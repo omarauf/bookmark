@@ -1,0 +1,20 @@
+# Allowed commit prefixes
+ALLOWED_PREFIXES="chore: feat: fix: docs: style: refactor: test:"
+
+# Get commit message
+COMMIT_MSG=$(cat "$1")
+
+# Check if it starts with allowed prefixes
+VALID=false
+for PREFIX in $ALLOWED_PREFIXES; do
+  if echo "$COMMIT_MSG" | grep -q "^$PREFIX"; then
+    VALID=true
+    break
+  fi
+done
+
+if [ "$VALID" = false ]; then
+  echo "Error: Commit message must start with one of the following prefixes:"
+  echo "$ALLOWED_PREFIXES"
+  exit 1
+fi

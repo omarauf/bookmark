@@ -1,0 +1,24 @@
+{
+  "name": "@workspace/contracts",
+  "type": "module",
+  "devDependencies": {},
+  "exports": {
+    "./link": "./src/link.ts",
+    "./tag": "./src/tag.ts",
+    "./collection": "./src/collection.ts",
+    "./user": "./src/user.ts",
+    "./import": "./src/import.ts",
+    "./post": "./src/post.ts",
+    "./platform-type": "./src/common/platform-type.ts",
+    "./instagram/*": "./src/instagram/*.ts",
+    "./table": "./src/table/index.ts"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@orpc/contract": "^1.8.3",
+    "mongoose": "^8.17.2",
+    "zod": "^4.1.5"
+  }
+}

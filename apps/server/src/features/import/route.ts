@@ -44,7 +44,10 @@ export const importRouter = {
   }),
 
   list: publicProcedure.input(ListImportSchema).handler(async ({ input }) => {
-    const imports = await ImportModel.find(input);
+    const { type } = input;
+    const imports = await ImportModel.find({
+      ...(type ? { type } : {}),
+    });
     return imports;
   }),
 

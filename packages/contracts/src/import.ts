@@ -1,7 +1,7 @@
 import z from "zod";
 import { ObjectIdSchema } from "./common/object-id-schema";
-import { SortingParamsSchema } from "./common/pagination-query";
 import { PlatformTypeSchema } from "./common/platform-type";
+import { BasicSearchSchema } from "./table";
 
 const ImportEntitySchema = z.object({
   _id: ObjectIdSchema,
@@ -24,7 +24,9 @@ export const CreateImportSchema = z.object({
   date: z.date(),
 });
 
-export const ListImportSchema = SortingParamsSchema.extend({});
+export const ListImportSchema = BasicSearchSchema.extend({
+  type: PlatformTypeSchema.optional(),
+});
 
 export const DeleteImportSchema = ImportSchema.pick({ id: true });
 

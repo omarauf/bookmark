@@ -1,8 +1,6 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import type { Import } from "@workspace/contracts/import";
-import { BasicSearchSchema } from "@workspace/contracts/table";
-import { useDataTable } from "@workspace/ui/hooks/use-data-table";
+import { type Import, ListImportSchema } from "@workspace/contracts/import";
 import { DataTable, DataTableToolbar } from "@workspace/ui/table";
 import type { DataTableRowAction } from "@workspace/ui/types/data-table";
 import React from "react";
@@ -10,12 +8,14 @@ import { orpc } from "@/api/rpc";
 import { useGetImportTableColumns } from "@/apps/imports/column";
 import { DeleteImportsDialog } from "@/apps/imports/delete";
 import { UploadButton } from "@/apps/imports/upload";
+import { useDataTable } from "@/hooks/use-data-table";
 
 export const Route = createFileRoute("/imports/")({
   component: ImportList,
-  validateSearch: BasicSearchSchema,
-  loader: async ({ context: { orpc, queryClient } }) => {
-    await queryClient.ensureQueryData(orpc.imports.list.queryOptions({ input: {} }));
+  validateSearch: ListImportSchema,
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context: { orpc, queryClient }, deps }) => {
+    await queryClient.ensureQueryData(orpc.imports.list.queryOptions({ input: deps }));
     return;
   },
 });
@@ -25,7 +25,7 @@ export function ImportList() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const importQuery = useSuspenseQuery(orpc.imports.list.queryOptions({ input: {} }));
+  const importQuery = useSuspenseQuery(orpc.imports.list.queryOptions({ input: search }));
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<Import>>();
 
@@ -38,7 +38,7 @@ export function ImportList() {
     pageCount: 1,
     getRowId: (row) => row.id,
     search,
-    navigate: (search) => navigate({ search, replace: true }),
+    navigate,
   });
 
   return (

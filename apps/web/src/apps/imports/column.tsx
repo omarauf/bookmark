@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Column, ColumnDef } from "@tanstack/react-table";
 import type { Import } from "@workspace/contracts/import";
+import { PlatformTypeArray } from "@workspace/contracts/platform-type";
 import { Button } from "@workspace/ui/components/button";
 import {
   DropdownMenu,
@@ -103,12 +104,7 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
           label: "Type",
           placeholder: "Search types...",
           variant: "select",
-          options: [
-            { value: "instagram", label: "Instagram" },
-            { value: "twitter", label: "Twitter" },
-            { value: "facebook", label: "Facebook" },
-            { value: "tiktok", label: "TikTok" },
-          ],
+          options: PlatformTypeArray.map((t) => ({ label: t, value: t })),
           icon: Text,
         },
         enableColumnFilter: true,

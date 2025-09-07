@@ -1,6 +1,7 @@
 import z from "zod";
 
-export const PlatformTypeSchema = z.enum(["instagram", "twitter", "facebook"]);
+export const PlatformTypeArray = ["instagram", "twitter", "facebook"] as const;
+export const PlatformTypeSchema = z.enum(PlatformTypeArray);
 export type PlatformType = z.infer<typeof PlatformTypeSchema>;
 export const PlatformTypeEnum = PlatformTypeSchema.enum;
 

@@ -4,4 +4,4 @@ node_modules
 .env
 
 # Data folder 
-data
+apps/server/src/data

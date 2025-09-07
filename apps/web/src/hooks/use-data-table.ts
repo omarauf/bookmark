@@ -1,3 +1,4 @@
+import type { LinkProps } from "@tanstack/react-router";
 import {
   type ColumnFiltersState,
   getCoreRowModel,
@@ -17,7 +18,6 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import type { AdvancedSearchParams, SearchParams } from "@workspace/contracts/table";
-import { useDebouncedCallback } from "@workspace/ui/hooks/use-debounced-callback";
 import { AdvancedFilterFeature, type AdvancedFilterState } from "@workspace/ui/lib/advanced-filter";
 import { arrayEqual } from "@workspace/ui/lib/equity";
 import type {
@@ -26,6 +26,7 @@ import type {
   ExtendedColumnSort,
 } from "@workspace/ui/types/data-table";
 import * as React from "react";
+import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 
 const PAGE_KEY = "page";
 const PER_PAGE_KEY = "perPage";
@@ -48,13 +49,14 @@ interface UseDataTableProps<TData>
   initialState?: Omit<Partial<TableState>, "sorting"> & {
     sorting?: ExtendedColumnSort<TData>[];
   };
+  replace?: boolean;
   debounceMs?: number;
   throttleMs?: number;
   clearOnDefault?: boolean;
   enableAdvancedFilter?: boolean;
   scroll?: boolean;
   search: SearchParams | AdvancedSearchParams;
-  navigate: (props: Updater<SearchParams | AdvancedSearchParams>) => void;
+  navigate: (props: LinkProps<SearchParams | AdvancedSearchParams>) => void;
 }
 
 // Priority to search -> initialState -> default values
@@ -63,6 +65,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     columns,
     pageCount = -1,
     initialState,
+    replace = true,
     debounceMs = DEBOUNCE_MS,
     throttleMs = THROTTLE_MS,
     enableAdvancedFilter = false,
@@ -97,19 +100,25 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
 
   const setPage = React.useCallback(
     (newPage: number) => {
-      navigate((prev) => ({ ...prev, [PAGE_KEY]: newPage !== defaultPage ? newPage : undefined }));
+      navigate({
+        search: (prev) => ({ ...prev, [PAGE_KEY]: newPage !== defaultPage ? newPage : undefined }),
+        replace,
+      });
     },
-    [navigate, defaultPage],
+    [navigate, replace, defaultPage],
   );
 
   const setPerPage = React.useCallback(
     (newPage: number) => {
-      navigate((prev) => ({
-        ...prev,
-        [PER_PAGE_KEY]: newPage !== defaultPerPage ? newPage : undefined,
-      }));
+      navigate({
+        search: (prev) => ({
+          ...prev,
+          [PER_PAGE_KEY]: newPage !== defaultPerPage ? newPage : undefined,
+        }),
+        replace,
+      });
     },
-    [navigate, defaultPerPage],
+    [navigate, replace, defaultPerPage],
   );
 
   const pagination: PaginationState = React.useMemo(() => {
@@ -136,12 +145,17 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
   /* ------------------------------------------------ Sorting ----------------------------------------------- */
   const setSorting = React.useCallback(
     (newSorting: ExtendedColumnSort<TData>[]) => {
-      navigate((prev) => ({
-        ...prev,
-        [SORT_KEY]: arrayEqual(newSorting, defaultSorting, ["desc", "id"]) ? undefined : newSorting,
-      }));
+      navigate({
+        search: (prev) => ({
+          ...prev,
+          [SORT_KEY]: arrayEqual(newSorting, defaultSorting, ["desc", "id"])
+            ? undefined
+            : newSorting,
+        }),
+        replace,
+      });
     },
-    [navigate, defaultSorting],
+    [navigate, replace, defaultSorting],
   );
 
   const onSortingChange = React.useCallback(
@@ -175,9 +189,9 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
 
   const setFilterSearch = React.useCallback(
     (newFilters: ColumnFilter) => {
-      navigate((prev) => ({ ...prev, ...newFilters }));
+      navigate({ search: (prev) => ({ ...prev, ...newFilters }), replace });
     },
-    [navigate],
+    [replace, navigate],
   );
 
   const debouncedSetFilterSearch = useDebouncedCallback((values: ColumnFilter) => {
@@ -185,7 +199,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     void setFilterSearch(values);
   }, debounceMs);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the column filter is being serialized
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we need to re-compute when columnFilter changes
   const initialColumnFilters: ColumnFiltersState = React.useMemo(() => {
     if (enableAdvancedFilter) return [];
 
@@ -205,7 +219,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
           ? value
           : typeof value === "string" && /[^a-zA-Z0-9]/.test(value)
             ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean)
-            : [value];
+            : value;
 
         filters.push({
           id: key,
@@ -214,6 +228,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
       }
       return filters;
     }, []);
+
     // Use JSON.stringify(columnFilter) to avoid dependency on a changing object reference
   }, [enableAdvancedFilter, initialState?.columnFilters, JSON.stringify(columnFilter)]);
 
@@ -263,14 +278,17 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
 
   const setAdvancedFilterSearch = React.useCallback(
     (newFilters: AdvancedFilterState<TData>) => {
-      navigate((prev) => ({
-        ...prev,
-        [FILTERS_KEY]: newFilters.filters.length === 0 ? undefined : newFilters.filters,
-        joinOperator:
-          newFilters.joinOperator !== defaultJoinOperator ? newFilters.joinOperator : undefined,
-      }));
+      navigate({
+        search: (prev) => ({
+          ...prev,
+          [FILTERS_KEY]: newFilters.filters.length === 0 ? undefined : newFilters.filters,
+          joinOperator:
+            newFilters.joinOperator !== defaultJoinOperator ? newFilters.joinOperator : undefined,
+        }),
+        replace,
+      });
     },
-    [defaultJoinOperator, navigate],
+    [defaultJoinOperator, navigate, replace],
   );
 
   const debouncedSetAdvancedFilterSearch = useDebouncedCallback(

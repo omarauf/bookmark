@@ -6,6 +6,7 @@ import { DataTableDateFilter } from "@workspace/ui/components/data-table/data-ta
 import { DataTableFacetedFilter } from "@workspace/ui/components/data-table/data-table-faceted-filter";
 import { DataTableSliderFilter } from "@workspace/ui/components/data-table/data-table-slider-filter";
 import { DataTableViewOptions } from "@workspace/ui/components/data-table/data-table-view-options";
+import { DataTableSingleSelectFilter } from "@workspace/ui/components/data-table/data-table-single-select-filter";
 import { Input } from "@workspace/ui/components/input";
 import { cn } from "@workspace/ui/lib/utils";
 import { X } from "lucide-react";
@@ -118,13 +119,20 @@ function DataTableToolbarFilter<TData>({ column }: DataTableToolbarFilterProps<T
           );
 
         case "select":
+          return (
+            <DataTableSingleSelectFilter
+              column={column}
+              title={columnMeta.label ?? column.id}
+              options={columnMeta.options ?? []}
+            />
+          );
+
         case "multiSelect":
           return (
             <DataTableFacetedFilter
               column={column}
               title={columnMeta.label ?? column.id}
               options={columnMeta.options ?? []}
-              multiple={columnMeta.variant === "multiSelect"}
             />
           );
 

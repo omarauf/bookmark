@@ -4,7 +4,14 @@ declare global {
   }
 }
 
-export function instagramScrapper() {
+type Props = {
+  username: string;
+  pages?: number;
+  download?: boolean;
+  send?: boolean;
+};
+
+export function instagramScraper({ username, pages, download, send }: Props) {
   console.log("[bookmark]", "Instagram Scrapper initializing... v4");
 
   const savedPosts: unknown[] = [];
@@ -41,7 +48,9 @@ export function instagramScrapper() {
   }
 
   function openAllPostsPage() {
-    const link = document.querySelector<HTMLAnchorElement>('a[href="/omarauf/saved/all-posts/"]');
+    const link = document.querySelector<HTMLAnchorElement>(
+      `a[href="/${username}/saved/all-posts/"]`,
+    );
     if (!link) return;
 
     link.click();
@@ -119,21 +128,63 @@ export function instagramScrapper() {
         console.log("[bookmark]", "No loading indicator found, stopping scroll loop.");
         break;
       }
+
+      if (pages && savedPosts.length >= pages) {
+        console.log(
+          "[bookmark]",
+          `Reached the specified number of pages: ${pages}, stopping scroll loop.`,
+        );
+        break;
+      }
     }
   }
 
-  function download() {
+  function downloadFile(filename: string) {
     const blob = new Blob([JSON.stringify(savedPosts, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const date = new Date();
-    const formattedDate = date.toISOString();
-    a.download = `savedPosts_${formattedDate}.json`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  function sendFileToApi(filename: string, date: Date) {
+    const formData = new FormData();
+    const blob = new Blob([JSON.stringify(savedPosts, null, 2)], {
+      type: "application/json",
+    });
+
+    formData.append("file", blob, filename);
+    formData.append("scrapedAt", date.toISOString());
+    formData.append("type", "instagram");
+
+    fetch("http://localhost:3000/api/import", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function formatDate(date = new Date()) {
+    const pad = (n: number) => n.toString().padStart(2, "0");
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+
+    return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
   }
 
   async function scrape() {
@@ -144,7 +195,11 @@ export function instagramScrapper() {
 
     await scrollLoop2();
 
-    download();
+    const date = new Date();
+    const filename = `instagram_${formatDate(date)}.json`;
+
+    if (download) downloadFile(filename);
+    if (send) sendFileToApi(filename, date);
   }
 
   setTimeout(scrape, 5000);

@@ -40,6 +40,7 @@ export const scrapeChromeBookmark = async () => {
 
   const importedLink: CreateLink[] = result
     .filter((l) => l.url)
+    .filter((l) => l.url?.startsWith("http"))
     .map((l) => ({
       createdAt: l.dateAdded ? new Date(l.dateAdded) : undefined,
       folder: l.folder,

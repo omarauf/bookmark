@@ -1,5 +1,5 @@
 # Allowed commit prefixes
-ALLOWED_PREFIXES="chore: feat: fix: docs: style: refactor: test:"
+ALLOWED_PREFIXES="chore: feat: fix: docs: style: refactor: test: cleaner:"
 
 # Get commit message
 COMMIT_MSG=$(cat "$1")

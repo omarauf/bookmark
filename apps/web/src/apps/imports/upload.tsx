@@ -28,7 +28,7 @@ export function UploadButton() {
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [type, setType] = useState<"instagram">();
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [scrapedAt, setScrapedAt] = useState<Date | undefined>(new Date());
   const queryClient = useQueryClient();
 
   const uploadMutation = useMutation(
@@ -103,7 +103,7 @@ export function UploadButton() {
     }
 
     setFile(selectedFile);
-    setDate(parsedDate.toDate());
+    setScrapedAt(parsedDate.toDate());
     setType(fileType);
 
     // Read file content
@@ -131,12 +131,12 @@ export function UploadButton() {
       return;
     }
 
-    if (date === undefined) {
+    if (scrapedAt === undefined) {
       toast.error("Please select a date");
       return;
     }
 
-    const result = uploadMutation.mutateAsync({ file, type, date: date });
+    const result = uploadMutation.mutateAsync({ file, type, scrapedAt });
 
     toast.promise(result, {
       loading: "Loading...",
@@ -254,7 +254,7 @@ export function UploadButton() {
           className="w-full"
         />
 
-        <DatePicker label="To" date={date} setDate={setDate} className="w-full" />
+        <DatePicker label="To" date={scrapedAt} setDate={setScrapedAt} className="w-full" />
 
         <DialogFooter className="mt-4">
           <Button variant="outline" onClick={() => setOpen(false)}>

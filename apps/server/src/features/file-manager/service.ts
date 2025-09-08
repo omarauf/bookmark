@@ -1,6 +1,6 @@
 import { createWriteStream } from "node:fs";
-import { exists, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
-import path, { dirname } from "node:path";
+import { access, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
+import path from "node:path";
 import type { Readable } from "node:stream";
 
 export type FilePath =
@@ -13,17 +13,28 @@ export type FilePath =
   | `instagram/carousel/${string}-${number}.jpg`
   | `instagram/carousel/${string}-${number}.mp4`;
 
+const dataDir = path.join(path.resolve(process.cwd()), "src", "data");
+const resolveFullPath = (filePath: FilePath | string) => path.join(dataDir, ...filePath.split("/"));
+
+const fileExists = async (filePath: string): Promise<boolean> => {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const fileManager = {
   async write(filePath: FilePath, data: Buffer | string): Promise<void> {
-    const parts = filePath.split("/");
-    const fullPath = path.join(path.resolve(process.cwd()), "src", "data", ...parts);
-    await mkdir(fullPath, { recursive: true });
+    const fullPath = resolveFullPath(filePath);
+    await mkdir(path.dirname(fullPath), { recursive: true });
     await writeFile(fullPath, data);
   },
 
   async saveFile(data: Readable | Buffer, filePath: FilePath | string): Promise<string> {
-    const parts = filePath.split("/");
-    const fullPath = path.join(path.resolve(process.cwd()), "src", "data", ...parts);
+    const fullPath = resolveFullPath(filePath);
+    await mkdir(path.dirname(fullPath), { recursive: true });
     const writer = createWriteStream(fullPath);
 
     if (Buffer.isBuffer(data)) {
@@ -40,36 +51,28 @@ export const fileManager = {
   },
 
   async readFileAsString(filePath: FilePath): Promise<string> {
-    const parts = filePath.split("/");
-    const fullPath = path.join(path.resolve(process.cwd()), "src", "data", ...parts);
+    const fullPath = resolveFullPath(filePath);
     return readFile(fullPath, "utf-8");
   },
 
   async readFile(filePath: FilePath | string) {
-    const parts = filePath.split("/");
-    const fullPath = path.join(path.resolve(process.cwd()), "src", "data", ...parts);
+    const fullPath = resolveFullPath(filePath);
     return await readFile(fullPath);
   },
 
   async getPath(filePath: FilePath): Promise<string> {
-    const parts = filePath.split("/");
-    return path.join(path.resolve(process.cwd()), "src", "data", ...parts);
+    return resolveFullPath(filePath);
   },
 
   async delete(filePath: FilePath): Promise<void> {
-    const parts = filePath.split("/");
-    const fullPath = path.join(path.resolve(process.cwd()), "src", "data", ...parts);
-    await unlink(fullPath);
+    const fullPath = resolveFullPath(filePath);
+    if (await fileExists(fullPath)) {
+      await unlink(fullPath);
+    }
   },
 
   async exists(filePath: FilePath | string): Promise<boolean> {
-    const parts = filePath.split("/");
-    const fullPath = path.join(path.resolve(process.cwd()), "src", "data", ...parts);
-    const dirPath = dirname(fullPath);
-
-    const isExists = await exists(dirPath);
-    if (!isExists) await mkdir(dirPath, { recursive: true });
-
-    return await exists(fullPath);
+    const fullPath = resolveFullPath(filePath);
+    return fileExists(fullPath);
   },
 };

@@ -4,7 +4,7 @@ import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
 import { Switch } from "@workspace/ui/components/switch";
 import { useId, useState } from "react";
-import { scrapeChromeBookmark } from "@/scrapper/bookmark";
+import { scrapeChromeBookmark } from "@/features/bookmark/scraper";
 import type { CommunicationMessage, CommunicationResponse } from "@/types/communication";
 
 export default function App() {

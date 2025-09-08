@@ -40,7 +40,7 @@ export function instagramCleaner({ username, posts }: Props) {
 
     const removeButton = Array.from(
       document.querySelectorAll<HTMLButtonElement>('button[tabindex="0"]'),
-    ).find((btn) => btn.textContent.trim() === "Remove");
+    ).find((btn) => btn.textContent?.trim() === "Remove");
 
     if (removeButton) {
       removeButton.click();

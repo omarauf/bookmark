@@ -12,7 +12,7 @@ type Props = {
 };
 
 export function instagramScraper({ username, pages, download, send }: Props) {
-  console.log("[bookmark]", "Instagram Scrapper initializing... v4");
+  console.log("[bookmark]", "Instagram Scraper initializing... v4");
 
   const savedPosts: unknown[] = [];
 

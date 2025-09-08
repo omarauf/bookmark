@@ -13,35 +13,39 @@ import { parseInstagram } from "../posts/instagram/parser";
 import { ImportModel } from "./model";
 
 export const importRouter = {
-  create: publicProcedure.input(CreateImportSchema).handler(async ({ input }) => {
-    const { date, file, type } = input;
+  create: publicProcedure
+    .route({ path: "/import" })
+    .input(CreateImportSchema)
+    .handler(async ({ input }) => {
+      const { scrapedAt, file, type } = input;
 
-    const exist = await ImportModel.findOne({ name: file.name }).exec();
+      const exist = await ImportModel.findOne({ name: file.name }).exec();
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    await fileManager.write(`json/${file.name}.json`, buffer);
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const fileName = file.name.replace(".json", "");
+      await fileManager.write(`json/${fileName}.json`, buffer);
 
-    const data = buffer.toString("utf-8");
+      const data = buffer.toString("utf-8");
 
-    const parsedData = parseInstagram(data);
+      const parsedData = parseInstagram(data);
 
-    if (exist) {
-      return await ImportModel.updateOne(
-        { name: file.name },
-        { $set: { type: input.type, scrapedAt: input.date, size: file.size } },
-      );
-    }
+      if (exist) {
+        return await ImportModel.updateOne(
+          { name: file.name },
+          { $set: { type: input.type, scrapedAt: input.scrapedAt, size: file.size } },
+        );
+      }
 
-    return await ImportModel.insertOne({
-      name: file.name,
-      validPostCount: parsedData.valid.length,
-      invalidPostCount: parsedData.invalid.length,
-      size: file.size,
-      type: type,
-      scrapedAt: date,
-    });
-  }),
+      return await ImportModel.insertOne({
+        name: file.name,
+        validPostCount: parsedData.valid.length,
+        invalidPostCount: parsedData.invalid.length,
+        size: file.size,
+        type: type,
+        scrapedAt: scrapedAt,
+      });
+    }),
 
   list: publicProcedure.input(ListImportSchema).handler(async ({ input }) => {
     const { type } = input;
@@ -65,14 +69,14 @@ export const importRouter = {
       const result = await mapInstagram(valid);
 
       if (download) {
-        await ImportModel.updateOne({ _id: data._id }, { $set: { downloaded: true } });
+        await ImportModel.updateOne({ _id: data._id }, { $set: { downloadedAt: new Date() } });
 
         const queue = getDownloaderQueue();
 
         await queue.add(QUEUE.downloader, { id: data.id });
       }
 
-      await ImportModel.updateOne({ _id: data._id }, { $set: { imported: true } });
+      await ImportModel.updateOne({ _id: data._id }, { $set: { importedAt: new Date() } });
 
       return {
         mappedUsers: result.mappedUsers,

@@ -124,7 +124,7 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
       },
       {
         id: "downloaded",
-        accessorKey: "downloaded",
+        accessorKey: "downloadedAt",
         header: ({ column }: { column: Column<Import, unknown> }) => (
           <DataTableColumnHeader column={column} title="Downloaded" />
         ),
@@ -140,12 +140,12 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
       },
       {
         id: "imported",
-        accessorKey: "imported",
+        accessorKey: "importedAt",
         header: ({ column }: { column: Column<Import, unknown> }) => (
           <DataTableColumnHeader column={column} title="Imported" />
         ),
         cell: ({ cell }) => {
-          const s = cell.getValue<Import["downloadedAt"]>();
+          const s = cell.getValue<Import["importedAt"]>();
 
           return (
             <Label variant="soft" className="capitalize">

@@ -21,7 +21,7 @@ export const ImportSchema = ImportEntitySchema.extend({ _id: z.string() });
 export const CreateImportSchema = z.object({
   file: z.file(),
   type: PlatformTypeSchema,
-  date: z.date(),
+  scrapedAt: z.union([z.date(), z.string()]),
 });
 
 export const ListImportSchema = BasicSearchSchema.extend({

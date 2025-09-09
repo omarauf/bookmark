@@ -1,5 +1,7 @@
+import type { PlatformType } from "@workspace/contracts/platform-type";
+
 export type CommunicationMessage = {
-  platform: "instagram";
+  platform: PlatformType;
   type: "scrape" | "unsave";
   count?: number;
   download?: boolean;

@@ -1,5 +1,7 @@
 import { env } from "@/config/env";
-import { instagramCleaner, instagramScraper } from "@/features/instagram";
+import { instagramCleaner } from "@/features/instagram/cleaner";
+import { instagramScraper } from "@/features/instagram/scraper";
+import { twitterScraper } from "@/features/twitter/scraper";
 import type { CommunicationMessage, CommunicationResponse } from "@/types/communication";
 
 chrome.runtime.onMessage.addListener(
@@ -9,12 +11,15 @@ chrome.runtime.onMessage.addListener(
     sendResponse: (response: CommunicationResponse) => void,
   ): Promise<void> => {
     console.log("Message received:", message, sender);
-    const { count, download, send, type } = message;
+    const { count, download, send, type, platform } = message;
+
+    const url =
+      platform === "instagram"
+        ? `https://www.instagram.com/${env.VITE_INSTAGRAM_USERNAME}/saved/`
+        : "https://x.com/home";
 
     try {
-      const newTab = await chrome.tabs.create({
-        url: `https://www.instagram.com/${env.VITE_INSTAGRAM_USERNAME}/saved/`,
-      });
+      const newTab = await chrome.tabs.create({ url });
 
       if (!newTab.id) return;
 
@@ -22,37 +27,70 @@ chrome.runtime.onMessage.addListener(
         if (tabId === newTab.id && info.status === "complete") {
           chrome.tabs.onUpdated.removeListener(listener);
 
-          if (type === "unsave") {
-            chrome.scripting.executeScript({
-              target: { tabId: newTab.id },
-              func: instagramCleaner,
-              args: [
-                {
-                  username: env.VITE_INSTAGRAM_USERNAME,
-                  posts: count || 1,
-                },
-              ],
-              world: "MAIN",
-              injectImmediately: true,
-            });
+          if (platform === "twitter") {
+            if (type === "unsave") {
+              chrome.scripting.executeScript({
+                target: { tabId: newTab.id },
+                func: instagramCleaner,
+                args: [
+                  {
+                    username: env.VITE_INSTAGRAM_USERNAME,
+                    posts: count || 1,
+                  },
+                ],
+                world: "MAIN",
+                injectImmediately: true,
+              });
+            } else {
+              chrome.scripting.executeScript({
+                target: { tabId: newTab.id },
+                func: twitterScraper,
+                args: [
+                  {
+                    pages: count || 1,
+                    download: download || false,
+                    send: send || false,
+                  },
+                ],
+                world: "MAIN",
+                injectImmediately: true,
+              });
+            }
           }
 
-          //
-          else {
-            chrome.scripting.executeScript({
-              target: { tabId: newTab.id },
-              func: instagramScraper,
-              args: [
-                {
-                  username: env.VITE_INSTAGRAM_USERNAME,
-                  pages: count || 1,
-                  download: download || false,
-                  send: send || false,
-                },
-              ],
-              world: "MAIN",
-              injectImmediately: true,
-            });
+          if (platform === "instagram") {
+            if (type === "unsave") {
+              chrome.scripting.executeScript({
+                target: { tabId: newTab.id },
+                func: instagramCleaner,
+                args: [
+                  {
+                    username: env.VITE_INSTAGRAM_USERNAME,
+                    posts: count || 1,
+                  },
+                ],
+                world: "MAIN",
+                injectImmediately: true,
+              });
+            }
+
+            //
+            else {
+              chrome.scripting.executeScript({
+                target: { tabId: newTab.id },
+                func: instagramScraper,
+                args: [
+                  {
+                    username: env.VITE_INSTAGRAM_USERNAME,
+                    pages: count || 1,
+                    download: download || false,
+                    send: send || false,
+                  },
+                ],
+                world: "MAIN",
+                injectImmediately: true,
+              });
+            }
           }
         }
       };

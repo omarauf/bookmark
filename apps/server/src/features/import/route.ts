@@ -5,6 +5,7 @@ import {
   ListImportSchema,
   RunImportSchema,
 } from "@workspace/contracts/import";
+import { parseImportFilename } from "@workspace/core/import";
 import { publicProcedure } from "@/lib/orpc";
 import { getDownloaderQueue, getTwitterDownloaderQueue, QUEUE } from "@/queue";
 import { fileManager } from "../file-manager/service";
@@ -18,15 +19,20 @@ export const importRouter = {
   create: publicProcedure
     .route({ path: "/import" })
     .input(CreateImportSchema)
-    .handler(async ({ input }) => {
-      const { scrapedAt, file, type } = input;
-
+    .handler(async ({ input: { file } }) => {
       const exist = await ImportModel.findOne({ name: file.name }).exec();
 
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const fileName = file.name.replace(".json", "");
       await fileManager.write(`json/${fileName}.json`, buffer);
+      const { date: scrapedAt, type } = parseImportFilename(file.name);
+
+      if (scrapedAt === undefined || type === undefined) {
+        throw new ORPCError("BAD_REQUEST", {
+          message: "Invalid filename format. Expected format: {type}_YYYY-MM-DD_HH-MM-SS.json",
+        });
+      }
 
       const data = buffer.toString("utf-8");
 
@@ -36,7 +42,7 @@ export const importRouter = {
         if (exist) {
           return await ImportModel.updateOne(
             { name: file.name },
-            { $set: { type: input.type, scrapedAt: input.scrapedAt, size: file.size } },
+            { $set: { type, scrapedAt, size: file.size } },
           );
         }
 
@@ -56,7 +62,7 @@ export const importRouter = {
         if (exist) {
           return await ImportModel.updateOne(
             { name: file.name },
-            { $set: { type: input.type, scrapedAt: input.scrapedAt, size: file.size } },
+            { $set: { type, scrapedAt, size: file.size } },
           );
         }
 

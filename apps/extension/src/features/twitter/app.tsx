@@ -14,7 +14,7 @@ export function Twitter() {
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState({
     pages: 1,
-    download: false,
+    download: true,
     send: true,
   });
 

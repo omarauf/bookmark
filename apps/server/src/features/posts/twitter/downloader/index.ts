@@ -8,11 +8,6 @@ import { getFilePaths, getPlaceholderPath } from "../utils";
 export async function downloadTwitter(post: ParsedTwitterPost): Promise<boolean> {
   const files = getFilePaths(post);
 
-  if (post.postId === "1965350724499611796") {
-    console.log("Debug");
-    console.log(files);
-  }
-
   let allDownloaded = true;
 
   for (const file of files) {

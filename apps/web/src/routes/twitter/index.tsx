@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { ListTwitterPostSchema } from "@workspace/contracts/twitter/post";
 import { orpc } from "@/api/rpc";

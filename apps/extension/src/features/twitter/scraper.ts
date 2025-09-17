@@ -8,9 +8,10 @@ type Props = {
   pages?: number;
   download?: boolean;
   send?: boolean;
+  filename: string;
 };
 
-export function twitterScraper({ pages, download, send }: Props) {
+export function twitterScraper({ pages, download, send, filename }: Props) {
   console.log("[bookmark]", "Twitter Scraper initializing... v4");
 
   const savedPosts: unknown[] = [];
@@ -107,7 +108,7 @@ export function twitterScraper({ pages, download, send }: Props) {
     }
   }
 
-  function downloadFile(filename: string) {
+  function downloadFile() {
     const blob = new Blob([JSON.stringify(savedPosts, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -119,15 +120,13 @@ export function twitterScraper({ pages, download, send }: Props) {
     URL.revokeObjectURL(url);
   }
 
-  function sendFileToApi(filename: string, date: Date) {
+  function sendFileToApi() {
     const formData = new FormData();
     const blob = new Blob([JSON.stringify(savedPosts, null, 2)], {
       type: "application/json",
     });
 
     formData.append("file", blob, filename);
-    formData.append("scrapedAt", date.toISOString());
-    formData.append("type", "twitter");
 
     fetch("http://localhost:3000/api/import", {
       method: "POST",
@@ -142,19 +141,6 @@ export function twitterScraper({ pages, download, send }: Props) {
       });
   }
 
-  function formatDate(date = new Date()) {
-    const pad = (n: number) => n.toString().padStart(2, "0");
-
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hours = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
-    const seconds = pad(date.getSeconds());
-
-    return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
-  }
-
   async function scrape() {
     init();
 
@@ -163,11 +149,8 @@ export function twitterScraper({ pages, download, send }: Props) {
 
     await scrollLoop2();
 
-    const date = new Date();
-    const filename = `twitter_${formatDate(date)}.json`;
-
-    if (download) downloadFile(filename);
-    if (send) sendFileToApi(filename, date);
+    if (download) downloadFile();
+    if (send) sendFileToApi();
   }
 
   setTimeout(scrape, 5000);

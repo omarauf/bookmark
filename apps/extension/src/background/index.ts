@@ -1,6 +1,8 @@
+import { generateImportFilename } from "@workspace/core/import";
 import { env } from "@/config/env";
 import { instagramCleaner } from "@/features/instagram/cleaner";
 import { instagramScraper } from "@/features/instagram/scraper";
+import { twitterCleaner } from "@/features/twitter/cleaner";
 import { twitterScraper } from "@/features/twitter/scraper";
 import type { CommunicationMessage, CommunicationResponse } from "@/types/communication";
 
@@ -27,17 +29,14 @@ chrome.runtime.onMessage.addListener(
         if (tabId === newTab.id && info.status === "complete") {
           chrome.tabs.onUpdated.removeListener(listener);
 
+          const filename = generateImportFilename(platform);
+
           if (platform === "twitter") {
             if (type === "unsave") {
               chrome.scripting.executeScript({
                 target: { tabId: newTab.id },
-                func: instagramCleaner,
-                args: [
-                  {
-                    username: env.VITE_INSTAGRAM_USERNAME,
-                    posts: count || 1,
-                  },
-                ],
+                func: twitterCleaner,
+                args: [{ posts: count || 1 }],
                 world: "MAIN",
                 injectImmediately: true,
               });
@@ -50,6 +49,7 @@ chrome.runtime.onMessage.addListener(
                     pages: count || 1,
                     download: download || false,
                     send: send || false,
+                    filename,
                   },
                 ],
                 world: "MAIN",
@@ -85,6 +85,7 @@ chrome.runtime.onMessage.addListener(
                     pages: count || 1,
                     download: download || false,
                     send: send || false,
+                    filename,
                   },
                 ],
                 world: "MAIN",

@@ -1,0 +1,14 @@
+{
+  "name": "@workspace/core",
+  "type": "module",
+  "devDependencies": {},
+  "exports": {
+    "./import": "./src/import.ts"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@workspace/contracts": "workspace:*"
+  }
+}

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type PlatformType, PlatformTypeArray } from "@workspace/contracts/platform-type";
+import { parseImportFilename } from "@workspace/core/import";
 import { Alert, AlertDescription } from "@workspace/ui/components/alert";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -11,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
-import dayjs from "dayjs";
 import { AlertCircle, Check, FileJson, Upload } from "lucide-react";
 import type React from "react";
 import { useRef, useState } from "react";
@@ -86,26 +86,17 @@ export function UploadButton() {
     }
 
     const filename = selectedFile.name.split(".").slice(0, -1).join(".");
+    const { date, type } = parseImportFilename(filename);
 
-    const [fileType, fileDate] = filename.split("-");
-
-    const parsedDate = dayjs(fileDate, "YYYY.MM.DD_HH.mm.ss");
-
-    if (!parsedDate.isValid()) {
-      setError("Invalid date format in filename. Expected format: YYYY.MM.DD_HH.mm.ss");
-      setFile(null);
-      return;
-    }
-
-    if (fileType !== "instagram" && fileType !== "twitter") {
-      setError("Unsupported file type. Only 'instagram' and 'twitter' files are supported.");
+    if (date === undefined || type === undefined) {
+      setError("Invalid filename format. Expected format: {type}_YYYY-MM-DD_HH-MM-SS.json");
       setFile(null);
       return;
     }
 
     setFile(selectedFile);
-    setScrapedAt(parsedDate.toDate());
-    setType(fileType);
+    setScrapedAt(date);
+    setType(type);
 
     // Read file content
     const reader = new FileReader();
@@ -137,7 +128,7 @@ export function UploadButton() {
       return;
     }
 
-    const result = uploadMutation.mutateAsync({ file, type, scrapedAt });
+    const result = uploadMutation.mutateAsync({ file });
 
     toast.promise(result, {
       loading: "Loading...",

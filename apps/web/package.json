@@ -32,6 +32,7 @@
     "@tanstack/zod-adapter": "^1.131.35",
     "@workspace/contracts": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "@workspace/core": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

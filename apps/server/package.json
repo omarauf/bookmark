@@ -17,6 +17,7 @@
     "@orpc/openapi": "^1.8.6",
     "@orpc/server": "^1.8.6",
     "@workspace/contracts": "workspace:*",
+    "@workspace/core": "workspace:*",
     "axios": "^1.11.0",
     "bullmq": "^5.58.4",
     "dotenv": "^17.2.2",

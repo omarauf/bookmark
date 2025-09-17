@@ -1,7 +1,7 @@
 import { detectLanguage } from "@/utils/string";
 
 export function RenderCaption({ caption }: { caption?: string }) {
-  const captionLang = detectLanguage(caption || "No caption");
+  const captionLang = detectLanguage(caption);
 
   return (
     <div>

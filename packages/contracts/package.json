@@ -11,6 +11,7 @@
     "./post": "./src/post.ts",
     "./platform-type": "./src/common/platform-type.ts",
     "./instagram/*": "./src/instagram/*.ts",
+    "./twitter/*": "./src/twitter/*.ts",
     "./table": "./src/table/index.ts"
   },
   "peerDependencies": {

@@ -18,7 +18,9 @@ const userSchema = new Schema<User>(
     name: { type: String },
     profilePicture: { type: String, required: false },
     favorite: { type: Boolean, required: false },
+    createdAt: { type: Date, required: false },
     deletedAt: { type: Date, required: false },
+    verified: { type: Boolean, required: false, default: false },
   },
   userSchemaOptions,
 );

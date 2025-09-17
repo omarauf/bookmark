@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type PlatformType, PlatformTypeArray } from "@workspace/contracts/platform-type";
 import { Alert, AlertDescription } from "@workspace/ui/components/alert";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -27,7 +28,7 @@ export function UploadButton() {
   const [jsonData, setJsonData] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [type, setType] = useState<"instagram">();
+  const [type, setType] = useState<PlatformType>();
   const [scrapedAt, setScrapedAt] = useState<Date | undefined>(new Date());
   const queryClient = useQueryClient();
 
@@ -96,8 +97,8 @@ export function UploadButton() {
       return;
     }
 
-    if (fileType !== "instagram") {
-      setError("Unsupported file type. Only 'instagram' files are supported.");
+    if (fileType !== "instagram" && fileType !== "twitter") {
+      setError("Unsupported file type. Only 'instagram' and 'twitter' files are supported.");
       setFile(null);
       return;
     }
@@ -250,7 +251,7 @@ export function UploadButton() {
           placeholder="Import Type"
           value={type}
           onChange={setType}
-          options={["instagram"]}
+          options={PlatformTypeArray.map((p) => p)}
           className="w-full"
         />
 

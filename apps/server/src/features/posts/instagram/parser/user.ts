@@ -7,11 +7,13 @@ export function userParser(user: Owner | CoauthorProducer): ParsedInstagramUser 
   const name = user.full_name;
   const profilePicture = user.profile_pic_url;
   const url = `https://www.instagram.com/${username}/`;
+  const verified = user.is_verified;
   return {
     userId,
     username,
     name,
     url,
     profilePicture,
+    verified,
   };
 }

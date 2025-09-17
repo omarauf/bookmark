@@ -11,6 +11,7 @@ const UserEntitySchema = z.object({
   username: z.string(),
   type: UserPlatformTypeSchema,
   profilePicture: z.string().optional(),
+  verified: z.boolean(),
   name: z.string().optional(),
   favorite: z.boolean().optional(),
   deletedAt: z.date().optional(),

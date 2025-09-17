@@ -38,6 +38,11 @@ export const sidebarData: SidebarData = {
           icon: "mdi:instagram",
         },
         {
+          title: "Twitter",
+          url: "/twitter",
+          icon: "mdi:twitter",
+        },
+        {
           title: "Collections",
           url: "/collections",
           icon: "material-symbols:collections-bookmark-rounded",

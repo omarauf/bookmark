@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/server";
+import { PlatformTypeArray } from "@workspace/contracts/platform-type";
 import z from "zod";
 import { publicProcedure } from "@/lib/orpc";
 import { fileManager } from "./service";
@@ -13,7 +14,7 @@ export const fileManagerRoute = {
     .input(
       z.object({
         params: z.object({
-          postType: z.enum(["instagram"]),
+          postType: z.enum(PlatformTypeArray),
           type: z.enum(["image", "video", "user", "carousel"]),
           filename: z.string(),
           ext: z.enum(["jpg", "mp4"]),

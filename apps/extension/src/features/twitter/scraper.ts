@@ -119,28 +119,28 @@ export function twitterScraper({ pages, download, send }: Props) {
     URL.revokeObjectURL(url);
   }
 
-  //   function sendFileToApi(filename: string, date: Date) {
-  //     const formData = new FormData();
-  //     const blob = new Blob([JSON.stringify(savedPosts, null, 2)], {
-  //       type: "application/json",
-  //     });
+  function sendFileToApi(filename: string, date: Date) {
+    const formData = new FormData();
+    const blob = new Blob([JSON.stringify(savedPosts, null, 2)], {
+      type: "application/json",
+    });
 
-  //     formData.append("file", blob, filename);
-  //     formData.append("scrapedAt", date.toISOString());
-  //     formData.append("type", "twitter");
+    formData.append("file", blob, filename);
+    formData.append("scrapedAt", date.toISOString());
+    formData.append("type", "twitter");
 
-  //     fetch("http://localhost:3000/api/import", {
-  //       method: "POST",
-  //       body: formData,
-  //     })
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         console.log("Success:", data);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error:", error);
-  //       });
-  //   }
+    fetch("http://localhost:3000/api/import", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
 
   function formatDate(date = new Date()) {
     const pad = (n: number) => n.toString().padStart(2, "0");
@@ -167,7 +167,7 @@ export function twitterScraper({ pages, download, send }: Props) {
     const filename = `twitter_${formatDate(date)}.json`;
 
     if (download) downloadFile(filename);
-    // if (send) sendFileToApi(filename, date);
+    if (send) sendFileToApi(filename, date);
   }
 
   setTimeout(scrape, 5000);

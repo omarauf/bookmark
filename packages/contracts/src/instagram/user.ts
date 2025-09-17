@@ -21,6 +21,7 @@ export const ParsedInstagramUserSchema = z.object({
   username: z.string(),
   profilePicture: z.string().optional(),
   name: z.string().optional(),
+  verified: z.boolean(),
 });
 
 export type ParsedInstagramUser = z.infer<typeof ParsedInstagramUserSchema>;

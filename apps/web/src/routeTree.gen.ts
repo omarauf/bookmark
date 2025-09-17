@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteRouteImport } from './routes/settings/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
+import { Route as TwitterIndexRouteImport } from './routes/twitter/index'
 import { Route as TagsIndexRouteImport } from './routes/tags/index'
 import { Route as LinksIndexRouteImport } from './routes/links/index'
 import { Route as InstagramIndexRouteImport } from './routes/instagram/index'
@@ -39,6 +40,11 @@ const IndexRoute = IndexRouteImport.update({
 const UsersIndexRoute = UsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TwitterIndexRoute = TwitterIndexRouteImport.update({
+  id: '/twitter/',
+  path: '/twitter/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TagsIndexRoute = TagsIndexRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/instagram': typeof InstagramIndexRoute
   '/links': typeof LinksIndexRoute
   '/tags': typeof TagsIndexRoute
+  '/twitter': typeof TwitterIndexRoute
   '/users': typeof UsersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/instagram': typeof InstagramIndexRoute
   '/links': typeof LinksIndexRoute
   '/tags': typeof TagsIndexRoute
+  '/twitter': typeof TwitterIndexRoute
   '/users': typeof UsersIndexRoute
 }
 export interface FileRoutesById {
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/instagram/': typeof InstagramIndexRoute
   '/links/': typeof LinksIndexRoute
   '/tags/': typeof TagsIndexRoute
+  '/twitter/': typeof TwitterIndexRoute
   '/users/': typeof UsersIndexRoute
 }
 export interface FileRouteTypes {
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/instagram'
     | '/links'
     | '/tags'
+    | '/twitter'
     | '/users'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/instagram'
     | '/links'
     | '/tags'
+    | '/twitter'
     | '/users'
   id:
     | '__root__'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/instagram/'
     | '/links/'
     | '/tags/'
+    | '/twitter/'
     | '/users/'
   fileRoutesById: FileRoutesById
 }
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   InstagramIndexRoute: typeof InstagramIndexRoute
   LinksIndexRoute: typeof LinksIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
+  TwitterIndexRoute: typeof TwitterIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
 }
 
@@ -256,6 +269,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof UsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/twitter/': {
+      id: '/twitter/'
+      path: '/twitter'
+      fullPath: '/twitter'
+      preLoaderRoute: typeof TwitterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tags/': {
@@ -381,6 +401,7 @@ const rootRouteChildren: RootRouteChildren = {
   InstagramIndexRoute: InstagramIndexRoute,
   LinksIndexRoute: LinksIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
+  TwitterIndexRoute: TwitterIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
 }
 export const routeTree = rootRouteImport

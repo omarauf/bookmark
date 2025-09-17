@@ -25,7 +25,6 @@ const QuotedTwitterPostSchema = new Schema<TwitterPost["quoted"]>(
 
 const TwitterPostSchema = new Schema<TwitterPost>(
   {
-    caption: { type: String, required: false },
     media: { type: Schema.Types.Mixed, default: [] },
     likes: { type: Number, default: 0 },
     quotes: { type: Number, default: 0 },

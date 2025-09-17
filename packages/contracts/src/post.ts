@@ -21,6 +21,7 @@ const PostEntitySchema = z.object({
   importedAt: z.date(),
   downloadedAt: z.date().optional(),
   savedAt: z.date().optional(),
+  caption: z.string().optional(),
 });
 
 export const PostSchema = PostEntitySchema.extend({

@@ -33,7 +33,6 @@ const CoreParsedTwitterPostSchema = z.object({
 const TwitterPostSchema = z.object({
   ...CoreParsedTwitterPostSchema.shape,
   ...PostSchema.shape,
-  caption: z.string().optional(), // TODO: move to PostSchema
   type: z.literal(PostPlatformTypeEnum["twitter-post"]),
   quoted: CoreParsedTwitterPostSchema.optional(),
 });

@@ -27,6 +27,7 @@ const postSchema = new Schema<PostEntity>(
     savedAt: { type: Date, required: false },
     createdAt: { type: Date, required: false },
     downloadedAt: { type: Date, required: false },
+    caption: { type: String, required: false },
   },
   postSchemaOptions,
 );

@@ -16,7 +16,6 @@ const InstagramPostSchema = new Schema<InstagramPostEntity>(
   {
     likes: { type: Number, required: true },
     media: { type: Schema.Types.Mixed, required: true },
-    caption: { type: String, required: false },
     location: { type: Schema.Types.Mixed, required: false },
     userTags: { type: [UserTagSchema], required: false },
     music: { type: Schema.Types.Mixed, required: false },

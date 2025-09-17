@@ -7,7 +7,7 @@ import {
 } from "@workspace/contracts/import";
 import { parseImportFilename } from "@workspace/core/import";
 import { publicProcedure } from "@/lib/orpc";
-import { getDownloaderQueue, getTwitterDownloaderQueue, QUEUE } from "@/queue";
+import { getDownloaderQueue, QUEUE } from "@/queue";
 import { fileManager } from "../file-manager/service";
 import { mapInstagram } from "../posts/instagram/mapper";
 import { parseInstagram } from "../posts/instagram/parser";
@@ -124,9 +124,9 @@ export const importRouter = {
       if (download) {
         await ImportModel.updateOne({ _id: data._id }, { $set: { downloadedAt: new Date() } });
 
-        const queue = getTwitterDownloaderQueue();
+        const queue = getDownloaderQueue();
 
-        await queue.add(QUEUE.twitterDownload, { id: data.id });
+        await queue.add(QUEUE.downloader, { id: data.id });
       }
 
       await ImportModel.updateOne({ _id: data._id }, { $set: { importedAt: new Date() } });

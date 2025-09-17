@@ -8,7 +8,7 @@ import { TagSchema } from "../tag";
 import { InstagramLocationSchema } from "./location";
 import { InstagramMediaSchema } from "./media";
 import { InstagramMusicSchema } from "./music";
-import { InstagramUserSchema, ParsedInstagramUserSchema } from "./user";
+import { InstagramUserSchema } from "./user";
 import { InstagramUserTagSchema } from "./user-tag";
 
 const InstagramPostEntitySchema = PostSchema.extend({
@@ -41,19 +41,6 @@ export const CreateInstagramPostSchema = InstagramPostSchema.omit({
   deletedAt: true,
 });
 
-export const ParsedInstagramPostSchema = z.object({
-  postId: z.string(),
-  media: InstagramMediaSchema,
-  userTags: z.array(InstagramUserTagSchema),
-  location: InstagramLocationSchema.optional(),
-  likes: z.number(),
-  music: InstagramMusicSchema.optional(),
-  caption: z.string().optional(),
-  creator: ParsedInstagramUserSchema,
-  createdAt: z.date(),
-  url: z.url(),
-});
-
 export const ListInstagramPostSchema = BasePaginationQuerySchema.extend({
   minDate: z.date().optional(),
   maxDate: z.date().optional(),
@@ -66,6 +53,5 @@ export const ListInstagramPostSchema = BasePaginationQuerySchema.extend({
 export type InstagramPostEntity = z.infer<typeof InstagramPostEntitySchema>;
 export type InstagramPost = z.infer<typeof InstagramPostSchema>;
 export type CreateInstagramPost = z.infer<typeof CreateInstagramPostSchema>;
-export type ParsedInstagramPost = z.infer<typeof ParsedInstagramPostSchema>;
 export type ListInstagramPosts = z.infer<typeof ListInstagramPostSchema>;
 export type PopulatedInstagramPost = z.infer<typeof PopulatedInstagramPostSchema>;

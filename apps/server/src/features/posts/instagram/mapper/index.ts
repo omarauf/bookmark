@@ -1,4 +1,4 @@
-import type { ParsedInstagramPost } from "@workspace/contracts/instagram/post";
+import type { ParsedInstagramPost } from "../parser/schema";
 import { mapInstagramPosts } from "./post";
 import { mapInstagramUsers } from "./user";
 

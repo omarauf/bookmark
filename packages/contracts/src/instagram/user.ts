@@ -15,15 +15,5 @@ export const CreateInstagramUserSchema = InstagramUserSchema.omit({
   deletedAt: true,
 });
 
-export const ParsedInstagramUserSchema = z.object({
-  userId: z.string(),
-  url: z.url(),
-  username: z.string(),
-  profilePicture: z.string().optional(),
-  name: z.string().optional(),
-  verified: z.boolean(),
-});
-
-export type ParsedInstagramUser = z.infer<typeof ParsedInstagramUserSchema>;
 export type InstagramUser = z.infer<typeof InstagramUserSchema>;
 export type CreateInstagramUser = z.infer<typeof CreateInstagramUserSchema>;

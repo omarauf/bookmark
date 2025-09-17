@@ -1,8 +1,8 @@
-import type { ParsedInstagramPost } from "@workspace/contracts/instagram/post";
 import sharp from "sharp";
 import { fileManager } from "@/features/file-manager/service";
 import { randomDelay } from "@/utils/delay";
 import { getFileStream } from "@/utils/download";
+import type { ParsedInstagramPost } from "../parser/schema";
 import { getFilePaths, getPlaceholderPath } from "../utils";
 
 export async function downloadInstagram(post: ParsedInstagramPost): Promise<boolean> {

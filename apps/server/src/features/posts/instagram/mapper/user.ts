@@ -1,10 +1,6 @@
-import type { ParsedInstagramPost } from "@workspace/contracts/instagram/post";
-import type {
-  CreateInstagramUser,
-  InstagramUser,
-  ParsedInstagramUser,
-} from "@workspace/contracts/instagram/user";
+import type { CreateInstagramUser, InstagramUser } from "@workspace/contracts/instagram/user";
 import { InstagramUserModel } from "../models/user";
+import type { ParsedInstagramPost, ParsedInstagramUser } from "../parser/schema";
 import { getImagePath } from "../utils";
 
 export async function mapInstagramUsers(data: ParsedInstagramPost[]) {

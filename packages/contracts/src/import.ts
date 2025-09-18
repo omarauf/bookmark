@@ -1,10 +1,9 @@
 import z from "zod";
-import { ObjectIdSchema } from "./common/object-id-schema";
 import { PlatformTypeSchema } from "./common/platform-type";
 import { BasicSearchSchema } from "./table";
 
-const ImportEntitySchema = z.object({
-  _id: ObjectIdSchema,
+const ImportSchema = z.object({
+  _id: z.string(),
   id: z.string(),
   name: z.string(),
   type: PlatformTypeSchema,
@@ -15,8 +14,6 @@ const ImportEntitySchema = z.object({
   importedAt: z.boolean().optional(),
   scrapedAt: z.date().optional(),
 });
-
-export const ImportSchema = ImportEntitySchema.extend({ _id: z.string() });
 
 export const CreateImportSchema = z.object({ file: z.file() });
 

@@ -1,6 +1,5 @@
 import z from "zod";
 import { CollectionSchema } from "../collection";
-import { ObjectIdSchema } from "../common/object-id-schema";
 import { BasePaginationQuerySchema } from "../common/pagination-query";
 import { PostPlatformTypeEnum } from "../common/platform-type";
 import { PostSchema } from "../post";
@@ -11,18 +10,14 @@ import { InstagramMusicSchema } from "./music";
 import { InstagramUserSchema } from "./user";
 import { InstagramUserTagSchema } from "./user-tag";
 
-const InstagramPostEntitySchema = PostSchema.extend({
+const InstagramPostSchema = PostSchema.extend({
   media: InstagramMediaSchema,
-  userTags: InstagramUserTagSchema.extend({ user: ObjectIdSchema }).array(),
+  userTags: InstagramUserTagSchema.extend({ user: z.string() }).array(),
   location: InstagramLocationSchema.optional(),
   likes: z.number(),
   music: InstagramMusicSchema.optional(),
   caption: z.string().optional(),
   type: z.literal(PostPlatformTypeEnum["instagram-post"]),
-});
-
-export const InstagramPostSchema = InstagramPostEntitySchema.extend({
-  userTags: InstagramUserTagSchema.extend({ user: z.string() }).array(),
 });
 
 export const PopulatedInstagramPostSchema = InstagramPostSchema.extend({
@@ -50,7 +45,6 @@ export const ListInstagramPostSchema = BasePaginationQuerySchema.extend({
   mediaType: z.enum(["image", "video", "carousel"]).optional(),
 });
 
-export type InstagramPostEntity = z.infer<typeof InstagramPostEntitySchema>;
 export type InstagramPost = z.infer<typeof InstagramPostSchema>;
 export type CreateInstagramPost = z.infer<typeof CreateInstagramPostSchema>;
 export type ListInstagramPosts = z.infer<typeof ListInstagramPostSchema>;

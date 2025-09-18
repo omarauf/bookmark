@@ -1,18 +1,17 @@
 import z from "zod";
-import { ObjectIdSchema } from "./common/object-id-schema";
 import { BasePaginationQuerySchema } from "./common/pagination-query";
 import { PostPlatformTypeSchema } from "./common/platform-type";
 
-const PostEntitySchema = z.object({
-  _id: ObjectIdSchema,
+export const PostSchema = z.object({
+  _id: z.string(),
   id: z.string(),
   postId: z.string(),
-  creator: ObjectIdSchema,
+  creator: z.string(),
   type: PostPlatformTypeSchema,
   url: z.url(),
   favorite: z.boolean().optional(),
-  tags: z.array(ObjectIdSchema),
-  collections: z.array(ObjectIdSchema),
+  tags: z.array(z.string()),
+  collections: z.array(z.string()),
   note: z.string().optional(),
   rate: z.number().min(0).max(10).optional(),
   deletedAt: z.date().optional(),
@@ -22,13 +21,6 @@ const PostEntitySchema = z.object({
   downloadedAt: z.date().optional(),
   savedAt: z.date().optional(),
   caption: z.string().optional(),
-});
-
-export const PostSchema = PostEntitySchema.extend({
-  _id: z.string(),
-  creator: z.string(),
-  tags: z.array(z.string()),
-  collections: z.array(z.string()),
 });
 
 export const ListPostSchema = BasePaginationQuerySchema.extend({});
@@ -58,7 +50,6 @@ export const DeleteAllPostSchema = z.object({
   hard: z.boolean().optional(),
 });
 
-export type PostEntity = z.infer<typeof PostEntitySchema>;
 export type Post = z.infer<typeof PostSchema>;
 export type CreatePost = z.infer<typeof CreatePostSchema>;
 export type UpdatePost = z.infer<typeof UpdatePostSchema>;

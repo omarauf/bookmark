@@ -1,5 +1,4 @@
 import z from "zod";
-import { ObjectIdSchema } from "./common/object-id-schema";
 import { BasePaginationQuerySchema, SortingParamsSchema } from "./common/pagination-query";
 
 const PreviewSchema = z.object({
@@ -25,8 +24,8 @@ const PreviewSchema = z.object({
     .optional(),
 });
 
-const LinkEntitySchema = z.object({
-  _id: ObjectIdSchema,
+const LinkSchema = z.object({
+  _id: z.string(),
   id: z.string(),
   title: z.string().optional(),
   url: z.url(),
@@ -38,9 +37,7 @@ const LinkEntitySchema = z.object({
   updatedAt: z.date(),
 });
 
-export const LinkSchema = LinkEntitySchema.extend({ _id: z.string() });
-
-export const CreateLinkSchema = LinkEntitySchema.omit({
+export const CreateLinkSchema = LinkSchema.omit({
   _id: true,
   id: true,
   updatedAt: true,
@@ -69,7 +66,7 @@ export const ListLinkSchema = BasePaginationQuerySchema.extend({
   domain: z.string().optional(),
 });
 
-export type LinkEntity = z.infer<typeof LinkEntitySchema>;
+export type LinkEntity = z.infer<typeof LinkSchema>;
 export type Link = z.infer<typeof LinkSchema>;
 export type LinkPreview = z.infer<typeof PreviewSchema>;
 export type CreateLink = z.infer<typeof CreateLinkSchema>;

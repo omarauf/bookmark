@@ -1,4 +1,4 @@
-import type { PostEntity } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/post";
 import { CollectionModel } from "@/features/collection/model";
 import { TagModel } from "@/features/tag/model";
 import { model, Schema } from "@/services/database/mongoose";
@@ -13,8 +13,9 @@ export const postSchemaOptions = {
   discriminatorKey: "type",
 };
 
-const postSchema = new Schema<PostEntity>(
+const postSchema = new Schema<Post>(
   {
+    // @ts-expect-error the creator is inferred as string but we store ObjectId
     creator: { type: Schema.Types.ObjectId, ref: UserModel.modelName, required: true },
     postId: { type: String, required: true },
     url: { type: String, required: true },

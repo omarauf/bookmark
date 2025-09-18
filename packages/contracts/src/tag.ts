@@ -1,5 +1,4 @@
 import z from "zod";
-import { ObjectIdSchema } from "./common/object-id-schema";
 import { SortingParamsSchema } from "./common/pagination-query";
 
 const nameSchema = z
@@ -10,16 +9,14 @@ const nameSchema = z
 
 const colorSchema = z.string().regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/, "Invalid hex color");
 
-const TagEntitySchema = z.object({
-  _id: ObjectIdSchema,
+export const TagSchema = z.object({
+  _id: z.string(),
   id: z.string(),
   name: nameSchema,
   color: colorSchema,
   createdAt: z.date(),
   updatedAt: z.date(),
 });
-
-export const TagSchema = TagEntitySchema.extend({ _id: z.string() });
 
 export const TagWithCountSchema = TagSchema.extend({
   count: z.number().min(0),
@@ -42,7 +39,6 @@ export const UpdateTagSchema = TagSchema.pick({
 
 export const DeleteTagSchema = TagSchema.pick({ id: true });
 
-export type TagEntity = z.infer<typeof TagEntitySchema>;
 export type Tag = z.infer<typeof TagSchema>;
 export type CreateTag = z.infer<typeof CreateTagSchema>;
 export type UpdateTag = z.infer<typeof UpdateTagSchema>;

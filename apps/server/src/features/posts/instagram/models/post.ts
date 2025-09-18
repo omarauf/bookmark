@@ -1,18 +1,19 @@
-import type { InstagramPostEntity } from "@workspace/contracts/instagram/post";
+import type { InstagramPost } from "@workspace/contracts/instagram/post";
 import { PostPlatformTypeEnum } from "@workspace/contracts/platform-type";
 import { Schema } from "@/services/database/mongoose";
 import { PostModel, postSchemaOptions } from "../../base/models/post";
 
-const UserTagSchema = new Schema<InstagramPostEntity["userTags"][number]>(
+const UserTagSchema = new Schema<InstagramPost["userTags"][number]>(
   {
     x: { type: Number },
     y: { type: Number },
+    // @ts-expect-error the user id is inferred as string but we store ObjectId
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { _id: false }, // optional: prevent creating _id for each sub-document
 );
 
-const InstagramPostSchema = new Schema<InstagramPostEntity>(
+const InstagramPostSchema = new Schema<InstagramPost>(
   {
     likes: { type: Number, required: true },
     media: { type: Schema.Types.Mixed, required: true },

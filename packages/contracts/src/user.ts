@@ -1,10 +1,9 @@
 import z from "zod";
-import { ObjectIdSchema } from "./common/object-id-schema";
 import { BasePaginationQuerySchema } from "./common/pagination-query";
 import { UserPlatformTypeSchema } from "./common/platform-type";
 
-const UserEntitySchema = z.object({
-  _id: ObjectIdSchema,
+export const UserSchema = z.object({
+  _id: z.string(),
   id: z.string(),
   userId: z.string(),
   url: z.url(),
@@ -21,8 +20,6 @@ const UserEntitySchema = z.object({
   downloadedAt: z.date().optional(),
   savedAt: z.date().optional(),
 });
-
-export const UserSchema = UserEntitySchema.extend({ _id: z.string() });
 
 export const ListUserSchema = BasePaginationQuerySchema.extend({
   name: z.string().optional(),
@@ -54,7 +51,6 @@ export const DeleteAllUserSchema = z.object({
   hard: z.boolean().optional(),
 });
 
-export type UserEntity = z.infer<typeof UserEntitySchema>;
 export type User = z.infer<typeof UserSchema>;
 export type CreateUser = z.infer<typeof CreateUserSchema>;
 export type UpdateUser = z.infer<typeof UpdateUserSchema>;

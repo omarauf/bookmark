@@ -3,7 +3,7 @@ import type {
   PurpleUserResults,
   StickyUserResults,
 } from "@workspace/contracts/twitter/raw";
-import type { ParsedTwitterUser } from "./schema";
+import type { ParsedTwitterUser } from "../schemas";
 
 export function userParser(
   user: FluffyUserResults | PurpleUserResults | StickyUserResults,

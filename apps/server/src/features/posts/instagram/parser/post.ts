@@ -1,8 +1,8 @@
 import type { Media } from "@workspace/contracts/instagram/raw";
+import type { ParsedInstagramPost } from "../schemas";
 import { locationParser } from "./location";
 import { mediaParser } from "./media";
 import { musicParser } from "./music";
-import type { ParsedInstagramPost } from "./schema";
 import { userParser } from "./user";
 import { userTagParser } from "./user-tag";
 

@@ -1,5 +1,5 @@
 import type { Tags } from "@workspace/contracts/instagram/raw";
-import type { InstagramUserTag } from "./schema";
+import type { InstagramUserTag } from "../schemas";
 import { userParser } from "./user";
 
 export function userTagParser(usertags?: Tags): InstagramUserTag[] {

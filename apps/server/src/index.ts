@@ -1,6 +1,6 @@
 import "dotenv/config";
 import app from "./app";
-import { checkWorkerStatus } from "./features/posts/base/downloader";
+import { checkWorkerStatus } from "./features/posts/common/worker";
 import { checkRedisConnection } from "./services/cache/redis";
 import { connectDatabase } from "./services/database/connect";
 

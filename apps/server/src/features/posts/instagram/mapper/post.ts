@@ -1,7 +1,7 @@
 import { ORPCError } from "@orpc/server";
 import type { CreateInstagramPost, InstagramPost } from "@workspace/contracts/instagram/post";
 import { InstagramPostModel } from "../models/post";
-import type { ParsedInstagramPost } from "../parser/schema";
+import type { ParsedInstagramPost } from "../schemas";
 import { getImagePath, getVideoPath } from "../utils";
 
 export async function mapInstagramPosts(data: ParsedInstagramPost[], userMap: Map<string, string>) {

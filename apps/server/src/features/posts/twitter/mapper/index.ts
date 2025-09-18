@@ -1,4 +1,4 @@
-import type { ParsedTwitterPost } from "../parser/schema";
+import type { ParsedTwitterPost } from "../schemas";
 import { mapTwitterPosts } from "./post";
 import { mapTwitterUsers } from "./user";
 

@@ -9,10 +9,8 @@ import { parseImportFilename } from "@workspace/core/import";
 import { publicProcedure } from "@/lib/orpc";
 import { getDownloaderQueue, QUEUE } from "@/queue";
 import { fileManager } from "../file-manager/service";
-import { mapInstagram } from "../posts/instagram/mapper";
-import { parseInstagram } from "../posts/instagram/parser";
-import { mapTwitter } from "../posts/twitter/mapper";
-import { parseTwitter } from "../posts/twitter/parser";
+import { postMapper } from "../posts/common/mapper";
+import { parsers } from "../posts/common/parser";
 import { ImportModel } from "./model";
 
 export const importRouter = {
@@ -36,45 +34,23 @@ export const importRouter = {
 
       const data = buffer.toString("utf-8");
 
-      if (type === "instagram") {
-        const parsedData = parseInstagram(data);
+      const parsedData = parsers[type](data);
 
-        if (exist) {
-          return await ImportModel.updateOne(
-            { name: file.name },
-            { $set: { type, scrapedAt, size: file.size } },
-          );
-        }
-
-        return await ImportModel.insertOne({
-          name: file.name,
-          validPostCount: parsedData.valid.length,
-          invalidPostCount: parsedData.invalid.length,
-          size: file.size,
-          type: type,
-          scrapedAt: scrapedAt,
-        });
+      if (exist) {
+        return await ImportModel.updateOne(
+          { name: file.name },
+          { $set: { type, scrapedAt, size: file.size } },
+        );
       }
 
-      if (type === "twitter") {
-        const parsedData = parseTwitter(data);
-
-        if (exist) {
-          return await ImportModel.updateOne(
-            { name: file.name },
-            { $set: { type, scrapedAt, size: file.size } },
-          );
-        }
-
-        return await ImportModel.insertOne({
-          name: file.name,
-          validPostCount: parsedData.valid.length,
-          invalidPostCount: parsedData.invalid.length,
-          size: file.size,
-          type: type,
-          scrapedAt: scrapedAt,
-        });
-      }
+      return await ImportModel.insertOne({
+        name: file.name,
+        validPostCount: parsedData.valid.length,
+        invalidPostCount: parsedData.invalid.length,
+        size: file.size,
+        type: type,
+        scrapedAt: scrapedAt,
+      });
     }),
 
   list: publicProcedure.input(ListImportSchema).handler(async ({ input }) => {
@@ -92,53 +68,26 @@ export const importRouter = {
     const filenameNoExtension = data.name.split(".").slice(0, -1).join(".");
     const fileContent = await fileManager.readFileAsString(`json/${filenameNoExtension}.json`);
 
-    if (data.type === "instagram") {
-      const parsedData = parseInstagram(fileContent);
+    const parsedData = parsers[data.type](fileContent);
 
-      const { valid, invalid } = parsedData;
-      const result = await mapInstagram(valid);
+    const { valid, invalid } = parsedData;
+    const result = await postMapper(data.type, valid);
 
-      if (download) {
-        await ImportModel.updateOne({ _id: data._id }, { $set: { downloadedAt: new Date() } });
+    if (download) {
+      await ImportModel.updateOne({ _id: data._id }, { $set: { downloadedAt: new Date() } });
 
-        const queue = getDownloaderQueue();
+      const queue = getDownloaderQueue();
 
-        await queue.add(QUEUE.downloader, { id: data.id });
-      }
-
-      await ImportModel.updateOne({ _id: data._id }, { $set: { importedAt: new Date() } });
-
-      return {
-        mappedUsers: result.mappedUsers,
-        mappedPosts: result.mappedPosts,
-        invalidPosts: invalid.length,
-      };
+      await queue.add(QUEUE.downloader, { id: data.id });
     }
 
-    if (data.type === "twitter") {
-      const parsedData = parseTwitter(fileContent);
+    await ImportModel.updateOne({ _id: data._id }, { $set: { importedAt: new Date() } });
 
-      const { valid, invalid } = parsedData;
-      const result = await mapTwitter(valid);
-
-      if (download) {
-        await ImportModel.updateOne({ _id: data._id }, { $set: { downloadedAt: new Date() } });
-
-        const queue = getDownloaderQueue();
-
-        await queue.add(QUEUE.downloader, { id: data.id });
-      }
-
-      await ImportModel.updateOne({ _id: data._id }, { $set: { importedAt: new Date() } });
-
-      return {
-        mappedUsers: result.mappedUsers,
-        mappedPosts: result.mappedPosts,
-        invalidPosts: invalid.length,
-      };
-    }
-
-    throw new ORPCError("BAD_REQUEST", { message: "Unsupported import type" });
+    return {
+      mappedUsers: result.mappedUsers,
+      mappedPosts: result.mappedPosts,
+      invalidPosts: invalid.length,
+    };
   }),
 
   delete: publicProcedure.input(DeleteImportSchema).handler(async ({ input: { id } }) => {

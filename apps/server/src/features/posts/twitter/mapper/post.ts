@@ -1,7 +1,7 @@
 import { ORPCError } from "@orpc/server";
 import type { CreateTwitterPost, TwitterPost } from "@workspace/contracts/twitter/post";
 import { TwitterPostModel } from "../models/post";
-import type { ParsedTwitterPost } from "../parser/schema";
+import type { ParsedTwitterPost } from "../schemas";
 import { getImagePath, getVideoPath } from "../utils";
 
 export async function mapTwitterPosts(data: ParsedTwitterPost[], userMap: Map<string, string>) {

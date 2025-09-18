@@ -4,8 +4,8 @@ import type {
   TweetResults,
   TweetResultsResult,
 } from "@workspace/contracts/twitter/raw";
+import type { ParsedTwitterPost } from "../schemas";
 import { mediaParser } from "./media";
-import type { ParsedTwitterPost } from "./schema";
 import { userParser } from "./user";
 
 export function postParser(post: TweetResults): ParsedTwitterPost {

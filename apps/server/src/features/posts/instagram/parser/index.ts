@@ -1,7 +1,7 @@
 import type { Instagram } from "@workspace/contracts/instagram/raw";
 import z from "zod";
+import { type ParsedInstagramPost, ParsedInstagramPostSchema } from "../schemas";
 import { postParser } from "./post";
-import { type ParsedInstagramPost, ParsedInstagramPostSchema } from "./schema";
 
 export function parseInstagram(data: string) {
   const jsonData = JSON.parse(data) as Instagram[];

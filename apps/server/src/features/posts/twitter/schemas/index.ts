@@ -4,20 +4,14 @@ import {
   TwitterVideoMediaSchema,
 } from "@workspace/contracts/twitter/media";
 import z from "zod";
+import { type ParsedPost, ParsedPostSchema } from "../../base/schemas/post";
+import { type ParsedUser, ParsedUserSchema } from "../../base/schemas/user";
 
-const ParsedTwitterUserSchema = z.object({
-  userId: z.string(),
-  url: z.url(),
-  username: z.string(),
-  profilePicture: z.string().optional(),
-  name: z.string().optional(),
-  createdAt: z.date(),
-  verified: z.boolean(),
+const ParsedTwitterUserSchema = ParsedUserSchema.extend({
   location: z.string().optional(),
 });
 
-const CoreParsedTwitterPostSchema = z.object({
-  postId: z.string(),
+const CoreParsedTwitterPostSchema = ParsedPostSchema.extend({
   media: z
     .discriminatedUnion("mediaType", [
       TwitterImageMediaSchema,
@@ -25,10 +19,6 @@ const CoreParsedTwitterPostSchema = z.object({
       TwitterGifMediaSchema,
     ])
     .array(),
-  caption: z.string().optional(),
-  creator: ParsedTwitterUserSchema,
-  createdAt: z.date(),
-  url: z.url(),
   imageDescription: z.string().optional(),
   videoDescription: z.string().optional(),
   views: z.number(),
@@ -43,5 +33,5 @@ export const ParsedTwitterPostSchema = CoreParsedTwitterPostSchema.extend({
   quoted: CoreParsedTwitterPostSchema.optional(),
 });
 
-export type ParsedTwitterUser = z.infer<typeof ParsedTwitterUserSchema>;
-export type ParsedTwitterPost = z.infer<typeof ParsedTwitterPostSchema>;
+export type ParsedTwitterUser = z.infer<typeof ParsedTwitterUserSchema> & ParsedUser;
+export type ParsedTwitterPost = z.infer<typeof ParsedTwitterPostSchema> & ParsedPost;

@@ -1,5 +1,5 @@
 import type { FilePath } from "@/features/file-manager/service";
-import type { ParsedInstagramPost } from "../parser/schema";
+import type { ParsedInstagramPost } from "../schemas";
 
 type MediaType = "image" | "video" | "carousel" | "user";
 

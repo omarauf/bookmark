@@ -1,5 +1,5 @@
 import type { CoauthorProducer, Owner } from "@workspace/contracts/instagram/raw";
-import type { ParsedInstagramUser } from "./schema";
+import type { ParsedInstagramUser } from "../schemas";
 
 export function userParser(user: Owner | CoauthorProducer): ParsedInstagramUser {
   const userId = user.id;

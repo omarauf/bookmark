@@ -2,7 +2,7 @@ import sharp from "sharp";
 import { fileManager } from "@/features/file-manager/service";
 import { randomDelay } from "@/utils/delay";
 import { getFileStream } from "@/utils/download";
-import type { ParsedTwitterPost } from "../parser/schema";
+import type { ParsedTwitterPost } from "../schemas";
 import { getFilePaths, getPlaceholderPath } from "../utils";
 
 export async function downloadTwitter(post: ParsedTwitterPost): Promise<boolean> {

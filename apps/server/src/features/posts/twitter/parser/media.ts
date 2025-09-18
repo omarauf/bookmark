@@ -5,7 +5,7 @@ import type {
   Variant,
 } from "@workspace/contracts/twitter/raw";
 import { MediaType } from "@workspace/contracts/twitter/raw";
-import type { ParsedTwitterPost } from "./schema";
+import type { ParsedTwitterPost } from "../schemas";
 
 export function mediaParser(
   media: TentacledMedia | PurpleMedia | FluffyMedia,

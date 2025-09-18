@@ -1,8 +1,8 @@
 import type { Twitter } from "@workspace/contracts/twitter/raw";
 import z from "zod";
+import type { ParsedTwitterPost } from "../schemas";
+import { ParsedTwitterPostSchema } from "../schemas";
 import { postParser } from "./post";
-import type { ParsedTwitterPost } from "./schema";
-import { ParsedTwitterPostSchema } from "./schema";
 
 export function parseTwitter(data: string) {
   const jsonData = JSON.parse(data) as Twitter[];

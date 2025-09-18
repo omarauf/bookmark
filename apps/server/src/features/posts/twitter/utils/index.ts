@@ -1,5 +1,5 @@
 import type { FilePath } from "@/features/file-manager/service";
-import type { ParsedTwitterPost } from "../parser/schema";
+import type { ParsedTwitterPost } from "../schemas";
 
 type MediaType = "image" | "video" | "user";
 

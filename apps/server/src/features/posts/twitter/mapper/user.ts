@@ -1,6 +1,6 @@
 import type { CreateTwitterUser, TwitterUser } from "@workspace/contracts/twitter/user";
 import { TwitterUserModel } from "../models/user";
-import type { ParsedTwitterPost, ParsedTwitterUser } from "../parser/schema";
+import type { ParsedTwitterPost, ParsedTwitterUser } from "../schemas";
 import { getImagePath } from "../utils";
 
 export async function mapTwitterUsers(data: ParsedTwitterPost[]) {

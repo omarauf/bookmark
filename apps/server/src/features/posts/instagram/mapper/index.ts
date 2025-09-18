@@ -1,4 +1,4 @@
-import type { ParsedInstagramPost } from "../parser/schema";
+import type { ParsedInstagramPost } from "../schemas";
 import { mapInstagramPosts } from "./post";
 import { mapInstagramUsers } from "./user";
 

@@ -31,7 +31,7 @@ export function TwitterMediaCard({ media, className }: Props) {
     return (
       <div
         className={cn(
-          "grid max-h-[420px] grid-cols-2 gap-0.5 overflow-hidden rounded-2xl",
+          "grid h-full max-h-[420px] min-h-[290px] grid-cols-2 gap-0.5 overflow-hidden rounded-2xl",
           className,
         )}
       >

@@ -2,16 +2,24 @@ import { createWriteStream } from "node:fs";
 import { access, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { Readable } from "node:stream";
+import type { PlatformType } from "@workspace/contracts/platform-type";
 
 export type FilePath =
   | `json/${string}.json`
   | `link/${string}.jpg`
-  | `instagram/user/${string}.jpg`
-  | `instagram/video/${string}.jpg`
-  | `instagram/image/${string}.jpg`
-  | `instagram/video/${string}.mp4`
-  | `instagram/carousel/${string}-${number}.jpg`
-  | `instagram/carousel/${string}-${number}.mp4`;
+  //
+  | `${PlatformType}/user/${string}.jpg`
+  //
+  | `${PlatformType}/image/${string}.jpg`
+  //
+  | `${PlatformType}/video/${string}.jpg`
+  | `${PlatformType}/video/${string}.mp4`
+  //
+  | `${PlatformType}/music/${string}.mp3`
+  | `${PlatformType}/music/${string}.mp4`
+  //
+  | `${PlatformType}/carousel/${string}-${number}.jpg`
+  | `${PlatformType}/carousel/${string}-${number}.mp4`;
 
 const dataDir = path.join(path.resolve(process.cwd()), "src", "data");
 const resolveFullPath = (filePath: FilePath | string) => path.join(dataDir, ...filePath.split("/"));

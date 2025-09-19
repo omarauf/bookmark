@@ -5,12 +5,14 @@ import type { ParsedTwitterPost } from "../schemas";
 import { getImagePath, getVideoPath } from "../utils";
 
 export async function mapTwitterPosts(data: ParsedTwitterPost[], userMap: Map<string, string>) {
+  const uniqueData = Array.from(new Map(data.map((item) => [item.postId, item])).values());
+
   const existingPosts: TwitterPost[] = await TwitterPostModel.find({
-    postId: { $in: data.map((post) => post.postId) },
+    postId: { $in: uniqueData.map((post) => post.postId) },
   });
 
   const existingPostIds = new Set(existingPosts.map((post) => post.postId));
-  const postsToInsert = data.filter((post) => !existingPostIds.has(post.postId));
+  const postsToInsert = uniqueData.filter((post) => !existingPostIds.has(post.postId));
 
   const mappedPosts = postsToInsert.map((post) => mapToDocument(post, userMap));
 

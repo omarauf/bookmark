@@ -16,6 +16,7 @@ export const InstagramUserTagSchema = z.object({
 export const ParsedInstagramPostSchema = ParsedPostSchema.extend({
   media: InstagramMediaSchema,
   userTags: z.array(InstagramUserTagSchema),
+  creator: ParsedInstagramUserSchema,
   location: InstagramLocationSchema.optional(),
   likes: z.number(),
   music: InstagramMusicSchema.optional(),

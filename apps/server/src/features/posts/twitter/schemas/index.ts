@@ -19,6 +19,7 @@ const CoreParsedTwitterPostSchema = ParsedPostSchema.extend({
       TwitterGifMediaSchema,
     ])
     .array(),
+  creator: ParsedTwitterUserSchema,
   imageDescription: z.string().optional(),
   videoDescription: z.string().optional(),
   views: z.number(),

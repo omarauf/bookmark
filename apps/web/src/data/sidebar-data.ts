@@ -43,6 +43,11 @@ export const sidebarData: SidebarData = {
           icon: "mdi:twitter",
         },
         {
+          title: "Tiktok",
+          url: "/tiktok",
+          icon: "ic:baseline-tiktok",
+        },
+        {
           title: "Collections",
           url: "/collections",
           icon: "material-symbols:collections-bookmark-rounded",

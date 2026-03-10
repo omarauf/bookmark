@@ -1,0 +1,15 @@
+export const PostRowCount = {
+  sm: 2,
+  md: 2,
+  base: 2,
+  lg: 3,
+  xl: 4,
+  "2xl": 5,
+  "3xl": 6,
+  "4xl": 7,
+  "5xl": 7,
+  "6xl": 7,
+  "7xl": 7,
+  "8xl": 7,
+  "9xl": 7,
+};

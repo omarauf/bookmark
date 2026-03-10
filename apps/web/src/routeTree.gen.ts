@@ -13,10 +13,12 @@ import { Route as SettingsRouteRouteImport } from './routes/settings/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as TwitterIndexRouteImport } from './routes/twitter/index'
+import { Route as TiktokIndexRouteImport } from './routes/tiktok/index'
 import { Route as TagsIndexRouteImport } from './routes/tags/index'
 import { Route as LinksIndexRouteImport } from './routes/links/index'
 import { Route as InstagramIndexRouteImport } from './routes/instagram/index'
 import { Route as ImportsIndexRouteImport } from './routes/imports/index'
+import { Route as DemoIndexRouteImport } from './routes/demo/index'
 import { Route as CollectionsIndexRouteImport } from './routes/collections/index'
 import { Route as SettingsLinksRouteImport } from './routes/settings/links'
 import { Route as SettingsInstagramRouteImport } from './routes/settings/instagram'
@@ -47,6 +49,11 @@ const TwitterIndexRoute = TwitterIndexRouteImport.update({
   path: '/twitter/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TiktokIndexRoute = TiktokIndexRouteImport.update({
+  id: '/tiktok/',
+  path: '/tiktok/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TagsIndexRoute = TagsIndexRouteImport.update({
   id: '/tags/',
   path: '/tags/',
@@ -65,6 +72,11 @@ const InstagramIndexRoute = InstagramIndexRouteImport.update({
 const ImportsIndexRoute = ImportsIndexRouteImport.update({
   id: '/imports/',
   path: '/imports/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoIndexRoute = DemoIndexRouteImport.update({
+  id: '/demo/',
+  path: '/demo/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
@@ -125,10 +137,12 @@ export interface FileRoutesByFullPath {
   '/settings/instagram': typeof SettingsInstagramRoute
   '/settings/links': typeof SettingsLinksRoute
   '/collections': typeof CollectionsIndexRoute
+  '/demo': typeof DemoIndexRoute
   '/imports': typeof ImportsIndexRoute
   '/instagram': typeof InstagramIndexRoute
   '/links': typeof LinksIndexRoute
   '/tags': typeof TagsIndexRoute
+  '/tiktok': typeof TiktokIndexRoute
   '/twitter': typeof TwitterIndexRoute
   '/users': typeof UsersIndexRoute
 }
@@ -144,10 +158,12 @@ export interface FileRoutesByTo {
   '/settings/instagram': typeof SettingsInstagramRoute
   '/settings/links': typeof SettingsLinksRoute
   '/collections': typeof CollectionsIndexRoute
+  '/demo': typeof DemoIndexRoute
   '/imports': typeof ImportsIndexRoute
   '/instagram': typeof InstagramIndexRoute
   '/links': typeof LinksIndexRoute
   '/tags': typeof TagsIndexRoute
+  '/tiktok': typeof TiktokIndexRoute
   '/twitter': typeof TwitterIndexRoute
   '/users': typeof UsersIndexRoute
 }
@@ -164,10 +180,12 @@ export interface FileRoutesById {
   '/settings/instagram': typeof SettingsInstagramRoute
   '/settings/links': typeof SettingsLinksRoute
   '/collections/': typeof CollectionsIndexRoute
+  '/demo/': typeof DemoIndexRoute
   '/imports/': typeof ImportsIndexRoute
   '/instagram/': typeof InstagramIndexRoute
   '/links/': typeof LinksIndexRoute
   '/tags/': typeof TagsIndexRoute
+  '/tiktok/': typeof TiktokIndexRoute
   '/twitter/': typeof TwitterIndexRoute
   '/users/': typeof UsersIndexRoute
 }
@@ -185,10 +203,12 @@ export interface FileRouteTypes {
     | '/settings/instagram'
     | '/settings/links'
     | '/collections'
+    | '/demo'
     | '/imports'
     | '/instagram'
     | '/links'
     | '/tags'
+    | '/tiktok'
     | '/twitter'
     | '/users'
   fileRoutesByTo: FileRoutesByTo
@@ -204,10 +224,12 @@ export interface FileRouteTypes {
     | '/settings/instagram'
     | '/settings/links'
     | '/collections'
+    | '/demo'
     | '/imports'
     | '/instagram'
     | '/links'
     | '/tags'
+    | '/tiktok'
     | '/twitter'
     | '/users'
   id:
@@ -223,10 +245,12 @@ export interface FileRouteTypes {
     | '/settings/instagram'
     | '/settings/links'
     | '/collections/'
+    | '/demo/'
     | '/imports/'
     | '/instagram/'
     | '/links/'
     | '/tags/'
+    | '/tiktok/'
     | '/twitter/'
     | '/users/'
   fileRoutesById: FileRoutesById
@@ -240,10 +264,12 @@ export interface RootRouteChildren {
   errors500Route: typeof errors500Route
   errors503Route: typeof errors503Route
   CollectionsIndexRoute: typeof CollectionsIndexRoute
+  DemoIndexRoute: typeof DemoIndexRoute
   ImportsIndexRoute: typeof ImportsIndexRoute
   InstagramIndexRoute: typeof InstagramIndexRoute
   LinksIndexRoute: typeof LinksIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
+  TiktokIndexRoute: typeof TiktokIndexRoute
   TwitterIndexRoute: typeof TwitterIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
 }
@@ -278,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TwitterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tiktok/': {
+      id: '/tiktok/'
+      path: '/tiktok'
+      fullPath: '/tiktok'
+      preLoaderRoute: typeof TiktokIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tags/': {
       id: '/tags/'
       path: '/tags'
@@ -304,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/imports'
       fullPath: '/imports'
       preLoaderRoute: typeof ImportsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/': {
+      id: '/demo/'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collections/': {
@@ -397,10 +437,12 @@ const rootRouteChildren: RootRouteChildren = {
   errors500Route: errors500Route,
   errors503Route: errors503Route,
   CollectionsIndexRoute: CollectionsIndexRoute,
+  DemoIndexRoute: DemoIndexRoute,
   ImportsIndexRoute: ImportsIndexRoute,
   InstagramIndexRoute: InstagramIndexRoute,
   LinksIndexRoute: LinksIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
+  TiktokIndexRoute: TiktokIndexRoute,
   TwitterIndexRoute: TwitterIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
 }

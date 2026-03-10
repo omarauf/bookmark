@@ -2,6 +2,8 @@ import { generateImportFilename } from "@workspace/core/import";
 import { env } from "@/config/env";
 import { instagramCleaner } from "@/features/instagram/cleaner";
 import { instagramScraper } from "@/features/instagram/scraper";
+import { tiktokCleaner } from "@/features/tiktok/cleaner";
+import { tiktokScraper } from "@/features/tiktok/scraper";
 import { twitterCleaner } from "@/features/twitter/cleaner";
 import { twitterScraper } from "@/features/twitter/scraper";
 import type { CommunicationMessage, CommunicationResponse } from "@/types/communication";
@@ -18,7 +20,9 @@ chrome.runtime.onMessage.addListener(
     const url =
       platform === "instagram"
         ? `https://www.instagram.com/${env.VITE_INSTAGRAM_USERNAME}/saved/`
-        : "https://x.com/home";
+        : platform === "tiktok"
+          ? `https://www.tiktok.com/@${env.VITE_TIKTOK_USERNAME}`
+          : "https://x.com/home";
 
     try {
       const newTab = await chrome.tabs.create({ url });
@@ -44,6 +48,33 @@ chrome.runtime.onMessage.addListener(
               chrome.scripting.executeScript({
                 target: { tabId: newTab.id },
                 func: twitterScraper,
+                args: [
+                  {
+                    pages: count || 1,
+                    download: download || false,
+                    send: send || false,
+                    filename,
+                  },
+                ],
+                world: "MAIN",
+                injectImmediately: true,
+              });
+            }
+          }
+
+          if (platform === "tiktok") {
+            if (type === "unsave") {
+              chrome.scripting.executeScript({
+                target: { tabId: newTab.id },
+                func: tiktokCleaner,
+                args: [{ posts: count || 1 }],
+                world: "MAIN",
+                injectImmediately: true,
+              });
+            } else {
+              chrome.scripting.executeScript({
+                target: { tabId: newTab.id },
+                func: tiktokScraper,
                 args: [
                   {
                     pages: count || 1,

@@ -5,6 +5,7 @@ import { linkRouter } from "./link/route";
 import { postRouter } from "./posts/base/routes/post";
 import { userRouter } from "./posts/base/routes/user";
 import { instagramPostRouter } from "./posts/instagram/routes/post";
+import { tiktokPostRouter } from "./posts/tiktok/routes/post";
 import { twitterPostRouter } from "./posts/twitter/routes/post";
 import { tagRouter } from "./tag/router";
 
@@ -17,5 +18,6 @@ export const features = {
   users: userRouter,
   instagramPosts: instagramPostRouter,
   twitterPosts: twitterPostRouter,
+  tiktokPosts: tiktokPostRouter,
   files: fileManagerRoute,
 };

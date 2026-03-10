@@ -1,5 +1,6 @@
 import { Bookmark } from "@/features/bookmark/app";
 import { Instagram } from "@/features/instagram/app";
+import { Tiktok } from "@/features/tiktok/app";
 import { Twitter } from "@/features/twitter/app";
 
 export default function App() {
@@ -8,6 +9,8 @@ export default function App() {
       <Instagram />
 
       <Twitter />
+
+      <Tiktok />
 
       <Bookmark />
     </div>

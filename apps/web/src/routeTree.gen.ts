@@ -23,6 +23,7 @@ import { Route as AuthenticatedTagsIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
 import { Route as AuthenticatedInstagramIndexRouteImport } from './routes/_authenticated/instagram/index'
 import { Route as AuthenticatedImportsIndexRouteImport } from './routes/_authenticated/imports/index'
+import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
 import { Route as AuthenticatedCollectionsIndexRouteImport } from './routes/_authenticated/collections/index'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -98,6 +99,12 @@ const AuthenticatedImportsIndexRoute =
     path: '/imports/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDownloadsIndexRoute =
+  AuthenticatedDownloadsIndexRouteImport.update({
+    id: '/downloads/',
+    path: '/downloads/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCollectionsIndexRoute =
   AuthenticatedCollectionsIndexRouteImport.update({
     id: '/collections/',
@@ -113,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/collections/': typeof AuthenticatedCollectionsIndexRoute
+  '/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/imports/': typeof AuthenticatedImportsIndexRoute
   '/instagram/': typeof AuthenticatedInstagramIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
@@ -129,6 +137,7 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
   '/collections': typeof AuthenticatedCollectionsIndexRoute
+  '/downloads': typeof AuthenticatedDownloadsIndexRoute
   '/imports': typeof AuthenticatedImportsIndexRoute
   '/instagram': typeof AuthenticatedInstagramIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
@@ -147,6 +156,7 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/collections/': typeof AuthenticatedCollectionsIndexRoute
+  '/_authenticated/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/_authenticated/imports/': typeof AuthenticatedImportsIndexRoute
   '/_authenticated/instagram/': typeof AuthenticatedInstagramIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/collections/'
+    | '/downloads/'
     | '/imports/'
     | '/instagram/'
     | '/links/'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/collections'
+    | '/downloads'
     | '/imports'
     | '/instagram'
     | '/links'
@@ -198,6 +210,7 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_authenticated/'
     | '/_authenticated/collections/'
+    | '/_authenticated/downloads/'
     | '/_authenticated/imports/'
     | '/_authenticated/instagram/'
     | '/_authenticated/links/'
@@ -316,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImportsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/downloads/': {
+      id: '/_authenticated/downloads/'
+      path: '/downloads'
+      fullPath: '/downloads/'
+      preLoaderRoute: typeof AuthenticatedDownloadsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/collections/': {
       id: '/_authenticated/collections/'
       path: '/collections'
@@ -329,6 +349,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedCollectionsIndexRoute: typeof AuthenticatedCollectionsIndexRoute
+  AuthenticatedDownloadsIndexRoute: typeof AuthenticatedDownloadsIndexRoute
   AuthenticatedImportsIndexRoute: typeof AuthenticatedImportsIndexRoute
   AuthenticatedInstagramIndexRoute: typeof AuthenticatedInstagramIndexRoute
   AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
@@ -341,6 +362,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedCollectionsIndexRoute: AuthenticatedCollectionsIndexRoute,
+  AuthenticatedDownloadsIndexRoute: AuthenticatedDownloadsIndexRoute,
   AuthenticatedImportsIndexRoute: AuthenticatedImportsIndexRoute,
   AuthenticatedInstagramIndexRoute: AuthenticatedInstagramIndexRoute,
   AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,

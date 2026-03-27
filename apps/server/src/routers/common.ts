@@ -1,5 +1,6 @@
 import { collectionRouter } from "@/modules/collection/route";
 import { creatorRouter } from "@/modules/creator/router";
+import { downloadTaskRouter } from "@/modules/download-task/route";
 import { fileManagerRoute } from "@/modules/file-manager/route";
 import { importRouter } from "@/modules/import/route";
 import { linkRouter } from "@/modules/link/route";
@@ -14,4 +15,5 @@ export const appRouter = {
   collection: collectionRouter,
   link: linkRouter,
   creator: creatorRouter,
+  downloadTask: downloadTaskRouter,
 };

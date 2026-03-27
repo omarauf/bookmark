@@ -57,6 +57,10 @@ export const sidebarData: SidebarData = {
           url: "/imports",
         },
         {
+          title: "Downloads",
+          url: "/downloads",
+        },
+        {
           title: "Users",
           url: "/users",
         },

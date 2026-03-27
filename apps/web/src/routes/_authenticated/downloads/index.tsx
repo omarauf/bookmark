@@ -65,8 +65,8 @@ function DownloadsPage() {
 
       {/* Header Header */}
       <header className="mb-8 animate-stagger-1">
-        <h1 className="text-4xl md:text-5xl text-foreground mb-4">Download Tasks.</h1>
-        <p className="text-muted-foreground font-mono text-sm max-w-lg leading-relaxed">
+        <h1 className="mb-4 text-4xl text-foreground md:text-5xl">Download Tasks.</h1>
+        <p className="max-w-lg font-mono text-muted-foreground text-sm leading-relaxed">
           SYSTEM_STATUS / TRACKING {stats.total} JOBS OVER {stats.completed} COMPLETED.
         </p>
       </header>
@@ -77,49 +77,49 @@ function DownloadsPage() {
       </div>
 
       {/* Filter/Tabs Minimalist */}
-      <div className="flex items-center gap-6 mb-6 border-b border-muted/30 pb-4 animate-stagger-3">
+      <div className="mb-6 flex animate-stagger-3 items-center gap-6 border-muted/30 border-b pb-4">
         <Link
           to="/downloads"
-          className="text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors aria-[current=page]:text-foreground"
+          className="font-medium text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground aria-[current=page]:text-foreground"
         >
           All
         </Link>
         <Link
           to="/downloads"
           search={{ status: "pending" }}
-          className="text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors aria-[current=page]:text-foreground"
+          className="font-medium text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground aria-[current=page]:text-foreground"
         >
           Pending
         </Link>
         <Link
           to="/downloads"
           search={{ status: "processing" }}
-          className="text-xs font-medium  tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors aria-[current=page]:text-foreground"
+          className="font-medium text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground aria-[current=page]:text-foreground"
         >
           Active
         </Link>
         <Link
           to="/downloads"
           search={{ status: "failed" }}
-          className="text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors aria-[current=page]:text-foreground relative"
+          className="relative font-medium text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground aria-[current=page]:text-foreground"
         >
           Failed
           {stats.failed > 0 && (
-            <span className="absolute -top-1 -right-3 w-1.5 h-1.5 bg-red-500 rounded-full" />
+            <span className="absolute -top-1 -right-3 h-1.5 w-1.5 rounded-full bg-red-500" />
           )}
         </Link>
       </div>
 
       {/* Task List */}
-      <div className="space-y-4 animate-stagger-4">
-        <div className="grid grid-cols-12 gap-4 px-2 text-xs font-mono text-muted-foreground/60 tracking-wider">
+      <div className="animate-stagger-4 space-y-4">
+        <div className="grid grid-cols-12 gap-4 px-2 font-mono text-muted-foreground/60 text-xs tracking-wider">
           <div className="col-span-5 md:col-span-6">RESOURCE</div>
           <div className="col-span-3 text-right">METRICS</div>
-          <div className="col-span-4 md:col-span-3 text-right">STATUS</div>
+          <div className="col-span-4 text-right md:col-span-3">STATUS</div>
         </div>
 
         {flatItems.length === 0 ? (
-          <div className="py-24 text-center text-muted-foreground font-mono text-sm">
+          <div className="py-24 text-center font-mono text-muted-foreground text-sm">
             [ NO_TASKS_FOUND_FOR_CURRENT_FILTER ]
           </div>
         ) : (
@@ -132,7 +132,7 @@ function DownloadsPage() {
               type="button"
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
-              className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors tracking-widest uppercase disabled:opacity-50"
+              className="font-mono text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground disabled:opacity-50"
             >
               {isFetchingNextPage ? "LOADING_MORE..." : "[ LOAD_MORE_RECORDS ]"}
             </button>

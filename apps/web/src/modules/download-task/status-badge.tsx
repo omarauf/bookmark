@@ -10,7 +10,7 @@ export function DownloadStatusBadge({ status, className }: DownloadStatusBadgePr
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase",
+        "inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest",
         status === "pending" && "text-muted-foreground",
         status === "processing" && "text-blue-400",
         status === "completed" && "text-emerald-500",
@@ -21,9 +21,9 @@ export function DownloadStatusBadge({ status, className }: DownloadStatusBadgePr
     >
       <span
         className={cn(
-          "w-1.5 h-1.5 rounded-full",
+          "h-1.5 w-1.5 rounded-full",
           status === "pending" && "bg-muted-foreground/40",
-          status === "processing" && "bg-blue-400 animate-pulse",
+          status === "processing" && "animate-pulse bg-blue-400",
           status === "completed" && "bg-emerald-500/80",
           status === "failed" && "bg-rose-500/80",
           status === "exists" && "bg-amber-500/80",

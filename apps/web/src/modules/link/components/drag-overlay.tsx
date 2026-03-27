@@ -31,7 +31,7 @@ export function LinkDragOverlay({ links }: { links: Link[] }) {
               {selectedIds.size > maxVisibleCards && (
                 <Badge
                   variant="secondary"
-                  className="-top-2 -right-2 absolute h-6 w-6 rounded-full p-0 font-bold text-xs"
+                  className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 font-bold text-xs"
                   style={{ zIndex: maxVisibleCards + 1 }}
                 >
                   +{selectedIds.size - maxVisibleCards}
@@ -41,7 +41,7 @@ export function LinkDragOverlay({ links }: { links: Link[] }) {
               {/* Total count badge */}
               <Badge
                 variant="default"
-                className="-top-2 -left-2 absolute h-6 w-6 rounded-full p-0 font-bold text-xs"
+                className="absolute -top-2 -left-2 h-6 w-6 rounded-full p-0 font-bold text-xs"
                 style={{ zIndex: maxVisibleCards + 1 }}
               >
                 {selectedIds.size}

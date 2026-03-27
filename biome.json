@@ -44,6 +44,15 @@
       "recommended": true,
       "suspicious": {
         "noArrayIndexKey": "off"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "fix": "safe",
+          "options": {
+            "functions": ["clsx", "cva", "cn"]
+          }
+        }
       }
     },
     "includes": ["**", "!**/src/components/data-table/*.tsx", "!**/src/components/ui/*.tsx"]

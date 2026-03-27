@@ -44,9 +44,9 @@ export function CarouselPosts({ post, className }: Props) {
         ))}
       </CarouselContent>
       <CarouselPrevious className="left-0 translate-x-1/2" />
-      <CarouselNext className="-translate-x-1/2 right-0" />
+      <CarouselNext className="right-0 -translate-x-1/2" />
 
-      <div className="-translate-x-1/2 absolute bottom-2 left-1/2 flex translate-y-1/2 gap-2 rounded-full bg-black/50 p-2 text-white">
+      <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 translate-y-1/2 gap-2 rounded-full bg-black/50 p-2 text-white">
         {post.media.map((p, i) => (
           <div
             key={p.key}

@@ -68,7 +68,7 @@ export function LinkFilter({ className }: LinkFilterProps) {
       <div className="flex flex-1 items-center gap-4">
         {/* Search Input */}
         <div className="relative max-w-75 flex-1">
-          <div className="-translate-y-1/2 absolute top-1/2 left-3">
+          <div className="absolute top-1/2 left-3 -translate-y-1/2">
             <SearchIcon className="h-4 w-4 text-muted-foreground" />
           </div>
           <DebounceInput

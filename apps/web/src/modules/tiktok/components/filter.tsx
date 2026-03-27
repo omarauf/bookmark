@@ -17,6 +17,7 @@ export function Filter({ className }: { className?: string }) {
   const navigate = useNavigate({ from: "/tiktok/" });
 
   const setFilter = useCallback(
+    // biome-ignore lint/suspicious/noExplicitAny: Temporary until we define proper types for filters
     (newFilter: any) => navigate({ search: { ...search, ...newFilter } }),
     [search, navigate],
   );
@@ -51,7 +52,7 @@ export function Filter({ className }: { className?: string }) {
     >
       <XMultiSelect
         value={search.collections || []}
-        onChange={(v) => setFilter({ collections: v })}
+        onChange={(v) => setFilter({ collectionIds: v })}
         placeholder="Select a Collections"
         options={collectionsQuery.data?.map((t) => ({ label: t.name, value: t.id })) || []}
         className="w-50"
@@ -59,7 +60,7 @@ export function Filter({ className }: { className?: string }) {
 
       <XMultiSelect
         value={search.tags || []}
-        onChange={(v) => setFilter({ tags: v })}
+        onChange={(v) => setFilter({ tagIds: v })}
         placeholder="Select a Tags"
         options={tagsQuery.data?.map((t) => ({ label: t.name, value: t.id })) || []}
         className="w-50"

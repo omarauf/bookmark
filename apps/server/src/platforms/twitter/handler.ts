@@ -4,7 +4,6 @@ import type { Platform } from "@workspace/contracts/platform";
 import { type CreatePost, PostSchemas } from "@workspace/contracts/post";
 import type { Twitter } from "@workspace/contracts/raw/twitter";
 import { type CreateTwitterPost, TwitterSchemas } from "@workspace/contracts/twitter";
-import fs from "fs/promises";
 import z from "zod";
 import type { PlatformHandler, PostImportEntities } from "@/core/platform";
 import { postParser } from "./parser/post";

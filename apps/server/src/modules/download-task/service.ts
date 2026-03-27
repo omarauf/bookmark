@@ -1,7 +1,7 @@
 import type { CreateDownloadTask } from "@workspace/contracts/download-task";
-import { and, asc, eq, inArray, or, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, or } from "drizzle-orm";
 import { db } from "@/core/db";
-import { type DownloadTask, downloadTasks } from "./schema";
+import { downloadTasks } from "./schema";
 
 export async function addDownloadTask(data: CreateDownloadTask[]) {
   for (const task of data) {

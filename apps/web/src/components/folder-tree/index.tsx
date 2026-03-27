@@ -1,10 +1,10 @@
-import { Button } from "@workspace/ui/components/button";
-import { Collapsible, CollapsibleContent } from "@workspace/ui/components/collapsible";
-import { Input } from "@workspace/ui/components/input";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { motion } from "framer-motion";
 import { ChevronRight, File, Folder, FolderPlus } from "lucide-react";
 import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 export interface TreeNode {

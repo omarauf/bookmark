@@ -1,12 +1,10 @@
-import { Badge } from "@workspace/ui/components/badge";
-import { Command, CommandGroup, CommandItem, CommandList } from "@workspace/ui/components/command";
-import { cn } from "@workspace/ui/lib/utils";
 import { Command as CommandPrimitive } from "cmdk";
 import { Loader2, X } from "lucide-react";
 import { type KeyboardEvent, useCallback, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Command, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import type { Option } from "@/types/options";
-import { Iconify } from "../iconify";
 import { useFieldContext } from ".";
 import { FieldErrors } from "./field-errors";
 import { convertOptions } from "./utils";
@@ -152,7 +150,7 @@ export function AutocompleteField<T extends Value>({
                           className="cursor-pointer outline-none hover:bg-accent focus:bg-accent"
                         >
                           {option.label}
-                          <Iconify
+                          {/* <Iconify
                             icon="lucide:check"
                             className={cn(
                               "ml-auto h-4 w-4",
@@ -160,7 +158,7 @@ export function AutocompleteField<T extends Value>({
                                 ? "opacity-100"
                                 : "opacity-0",
                             )}
-                          />
+                          /> */}
                         </CommandItem>
                       ))
                     ) : (

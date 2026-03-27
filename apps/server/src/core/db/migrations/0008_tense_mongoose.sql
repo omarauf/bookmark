@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ADD COLUMN "quoted_post_id" uuid;

@@ -1,7 +1,7 @@
-import type { PlatformType } from "@workspace/contracts/platform-type";
+import type { Platform } from "@workspace/contracts/platform";
 
 export type CommunicationMessage = {
-  platform: PlatformType;
+  platform: Platform;
   type: "scrape" | "unsave";
   count?: number;
   download?: boolean;

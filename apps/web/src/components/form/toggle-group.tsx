@@ -1,6 +1,5 @@
-import { ToggleGroup, ToggleGroupItem } from "@workspace/ui/components/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { Option } from "@/types/options";
-import { Iconify } from "../iconify";
 import { convertOptions } from "./utils";
 
 type Value = string;
@@ -29,7 +28,7 @@ export function XToggleGroup<T extends Value>({ value, options, onChange }: Prop
           aria-label={option.label}
           // className="h-8 w-auto min-w-auto rounded-md"
         >
-          {option.icon && <Iconify icon={option.icon} className="h-4 w-4" />}
+          {/* {option.icon && <Iconify icon={option.icon} className="h-4 w-4" />} */}
           {option.label && <span>{option.label}</span>}
         </ToggleGroupItem>
       ))}

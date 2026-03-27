@@ -1,6 +1,6 @@
-import { Label } from "@workspace/ui/components/label";
-import { Textarea } from "@workspace/ui/components/textarea";
 import type React from "react";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useFieldContext } from ".";
 import { FieldErrors } from "./field-errors";
 

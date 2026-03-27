@@ -1,28 +1,45 @@
 import z from "zod";
-import { PlatformTypeSchema } from "./common/platform-type";
-import { BasicSearchSchema } from "./table";
+import { BasePaginationQuerySchema, PaginationResultSchema } from "./common/pagination-query";
+import { PlatformEnum } from "./common/platform";
 
 const ImportSchema = z.object({
-  _id: z.string(),
-  id: z.string(),
-  name: z.string(),
-  type: PlatformTypeSchema,
+  id: z.uuid(),
+  filename: z.string(),
+  platform: PlatformEnum,
   size: z.number(),
-  validPostCount: z.number(),
-  invalidPostCount: z.number(),
-  downloadedAt: z.boolean().optional(),
-  importedAt: z.boolean().optional(),
-  scrapedAt: z.date().optional(),
+  validPost: z.number(),
+  invalidPost: z.number(),
+
+  importedAt: z.date().optional(),
+  deletedAt: z.date().optional(),
+  scrapedAt: z.date(),
 });
 
-export const CreateImportSchema = z.object({ file: z.file() });
+export const ImportSchemas = {
+  list: {
+    request: BasePaginationQuerySchema.extend({ platform: PlatformEnum.optional() }),
+    response: PaginationResultSchema(ImportSchema),
+  },
 
-export const ListImportSchema = BasicSearchSchema.extend({
-  type: PlatformTypeSchema.optional(),
-});
+  create: {
+    request: z.object({ file: z.file() }),
+    response: z.void(),
+  },
 
-export const DeleteImportSchema = ImportSchema.pick({ id: true });
+  import: {
+    request: z.object({ id: z.uuid() }),
+    response: z.object({ valid: z.number() }),
+  },
 
-export const RunImportSchema = z.object({ id: z.string(), download: z.boolean() });
+  delete: {
+    request: z.object({ id: z.uuid() }),
+    response: z.void(),
+  },
+
+  download: {
+    request: z.object({ id: z.uuid() }),
+    response: z.void(),
+  },
+};
 
 export type Import = z.infer<typeof ImportSchema>;

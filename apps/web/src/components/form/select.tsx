@@ -1,4 +1,5 @@
-import { Button } from "@workspace/ui/components/button";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -8,10 +9,8 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { useState } from "react";
+} from "@/components/ui/select";
 import type { Option } from "@/types/options";
-import { Iconify } from "../iconify";
 import { convertOptions } from "./utils";
 
 type Value = string;
@@ -49,7 +48,7 @@ export function XSelect<T extends Value>({
           {label !== undefined && <SelectLabel>{label}</SelectLabel>}
           {_options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              {option.icon && <Iconify icon={option.icon} className="mr-1" />}
+              {/* {option.icon && <Iconify icon={option.icon} className="mr-1" />} */}
               {option.label}
             </SelectItem>
           ))}

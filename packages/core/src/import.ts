@@ -1,6 +1,6 @@
-import { type PlatformType, PlatformTypeSchema } from "@workspace/contracts/platform-type";
+import { type Platform, PlatformEnum } from "@workspace/contracts/platform";
 
-export function generateImportFilename(type: PlatformType, date: Date = new Date()) {
+export function generateImportFilename(platform: Platform, date: Date = new Date()) {
   const pad = (n: number) => n.toString().padStart(2, "0");
 
   const year = date.getFullYear();
@@ -12,22 +12,22 @@ export function generateImportFilename(type: PlatformType, date: Date = new Date
 
   const formatDate = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
 
-  return `${type}_${formatDate}.json`;
+  return `${platform}_${formatDate}.json`;
 }
 
 export function parseImportFilename(filename: string) {
-  const defaultResult = { date: undefined, type: undefined };
+  const defaultResult = { scrapedAt: undefined, platform: undefined };
   const split = filename.split("_");
   if (split.length !== 3) return defaultResult;
 
-  const type = split[0];
+  const platform = split[0];
   const dateOnly = split[1];
   const timeOnly = split[2]?.replace(".json", "");
 
-  const valid = PlatformTypeSchema.safeParse(type);
+  const valid = PlatformEnum.safeParse(platform);
   if (!valid.success) return defaultResult;
 
-  if (!type || !dateOnly || !timeOnly) return defaultResult;
+  if (!platform || !dateOnly || !timeOnly) return defaultResult;
 
   const datePart = `${dateOnly}_${timeOnly}`;
 
@@ -39,7 +39,7 @@ export function parseImportFilename(filename: string) {
 
   if (!year || !month || !day || !hours || !minutes || !seconds) return defaultResult;
 
-  const date = new Date(
+  const scrapedAt = new Date(
     Number.parseInt(year, 10),
     Number.parseInt(month, 10) - 1,
     Number.parseInt(day, 10),
@@ -48,5 +48,5 @@ export function parseImportFilename(filename: string) {
     Number.parseInt(seconds, 10),
   );
 
-  return { date, type: valid.data };
+  return { scrapedAt, platform: valid.data };
 }

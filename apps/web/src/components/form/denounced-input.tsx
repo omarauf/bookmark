@@ -1,5 +1,5 @@
-import { Input } from "@workspace/ui/components/input";
 import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   value: string;

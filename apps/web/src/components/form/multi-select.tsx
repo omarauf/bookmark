@@ -1,4 +1,6 @@
-import { Button } from "@workspace/ui/components/button";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -6,12 +8,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@workspace/ui/components/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover";
-import { cn } from "@workspace/ui/lib/utils";
-import { useCallback, useMemo, useState } from "react";
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import type { Option } from "@/types/options";
-import { Iconify } from "../iconify";
 import { convertOptions } from "./utils";
 
 type Value = string;
@@ -66,7 +66,7 @@ export function XMultiSelect<T extends Value>({
           className={cn("w-full justify-between", className)}
         >
           <span className="truncate">{value.length > 0 ? selectedLabels : placeholder}</span>
-          <Iconify icon="lucide:chevrons-up-down" className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popper-anchor-width)] p-0" align="start">
@@ -82,8 +82,7 @@ export function XMultiSelect<T extends Value>({
                   onSelect={() => handleSelect(option.value)}
                 >
                   {option.label}
-                  <Iconify
-                    icon="lucide:check"
+                  <Check
                     className={cn(
                       "ml-auto h-4 w-4",
                       value.includes(option.value) ? "opacity-100" : "opacity-0",

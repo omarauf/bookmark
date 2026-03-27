@@ -1,5 +1,4 @@
 import z from "zod";
-import { SortingParamsSchema } from "./common/pagination-query";
 
 const nameSchema = z
   .string()
@@ -9,7 +8,7 @@ const nameSchema = z
 
 const colorSchema = z.string().regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/, "Invalid hex color");
 
-export const CollectionSchema = z.object({
+const CollectionSchema = z.object({
   id: z.string(),
   name: nameSchema,
   color: colorSchema,
@@ -17,28 +16,36 @@ export const CollectionSchema = z.object({
   updatedAt: z.date(),
 });
 
-export const CollectionWithCountSchema = CollectionSchema.extend({
-  count: z.number().min(0),
-});
+export const CollectionSchemas = {
+  list: {
+    request: z.object({
+      name: z.string().optional(),
+    }),
+    response: z.object({ ...CollectionSchema.shape, count: z.number() }).array(),
+  },
 
-export const ListCollectionSchema = SortingParamsSchema.extend({
-  name: nameSchema.optional(),
-  sortBy: z.enum(["name", "count"]).optional(),
-});
+  options: {
+    request: z.void(),
+    response: z.object({ id: z.uuid(), name: z.string(), color: colorSchema }).array(),
+  },
 
-export const CreateCollectionSchema = CollectionSchema.pick({ name: true, color: true });
+  create: {
+    request: CollectionSchema.pick({ name: true, color: true }),
+    response: z.void(),
+  },
 
-export const UpdateCollectionSchema = CollectionSchema.pick({
-  id: true,
-  name: true,
-  color: true,
-});
+  update: {
+    request: CollectionSchema.pick({ id: true, name: true, color: true }),
+    response: z.void(),
+  },
 
-export const DeleteCollectionSchema = CollectionSchema.pick({ id: true });
+  delete: {
+    request: z.object({ id: z.string() }),
+    response: z.void(),
+  },
+};
 
 export type Collection = z.infer<typeof CollectionSchema>;
-export type CreateCollection = z.infer<typeof CreateCollectionSchema>;
-export type UpdateCollection = z.infer<typeof UpdateCollectionSchema>;
-export type ListCollections = z.infer<typeof ListCollectionSchema>;
-export type DeleteCollection = z.infer<typeof DeleteCollectionSchema>;
-export type CollectionWithCount = z.infer<typeof CollectionWithCountSchema>;
+export type CollectionWithCount = Collection & { count: number };
+export type CreateCollection = z.infer<typeof CollectionSchemas.create.request>;
+export type UpdateCollection = z.infer<typeof CollectionSchemas.update.request>;

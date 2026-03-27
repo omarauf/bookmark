@@ -1,13 +1,17 @@
-import type { RouterClient } from "@orpc/server";
-import { features } from "@/features";
-import { publicProcedure } from "@/lib/orpc";
+import { collectionRouter } from "@/modules/collection/route";
+import { creatorRouter } from "@/modules/creator/router";
+import { fileManagerRoute } from "@/modules/file-manager/route";
+import { importRouter } from "@/modules/import/route";
+import { linkRouter } from "@/modules/link/route";
+import { postRouter } from "@/modules/post/route";
+import { tagRouter } from "@/modules/tag/route";
 
 export const appRouter = {
-  healthCheck: publicProcedure.handler(() => {
-    return "OK";
-  }),
-  ...features,
+  import: importRouter,
+  tag: tagRouter,
+  post: postRouter,
+  file: fileManagerRoute,
+  collection: collectionRouter,
+  link: linkRouter,
+  creator: creatorRouter,
 };
-
-export type AppRouter = typeof appRouter;
-export type AppRouterClient = RouterClient<typeof appRouter>;

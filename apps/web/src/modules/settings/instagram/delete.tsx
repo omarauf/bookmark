@@ -26,7 +26,7 @@ export function Delete() {
     }),
   );
 
-  const deleteUserMutation = useMutation(
+  const deleteCreatorMutation = useMutation(
     orpc.creator.deleteAll.mutationOptions({
       onSuccess: () => {
         toast.success("Instagram deleted successfully");
@@ -71,7 +71,7 @@ export function Delete() {
             variant="destructive"
             onClick={() => {
               deletePostMutation.mutate({ hard });
-              deleteUserMutation.mutate({ hard });
+              deleteCreatorMutation.mutate({ hard });
             }}
           >
             Delete

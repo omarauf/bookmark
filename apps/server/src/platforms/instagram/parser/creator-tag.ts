@@ -10,7 +10,7 @@ export function creatorTagParser(creatorTag?: Tags): InstagramCreatorTag[] {
     if (!t.position) throw new Error("No position found in creator tag");
 
     return {
-      user: creatorParser(t.user),
+      creator: creatorParser(t.user),
       x: t.position[0],
       y: t.position[1],
     };

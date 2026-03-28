@@ -7,7 +7,7 @@ import { mediaParser } from "./media";
 import { musicParser } from "./music";
 
 export function postParser(post: Media): CreateInstagramPost {
-  const user = creatorParser(post.owner);
+  const creator = creatorParser(post.owner);
   const postId = post.id;
   const url = `https://www.instagram.com/p/${post.code}`;
   const text = post.caption?.text;
@@ -15,7 +15,7 @@ export function postParser(post: Media): CreateInstagramPost {
   const location = locationParser(post.location);
   const music = musicParser(post.clips_metadata);
 
-  const userTags = creatorTagParser(post.usertags);
+  const creatorTags = creatorTagParser(post.usertags);
 
   const type = getMediaType(post.media_type, post.product_type);
 
@@ -23,15 +23,15 @@ export function postParser(post: Media): CreateInstagramPost {
     externalId: postId,
     url,
     createdAt: new Date(post.taken_at * 1000),
-    creator: user,
-    externalCreatorId: user.externalId,
+    creator: creator,
+    externalCreatorId: creator.externalId,
     likes: post.like_count,
     play: post.play_count,
     view: post.view_count,
     caption: text,
     location,
     music,
-    taggedCreators: userTags,
+    taggedCreators: creatorTags,
     media,
     platform: "instagram",
     collections: [],

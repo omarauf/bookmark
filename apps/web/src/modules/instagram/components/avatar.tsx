@@ -8,7 +8,7 @@ type Props = {
   size?: "small" | "large";
 };
 
-export function UserAvatar({ creator, size }: Props) {
+export function CreatorAvatar({ creator, size }: Props) {
   return (
     <Avatar className={cn("border", size === "large" ? "h-10 w-10" : "h-8 w-8")}>
       <AvatarImage src={creator.avatar && staticFile(creator.avatar)} alt={creator.username} />

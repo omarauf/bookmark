@@ -4,7 +4,7 @@ import { staticFile } from "@/api/static-file";
 import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { fDate } from "@/utils/format-time";
-import { UserAvatar } from "../avatar";
+import { CreatorAvatar } from "../avatar";
 import { getThumbnailUrl } from "./utils";
 
 type Props = {
@@ -25,7 +25,7 @@ export function _PostCard({ post, onClick }: Props) {
 
       <CardContent className="flex flex-row items-center justify-between px-1">
         <div className="flex max-w-[60%] flex-row gap-2 overflow-hidden">
-          <UserAvatar creator={post.creator} size="small" />
+          <CreatorAvatar creator={post.creator} size="small" />
           <p className="flex items-center text-sm">{post.creator.username}</p>
         </div>
 

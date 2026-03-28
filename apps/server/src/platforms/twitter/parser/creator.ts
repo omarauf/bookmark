@@ -5,20 +5,20 @@ import type {
 } from "@workspace/contracts/raw/twitter";
 import type { CreateTwitterCreator } from "@workspace/contracts/twitter";
 
-export function userParser(
-  user: FluffyUserResults | PurpleUserResults | StickyUserResults,
+export function creatorParser(
+  creator: FluffyUserResults | PurpleUserResults | StickyUserResults,
 ): CreateTwitterCreator {
-  const userId = user.result.id;
-  const username = user.result.core.screen_name;
-  const name = user.result.core.name;
-  const profilePicture = user.result.avatar.image_url;
-  const createdAt = new Date(user.result.core.created_at);
+  const externalId = creator.result.id;
+  const username = creator.result.core.screen_name;
+  const name = creator.result.core.name;
+  const profilePicture = creator.result.avatar.image_url;
+  const createdAt = new Date(creator.result.core.created_at);
   const url = `https://x.com/${username}`;
-  const verified = user.result.is_blue_verified;
-  const location = user.result.location.location || undefined;
+  const verified = creator.result.is_blue_verified;
+  const location = creator.result.location.location || undefined;
 
   return {
-    externalId: userId,
+    externalId,
     username,
     name,
     url,

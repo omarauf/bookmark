@@ -10,11 +10,11 @@ import { Action } from "./action";
 import { RenderCaption } from "./caption";
 import { CollectionsForm } from "./collection";
 import { RenderContent } from "./content";
+import { CreatorProfile } from "./creator-profile";
 import { RenderMusic } from "./music";
 import { NoteForm } from "./notes";
 import { RenderStats } from "./stats";
 import { TagForm } from "./tag";
-import { UserProfile } from "./user-profile";
 
 type SubmitRef = { submit: () => Promise<void> };
 
@@ -135,7 +135,7 @@ function DialogForm({ post, ref }: DialogFormProps) {
   return (
     <>
       {/* <form
-      
+
         onSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -152,7 +152,7 @@ function DialogForm({ post, ref }: DialogFormProps) {
 
       <div className="w-125">
         <div className="flex h-full flex-col gap-4">
-          <UserProfile creator={post.creator} />
+          <CreatorProfile creator={post.creator} />
 
           <RenderStats post={post} />
 

@@ -5,7 +5,7 @@ import type {
   TweetResultsResult,
 } from "@workspace/contracts/raw/twitter";
 import type { CreateTwitterPost } from "@workspace/contracts/twitter";
-import { userParser } from "./creator";
+import { creatorParser } from "./creator";
 import { mediaParser } from "./media";
 
 export function postParser(post: TweetResults): CreateTwitterPost[] {
@@ -42,9 +42,9 @@ export function postParser(post: TweetResults): CreateTwitterPost[] {
 }
 
 function tweetParser(tweet: FluffyTweet): CreateTwitterPost {
-  const user = userParser(tweet.core.user_results);
+  const creator = creatorParser(tweet.core.user_results);
   const postId = tweet.rest_id;
-  const url = `https://x.com/${user.username}/status/${postId}`;
+  const url = `https://x.com/${creator.username}/status/${postId}`;
   const createdAt = new Date(tweet.legacy.created_at);
 
   const media = tweet.legacy.extended_entities?.media.map(mediaParser) || [];
@@ -53,10 +53,10 @@ function tweetParser(tweet: FluffyTweet): CreateTwitterPost {
     externalId: postId,
     url,
     createdAt,
-    creator: user,
+    creator: creator,
     caption: tweet.legacy.full_text.replace(/https:\/\/t\.co\/\S+/g, ""),
     media: media,
-    externalCreatorId: user.externalId,
+    externalCreatorId: creator.externalId,
     videoDescription: tweet.post_video_description,
     imageDescription: tweet.post_image_description,
     views: Number(tweet.views.count || 0),
@@ -78,9 +78,9 @@ function coreParser(result: TweetResultsResult | CunningResult): CreateTwitterPo
     throw new Error("Invalid tweet result");
   }
 
-  const user = userParser(result.core.user_results);
+  const creator = creatorParser(result.core.user_results);
   const postId = result.rest_id;
-  const url = `https://x.com/${user.username}/status/${postId}`;
+  const url = `https://x.com/${creator.username}/status/${postId}`;
   const createdAt = new Date(result.legacy.created_at);
 
   const media = result.legacy.extended_entities?.media.map(mediaParser) || [];
@@ -89,7 +89,7 @@ function coreParser(result: TweetResultsResult | CunningResult): CreateTwitterPo
     externalId: postId,
     url,
     createdAt,
-    creator: user,
+    creator: creator,
     caption: result.legacy.full_text.replace(/https:\/\/t\.co\/\S+/g, ""),
     media: media,
     videoDescription: result.post_video_description,
@@ -105,6 +105,6 @@ function coreParser(result: TweetResultsResult | CunningResult): CreateTwitterPo
     platform: "twitter",
     collections: [],
     tags: [],
-    externalCreatorId: user.externalId,
+    externalCreatorId: creator.externalId,
   };
 }

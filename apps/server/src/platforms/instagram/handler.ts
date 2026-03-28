@@ -118,11 +118,11 @@ export class InstagramHandler implements PlatformHandler<CreateInstagramPost> {
 
   mapTaggedCreator(data: CreateInstagramPost[]): CreateTaggedCreator[] {
     const taggedCreators: CreateTaggedCreator[] = data.flatMap((post) =>
-      post.taggedCreators.map((userTag) => ({
-        externalCreatorId: userTag.user.externalId,
+      post.taggedCreators.map((creatorTag) => ({
+        externalCreatorId: creatorTag.creator.externalId,
         externalPostId: post.externalId,
-        x: userTag.x,
-        y: userTag.y,
+        x: creatorTag.x,
+        y: creatorTag.y,
       })),
     );
 
@@ -161,7 +161,10 @@ export class InstagramHandler implements PlatformHandler<CreateInstagramPost> {
 
   mapCreator(data: CreateInstagramPost[]): CreateCreator[] {
     const creators: CreateCreator[] = data
-      .flatMap((post) => [post.creator, ...post.taggedCreators.map((userTag) => userTag.user)])
+      .flatMap((post) => [
+        post.creator,
+        ...post.taggedCreators.map((creatorTag) => creatorTag.creator),
+      ])
       .map((creator) => {
         const { createdAt, ...rest } = creator;
 

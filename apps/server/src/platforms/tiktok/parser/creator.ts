@@ -2,17 +2,17 @@ import type { Author } from "@workspace/contracts/raw/tiktok";
 import type { CreateTiktokCreator } from "@workspace/contracts/tiktok";
 
 export function creatorParser(author: Author): CreateTiktokCreator {
-  const user = author;
+  const creator = author;
 
-  const userId = user.id;
-  const username = user.uniqueId;
-  const name = user.nickname;
-  const profilePicture = user.avatarLarger;
+  const externalId = creator.id;
+  const username = creator.uniqueId;
+  const name = creator.nickname;
+  const profilePicture = creator.avatarLarger;
   const url = `https://tiktok.com/@${username}`;
-  const verified = user.verified;
+  const verified = creator.verified;
 
   return {
-    externalId: userId,
+    externalId,
     username,
     name,
     url,
@@ -20,6 +20,6 @@ export function creatorParser(author: Author): CreateTiktokCreator {
     createdAt: undefined,
     verified,
     platform: "tiktok",
-    // TODO: add user stats
+    // TODO: add creator stats
   };
 }

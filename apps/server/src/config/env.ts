@@ -6,10 +6,10 @@ const envSchema = z.object({
     return [v.trim()];
   }),
   DATABASE_URL: z.string(),
+  BETTER_AUTH_URL: z.string(),
+  BETTER_AUTH_SECRET: z.string(),
   DOMAIN: z.string().default("localhost"),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  REDIS_HOST: z.string().default("127.0.0.1"),
-  REDIS_PORT: z.coerce.number().min(1).default(6379),
   SUPER_ADMIN_EMAIL: z.email().min(1, "SUPER_ADMIN_EMAIL is required"),
   SUPER_ADMIN_PASSWORD: z.string().min(8, "SUPER_ADMIN_PASSWORD must be at least 8 characters"),
   S3_REGION: z.string().min(1, "S3_REGION is required"),

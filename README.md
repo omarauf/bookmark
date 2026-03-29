@@ -50,8 +50,6 @@ pnpm install
 ```
 DATABASE_URL=postgresql://...
 CORS_ORIGIN=http://localhost:3001
-REDIS_HOST=localhost
-REDIS_PORT=6379
 S3_REGION=...
 S3_ENDPOINT=...
 S3_ACCESS_KEY=...
@@ -70,7 +68,7 @@ VITE_S3_URL=...
 ### Database Setup
 
 ```bash
-pnpm docker:up      # Start PostgreSQL & Redis
+pnpm docker:up      # Start PostgreSQL
 pnpm db:push        # Push schema to database
 pnpm db:seed        # Seed initial data
 ```

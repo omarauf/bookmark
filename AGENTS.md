@@ -83,7 +83,7 @@ Run `pnpm check` before committing to auto-fix issues.
 
 | Type | Pattern | Example |
 |------|---------|---------|
-| Components | PascalCase | `Button.tsx`, `UserProfile.tsx` |
+| Components | CamelCase | `button.tsx`, `creator-profile.tsx` |
 | Routes | kebab-case or route format | `__root.tsx`, `_authenticated/users/index.tsx` |
 | Schemas | `.schema.ts` suffix | `link.schema.ts` |
 | Routes (server) | `.route.ts` suffix | `link.route.ts` |
@@ -273,6 +273,5 @@ Example: `feat: add link preview fetching`
 
 Required server env vars:
 - `DATABASE_URL`, `CORS_ORIGIN`, `DOMAIN`
-- `REDIS_HOST`, `REDIS_PORT`
 - `S3_*` variables for file storage
 - `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`

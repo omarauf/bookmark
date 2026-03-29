@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { XToggleGroup } from "@/components/form/toggle-group";
+import { XToggleGroup } from "@/components/inputs/toggle-group";
 import { Label } from "@/components/ui/label";
 import ContentSection from "../components/content-section";
 import { Delete } from "./delete";

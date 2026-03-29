@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type Post, PostSchemas, type UpdatePost } from "@workspace/contracts/post";
 import { type Ref, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useAppForm } from "@/components/tanstack-form";
+import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { orpc } from "@/integrations/orpc";

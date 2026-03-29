@@ -5,8 +5,8 @@ import { AlertCircle, Check, FileJson, Upload } from "lucide-react";
 import type React from "react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { DatePicker } from "@/components/form/date-picker";
-import { XSelect } from "@/components/form/select";
+import { DatePicker } from "@/components/inputs/date-picker";
+import { XSelect } from "@/components/inputs/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {

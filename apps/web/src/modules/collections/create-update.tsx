@@ -8,7 +8,7 @@ import { CollectionSchemas } from "@workspace/contracts/collection";
 import { Pencil, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { useAppForm } from "@/components/tanstack-form";
+import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -112,10 +112,8 @@ export function CreateUpdateCollection({ collection }: Props) {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <form.AppField name="name">{(field) => <field.TextField label="Name" />}</form.AppField>
-            <form.AppField name="color">
-              {(field) => <field.TextField label="Color" />}
-            </form.AppField>
+            <form.AppField name="name">{(field) => <field.Input label="Name" />}</form.AppField>
+            <form.AppField name="color">{(field) => <field.Input label="Color" />}</form.AppField>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>

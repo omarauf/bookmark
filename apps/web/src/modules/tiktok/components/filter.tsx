@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { DatePicker } from "@/components/form/date-picker";
-import { DebounceInput } from "@/components/form/denounced-input";
-import { XMultiSelect } from "@/components/form/multi-select";
-import { XToggleGroup } from "@/components/form/toggle-group";
+import { DatePicker } from "@/components/inputs/date-picker";
+import { DebounceInput } from "@/components/inputs/denounced-input";
+import { XMultiSelect } from "@/components/inputs/multi-select";
+import { XToggleGroup } from "@/components/inputs/toggle-group";
 import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { withForm } from "@/components/tanstack-form";
+import { withForm } from "@/components/form";
 import { orpc } from "@/integrations/orpc";
 import { DEFAULT_POST } from "../../constants";
 
@@ -24,7 +24,7 @@ export const TagForm = withForm({
     return (
       <form.AppField name="tagIds">
         {(field) => (
-          <field.AutocompleteField
+          <field.Autocomplete
             label="Tags"
             options={tagsQuery.data?.map((tag) => ({ label: tag.name, value: tag.id })) || []}
             onAdd={async (v) => {

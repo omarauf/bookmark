@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
-import { useAppForm } from "@/components/tanstack-form";
+import { useAppForm } from "@/components/form";
 import { authClient } from "@/integrations/auth";
 
 export const Route = createFileRoute("/_auth/sign-in")({
@@ -56,13 +56,11 @@ function RouteComponent() {
 
           <form onSubmit={onSubmitHandler} className="mt-8 space-y-4">
             <form.AppField name="email">
-              {(field) => <field.TextField label="Email" placeholder="Email" />}
+              {(field) => <field.Input placeholder="Email" />}
             </form.AppField>
 
             <form.AppField name="password">
-              {(field) => (
-                <field.TextField type="password" label="Password" placeholder="Password" />
-              )}
+              {(field) => <field.Password placeholder="Password" />}
             </form.AppField>
 
             <form.AppForm>

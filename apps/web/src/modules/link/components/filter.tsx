@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { DebounceInput } from "@/components/form/denounced-input";
-import { XSelect } from "@/components/form/select";
-import { XToggleGroup } from "@/components/form/toggle-group";
+import { DebounceInput } from "@/components/inputs/denounced-input";
+import { XSelect } from "@/components/inputs/select";
+import { XToggleGroup } from "@/components/inputs/toggle-group";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

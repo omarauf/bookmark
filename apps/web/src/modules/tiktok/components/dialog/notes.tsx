@@ -1,4 +1,4 @@
-import { withForm } from "@/components/tanstack-form";
+import { withForm } from "@/components/form";
 import { DEFAULT_POST } from "../../constants";
 
 export const NoteForm = withForm({
@@ -8,11 +8,7 @@ export const NoteForm = withForm({
     return (
       <form.AppField name="note">
         {(field) => (
-          <field.TextAreaField
-            label="Notes"
-            placeholder="Add your notes about this post..."
-            rows={6}
-          />
+          <field.Textarea label="Notes" placeholder="Add your notes about this post..." />
         )}
       </form.AppField>
     );

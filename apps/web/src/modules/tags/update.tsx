@@ -3,7 +3,7 @@ import { type Tag, TagSchemas, type UpdateTag } from "@workspace/contracts/tag";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useAppForm } from "@/components/tanstack-form";
+import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -70,10 +70,8 @@ export function UpdateTagDialog({ tag }: Props) {
             <DialogDescription>Update tag with a name and color.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <form.AppField name="name">{(field) => <field.TextField label="Name" />}</form.AppField>
-            <form.AppField name="color">
-              {(field) => <field.TextField label="Color" />}
-            </form.AppField>
+            <form.AppField name="name">{(field) => <field.Input label="Name" />}</form.AppField>
+            <form.AppField name="color">{(field) => <field.Input label="Color" />}</form.AppField>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { withForm } from "@/components/tanstack-form";
+import { withForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
 import { DEFAULT_POST } from "../../constants";

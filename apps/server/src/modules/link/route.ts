@@ -5,12 +5,12 @@ import { getPreviewFromContent } from "link-preview-js";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
 import { s3Client } from "@/core/s3";
-import { publicProcedure } from "@/lib/orpc";
+import { protectedProcedure } from "@/lib/orpc";
 import { countCharacter, trimAfterXCharacter } from "@/lib/string";
 import { links } from "./schema";
 
 export const linkRouter = {
-  tree: publicProcedure
+  tree: protectedProcedure
     .input(LinkSchemas.tree.request)
     .output(LinkSchemas.tree.response)
     .handler(async ({ input }) => {
@@ -57,7 +57,7 @@ export const linkRouter = {
       };
     }),
 
-  list: publicProcedure
+  list: protectedProcedure
     .input(LinkSchemas.list.request)
     .output(LinkSchemas.list.response)
     .handler(async ({ input }) => {
@@ -98,7 +98,7 @@ export const linkRouter = {
       };
     }),
 
-  domains: publicProcedure.output(LinkSchemas.domains.response).handler(async () => {
+  domains: protectedProcedure.output(LinkSchemas.domains.response).handler(async () => {
     const distinctRecords = await db
       .selectDistinct({ url: links.url })
       .from(links)
@@ -126,7 +126,7 @@ export const linkRouter = {
       .sort((a, b) => b.count - a.count);
   }),
 
-  folders: publicProcedure.handler(async () => {
+  folders: protectedProcedure.handler(async () => {
     const folders: TreeNode[] = [];
 
     // 1. Fetch distinct paths from the database using Drizzle
@@ -162,7 +162,7 @@ export const linkRouter = {
     return folders;
   }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(LinkSchemas.create.request)
     .output(LinkSchemas.create.response)
     .handler(async ({ input }) => {
@@ -203,7 +203,7 @@ export const linkRouter = {
       }
     }),
 
-  preview: publicProcedure
+  preview: protectedProcedure
     .input(LinkSchemas.preview.request)
     .errors({
       BAD_REQUEST: { message: "Failed to fetch link preview xx" },
@@ -257,7 +257,7 @@ export const linkRouter = {
       }
     }),
 
-  move: publicProcedure
+  move: protectedProcedure
     .input(LinkSchemas.move.request)
     .handler(async ({ input: { ids, path } }) => {
       const items = await db.query.links.findMany({ where: inArray(links.id, ids) });
@@ -266,7 +266,7 @@ export const linkRouter = {
       return items;
     }),
 
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(LinkSchemas.delete.request)
     .handler(async ({ input: { ids, hard } }) => {
       if (hard) {

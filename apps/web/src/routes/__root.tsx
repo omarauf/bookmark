@@ -3,6 +3,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "@/components/ui/sonner";
+import { authQueries } from "@/integrations/auth";
 import type { orpc } from "@/integrations/orpc";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
@@ -13,6 +14,10 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  beforeLoad: async ({ context: { queryClient } }) => {
+    const userSession = await queryClient.fetchQuery(authQueries.session());
+    return { userSession };
+  },
   head: () => ({
     meta: [
       {

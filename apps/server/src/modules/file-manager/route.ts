@@ -1,11 +1,11 @@
 import { ORPCError } from "@orpc/server";
 import { PlatformEnum } from "@workspace/contracts/platform";
 import z from "zod";
-import { publicProcedure } from "@/lib/orpc";
+import { protectedProcedure } from "@/lib/orpc";
 import { fileManager } from "./service";
 
 export const fileManagerRoute = {
-  get: publicProcedure
+  get: protectedProcedure
     .route({
       path: "/files/{postType}/{type}/{filename}/{ext}",
       method: "GET",

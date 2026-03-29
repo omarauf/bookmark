@@ -3,11 +3,11 @@ import { and, count, eq } from "drizzle-orm";
 import type z from "zod";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
-import { publicProcedure } from "@/lib/orpc";
+import { protectedProcedure } from "@/lib/orpc";
 import { downloadTasks } from "./schema";
 
 export const downloadTaskRouter = {
-  list: publicProcedure
+  list: protectedProcedure
     .input(DownloadTaskSchemas.list.request)
     .output(DownloadTaskSchemas.list.response)
     .handler(async ({ input }) => {
@@ -34,7 +34,7 @@ export const downloadTaskRouter = {
       return data;
     }),
 
-  stats: publicProcedure.output(DownloadTaskSchemas.stats.response).handler(async () => {
+  stats: protectedProcedure.output(DownloadTaskSchemas.stats.response).handler(async () => {
     const [statusStats, platformStats, referenceTypeStats] = await Promise.all([
       db
         .select({ status: downloadTasks.status, count: count() })

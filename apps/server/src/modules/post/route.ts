@@ -3,7 +3,7 @@ import { PostSchemas } from "@workspace/contracts/post";
 import { count, eq, getTableColumns, isNull, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
-import { publicProcedure } from "@/lib/orpc";
+import { protectedProcedure } from "@/lib/orpc";
 import { creators } from "../creator/schema";
 import { media } from "../media/schema";
 import { normalizeMedia } from "../media/service";
@@ -12,7 +12,7 @@ import { posts } from "./schema";
 import { fetchPost } from "./service";
 
 export const postRouter = {
-  list: publicProcedure
+  list: protectedProcedure
     .input(PostSchemas.list.request)
     .output(PostSchemas.list.response)
     .handler(async ({ input }) => {
@@ -69,7 +69,7 @@ export const postRouter = {
       };
     }),
 
-  get: publicProcedure
+  get: protectedProcedure
     .input(PostSchemas.get.request)
     .output(PostSchemas.get.response)
     .errors({ NOT_FOUND: { message: "Post not found" } })
@@ -81,7 +81,7 @@ export const postRouter = {
       return post;
     }),
 
-  update: publicProcedure
+  update: protectedProcedure
     .input(PostSchemas.update.request)
     .output(PostSchemas.update.response)
     .errors({ NOT_FOUND: { message: "Post not found" } })
@@ -93,7 +93,7 @@ export const postRouter = {
       await postRepo.update(id, rest);
     }),
 
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(PostSchemas.delete.request)
     .output(PostSchemas.delete.response)
     .errors({ NOT_FOUND: { message: "Post not found" } })
@@ -109,7 +109,7 @@ export const postRouter = {
       await postRepo.update(id, { deletedAt: new Date() });
     }),
 
-  deleteAll: publicProcedure
+  deleteAll: protectedProcedure
     .input(PostSchemas.deleteAll.request)
     .output(PostSchemas.deleteAll.response)
     .handler(async ({ input: { hard } }) => {

@@ -4,7 +4,7 @@ import { count, eq } from "drizzle-orm";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
 import { s3Client } from "@/core/s3";
-import { publicProcedure } from "@/lib/orpc";
+import { protectedProcedure } from "@/lib/orpc";
 import { addCreators } from "../creator/service";
 import { addDownloadTask } from "../download-task/service";
 import { postOrchestrator } from "../post/orchestrator";
@@ -13,7 +13,7 @@ import { importRepo } from "./repo";
 import { imports } from "./schema";
 
 export const importRouter = {
-  list: publicProcedure
+  list: protectedProcedure
     .input(ImportSchemas.list.request)
     .output(ImportSchemas.list.response)
     .handler(async ({ input }) => {
@@ -34,7 +34,7 @@ export const importRouter = {
       });
     }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .route({ path: "/import" })
     .input(ImportSchemas.create.request)
     .output(ImportSchemas.create.response)
@@ -98,7 +98,7 @@ export const importRouter = {
       })();
     }),
 
-  import: publicProcedure
+  import: protectedProcedure
     .input(ImportSchemas.import.request)
     .output(ImportSchemas.import.response)
     .errors({ NOT_FOUND: { message: "Import not found" } })
@@ -124,7 +124,7 @@ export const importRouter = {
       return { valid: entities.posts.length };
     }),
 
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(ImportSchemas.delete.request)
     .output(ImportSchemas.delete.response)
     .errors({ NOT_FOUND: { message: "Import not found" } })

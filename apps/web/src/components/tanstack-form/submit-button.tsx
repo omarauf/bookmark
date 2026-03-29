@@ -4,9 +4,10 @@ import { useFormContext } from ".";
 
 type SubmitButtonProps = {
   children: React.ReactNode;
+  className?: string;
 };
 
-export function SubmitButton({ children }: SubmitButtonProps) {
+export function SubmitButton({ children, className }: SubmitButtonProps) {
   const form = useFormContext();
 
   const [isSubmitting, canSubmit] = useStore(form.store, (state) => [
@@ -15,7 +16,7 @@ export function SubmitButton({ children }: SubmitButtonProps) {
   ]);
 
   return (
-    <Button type="submit" disabled={isSubmitting || !canSubmit}>
+    <Button type="submit" disabled={isSubmitting || !canSubmit} className={className}>
       {children}
     </Button>
   );

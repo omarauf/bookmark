@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { SignOutDialog } from "@/components/auth/sign-out-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,18 +7,18 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDialogState } from "@/hooks/use-dialog-state";
-import { SignOutDialog } from "@/layout/common/sign-out-dialog";
-// import { authClient } from "@/lib/auth-client";
+import { useAuthenticatedUser } from "@/integrations/auth";
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState();
 
-  // const { data } = authClient.useSession();
+  const { user } = useAuthenticatedUser();
 
   return (
     <>
@@ -31,12 +32,12 @@ export function ProfileDropdown() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
-          {/* <DropdownMenuLabel className="font-normal">
+          <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col gap-1.5">
-              <p className="font-medium text-sm leading-none">{data?.user.name}</p>
-              <p className="text-muted-foreground text-xs leading-none">{data?.user.email}</p>
+              <p className="font-medium text-sm leading-none">{user.name}</p>
+              <p className="text-muted-foreground text-xs leading-none">{user.email}</p>
             </div>
-          </DropdownMenuLabel> */}
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>

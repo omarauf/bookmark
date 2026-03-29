@@ -1,6 +1,7 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { authClient } from "@/integrations/auth";
 import { SearchProvider } from "@/layout/search/search-provider";
 import { AppSidebar } from "@/layout/sidebar";
 import { cn } from "@/lib/utils";
@@ -10,15 +11,11 @@ import { ThemeProvider } from "@/theme/theme-provider";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
-  beforeLoad: async () => {
-    // const { data } = await authClient.getSession();
-    // if (data?.user == null) {
-    //   throw redirect({ to: "/sign-in", search: { redirect: location.href } });
-    // }
-    // if (data.user.role !== "admin") {
-    //   await authClient.signOut();
-    //   throw redirect({ to: "/403" });
-    // }
+  beforeLoad: async ({ location }) => {
+    const { data } = await authClient.getSession();
+    if (data?.user == null) {
+      throw redirect({ to: "/sign-in", search: { redirect: location.href } });
+    }
   },
 });
 

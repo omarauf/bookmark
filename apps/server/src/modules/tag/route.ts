@@ -1,11 +1,11 @@
 import { TagSchemas } from "@workspace/contracts/tag";
 import { eq, ilike } from "drizzle-orm";
 import { db } from "@/core/db";
-import { publicProcedure } from "@/lib/orpc";
+import { protectedProcedure } from "@/lib/orpc";
 import { tags } from "./schema";
 
 export const tagRouter = {
-  list: publicProcedure
+  list: protectedProcedure
     .input(TagSchemas.list.request)
     .output(TagSchemas.list.response)
     .handler(async ({ input }) => {
@@ -16,14 +16,14 @@ export const tagRouter = {
       return dataQuery.map((d) => ({ ...d, count: 0 }));
     }),
 
-  options: publicProcedure
+  options: protectedProcedure
     .input(TagSchemas.options.request)
     .output(TagSchemas.options.response)
     .handler(async () => {
       return await db.select({ id: tags.id, name: tags.name, color: tags.color }).from(tags);
     }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(TagSchemas.create.request)
     .output(TagSchemas.create.response)
     .errors({ CONFLICT: { message: "A tag with the same name already exists" } })
@@ -35,7 +35,7 @@ export const tagRouter = {
       await db.insert(tags).values(input);
     }),
 
-  update: publicProcedure
+  update: protectedProcedure
     .input(TagSchemas.update.request)
     .output(TagSchemas.update.response)
     .errors({
@@ -56,7 +56,7 @@ export const tagRouter = {
       await db.update(tags).set(rest).where(eq(tags.id, id));
     }),
 
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(TagSchemas.delete.request)
     .output(TagSchemas.delete.response)
     .errors({ NOT_FOUND: { message: "Tag not found" } })

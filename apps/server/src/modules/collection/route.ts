@@ -1,11 +1,11 @@
 import { CollectionSchemas } from "@workspace/contracts/collection";
 import { eq, ilike } from "drizzle-orm";
 import { db } from "@/core/db";
-import { publicProcedure } from "@/lib/orpc";
+import { protectedProcedure } from "@/lib/orpc";
 import { collections } from "./schema";
 
 export const collectionRouter = {
-  list: publicProcedure
+  list: protectedProcedure
     .input(CollectionSchemas.list.request)
     .output(CollectionSchemas.list.response)
     .handler(async ({ input }) => {
@@ -20,7 +20,7 @@ export const collectionRouter = {
       return dataQuery.map((d) => ({ ...d, count: 0 }));
     }),
 
-  options: publicProcedure
+  options: protectedProcedure
     .input(CollectionSchemas.options.request)
     .output(CollectionSchemas.options.response)
     .handler(async () => {
@@ -29,7 +29,7 @@ export const collectionRouter = {
         .from(collections);
     }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(CollectionSchemas.create.request)
     .output(CollectionSchemas.create.response)
     .errors({ CONFLICT: { message: "A collection with the same name already exists" } })
@@ -45,7 +45,7 @@ export const collectionRouter = {
       await db.insert(collections).values(input);
     }),
 
-  update: publicProcedure
+  update: protectedProcedure
     .input(CollectionSchemas.update.request)
     .output(CollectionSchemas.update.response)
     .errors({
@@ -70,7 +70,7 @@ export const collectionRouter = {
       await db.update(collections).set(rest).where(eq(collections.id, id));
     }),
 
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(CollectionSchemas.delete.request)
     .output(CollectionSchemas.delete.response)
     .errors({ NOT_FOUND: { message: "Collection not found" } })

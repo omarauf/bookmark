@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { env } from "./config/env";
+import { auth } from "./core/auth/lib";
 import { apiRouterHandler } from "./routers/api";
 import { rpcRouterHandler } from "./routers/rpc";
 
@@ -18,6 +19,9 @@ app.use(
     credentials: true,
   }),
 );
+
+// auth handler
+app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
 // oRPC handler
 app.use("/rpc/*", rpcRouterHandler);

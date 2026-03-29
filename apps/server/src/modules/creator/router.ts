@@ -1,11 +1,11 @@
 import { CreatorSchemas } from "@workspace/contracts/creator";
 import { db } from "@/core/db";
-import { publicProcedure } from "@/lib/orpc";
+import { protectedProcedure } from "@/lib/orpc";
 import { creators } from "../creator/schema";
 import { creatorRepo } from "./repo";
 
 export const creatorRouter = {
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(CreatorSchemas.delete.request)
     .output(CreatorSchemas.delete.response)
     .errors({ NOT_FOUND: { message: "Creator not found" } })
@@ -16,7 +16,7 @@ export const creatorRouter = {
       await creatorRepo.delete(id);
     }),
 
-  deleteAll: publicProcedure.output(CreatorSchemas.deleteAll.response).handler(async () => {
+  deleteAll: protectedProcedure.output(CreatorSchemas.deleteAll.response).handler(async () => {
     await db.delete(creators);
   }),
 };

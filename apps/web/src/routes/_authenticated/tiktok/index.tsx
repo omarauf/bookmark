@@ -1,13 +1,11 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { TiktokSchemas } from "@workspace/contracts/tiktok";
-import { LoaderIcon } from "lucide-react";
 import { useState } from "react";
 import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
-import { cn } from "@/lib/utils";
 import { PostDialog } from "@/modules/tiktok/components/dialog";
 import { Filter } from "@/modules/tiktok/components/filter";
 import { PostCard } from "@/modules/tiktok/components/post/card";
@@ -55,15 +53,6 @@ function Tiktok() {
           {flatItems.map((ig) => (
             <PostCard key={ig.id} post={ig} onClick={setSelectedPostId} />
           ))}
-        </div>
-
-        <div
-          className={cn(
-            "mt-4 flex w-full items-center justify-center",
-            !postQuery.isFetchingNextPage && "hidden",
-          )}
-        >
-          <LoaderIcon className="animate-spin" />
         </div>
       </InfiniteScroll>
 

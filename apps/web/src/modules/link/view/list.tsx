@@ -1,10 +1,10 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
-import { Link, Loader2 } from "lucide-react";
+import { Link } from "lucide-react";
 import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
-import { cn } from "@/lib/utils";
+
 import { LinkDragOverlay } from "../components/drag-overlay";
 import { DraggableLink } from "../components/draggable-link";
 import { useGridClassName } from "../hooks/use-grid-style";
@@ -42,15 +42,6 @@ export function ListLinkView() {
           {flatItems.map((link) => (
             <DraggableLink key={link.id} link={link} />
           ))}
-        </div>
-
-        <div
-          className={cn(
-            "flex w-full items-center justify-center",
-            !infiniteQuery.isFetchingNextPage && "hidden",
-          )}
-        >
-          <Loader2 className="animate-spin" />
         </div>
       </InfiniteScroll>
 

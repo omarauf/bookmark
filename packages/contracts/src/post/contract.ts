@@ -2,12 +2,16 @@ import z from "zod";
 import { BasePaginationQuerySchema, PaginationResultSchema } from "../common/pagination-query";
 import type { CreateBasePostSchema } from "../platform/base/post";
 import { CreatePostSchema, PostSchema } from "./entity";
+import { PostFilterSchema } from "./filter";
 
 export const PostSchemas = {
   create: CreatePostSchema,
+  filter: PostFilterSchema,
 
   list: {
-    request: BasePaginationQuerySchema,
+    request: BasePaginationQuerySchema.extend({
+      ...PostFilterSchema.shape,
+    }),
     response: PaginationResultSchema(PostSchema),
   },
 

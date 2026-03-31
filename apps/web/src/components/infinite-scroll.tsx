@@ -1,4 +1,6 @@
+import { LoaderIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 type Props = {
   threshold?: number;
@@ -55,6 +57,16 @@ export function InfiniteScroll({
   return (
     <div>
       {children}
+
+      <div
+        className={cn(
+          "mt-4 flex w-full items-center justify-center",
+          !isFetchingNextPage && "hidden",
+        )}
+      >
+        <LoaderIcon className="animate-spin" />
+      </div>
+
       <div ref={containerRef} className="h-1" />
     </div>
   );

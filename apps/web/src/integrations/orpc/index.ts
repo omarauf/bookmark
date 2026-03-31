@@ -31,7 +31,7 @@ const getORPCClient = createIsomorphicFn()
       fetch(url, options) {
         return fetch(url, {
           ...options,
-          // credentials: "include",
+          credentials: "include",
         });
       },
       interceptors: [

@@ -1,12 +1,10 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/post";
-import { LoaderIcon } from "lucide-react";
 import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
-import { cn } from "@/lib/utils";
 import { TwitterCard } from "@/modules/twitter/card";
 
 export const Route = createFileRoute("/_authenticated/twitter/")({
@@ -57,15 +55,6 @@ function Twitter() {
           {flatItems.map((t) => (
             <TwitterCard key={t.id} post={t} />
           ))}
-        </div>
-
-        <div
-          className={cn(
-            "mt-4 flex w-full items-center justify-center",
-            !postQuery.isFetchingNextPage && "hidden",
-          )}
-        >
-          <LoaderIcon className="animate-spin" />
         </div>
       </InfiniteScroll>
 

@@ -16,6 +16,8 @@ export const postRouter = {
     .input(PostSchemas.list.request)
     .output(PostSchemas.list.response)
     .handler(async ({ input }) => {
+      const filters = input.platform ? eq(posts.platform, input.platform) : undefined;
+
       const dataQuery = db
         .select({
           ...getTableColumns(posts),
@@ -35,7 +37,7 @@ export const postRouter = {
       const data = await withPagination({
         dataQuery,
         countQuery,
-        filters: undefined,
+        filters,
         page: input.page,
         perPage: input.perPage,
         orderByColumn: posts.createdAt,

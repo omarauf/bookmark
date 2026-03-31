@@ -1,6 +1,7 @@
 // import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import { useAppForm } from "@/components/form";
 // import { DatePicker } from "@/components/form/date-picker";
 // import { DebounceInput } from "@/components/form/denounced-input";
 // import { XMultiSelect } from "@/components/form/multi-select";
@@ -16,6 +17,11 @@ export function Filter({ className }: { className?: string }) {
 
   const search = useSearch({ from: "/_authenticated/instagram/" });
   const navigate = useNavigate({ from: "/instagram/" });
+
+  const form = useAppForm({
+    defaultValues: search,
+    onSubmit: (values) => {},
+  });
 
   // const setFilter = useCallback(
   //   (newFilter: ListInstagramPosts) => navigate({ search: { ...search, ...newFilter } }),
@@ -50,6 +56,14 @@ export function Filter({ className }: { className?: string }) {
         className,
       )}
     >
+      <form.AppField name="username">
+        {(field) => <field.Input placeholder="username..." className="w-50" />}
+      </form.AppField>
+
+      <form.AppField name="sortBy">
+        {(field) => <field.Tabs placeholder="username..." options={["asc", "desc"]} />}
+      </form.AppField>
+
       {/* <XSelect
         value={search.mediaType}
         onChange={(v) => setFilter({ mediaType: v })}

@@ -34,7 +34,7 @@ export function postParser(post: Media): CreateInstagramPost {
     taggedCreators: creatorTags,
     media,
     platform: "instagram",
-    collections: [],
+    collectionId: undefined,
     tags: [],
     code: post.code,
     type: type,

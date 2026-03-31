@@ -3,11 +3,9 @@ import { Input } from "@/components/ui/input";
 import { FormBase, type FormControlProps } from "../common/form-base";
 import { useFieldContext } from "../context";
 
-type Props = FormControlProps & {
-  label: string;
-};
+type Props = FormControlProps;
 
-export function ColorField({ label, ...props }: Props) {
+export function ColorField({ ...props }: Props) {
   const id = useId();
   const field = useFieldContext<string>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
@@ -21,7 +19,7 @@ export function ColorField({ label, ...props }: Props) {
           value={field.state.value}
           onChange={(e) => field.handleChange(e.target.value)}
           onBlur={field.handleBlur}
-          className="h-10 w-12 cursor-pointer p-1"
+          className="h-9 w-12 cursor-pointer p-1"
           aria-invalid={isInvalid}
         />
         {/* Hex value input */}

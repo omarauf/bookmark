@@ -179,7 +179,7 @@ export async function fetchPost(id: string): Promise<(Post & { quotedPost?: Post
     quotedPostId: post.quotedPostId || undefined,
     quotedPost: quotedPost || undefined,
     tags: [],
-    collections: [],
+    collectionId: post.collectionId || undefined,
     note: post.note || undefined,
     rate: post.rate || undefined,
     caption: post.caption || undefined,

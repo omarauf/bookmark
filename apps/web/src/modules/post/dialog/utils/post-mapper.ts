@@ -5,10 +5,8 @@ export function postToUpdate(post: Post): UpdatePost {
     id: post.id,
     note: post.note,
     rate: post.rate,
-    // tags: post.tags.map((t) => t.id),
-    // collections: post.collections.map((c) => c.id),
     tagIds: [],
-    collectionIds: [],
+    collectionId: post.collectionId,
     favorite: post.favorite,
   };
 }

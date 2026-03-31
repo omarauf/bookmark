@@ -71,6 +71,13 @@
       "when": 1774638236102,
       "tag": "0009_gigantic_madame_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1774986614643,
+      "tag": "0010_little_screwball",
+      "breakpoints": true
     }
   ]
 }

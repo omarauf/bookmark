@@ -6,6 +6,7 @@ import { fieldContext, formContext } from "./context";
 import { AutocompleteField } from "./fields/autocomplete";
 import { CheckboxField } from "./fields/checkbox";
 import { CheckboxGroupField } from "./fields/checkbox-group";
+import { ColorField } from "./fields/color";
 import { DateField } from "./fields/date";
 import { FileUploadField } from "./fields/file";
 import { FileImageUploadField } from "./fields/file-image";
@@ -19,10 +20,11 @@ import { SliderRangeField } from "./fields/slider-range";
 import { TabsField } from "./fields/tab";
 import { TextareaField } from "./fields/textarea";
 
-export const { useAppForm, withForm } = createFormHook({
+export const { useAppForm, withForm, withFieldGroup } = createFormHook({
   fieldComponents: {
     Autocomplete: AutocompleteField,
     Input: InputField,
+    Color: ColorField,
     File: FileUploadField,
     Image: FileImageUploadField,
     Number: NumberField,

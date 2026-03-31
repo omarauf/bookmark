@@ -1,14 +1,12 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { TiktokSchemas } from "@workspace/contracts/tiktok";
-import { useState } from "react";
 import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
-import { PostDialog } from "@/modules/tiktok/components/dialog";
+import { PostList } from "@/modules/post/list";
 import { Filter } from "@/modules/tiktok/components/filter";
-import { PostCard } from "@/modules/tiktok/components/post/card";
 
 export const Route = createFileRoute("/_authenticated/tiktok/")({
   component: Tiktok,
@@ -20,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/tiktok/")({
         initialPageParam: 1,
         input: (searchParams) => ({ ...deps, page: searchParams, limit: 30 }),
         getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
+        platform: "tiktok",
       }),
     );
     return;
@@ -31,12 +30,15 @@ function Tiktok() {
   const postQuery = useSuspenseInfiniteQuery(
     orpc.post.list.infiniteOptions({
       initialPageParam: 1,
-      input: (searchParams) => ({ ...search, page: searchParams, limit: 30 }),
+      input: (searchParams) => ({
+        ...search,
+        page: searchParams,
+        limit: 30,
+        platform: "tiktok",
+      }),
       getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
     }),
   );
-
-  const [selectedPostId, setSelectedPostId] = useState<string>();
 
   const flatItems = postQuery.data.pages.flatMap((page) => page.items);
 
@@ -49,20 +51,10 @@ function Tiktok() {
         hasNextPage={postQuery.hasNextPage}
         isFetchingNextPage={postQuery.isFetchingNextPage}
       >
-        <div className="grid 3xl:grid-cols-6 4xl:grid-cols-7 grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-          {flatItems.map((ig) => (
-            <PostCard key={ig.id} post={ig} onClick={setSelectedPostId} />
-          ))}
-        </div>
+        <PostList posts={flatItems} />
       </InfiniteScroll>
 
       <EmptyContent show={!flatItems.length} />
-
-      <PostDialog
-        posts={flatItems}
-        selectedPostId={selectedPostId}
-        onPostChange={setSelectedPostId}
-      />
     </Main>
   );
 }

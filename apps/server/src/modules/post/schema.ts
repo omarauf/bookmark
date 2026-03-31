@@ -14,6 +14,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { baseTable } from "@/core/db/helper/entity";
+import { collections } from "../collection/schema";
 import { creators } from "../creator/schema";
 import { tags } from "../tag/schema";
 
@@ -26,6 +27,7 @@ export const posts = pgTable("posts", {
   caption: text(),
   platform: text({ enum: PlatformValues }).notNull(),
   favorite: boolean().default(false),
+  collectionId: uuid().references(() => collections.id),
 
   note: text(),
   rate: integer(),
@@ -69,6 +71,7 @@ export const postTaggedCreators = pgTable(
 
 export const postsRelations = relations(posts, ({ many, one }) => ({
   taggedCreators: many(postTaggedCreators),
+  collection: one(collections, { fields: [posts.collectionId], references: [collections.id] }),
   creator: one(creators, {
     fields: [posts.creatorId],
     references: [creators.id],

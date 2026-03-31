@@ -1,44 +1,73 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { CollectionSchemas } from "@workspace/contracts/collection";
-import { EmptyContent } from "@/components/empty-content";
+import { List, Network } from "lucide-react";
+import z from "zod";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
-import { CollectionCard } from "@/modules/collections/card";
-import { CreateUpdateCollection } from "@/modules/collections/create-update";
+import { CreateCollectionDialog } from "@/modules/collections/create";
+import { CollectionTable } from "@/modules/collections/table";
+import { RenderCollectionTree } from "@/modules/collections/tree";
+import { listToTree } from "@/modules/collections/utils";
 
 export const Route = createFileRoute("/_authenticated/collections/")({
   component: Collections,
-  validateSearch: CollectionSchemas.list.request,
-  loaderDeps: ({ search: { name } }) => ({ name }),
-  loader: async ({ context: { orpc, queryClient }, deps }) => {
-    await queryClient.ensureQueryData(orpc.collection.list.queryOptions({ input: deps }));
+  validateSearch: z.object({
+    view: z.enum(["tree", "table"]).optional().default("tree"),
+  }),
+  loader: async ({ context: { orpc, queryClient } }) => {
+    await queryClient.ensureQueryData(orpc.collection.all.queryOptions());
     return;
   },
 });
 
 function Collections() {
-  const { name } = Route.useSearch();
+  const { view } = Route.useSearch();
+  const navigate = Route.useNavigate();
 
-  const collectionsQuery = useSuspenseQuery(orpc.collection.list.queryOptions({ input: { name } }));
+  const query = useSuspenseQuery(orpc.collection.all.queryOptions());
+  const collections = query.data;
 
   return (
     <Main>
-      <div className="flex w-full items-center justify-end">
-        <CreateUpdateCollection />
-      </div>
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-semibold text-3xl text-foreground">Collections</h1>
+            <p className="mt-1 text-muted-foreground text-sm">
+              Manage advertisement collections and their hierarchy
+            </p>
+          </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
-        {collectionsQuery.data.map((collection) => (
-          <CollectionCard key={collection.id} collection={collection} />
-        ))}
-      </div>
+          <div className="flex items-center gap-2">
+            <CreateCollectionDialog />
+          </div>
+        </div>
 
-      <EmptyContent
-        show={collectionsQuery.data.length === 0}
-        title="No collections found"
-        description="You can create a collection by clicking the button above."
-      />
+        <Tabs
+          value={view}
+          onValueChange={(v) => navigate({ search: { view: v as "tree" | "table" } })}
+        >
+          <TabsList>
+            <TabsTrigger value="tree">
+              <Network className="mr-2 h-4 w-4" />
+              Tree View
+            </TabsTrigger>
+            <TabsTrigger value="table">
+              <List className="mr-2 h-4 w-4" />
+              Table View
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="tree" className="mt-6">
+            <RenderCollectionTree nodes={listToTree(collections ?? [])} />
+          </TabsContent>
+
+          <TabsContent value="table" className="mt-6">
+            <CollectionTable collections={collections} />
+          </TabsContent>
+        </Tabs>
+      </div>
     </Main>
   );
 }

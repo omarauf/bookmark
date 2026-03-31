@@ -5,7 +5,7 @@
   "exports": {
     "./link": "./src/link/index.ts",
     "./tag": "./src/tag.ts",
-    "./collection": "./src/collection.ts",
+    "./collection": "./src/collection/index.ts",
     "./import": "./src/import.ts",
     "./post": "./src/post/index.ts",
     "./post-tag": "./src/post-tag/index.ts",

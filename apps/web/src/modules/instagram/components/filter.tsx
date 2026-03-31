@@ -20,7 +20,7 @@ export function Filter({ className }: { className?: string }) {
 
   const form = useAppForm({
     defaultValues: search,
-    onSubmit: (values) => {},
+    // onSubmit: (values) => {},
   });
 
   // const setFilter = useCallback(

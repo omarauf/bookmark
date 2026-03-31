@@ -8,34 +8,30 @@ export const CollectionsForm = withForm({
   ...formOpts,
   props: {},
   render: function Render({ form }) {
-    const collectionsQuery = useQuery(orpc.collection.options.queryOptions());
+    const collectionsQuery = useQuery(orpc.collection.all.queryOptions());
 
     return (
-      <form.AppField name="collectionIds">
+      <form.AppField name="collectionId">
         {(field) => (
           <div className="">
             <h3 className="mb-2 font-medium text-sm">Collections</h3>
 
             <div className="grid grid-cols-4 gap-4">
               {collectionsQuery.data?.map((collection) => {
-                const isSelected = field.state.value.includes(collection.id);
+                const isSelected = field.state.value === collection.id;
                 return (
                   <Button
                     key={collection.id}
                     variant={isSelected ? "default" : "outline"}
-                    // className="w-fit border"
-                    onClick={() => {
-                      // if (isSelected)
-                      //   field.setValue((prev) => prev.filter((c) => c !== collection.id));
-                      // else field.setValue((prev) => [...prev, collection.id]);
-                    }}
+                    className="flex items-center gap-2 leading-none"
+                    onClick={() => field.setValue(isSelected ? undefined : collection.id)}
                   >
                     <span
                       className="h-4 w-4 rounded-full"
                       style={{ backgroundColor: collection.color }}
                       aria-hidden="true"
                     />
-                    {collection.name}
+                    {collection.label}
                   </Button>
                 );
               })}

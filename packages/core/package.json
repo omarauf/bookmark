@@ -3,7 +3,8 @@
   "type": "module",
   "devDependencies": {},
   "exports": {
-    "./import": "./src/import.ts"
+    "./import": "./src/import.ts",
+    "./slugify": "./src/slugify.ts"
   },
   "peerDependencies": {
     "typescript": "^5"

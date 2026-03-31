@@ -1,4 +1,5 @@
 import z from "zod";
+import { CollectionSchema } from "../../collection/entity";
 import { BasePaginationQuerySchema } from "../../common/pagination-query";
 import { CreateInstagramCreatorSchema } from "./creator";
 import { InstagramTaggedCreatorSchema } from "./creator-tag";
@@ -20,7 +21,7 @@ export const InstagramSchemas = {
       minDate: z.date().optional(),
       maxDate: z.date().optional(),
       username: z.string().optional(),
-      collections: z.array(z.string()).optional(),
+      collection: CollectionSchema.optional(),
       tags: z.array(z.string()).optional(),
       mediaType: z.enum(["image", "video", "carousel"]).optional(),
     }),

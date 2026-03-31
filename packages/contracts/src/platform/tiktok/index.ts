@@ -1,4 +1,5 @@
 import z from "zod";
+import { CollectionSchema } from "../../collection/entity";
 import { BasePaginationQuerySchema } from "../../common/pagination-query";
 import { CreateTiktokCreatorSchema } from "./creator";
 import { TiktokMediaSchema } from "./media";
@@ -16,7 +17,7 @@ export const TiktokSchemas = {
       minDate: z.date().optional(),
       maxDate: z.date().optional(),
       username: z.string().optional(),
-      collections: z.array(z.string()).optional(),
+      collection: CollectionSchema.optional(),
       tags: z.array(z.string()).optional(),
     }),
   },

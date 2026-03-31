@@ -10,7 +10,6 @@ import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";
 
 export function Filter({ className }: { className?: string }) {
-  const collectionsQuery = useQuery(orpc.collection.list.queryOptions({ input: {} }));
   const tagsQuery = useQuery(orpc.tag.list.queryOptions({ input: {} }));
 
   const search = useSearch({ from: "/_authenticated/tiktok/" });
@@ -50,13 +49,13 @@ export function Filter({ className }: { className?: string }) {
         className,
       )}
     >
-      <XMultiSelect
+      {/* <XMultiSelect
         value={search.collections || []}
         onChange={(v) => setFilter({ collectionIds: v })}
         placeholder="Select a Collections"
         options={collectionsQuery.data?.map((t) => ({ label: t.name, value: t.id })) || []}
         className="w-50"
-      />
+      /> */}
 
       <XMultiSelect
         value={search.tags || []}

@@ -27,7 +27,7 @@ export function postParser(post: ItemList): CreateTiktokPost {
     shares: post.stats.shareCount,
     plays: post.stats.playCount,
     collects: post.stats.collectCount,
-    collections: [],
+    collectionId: undefined,
     tags: [],
     platform: "tiktok",
   };

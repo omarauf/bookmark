@@ -68,7 +68,7 @@ function tweetParser(tweet: FluffyTweet): CreateTwitterPost {
     // quoted: undefined,
     externalQuotedPostId: undefined,
     platform: "twitter",
-    collections: [],
+    collectionId: undefined,
     tags: [],
   };
 }
@@ -103,7 +103,7 @@ function coreParser(result: TweetResultsResult | CunningResult): CreateTwitterPo
     // quoted: undefined,
     externalQuotedPostId: undefined,
     platform: "twitter",
-    collections: [],
+    collectionId: undefined,
     tags: [],
     externalCreatorId: creator.externalId,
   };

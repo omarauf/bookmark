@@ -1,4 +1,5 @@
 import z from "zod";
+import { CollectionSchema } from "../../collection/entity";
 import { BasePaginationQuerySchema } from "../../common/pagination-query";
 import { CreateTwitterCreatorSchema } from "./creator";
 import { TwitterMediaSchema } from "./media";
@@ -14,7 +15,7 @@ export const TwitterSchemas = {
       minDate: z.date().optional(),
       maxDate: z.date().optional(),
       username: z.string().optional(),
-      collections: z.array(z.string()).optional(),
+      collection: CollectionSchema.optional(),
       tags: z.array(z.string()).optional(),
     }),
   },

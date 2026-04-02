@@ -1,13 +1,45 @@
 import type { Media } from "@workspace/contracts/media";
-import type { CreatePost, Post } from "@workspace/contracts/post";
+import type { CreatePost, Post, PostFilter } from "@workspace/contracts/post";
 import type { CreateTaggedCreator } from "@workspace/contracts/post-tag";
-import { eq, getTableColumns, inArray, sql } from "drizzle-orm";
+import { and, eq, getTableColumns, gte, ilike, inArray, lte, type SQL, sql } from "drizzle-orm";
 import { v7 as uuidV7 } from "uuid";
+import { parseDateWithFlexibleTZ } from "@/core/date";
 import { db } from "@/core/db";
 import { creators } from "../creator/schema";
 import { media } from "../media/schema";
 import { normalizeMedia } from "../media/service";
 import { posts, postTaggedCreators } from "./schema";
+
+export function buildPostFilter(filter: PostFilter) {
+  const { platform, username, collectionIds, type, from, to } = filter;
+  const whereClauses: (SQL | undefined)[] = [];
+
+  if (platform) {
+    whereClauses.push(eq(posts.platform, platform));
+  }
+
+  if (username) {
+    whereClauses.push(ilike(creators.username, `%${username}%`));
+  }
+
+  if (collectionIds && collectionIds.length > 0) {
+    whereClauses.push(inArray(posts.collectionId, collectionIds));
+  }
+
+  if (type) {
+    whereClauses.push(sql`${posts.metadata}->>'type' = ${type}`);
+  }
+
+  if (from) {
+    whereClauses.push(gte(posts.createdAt, parseDateWithFlexibleTZ(from)));
+  }
+
+  if (to) {
+    whereClauses.push(lte(posts.createdAt, parseDateWithFlexibleTZ(to)));
+  }
+
+  return and(...whereClauses);
+}
 
 export async function addPosts(data: CreatePost[]) {
   // 1. Deduplicate

@@ -8,6 +8,7 @@ import { CheckboxField } from "./fields/checkbox";
 import { CheckboxGroupField } from "./fields/checkbox-group";
 import { ColorField } from "./fields/color";
 import { DateField } from "./fields/date";
+import { DateRangeField } from "./fields/date-range";
 import { FileUploadField } from "./fields/file";
 import { FileImageUploadField } from "./fields/file-image";
 import { InputField } from "./fields/input";
@@ -37,6 +38,7 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
     Textarea: TextareaField,
     Tabs: TabsField,
     Date: DateField,
+    DateRange: DateRangeField,
     SliderRange: SliderRangeField,
   },
   formComponents: {

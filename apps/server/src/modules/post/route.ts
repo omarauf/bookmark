@@ -9,14 +9,14 @@ import { media } from "../media/schema";
 import { normalizeMedia } from "../media/service";
 import { postRepo } from "./repo";
 import { posts } from "./schema";
-import { fetchPost } from "./service";
+import { buildPostFilter, fetchPost } from "./service";
 
 export const postRouter = {
   list: protectedProcedure
     .input(PostSchemas.list.request)
     .output(PostSchemas.list.response)
     .handler(async ({ input }) => {
-      const filters = input.platform ? eq(posts.platform, input.platform) : undefined;
+      const filters = buildPostFilter(input);
 
       const dataQuery = db
         .select({
@@ -41,7 +41,7 @@ export const postRouter = {
         page: input.page,
         perPage: input.perPage,
         orderByColumn: posts.createdAt,
-        orderDirection: "desc",
+        orderDirection: input.sortOrder,
       });
 
       return {

@@ -1,24 +1,23 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { TiktokSchemas } from "@workspace/contracts/tiktok";
+import { PostSchemas } from "@workspace/contracts/post";
 import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
+import { Filter } from "@/modules/post/filter";
 import { PostList } from "@/modules/post/list";
-import { Filter } from "@/modules/tiktok/components/filter";
 
 export const Route = createFileRoute("/_authenticated/tiktok/")({
   component: Tiktok,
-  validateSearch: TiktokSchemas.list.request,
+  validateSearch: PostSchemas.list.request,
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { orpc, queryClient }, deps }) => {
     await queryClient.prefetchInfiniteQuery(
       orpc.post.list.infiniteOptions({
         initialPageParam: 1,
-        input: (searchParams) => ({ ...deps, page: searchParams, limit: 30 }),
+        input: (searchParams) => ({ ...deps, page: searchParams, limit: 30, platform: "tiktok" }),
         getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
-        platform: "tiktok",
       }),
     );
     return;

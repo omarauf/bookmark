@@ -78,6 +78,13 @@
       "when": 1774986614643,
       "tag": "0010_little_screwball",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1775078852785,
+      "tag": "0011_sweet_enchantress",
+      "breakpoints": true
     }
   ]
 }

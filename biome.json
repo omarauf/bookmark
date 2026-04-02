@@ -21,7 +21,9 @@
       "!**/wrangler.jsonc",
       "!**/.source",
       "!**/data/*",
-      "!**/parser/*.json"
+      "!**/parser/*.json",
+      "!**/.output",
+      "!**/.tanstack"
     ]
   },
   "formatter": {

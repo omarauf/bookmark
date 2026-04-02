@@ -19,3 +19,16 @@ export function deepEqual(a: any, b: any): boolean {
 
   return true;
 }
+
+export function containsData(obj: Record<string, unknown> | undefined): boolean {
+  if (obj === undefined) return false;
+  if (Object.keys(obj).length === 0) return false;
+
+  return Object.values(obj).some(
+    (value) =>
+      value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      (!Array.isArray(value) || value.length > 0),
+  );
+}

@@ -2,13 +2,13 @@ import { timestamp, uuid } from "drizzle-orm/pg-core";
 import { v7 as uuidV7 } from "uuid";
 
 export const AuditedEntityModel = {
-  createdAt: timestamp().notNull().defaultNow(),
+  createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 
   //   createdBy: text()
   //     .notNull()
   //     .references(() => users.id, { onDelete: "restrict" }),
 
-  updatedAt: timestamp()
+  updatedAt: timestamp({ withTimezone: true })
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),

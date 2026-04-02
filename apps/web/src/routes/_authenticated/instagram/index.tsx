@@ -5,7 +5,7 @@ import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
-import { Filter } from "@/modules/instagram/components/filter";
+import { Filter } from "@/modules/post/filter";
 import { PostList } from "@/modules/post/list";
 
 export const Route = createFileRoute("/_authenticated/instagram/")({
@@ -48,7 +48,7 @@ function Instagram() {
 
   return (
     <Main className="py-0">
-      <Filter className="sticky top-0 z-10 flex w-full bg-background" />
+      <Filter className="sticky top-0 z-10 flex w-full" />
 
       <InfiniteScroll
         onLoadMore={postQuery.fetchNextPage}

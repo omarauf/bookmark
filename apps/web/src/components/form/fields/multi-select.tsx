@@ -18,6 +18,7 @@ import { useFieldContext } from "../context";
 type Props<T extends string | number> = FormControlProps & {
   placeholder?: string;
   options: { value: T; label: string }[] | undefined;
+  className?: string;
   classNames?: {
     content?: string;
   };
@@ -29,6 +30,7 @@ export function MultiSelectField<T extends string | number = string>({
   placeholder,
   options,
   disabled,
+  className,
   classNames,
   clearable,
   variant = "default",
@@ -55,7 +57,12 @@ export function MultiSelectField<T extends string | number = string>({
       onValuesChange={field.handleChange}
       values={value}
     >
-      <MultiSelectTrigger aria-invalid={isInvalid} id={id} onBlur={field.handleBlur}>
+      <MultiSelectTrigger
+        aria-invalid={isInvalid}
+        id={id}
+        onBlur={field.handleBlur}
+        className={className}
+      >
         {isLoading ? (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="size-4 animate-spin" />

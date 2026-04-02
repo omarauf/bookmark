@@ -17,6 +17,7 @@ const envSchema = z.object({
   S3_ACCESS_KEY: z.string().min(1, "S3_ACCESS_KEY is required"),
   S3_SECRET_KEY: z.string().min(1, "S3_SECRET_KEY is required"),
   S3_BUCKET_NAME: z.string().min(1, "S3_BUCKET_NAME is required"),
+  CLIENT_TIMEZONE: z.union([z.string(), z.number().min(1, "CLIENT_TIMEZONE is required")]),
 });
 
 export const env = envSchema.parse(process.env);

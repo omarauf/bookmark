@@ -17,6 +17,7 @@ import { useFieldContext } from "../context";
 type Props<T extends string | number> = FormControlProps & {
   placeholder?: string;
   options: { value: T; label: string }[] | undefined;
+  className?: string;
   classNames?: {
     content?: string;
   };
@@ -29,6 +30,7 @@ export function SelectField<T extends string | number = string>({
   placeholder,
   options,
   disabled,
+  className,
   classNames,
   variant = "default",
   clearable,
@@ -66,7 +68,7 @@ export function SelectField<T extends string | number = string>({
         aria-invalid={isInvalid}
         id={id}
         onBlur={field.handleBlur}
-        className={cn(icon && "relative ps-9")}
+        className={cn(icon && "relative ps-9", className)}
       >
         {icon && (
           <div className="pointer-events-none absolute inset-s-0 inset-y-0 flex items-center justify-center ps-3 text-muted-foreground/80 group-has-[select[disabled]]:opacity-50">

@@ -1,0 +1,151 @@
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { PostSchemas } from "@workspace/contracts/post";
+import { useEffect, useState } from "react";
+import { useAppForm } from "@/components/form";
+import { Button } from "@/components/ui/button";
+import { orpc } from "@/integrations/orpc";
+import { cn } from "@/lib/utils";
+import { containsData } from "@/utils/object";
+
+export function Filter({ className }: { className?: string }) {
+  const collectionsQuery = useQuery(orpc.collection.all.queryOptions());
+
+  const search = useSearch({ strict: false });
+
+  const navigate = useNavigate();
+
+  const searchData = PostSchemas.list.request.safeParse(search);
+  const filterData = PostSchemas.filter.safeParse(search);
+
+  if (!searchData.success) {
+    throw new Error("Invalid search data");
+  }
+
+  const hasData = containsData(filterData.data);
+
+  const form = useAppForm({
+    defaultValues: {
+      ...searchData.data,
+      rangeData: {
+        from: searchData.data.from,
+        to: searchData.data.to,
+      },
+    },
+    listeners: {
+      onChange({ formApi }) {
+        const { rangeData, ...rest } = formApi.state.values;
+        navigate({ to: ".", search: (prev) => ({ ...prev, ...rest, ...rangeData }) });
+      },
+      onChangeDebounceMs: 500,
+    },
+  });
+
+  const clearFilter = () => {
+    navigate({ to: ".", search: undefined });
+    form.reset(undefined);
+  };
+
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div
+      className={cn(
+        "z-40 flex w-full items-center gap-3 transition-all duration-300",
+        isScrolled
+          ? "sticky top-4 rounded-full border border-border/40 bg-background/80 px-5 py-3 shadow-sm backdrop-blur-md"
+          : "pb-6",
+        className,
+      )}
+    >
+      <div className="no-scrollbar -mb-1 flex flex-1 items-center gap-3 overflow-x-auto pb-1">
+        <form.AppField name="username">
+          {(field) => (
+            <field.Input
+              placeholder="Search username..."
+              className="w-48 bg-background/50 transition-colors focus:bg-background"
+            />
+          )}
+        </form.AppField>
+
+        <form.AppField name="type">
+          {(field) => (
+            <field.Select
+              placeholder="All Types"
+              className="w-36 bg-background/50"
+              options={[
+                { label: "Photo", value: "Photo" },
+                { label: "Video", value: "Video" },
+                { label: "IGTV", value: "IGTV" },
+                { label: "Reel", value: "Reel" },
+                { label: "Carousel", value: "Carousel" },
+              ]}
+            />
+          )}
+        </form.AppField>
+
+        <form.AppField name="collectionIds">
+          {(field) => (
+            <field.MultiSelect
+              placeholder="Collections"
+              className="min-w-48 max-w-64 bg-background/50"
+              options={collectionsQuery.data?.map((t) => ({ label: t.label, value: t.id }))}
+            />
+          )}
+        </form.AppField>
+
+        <form.AppField name="rangeData">
+          {(field) => <field.DateRange placeholder="Date Range" />}
+        </form.AppField>
+
+        <form.AppField name="sortOrder">
+          {(field) => (
+            <field.Tabs
+              defaultValue="desc"
+              options={[
+                { label: "Latest", value: "desc" },
+                { label: "Oldest", value: "asc" },
+              ]}
+            />
+          )}
+        </form.AppField>
+      </div>
+
+      <div className="flex items-center gap-2 border-border/40 border-l pl-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            "text-muted-foreground transition-all duration-300",
+            !isScrolled && "pointer-events-none w-0 overflow-hidden p-0 opacity-0",
+          )}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          Top
+        </Button>
+
+        <Button
+          variant={hasData ? "secondary" : "ghost"}
+          size="sm"
+          disabled={!hasData}
+          onClick={clearFilter}
+          className={cn(
+            "transition-all",
+            hasData ? "text-foreground" : "text-muted-foreground opacity-50",
+          )}
+        >
+          Reset
+        </Button>
+      </div>
+    </div>
+  );
+}

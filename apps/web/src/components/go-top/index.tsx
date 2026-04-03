@@ -1,6 +1,6 @@
-import { Button } from "@workspace/ui/components/button";
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function GoTop() {

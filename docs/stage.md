@@ -1,1 +1,0 @@
-RawData --(Parsing)--> ParsedData --(Mapping)--> MappedData

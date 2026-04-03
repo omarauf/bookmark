@@ -9,95 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SettingsRouteRouteImport } from './routes/settings/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as UsersIndexRouteImport } from './routes/users/index'
-import { Route as TwitterIndexRouteImport } from './routes/twitter/index'
-import { Route as TiktokIndexRouteImport } from './routes/tiktok/index'
-import { Route as TagsIndexRouteImport } from './routes/tags/index'
-import { Route as LinksIndexRouteImport } from './routes/links/index'
-import { Route as InstagramIndexRouteImport } from './routes/instagram/index'
-import { Route as ImportsIndexRouteImport } from './routes/imports/index'
-import { Route as DemoIndexRouteImport } from './routes/demo/index'
-import { Route as CollectionsIndexRouteImport } from './routes/collections/index'
-import { Route as SettingsLinksRouteImport } from './routes/settings/links'
-import { Route as SettingsInstagramRouteImport } from './routes/settings/instagram'
-import { Route as SettingsAppearanceRouteImport } from './routes/settings/appearance'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
+import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedTwitterIndexRouteImport } from './routes/_authenticated/twitter/index'
+import { Route as AuthenticatedTiktokIndexRouteImport } from './routes/_authenticated/tiktok/index'
+import { Route as AuthenticatedTagsIndexRouteImport } from './routes/_authenticated/tags/index'
+import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
+import { Route as AuthenticatedInstagramIndexRouteImport } from './routes/_authenticated/instagram/index'
+import { Route as AuthenticatedImportsIndexRouteImport } from './routes/_authenticated/imports/index'
+import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
+import { Route as AuthenticatedCollectionsIndexRouteImport } from './routes/_authenticated/collections/index'
 
-const SettingsRouteRoute = SettingsRouteRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/_auth/sign-in',
+  path: '/sign-in',
   getParentRoute: () => rootRouteImport,
-} as any)
-const UsersIndexRoute = UsersIndexRouteImport.update({
-  id: '/users/',
-  path: '/users/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TwitterIndexRoute = TwitterIndexRouteImport.update({
-  id: '/twitter/',
-  path: '/twitter/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TiktokIndexRoute = TiktokIndexRouteImport.update({
-  id: '/tiktok/',
-  path: '/tiktok/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TagsIndexRoute = TagsIndexRouteImport.update({
-  id: '/tags/',
-  path: '/tags/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LinksIndexRoute = LinksIndexRouteImport.update({
-  id: '/links/',
-  path: '/links/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InstagramIndexRoute = InstagramIndexRouteImport.update({
-  id: '/instagram/',
-  path: '/instagram/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ImportsIndexRoute = ImportsIndexRouteImport.update({
-  id: '/imports/',
-  path: '/imports/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoIndexRoute = DemoIndexRouteImport.update({
-  id: '/demo/',
-  path: '/demo/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
-  id: '/collections/',
-  path: '/collections/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsLinksRoute = SettingsLinksRouteImport.update({
-  id: '/links',
-  path: '/links',
-  getParentRoute: () => SettingsRouteRoute,
-} as any)
-const SettingsInstagramRoute = SettingsInstagramRouteImport.update({
-  id: '/instagram',
-  path: '/instagram',
-  getParentRoute: () => SettingsRouteRoute,
-} as any)
-const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
-  id: '/appearance',
-  path: '/appearance',
-  getParentRoute: () => SettingsRouteRoute,
 } as any)
 const errors503Route = errors503RouteImport.update({
   id: '/(errors)/503',
@@ -124,107 +66,144 @@ const errors401Route = errors401RouteImport.update({
   path: '/401',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTwitterIndexRoute =
+  AuthenticatedTwitterIndexRouteImport.update({
+    id: '/twitter/',
+    path: '/twitter/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTiktokIndexRoute =
+  AuthenticatedTiktokIndexRouteImport.update({
+    id: '/tiktok/',
+    path: '/tiktok/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTagsIndexRoute = AuthenticatedTagsIndexRouteImport.update({
+  id: '/tags/',
+  path: '/tags/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLinksIndexRoute = AuthenticatedLinksIndexRouteImport.update({
+  id: '/links/',
+  path: '/links/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedInstagramIndexRoute =
+  AuthenticatedInstagramIndexRouteImport.update({
+    id: '/instagram/',
+    path: '/instagram/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedImportsIndexRoute =
+  AuthenticatedImportsIndexRouteImport.update({
+    id: '/imports/',
+    path: '/imports/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedDownloadsIndexRoute =
+  AuthenticatedDownloadsIndexRouteImport.update({
+    id: '/downloads/',
+    path: '/downloads/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCollectionsIndexRoute =
+  AuthenticatedCollectionsIndexRouteImport.update({
+    id: '/collections/',
+    path: '/collections/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/settings': typeof SettingsRouteRouteWithChildren
+  '/': typeof AuthenticatedIndexRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
-  '/settings/appearance': typeof SettingsAppearanceRoute
-  '/settings/instagram': typeof SettingsInstagramRoute
-  '/settings/links': typeof SettingsLinksRoute
-  '/collections': typeof CollectionsIndexRoute
-  '/demo': typeof DemoIndexRoute
-  '/imports': typeof ImportsIndexRoute
-  '/instagram': typeof InstagramIndexRoute
-  '/links': typeof LinksIndexRoute
-  '/tags': typeof TagsIndexRoute
-  '/tiktok': typeof TiktokIndexRoute
-  '/twitter': typeof TwitterIndexRoute
-  '/users': typeof UsersIndexRoute
+  '/sign-in': typeof AuthSignInRoute
+  '/collections/': typeof AuthenticatedCollectionsIndexRoute
+  '/downloads/': typeof AuthenticatedDownloadsIndexRoute
+  '/imports/': typeof AuthenticatedImportsIndexRoute
+  '/instagram/': typeof AuthenticatedInstagramIndexRoute
+  '/links/': typeof AuthenticatedLinksIndexRoute
+  '/tags/': typeof AuthenticatedTagsIndexRoute
+  '/tiktok/': typeof AuthenticatedTiktokIndexRoute
+  '/twitter/': typeof AuthenticatedTwitterIndexRoute
+  '/users/': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/settings': typeof SettingsRouteRouteWithChildren
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
-  '/settings/appearance': typeof SettingsAppearanceRoute
-  '/settings/instagram': typeof SettingsInstagramRoute
-  '/settings/links': typeof SettingsLinksRoute
-  '/collections': typeof CollectionsIndexRoute
-  '/demo': typeof DemoIndexRoute
-  '/imports': typeof ImportsIndexRoute
-  '/instagram': typeof InstagramIndexRoute
-  '/links': typeof LinksIndexRoute
-  '/tags': typeof TagsIndexRoute
-  '/tiktok': typeof TiktokIndexRoute
-  '/twitter': typeof TwitterIndexRoute
-  '/users': typeof UsersIndexRoute
+  '/sign-in': typeof AuthSignInRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/collections': typeof AuthenticatedCollectionsIndexRoute
+  '/downloads': typeof AuthenticatedDownloadsIndexRoute
+  '/imports': typeof AuthenticatedImportsIndexRoute
+  '/instagram': typeof AuthenticatedInstagramIndexRoute
+  '/links': typeof AuthenticatedLinksIndexRoute
+  '/tags': typeof AuthenticatedTagsIndexRoute
+  '/tiktok': typeof AuthenticatedTiktokIndexRoute
+  '/twitter': typeof AuthenticatedTwitterIndexRoute
+  '/users': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/settings': typeof SettingsRouteRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
-  '/settings/appearance': typeof SettingsAppearanceRoute
-  '/settings/instagram': typeof SettingsInstagramRoute
-  '/settings/links': typeof SettingsLinksRoute
-  '/collections/': typeof CollectionsIndexRoute
-  '/demo/': typeof DemoIndexRoute
-  '/imports/': typeof ImportsIndexRoute
-  '/instagram/': typeof InstagramIndexRoute
-  '/links/': typeof LinksIndexRoute
-  '/tags/': typeof TagsIndexRoute
-  '/tiktok/': typeof TiktokIndexRoute
-  '/twitter/': typeof TwitterIndexRoute
-  '/users/': typeof UsersIndexRoute
+  '/_auth/sign-in': typeof AuthSignInRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/collections/': typeof AuthenticatedCollectionsIndexRoute
+  '/_authenticated/downloads/': typeof AuthenticatedDownloadsIndexRoute
+  '/_authenticated/imports/': typeof AuthenticatedImportsIndexRoute
+  '/_authenticated/instagram/': typeof AuthenticatedInstagramIndexRoute
+  '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
+  '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
+  '/_authenticated/tiktok/': typeof AuthenticatedTiktokIndexRoute
+  '/_authenticated/twitter/': typeof AuthenticatedTwitterIndexRoute
+  '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/settings'
     | '/401'
     | '/403'
     | '/404'
     | '/500'
     | '/503'
-    | '/settings/appearance'
-    | '/settings/instagram'
-    | '/settings/links'
-    | '/collections'
-    | '/demo'
-    | '/imports'
-    | '/instagram'
-    | '/links'
-    | '/tags'
-    | '/tiktok'
-    | '/twitter'
-    | '/users'
+    | '/sign-in'
+    | '/collections/'
+    | '/downloads/'
+    | '/imports/'
+    | '/instagram/'
+    | '/links/'
+    | '/tags/'
+    | '/tiktok/'
+    | '/twitter/'
+    | '/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/settings'
     | '/401'
     | '/403'
     | '/404'
     | '/500'
     | '/503'
-    | '/settings/appearance'
-    | '/settings/instagram'
-    | '/settings/links'
+    | '/sign-in'
+    | '/'
     | '/collections'
-    | '/demo'
+    | '/downloads'
     | '/imports'
     | '/instagram'
     | '/links'
@@ -234,145 +213,57 @@ export interface FileRouteTypes {
     | '/users'
   id:
     | '__root__'
-    | '/'
-    | '/settings'
+    | '/_authenticated'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
-    | '/settings/appearance'
-    | '/settings/instagram'
-    | '/settings/links'
-    | '/collections/'
-    | '/demo/'
-    | '/imports/'
-    | '/instagram/'
-    | '/links/'
-    | '/tags/'
-    | '/tiktok/'
-    | '/twitter/'
-    | '/users/'
+    | '/_auth/sign-in'
+    | '/_authenticated/'
+    | '/_authenticated/collections/'
+    | '/_authenticated/downloads/'
+    | '/_authenticated/imports/'
+    | '/_authenticated/instagram/'
+    | '/_authenticated/links/'
+    | '/_authenticated/tags/'
+    | '/_authenticated/tiktok/'
+    | '/_authenticated/twitter/'
+    | '/_authenticated/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   errors401Route: typeof errors401Route
   errors403Route: typeof errors403Route
   errors404Route: typeof errors404Route
   errors500Route: typeof errors500Route
   errors503Route: typeof errors503Route
-  CollectionsIndexRoute: typeof CollectionsIndexRoute
-  DemoIndexRoute: typeof DemoIndexRoute
-  ImportsIndexRoute: typeof ImportsIndexRoute
-  InstagramIndexRoute: typeof InstagramIndexRoute
-  LinksIndexRoute: typeof LinksIndexRoute
-  TagsIndexRoute: typeof TagsIndexRoute
-  TiktokIndexRoute: typeof TiktokIndexRoute
-  TwitterIndexRoute: typeof TwitterIndexRoute
-  UsersIndexRoute: typeof UsersIndexRoute
+  AuthSignInRoute: typeof AuthSignInRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_auth/sign-in': {
+      id: '/_auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/users/': {
-      id: '/users/'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/twitter/': {
-      id: '/twitter/'
-      path: '/twitter'
-      fullPath: '/twitter'
-      preLoaderRoute: typeof TwitterIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tiktok/': {
-      id: '/tiktok/'
-      path: '/tiktok'
-      fullPath: '/tiktok'
-      preLoaderRoute: typeof TiktokIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tags/': {
-      id: '/tags/'
-      path: '/tags'
-      fullPath: '/tags'
-      preLoaderRoute: typeof TagsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/links/': {
-      id: '/links/'
-      path: '/links'
-      fullPath: '/links'
-      preLoaderRoute: typeof LinksIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/instagram/': {
-      id: '/instagram/'
-      path: '/instagram'
-      fullPath: '/instagram'
-      preLoaderRoute: typeof InstagramIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/imports/': {
-      id: '/imports/'
-      path: '/imports'
-      fullPath: '/imports'
-      preLoaderRoute: typeof ImportsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/': {
-      id: '/demo/'
-      path: '/demo'
-      fullPath: '/demo'
-      preLoaderRoute: typeof DemoIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/collections/': {
-      id: '/collections/'
-      path: '/collections'
-      fullPath: '/collections'
-      preLoaderRoute: typeof CollectionsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings/links': {
-      id: '/settings/links'
-      path: '/links'
-      fullPath: '/settings/links'
-      preLoaderRoute: typeof SettingsLinksRouteImport
-      parentRoute: typeof SettingsRouteRoute
-    }
-    '/settings/instagram': {
-      id: '/settings/instagram'
-      path: '/instagram'
-      fullPath: '/settings/instagram'
-      preLoaderRoute: typeof SettingsInstagramRouteImport
-      parentRoute: typeof SettingsRouteRoute
-    }
-    '/settings/appearance': {
-      id: '/settings/appearance'
-      path: '/appearance'
-      fullPath: '/settings/appearance'
-      preLoaderRoute: typeof SettingsAppearanceRouteImport
-      parentRoute: typeof SettingsRouteRoute
     }
     '/(errors)/503': {
       id: '/(errors)/503'
@@ -409,43 +300,119 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof errors401RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/users/': {
+      id: '/_authenticated/users/'
+      path: '/users'
+      fullPath: '/users/'
+      preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/twitter/': {
+      id: '/_authenticated/twitter/'
+      path: '/twitter'
+      fullPath: '/twitter/'
+      preLoaderRoute: typeof AuthenticatedTwitterIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tiktok/': {
+      id: '/_authenticated/tiktok/'
+      path: '/tiktok'
+      fullPath: '/tiktok/'
+      preLoaderRoute: typeof AuthenticatedTiktokIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tags/': {
+      id: '/_authenticated/tags/'
+      path: '/tags'
+      fullPath: '/tags/'
+      preLoaderRoute: typeof AuthenticatedTagsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/links/': {
+      id: '/_authenticated/links/'
+      path: '/links'
+      fullPath: '/links/'
+      preLoaderRoute: typeof AuthenticatedLinksIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/instagram/': {
+      id: '/_authenticated/instagram/'
+      path: '/instagram'
+      fullPath: '/instagram/'
+      preLoaderRoute: typeof AuthenticatedInstagramIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/imports/': {
+      id: '/_authenticated/imports/'
+      path: '/imports'
+      fullPath: '/imports/'
+      preLoaderRoute: typeof AuthenticatedImportsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/downloads/': {
+      id: '/_authenticated/downloads/'
+      path: '/downloads'
+      fullPath: '/downloads/'
+      preLoaderRoute: typeof AuthenticatedDownloadsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/collections/': {
+      id: '/_authenticated/collections/'
+      path: '/collections'
+      fullPath: '/collections/'
+      preLoaderRoute: typeof AuthenticatedCollectionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
-interface SettingsRouteRouteChildren {
-  SettingsAppearanceRoute: typeof SettingsAppearanceRoute
-  SettingsInstagramRoute: typeof SettingsInstagramRoute
-  SettingsLinksRoute: typeof SettingsLinksRoute
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCollectionsIndexRoute: typeof AuthenticatedCollectionsIndexRoute
+  AuthenticatedDownloadsIndexRoute: typeof AuthenticatedDownloadsIndexRoute
+  AuthenticatedImportsIndexRoute: typeof AuthenticatedImportsIndexRoute
+  AuthenticatedInstagramIndexRoute: typeof AuthenticatedInstagramIndexRoute
+  AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
+  AuthenticatedTagsIndexRoute: typeof AuthenticatedTagsIndexRoute
+  AuthenticatedTiktokIndexRoute: typeof AuthenticatedTiktokIndexRoute
+  AuthenticatedTwitterIndexRoute: typeof AuthenticatedTwitterIndexRoute
+  AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
 
-const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
-  SettingsAppearanceRoute: SettingsAppearanceRoute,
-  SettingsInstagramRoute: SettingsInstagramRoute,
-  SettingsLinksRoute: SettingsLinksRoute,
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedCollectionsIndexRoute: AuthenticatedCollectionsIndexRoute,
+  AuthenticatedDownloadsIndexRoute: AuthenticatedDownloadsIndexRoute,
+  AuthenticatedImportsIndexRoute: AuthenticatedImportsIndexRoute,
+  AuthenticatedInstagramIndexRoute: AuthenticatedInstagramIndexRoute,
+  AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,
+  AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,
+  AuthenticatedTiktokIndexRoute: AuthenticatedTiktokIndexRoute,
+  AuthenticatedTwitterIndexRoute: AuthenticatedTwitterIndexRoute,
+  AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
 }
 
-const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
-  SettingsRouteRouteChildren,
-)
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  SettingsRouteRoute: SettingsRouteRouteWithChildren,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   errors401Route: errors401Route,
   errors403Route: errors403Route,
   errors404Route: errors404Route,
   errors500Route: errors500Route,
   errors503Route: errors503Route,
-  CollectionsIndexRoute: CollectionsIndexRoute,
-  DemoIndexRoute: DemoIndexRoute,
-  ImportsIndexRoute: ImportsIndexRoute,
-  InstagramIndexRoute: InstagramIndexRoute,
-  LinksIndexRoute: LinksIndexRoute,
-  TagsIndexRoute: TagsIndexRoute,
-  TiktokIndexRoute: TiktokIndexRoute,
-  TwitterIndexRoute: TwitterIndexRoute,
-  UsersIndexRoute: UsersIndexRoute,
+  AuthSignInRoute: AuthSignInRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

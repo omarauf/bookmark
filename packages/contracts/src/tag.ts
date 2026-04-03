@@ -1,5 +1,4 @@
 import z from "zod";
-import { SortingParamsSchema } from "./common/pagination-query";
 
 const nameSchema = z
   .string()
@@ -9,8 +8,7 @@ const nameSchema = z
 
 const colorSchema = z.string().regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/, "Invalid hex color");
 
-export const TagSchema = z.object({
-  _id: z.string(),
+const TagSchema = z.object({
   id: z.string(),
   name: nameSchema,
   color: colorSchema,
@@ -18,30 +16,35 @@ export const TagSchema = z.object({
   updatedAt: z.date(),
 });
 
-export const TagWithCountSchema = TagSchema.extend({
-  count: z.number().min(0),
-});
+export const TagSchemas = {
+  list: {
+    request: z.object({
+      name: z.string().optional(),
+    }),
+    response: z.object({ ...TagSchema.shape, count: z.number() }).array(),
+  },
 
-export const ListTagSchema = SortingParamsSchema.extend({
-  name: nameSchema.optional(),
-  sortBy: z.enum(["name", "count"]).optional(),
-});
+  options: {
+    request: z.void(),
+    response: z.object({ id: z.uuid(), name: z.string(), color: colorSchema }).array(),
+  },
 
-export const CreateTagSchema = TagSchema.pick({ name: true, color: true }).partial({
-  color: true,
-});
+  create: {
+    request: TagSchema.pick({ name: true, color: true }),
+    response: z.void(),
+  },
 
-export const UpdateTagSchema = TagSchema.pick({
-  id: true,
-  name: true,
-  color: true,
-});
+  update: {
+    request: TagSchema.pick({ id: true, name: true, color: true }),
+    response: z.void(),
+  },
 
-export const DeleteTagSchema = TagSchema.pick({ id: true });
+  delete: {
+    request: z.object({ id: z.string() }),
+    response: z.void(),
+  },
+};
 
 export type Tag = z.infer<typeof TagSchema>;
-export type CreateTag = z.infer<typeof CreateTagSchema>;
-export type UpdateTag = z.infer<typeof UpdateTagSchema>;
-export type ListTags = z.infer<typeof ListTagSchema>;
-export type DeleteTag = z.infer<typeof DeleteTagSchema>;
-export type TagWithCount = z.infer<typeof TagWithCountSchema>;
+export type CreateTag = z.infer<typeof TagSchemas.create.request>;
+export type UpdateTag = z.infer<typeof TagSchemas.update.request>;

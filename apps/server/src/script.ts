@@ -1,71 +1,112 @@
-import { readdir, writeFile } from "fs/promises";
-import { TiktokUserModel } from "./features/posts/tiktok/models/user";
-import { connectDatabase } from "./services/database/connect";
+// import path from "node:path";
+// import cliProgress from "cli-progress";
+// import { and, eq } from "drizzle-orm";
+// import fs from "fs/promises";
+// import { db } from "./core/db";
+// import { s3Client } from "./core/s3";
+// import { creators } from "./modules/creator/schema";
 
-await connectDatabase();
-const existingAvatars = await readdir(
-  "C:\\Repos-2\\bookmark\\manager\\apps\\server\\src\\data\\tiktok\\user",
-);
-const existingUsernames = existingAvatars.map((file) => file.replace(".jpg", ""));
-const nonExistingUsers = await TiktokUserModel.find({
-  username: { $nin: existingUsernames },
-});
-console.log("Non-existing users count:", nonExistingUsers.length);
+// const CHECKPOINT_FILE = path.join(process.cwd(), "src", "upload-checkpoint.json");
+// const dataFolder = path.join(process.cwd(), "src", "data", "twitter", "user");
 
-// console.log(users);
+// const stats = {
+//   s3Exists: 0,
+//   uploaded: 0,
+// };
 
-for (const user of nonExistingUsers) {
-  const username = user.username;
+// async function loadCheckpoint() {
+//   try {
+//     const data = await fs.readFile(CHECKPOINT_FILE, "utf8");
+//     return JSON.parse(data).lastFile || null;
+//   } catch {
+//     return null;
+//   }
+// }
+// async function saveCheckpoint(lastFile: string) {
+//   await fs.writeFile(CHECKPOINT_FILE, JSON.stringify({ lastFile }, null, 2));
+// }
 
-  const response = await fetch(`https://www.tiktok.com/@${username}`);
-  const html = await response.text();
+// function addSuffix(filename: string, suffix: string) {
+//   const ext = path.extname(filename);
+//   const name = path.basename(filename, ext);
+//   return `${name}${suffix}${ext}`;
+// }
 
-  const scriptMatch = html.match(
-    /<script[^>]*id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/,
-  );
-  const script = scriptMatch ? scriptMatch[1] : "";
-  writeFile(`./data/${username}.json`, script);
+// const files = await fs.readdir(dataFolder);
+// const totalCount = files.length;
 
-  const avatarLargerMatch = html.match(/"avatarLarger"\s*:\s*"([^"]+)"/);
-  const url = avatarLargerMatch ? avatarLargerMatch[1] : undefined;
-  if (!url) {
-    console.error(`avatarLarger not found for user: ${username}`);
-    continue;
-  }
+// const progress = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+// progress.start(totalCount, 0);
 
-  const downloadFile = await fetch(url);
-  const buffer = await downloadFile.arrayBuffer();
-  await writeFile(`./data/${username}.jpg`, Buffer.from(buffer));
-  console.log("Avatar downloaded successfully");
-  await new Promise((resolve) => setTimeout(resolve, 300));
+// let lastFile = await loadCheckpoint();
 
-  // Find the script tag containing the JSON data
-  //   const scriptMatch = html.match(
-  //     /<script[^>]*id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/,
-  //   );
+// /**
+//  * Skip files until checkpoint
+//  */
+// let startIndex = 0;
+// if (lastFile) {
+//   const index = files.indexOf(lastFile);
+//   if (index !== -1) {
+//     startIndex = index + 1;
+//     progress.update(startIndex);
+//   }
+// }
 
-  // Regex to directly find the value for "avatarLarger"
+// process.on("SIGINT", async () => {
+//   console.log("\nStopping safely...");
+//   if (lastFile) await saveCheckpoint(lastFile);
+//   progress.stop();
+//   process.exit();
+// });
 
-  //   const script = scriptMatch ? scriptMatch[1] : "";
-  //   const json = JSON.parse(script);
+// for (let i = startIndex; i < files.length; i++) {
+//   const file = files[i];
+//   if (!file) continue;
 
-  //   // Safely extract avatarLarger URL from the scraped JSON
-  //   const avatarLarger =
-  //     json?.["__DEFAULT_SCOPE__"]?.["webapp.user-detail"]?.userInfo?.user?.avatarLarger;
+//   // const modifiedName = file;
+//   // const modifiedName = addSuffix(file, "-0");
+//   const username = path.basename(file, path.extname(file));
 
-  //   if (!avatarLarger) {
-  //     console.error(`avatarLarger not found for user: ${username}`);
-  //     continue;
-  //   }
+//   const creator = await db.query.creators.findFirst({
+//     where: and(eq(creators.username, username), eq(creators.platform, "twitter")),
+//   });
 
-  //   const url = avatarLarger;
-  //   //   const url = json["__DEFAULT_SCOPE__"]["webapp.user-detail"]["userInfo"]["user"]["avatarLarger"];
+//   if (!creator) {
+//     console.warn(`Creator not found for username: ${username}, skipping file: ${file}`);
+//     lastFile = file;
+//     progress.increment();
+//     continue;
+//   }
 
-  //   const downloadFile = await fetch(url);
-  //   const buffer = await downloadFile.arrayBuffer();
-  //   await writeFile(`./data/${username}.jpg`, Buffer.from(buffer));
-  //   console.log("Avatar downloaded successfully");
-  //   await new Promise((resolve) => setTimeout(resolve, 300));
-}
+//   const key = `twitter/avatar/${creator.externalId}.jpg`;
 
-process.exit(1);
+//   const s3Exist = await s3Client.exists(key);
+//   const filePath = path.join(dataFolder, file);
+
+//   if (s3Exist) {
+//     stats.s3Exists++;
+//     lastFile = file;
+//     progress.increment();
+//     await fs.unlink(filePath).catch(() => {});
+//     continue;
+//   }
+
+//   const buffer = await fs.readFile(filePath);
+
+//   await s3Client.upload(key, buffer);
+
+//   await fs.unlink(filePath).catch(() => {});
+
+//   stats.uploaded++;
+//   lastFile = file;
+
+//   progress.increment();
+// }
+
+// if (lastFile) {
+//   await saveCheckpoint(lastFile);
+// }
+
+// progress.stop();
+
+// console.log("Finished:", stats);

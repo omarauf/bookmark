@@ -1,12 +1,11 @@
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
-import { ResponseHeadersPlugin } from "@orpc/server/plugins";
 import type { Context as HonoContext } from "hono";
 import { createContext } from "@/lib/context";
 import { appRouter } from "./common";
 
 const handler = new RPCHandler(appRouter, {
-  plugins: [new ResponseHeadersPlugin()],
+  plugins: [],
   interceptors: [
     onError((error) => {
       if (error instanceof Error) {
@@ -21,7 +20,7 @@ const handler = new RPCHandler(appRouter, {
   ],
 });
 
-export const orpcRouterHandler = async (c: HonoContext, next: () => Promise<void>) => {
+export const rpcRouterHandler = async (c: HonoContext, next: () => Promise<void>) => {
   const context = await createContext({ context: c });
   const { matched, response } = await handler.handle(c.req.raw, {
     prefix: "/rpc",
@@ -31,5 +30,6 @@ export const orpcRouterHandler = async (c: HonoContext, next: () => Promise<void
   if (matched) {
     return c.newResponse(response.body, response);
   }
+
   await next();
 };

@@ -17,8 +17,5 @@ export const InstagramMetadataPostSchema = z.object({
 export const CreateInstagramPostSchema = CreateBaseItemSchema.extend({
   platform: z.literal("instagram"),
   kind: z.literal("post"),
-  // media: InstagramMediaSchema.array(),
-  // taggedCreators: InstagramTaggedCreatorSchema.array(),
-  // creator: CreateInstagramCreatorSchema,
   metadata: InstagramMetadataPostSchema,
 });

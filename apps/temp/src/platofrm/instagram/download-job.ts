@@ -96,7 +96,7 @@ function downloadMedia(post: Media): CreateDownloadTask[] {
             url: video.url,
             type: "video",
             duration: post.video_duration,
-            key: `instagram/post/${commonProps.externalId}-0.mp4`,
+            key: `instagram/post/${commonProps.externalId}-${i}.mp4`,
             height: video.height,
             width: video.width,
           });
@@ -106,7 +106,7 @@ function downloadMedia(post: Media): CreateDownloadTask[] {
             ...commonProps,
             url: image.url,
             type: "image",
-            key: `instagram/post/${commonProps.externalId}-0.jpg`,
+            key: `instagram/post/${commonProps.externalId}-${i}.jpg`,
             height: video.height,
             width: video.width,
           });

@@ -7,5 +7,3 @@ export const InstagramLocationSchema = z.object({
   city: z.string(),
   address: z.string(),
 });
-
-// export type InstagramLocation = z.infer<typeof InstagramLocationSchema>;

@@ -1,7 +1,6 @@
 import type { CreateItem } from "@/contracts/item";
-import type { Media } from "@/contracts/raw/instagram";
+import type { Media, MediaProductType } from "@/contracts/raw/instagram";
 import { locationParser } from "./location";
-import { getMediaType } from "./media";
 import { musicParser } from "./music";
 
 export function postParser(post: Media): CreateItem {
@@ -30,4 +29,29 @@ export function postParser(post: Media): CreateItem {
       type: type,
     },
   };
+}
+
+function getMediaType(media_type: number, product_type: MediaProductType) {
+  if (media_type === 1) {
+    return "Photo";
+  }
+
+  if (media_type === 2) {
+    switch (product_type) {
+      case "feed":
+        return "Video";
+      case "igtv":
+        return "IGTV";
+      case "clips":
+        return "Reel";
+      default:
+        throw new Error(`Unknown product_type: ${product_type}`);
+    }
+  }
+
+  if (media_type === 8) {
+    return "Carousel";
+  }
+
+  throw new Error(`Unsupported media_type: ${media_type}`);
 }

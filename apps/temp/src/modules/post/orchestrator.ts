@@ -1,46 +1,46 @@
-import type { Platform } from "@workspace/contracts/platform";
-import type { PlatformHandler } from "@/core/platform";
-import { InstagramHandler } from "@/platforms/instagram/handler";
-import { TiktokHandler } from "@/platforms/tiktok/handler";
-import { TwitterHandler } from "@/platforms/twitter/handler";
+// import type { Platform } from "@workspace/contracts/platform";
+// import type { PlatformHandler } from "@/core/platform";
+// import { InstagramHandler } from "@/platforms/instagram/handler";
+// import { TiktokHandler } from "@/platforms/tiktok/handler";
+// import { TwitterHandler } from "@/platforms/twitter/handler";
 
-class PostOrchestrator {
-  private handlers = new Map<Platform, PlatformHandler>();
+// class PostOrchestrator {
+//   private handlers = new Map<Platform, PlatformHandler>();
 
-  constructor() {
-    const instagramHandler = new InstagramHandler();
-    const tiktokHandler = new TiktokHandler();
-    const twitterHandler = new TwitterHandler();
-    this.handlers.set(instagramHandler.platform, instagramHandler);
-    this.handlers.set(tiktokHandler.platform, tiktokHandler);
-    this.handlers.set(twitterHandler.platform, twitterHandler);
-  }
+//   constructor() {
+//     const instagramHandler = new InstagramHandler();
+//     const tiktokHandler = new TiktokHandler();
+//     const twitterHandler = new TwitterHandler();
+//     this.handlers.set(instagramHandler.platform, instagramHandler);
+//     this.handlers.set(tiktokHandler.platform, tiktokHandler);
+//     this.handlers.set(twitterHandler.platform, twitterHandler);
+//   }
 
-  validate(type: Platform, data: string) {
-    const handler = this.handlers.get(type);
-    if (!handler) throw new Error("Unsupported platform");
+//   validate(type: Platform, data: string) {
+//     const handler = this.handlers.get(type);
+//     if (!handler) throw new Error("Unsupported platform");
 
-    return handler.validate(data);
-  }
+//     return handler.validate(data);
+//   }
 
-  process(type: Platform, data: string) {
-    const handler = this.handlers.get(type);
-    if (!handler) throw new Error("Unsupported platform");
+//   process(type: Platform, data: string) {
+//     const handler = this.handlers.get(type);
+//     if (!handler) throw new Error("Unsupported platform");
 
-    const parsed = handler.parse(data);
-    return parsed;
-  }
+//     const parsed = handler.parse(data);
+//     return parsed;
+//   }
 
-  bulkProcess(type: Platform, data: string) {
-    const handler = this.handlers.get(type);
+//   bulkProcess(type: Platform, data: string) {
+//     const handler = this.handlers.get(type);
 
-    if (!handler) throw new Error("Unsupported platform");
+//     if (!handler) throw new Error("Unsupported platform");
 
-    const parsed = handler.parse(data);
-    const map = handler.map(parsed);
+//     const parsed = handler.parse(data);
+//     const map = handler.map(parsed);
 
-    return map;
-  }
-}
+//     return map;
+//   }
+// }
 
-export const postOrchestrator = new PostOrchestrator();
+// export const postOrchestrator = new PostOrchestrator();

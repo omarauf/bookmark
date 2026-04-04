@@ -1,4 +1,4 @@
-import type { InstagramMusic } from "@/contracts/platform/instagram";
+import type { InstagramMusic } from "@/contracts/platform/instagram/music";
 import type { ClipsMetadata } from "@/contracts/raw/instagram";
 
 export function musicParser(clip?: ClipsMetadata): InstagramMusic | undefined {

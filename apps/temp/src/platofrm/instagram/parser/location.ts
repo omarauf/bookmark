@@ -1,4 +1,4 @@
-import type { InstagramLocation } from "@/contracts/platform/instagram";
+import type { InstagramLocation } from "@/contracts/platform/instagram/location";
 import type { Location } from "@/contracts/raw/instagram";
 
 export function locationParser(location?: Location): InstagramLocation | undefined {

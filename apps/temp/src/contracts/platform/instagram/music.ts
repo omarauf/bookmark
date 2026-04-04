@@ -14,3 +14,5 @@ export const InstagramMusicSchema = z.union([
   InstagramMusicOriginalSchema,
   InstagramMusicNonOriginalSchema,
 ]);
+
+export type InstagramMusic = z.infer<typeof InstagramMusicSchema>;

@@ -1,4 +1,4 @@
-// import type { RichItem, RichItemRelation } from "@workspace/contracts/item";
+// import type { RichItem, RichRelation } from "@workspace/contracts/item";
 // import type { Media } from "@/modules/media/schema";
 // import type { ItemEntity, RelationEntity } from "../schema";
 
@@ -42,7 +42,7 @@
 //   };
 // }
 
-// function mapOutgoing(relation: RawItem["outgoing"][number]): RichItemRelation {
+// function mapOutgoing(relation: RawItem["outgoing"][number]): RichRelation {
 //   const item = mapItem(relation.toItem);
 
 //   return {

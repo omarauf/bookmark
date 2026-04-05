@@ -15,6 +15,13 @@
       "when": 1775423915239,
       "tag": "0001_flippant_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775426975627,
+      "tag": "0002_jittery_nebula",
+      "breakpoints": true
     }
   ]
 }

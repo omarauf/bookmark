@@ -1,7 +1,8 @@
 import type { Post } from "@workspace/contracts/post";
-import type { ItemEntity, RelationEntity } from "@/modules/item/schema";
+import type { ItemEntity } from "@/modules/item/schema";
 import type { Media } from "@/modules/media/schema";
 import { normalizeMedia } from "@/modules/media/service";
+import type { RelationEntity } from "@/modules/relation/schema";
 
 type RawItem = ItemEntity & {
   media: Media[];

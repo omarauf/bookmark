@@ -1,26 +1,25 @@
 import z from "zod";
-import { BasePaginationQuerySchema, PaginationResultSchema } from "../common/pagination-query";
+import { KindEnum, PlatformEnum } from "../common/platform";
 import { CreateDownloadTaskSchema } from "../download-task";
-import { CreateItemRelationSchema } from "../item-relation/entity";
+import { CreateRelationSchema } from "../relation/entity";
 import { CreateItemSchema, ItemSchema } from "./entity";
 import { ItemFilterSchema } from "./filter";
-import { RichItemSchema } from "./rich";
 
 export const ItemSchemas = {
   create: CreateItemSchema,
   filter: ItemFilterSchema,
   import: z.object({
     items: CreateItemSchema.array(),
-    relations: CreateItemRelationSchema.array(),
+    relations: CreateRelationSchema.array(),
     downloadTask: CreateDownloadTaskSchema.array(),
   }),
 
-  list: {
-    request: BasePaginationQuerySchema.extend({
-      ...ItemFilterSchema.shape,
-    }),
-    response: PaginationResultSchema(RichItemSchema),
-  },
+  // list: {
+  //   request: BasePaginationQuerySchema.extend({
+  //     ...ItemFilterSchema.shape,
+  //   }),
+  //   response: PaginationResultSchema(RichItemSchema),
+  // },
 
   get: {
     request: z.object({ id: z.uuid() }),
@@ -45,7 +44,11 @@ export const ItemSchemas = {
   },
 
   deleteAll: {
-    request: z.object({ hard: z.boolean().default(false) }),
+    request: z.object({
+      platform: PlatformEnum.optional(),
+      kind: KindEnum.optional(),
+      hard: z.boolean().default(false),
+    }),
     response: z.void(),
   },
 };
@@ -54,5 +57,5 @@ export type Item = z.infer<typeof ItemSchema>;
 export type ItemMetadata = Item["metadata"];
 export type CreateItem = z.infer<typeof CreateItemSchema>;
 export type ItemImport = z.infer<typeof ItemSchemas.import>;
-export type ListItem = z.infer<typeof ItemSchemas.list.request>;
+// export type ListItem = z.infer<typeof ItemSchemas.list.request>;
 export type UpdateItem = z.infer<typeof ItemSchemas.update.request>;

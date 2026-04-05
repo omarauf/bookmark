@@ -8,7 +8,7 @@
     "./collection": "./src/collection/index.ts",
     "./import": "./src/import/index.ts",
     "./item": "./src/item/index.ts",
-    "./item-relation": "./src/item-relation/index.ts",
+    "./relation": "./src/relation/index.ts",
     "./platform": "./src/common/platform.ts",
     "./instagram": "./src/platform/instagram/index.ts",
     "./twitter": "./src/platform/twitter/index.ts",

@@ -3,7 +3,7 @@ import type { Platform } from "@workspace/contracts/platform";
 import type { ItemList, Tiktok } from "@workspace/contracts/raw/tiktok";
 import type { PlatformHandler } from "@/core/platform";
 import { jsonParse } from "@/utils/object";
-import { itemRelation } from "../common/relation";
+import { relation } from "../common/relation";
 import { toDownloadTasks } from "./download-job";
 import { creatorParser } from "./parser/creator";
 import { postParser } from "./parser/post";
@@ -55,7 +55,7 @@ export class TiktokHandler implements PlatformHandler {
 
     const downloadJob = toDownloadTasks(post);
 
-    const createdRelations = itemRelation(postItem, creator, "created_by");
+    const createdRelations = relation(postItem, creator, "created_by");
 
     const items = [postItem, creator];
     const relations = createdRelations;

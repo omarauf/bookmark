@@ -3,7 +3,7 @@ import type { Platform } from "@workspace/contracts/platform";
 import type { Instagram, Media } from "@workspace/contracts/raw/instagram";
 import type { PlatformHandler } from "@/core/platform";
 import { jsonParse } from "@/utils/object";
-import { itemRelation } from "../common/relation";
+import { relation } from "../common/relation";
 import { toDownloadTasks } from "./download-job";
 import { creatorParser } from "./parser/creator";
 import { postParser } from "./parser/post";
@@ -58,7 +58,7 @@ export class InstagramHandler implements PlatformHandler {
 
     const downloadTask = toDownloadTasks(post);
 
-    const taggedRelations = itemRelation(
+    const taggedRelations = relation(
       postItem,
       taggedCreators.map((t) => ({
         x: t.x,
@@ -68,7 +68,7 @@ export class InstagramHandler implements PlatformHandler {
       "tagged",
     );
 
-    const createdRelations = itemRelation(postItem, creator, "created_by");
+    const createdRelations = relation(postItem, creator, "created_by");
 
     const items = [postItem, creator, ...taggedCreators.map((t) => t.creator)];
     const relations = [...taggedRelations, ...createdRelations];

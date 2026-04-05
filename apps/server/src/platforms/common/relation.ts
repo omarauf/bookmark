@@ -1,4 +1,4 @@
-import type { CreateItemRelation, Relation } from "@workspace/contracts/item-relation";
+import type { CreateRelation, Relation } from "@workspace/contracts/relation";
 
 type FromItem = {
   externalId: string;
@@ -10,11 +10,7 @@ type ToItem = {
   y?: number;
 };
 
-export function itemRelation(
-  from: FromItem,
-  to: ToItem | ToItem[],
-  type: Relation,
-): CreateItemRelation[] {
+export function relation(from: FromItem, to: ToItem | ToItem[], type: Relation): CreateRelation[] {
   const toArray = Array.isArray(to) ? to : [to];
 
   return toArray.map((toItem) => ({

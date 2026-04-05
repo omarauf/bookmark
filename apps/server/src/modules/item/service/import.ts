@@ -1,9 +1,10 @@
 import type { CreateItem } from "@workspace/contracts/item";
-import type { CreateItemRelation } from "@workspace/contracts/item-relation";
+import type { CreateRelation } from "@workspace/contracts/relation";
 import { and, eq, inArray, or } from "drizzle-orm";
 import { v7 as uuidV7 } from "uuid";
 import { db } from "@/core/db";
-import { itemRelations, items } from "../schema";
+import { relations } from "@/modules/relation/schema";
+import { items } from "../schema";
 
 /**
  * Deduplicates items by `${platform}:${externalId}`.
@@ -19,7 +20,7 @@ function deduplicateItems(inputItems: CreateItem[]) {
  * Deduplicates relations by `${fromExternalId}:${toExternalId}:${relationType}`.
  * Keeps the first occurrence of each unique key.
  */
-function deduplicateRelations(inputRelations: CreateItemRelation[]) {
+function deduplicateRelations(inputRelations: CreateRelation[]) {
   return Array.from(
     new Map(
       inputRelations.map((relation) => [
@@ -94,7 +95,7 @@ function buildExternalIdMap(
  * Skips relations where either endpoint cannot be resolved.
  */
 function mapRelationsToInternalIds(
-  uniqueRelations: CreateItemRelation[],
+  uniqueRelations: CreateRelation[],
   externalIdMap: Map<string, string>,
 ) {
   return uniqueRelations
@@ -142,18 +143,18 @@ async function getExistingRelations(
 
   return db
     .select({
-      fromItemId: itemRelations.fromItemId,
-      toItemId: itemRelations.toItemId,
-      relationType: itemRelations.relationType,
+      fromItemId: relations.fromItemId,
+      toItemId: relations.toItemId,
+      relationType: relations.relationType,
     })
-    .from(itemRelations)
+    .from(relations)
     .where(
       or(
         ...uniqueMappedRelations.map((relation) =>
           and(
-            eq(itemRelations.fromItemId, relation.fromItemId),
-            eq(itemRelations.toItemId, relation.toItemId),
-            eq(itemRelations.relationType, relation.relationType),
+            eq(relations.fromItemId, relation.fromItemId),
+            eq(relations.toItemId, relation.toItemId),
+            eq(relations.relationType, relation.relationType),
           ),
         ),
       ),
@@ -193,10 +194,7 @@ function filterNewRelations(
  * - Skips unresolved relations and existing relation rows.
  * - Uses a transaction to ensure atomic inserts.
  */
-export async function importItems(
-  createdItems: CreateItem[],
-  createdRelations: CreateItemRelation[],
-) {
+export async function importItems(createdItems: CreateItem[], createdRelations: CreateRelation[]) {
   // Step 1: Deduplicate input data
   const uniqueItems = deduplicateItems(createdItems);
   const uniqueRelations = deduplicateRelations(createdRelations);
@@ -226,7 +224,7 @@ export async function importItems(
     }
 
     if (relationsToInsert.length > 0) {
-      await tx.insert(itemRelations).values(relationsToInsert);
+      await tx.insert(relations).values(relationsToInsert);
     }
   });
 }

@@ -6,4 +6,5 @@ export * from "@/modules/import/schema";
 export * from "@/modules/item/schema";
 export * from "@/modules/link/schema";
 export * from "@/modules/media/schema";
+export * from "@/modules/relation/schema";
 export * from "@/modules/tag/schema";

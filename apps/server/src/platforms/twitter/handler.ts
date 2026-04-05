@@ -1,11 +1,11 @@
 import type { CreateDownloadTask } from "@workspace/contracts/download-task";
 import { type CreateItem, type ItemImport, ItemSchemas } from "@workspace/contracts/item";
-import type { CreateItemRelation } from "@workspace/contracts/item-relation";
 import type { Platform } from "@workspace/contracts/platform";
 import type { TweetResults, Twitter } from "@workspace/contracts/raw/twitter";
+import type { CreateRelation } from "@workspace/contracts/relation";
 import type { PlatformHandler } from "@/core/platform";
 import { jsonParse } from "@/utils/object";
-import { itemRelation } from "../common/relation";
+import { relation } from "../common/relation";
 import { getCreator, getTweet } from "./parser/common";
 import { creatorParser } from "./parser/creator";
 import { postParser } from "./parser/post";
@@ -62,17 +62,17 @@ export class TwitterHandler implements PlatformHandler {
 
     const tweet = postParser(getTweet(data));
     const creator = creatorParser(getCreator(data));
-    const createdRelations = itemRelation(tweet.item, creator.item, "created_by");
+    const createdRelations = relation(tweet.item, creator.item, "created_by");
 
     const items: CreateItem[] = [tweet.item, creator.item];
-    const relations: CreateItemRelation[] = [...createdRelations];
+    const relations: CreateRelation[] = [...createdRelations];
     const downloadTasks: CreateDownloadTask[] = [...tweet.media, creator.media];
 
     const quotedItem = this.getQuotedTweet(data);
     if (quotedItem) {
       const { quotedTweet, quotedCreator } = quotedItem;
-      const quotedRelations = itemRelation(tweet.item, quotedTweet.item, "quoted");
-      const creatorRelations = itemRelation(quotedTweet.item, quotedCreator.item, "created_by");
+      const quotedRelations = relation(tweet.item, quotedTweet.item, "quoted");
+      const creatorRelations = relation(quotedTweet.item, quotedCreator.item, "created_by");
 
       items.push(quotedTweet.item, quotedCreator.item);
       relations.push(...quotedRelations, ...creatorRelations);

@@ -3,7 +3,8 @@ import { and, count, eq, exists, gte, ilike, lte, type SQL, sql } from "drizzle-
 import { alias } from "drizzle-orm/pg-core";
 import { parseDateWithFlexibleTZ } from "@/core/date";
 import { db } from "@/core/db";
-import { itemRelations, items } from "@/modules/item/schema";
+import { items } from "@/modules/item/schema";
+import { relations } from "@/modules/relation/schema";
 import { mapItemToPost } from "./mapper";
 
 export async function listItem(input: ListPost) {
@@ -65,12 +66,12 @@ function buildItemFilter(filter: PostFilter) {
       exists(
         db
           .select()
-          .from(itemRelations)
-          .leftJoin(related_item, eq(related_item.id, itemRelations.toItemId))
+          .from(relations)
+          .leftJoin(related_item, eq(related_item.id, relations.toItemId))
           .where(
             and(
-              eq(itemRelations.relationType, "created_by"),
-              eq(itemRelations.fromItemId, items.id),
+              eq(relations.relationType, "created_by"),
+              eq(relations.fromItemId, items.id),
               ilike(sql`(${related_item.metadata}->>'name')`, `%${username}%`),
             ),
           ),

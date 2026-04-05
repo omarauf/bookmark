@@ -5,7 +5,7 @@ import { RelationEnum } from "./enum";
 // [Post] --mentions--> [Movie]
 // [Post A] --related--> [Post B]
 
-export const ItemRelationSchema = z.object({
+export const RelationSchema = z.object({
   fromItemId: z.uuid(),
   toItemId: z.uuid(),
 
@@ -17,7 +17,7 @@ export const ItemRelationSchema = z.object({
   y: z.number().optional(),
 });
 
-export const CreateItemRelationSchema = z.object({
+export const CreateRelationSchema = z.object({
   fromExternalId: z.string(),
   toExternalId: z.string(),
 
@@ -28,5 +28,5 @@ export const CreateItemRelationSchema = z.object({
   y: z.number().optional(),
 });
 
-export type ItemRelation = z.infer<typeof ItemRelationSchema>;
-export type CreateItemRelation = z.infer<typeof CreateItemRelationSchema>;
+export type Relation = z.infer<typeof RelationSchema>;
+export type CreateRelation = z.infer<typeof CreateRelationSchema>;

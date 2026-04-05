@@ -28,7 +28,7 @@ export function Content({ post }: Props) {
   console.log("Form");
 
   const updateMutation = useMutation(
-    orpc.post.update.mutationOptions({
+    orpc.item.update.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: orpc.post.list.key() });
         toast.success("Post updated successfully");

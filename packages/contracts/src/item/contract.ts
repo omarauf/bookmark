@@ -1,0 +1,58 @@
+import z from "zod";
+import { BasePaginationQuerySchema, PaginationResultSchema } from "../common/pagination-query";
+import { CreateDownloadTaskSchema } from "../download-task";
+import { CreateItemRelationSchema } from "../item-relation/entity";
+import { CreateItemSchema, ItemSchema } from "./entity";
+import { ItemFilterSchema } from "./filter";
+import { RichItemSchema } from "./rich";
+
+export const ItemSchemas = {
+  create: CreateItemSchema,
+  filter: ItemFilterSchema,
+  import: z.object({
+    items: CreateItemSchema.array(),
+    relations: CreateItemRelationSchema.array(),
+    downloadTask: CreateDownloadTaskSchema.array(),
+  }),
+
+  list: {
+    request: BasePaginationQuerySchema.extend({
+      ...ItemFilterSchema.shape,
+    }),
+    response: PaginationResultSchema(RichItemSchema),
+  },
+
+  get: {
+    request: z.object({ id: z.uuid() }),
+    response: ItemSchema,
+  },
+
+  update: {
+    request: z.object({
+      id: z.uuid(),
+      note: z.string().optional(),
+      rate: z.number().optional(),
+      tagIds: z.uuid().array(),
+      collectionId: z.uuid().optional(),
+      favorite: z.boolean().optional(),
+    }),
+    response: z.void(),
+  },
+
+  delete: {
+    request: z.object({ id: z.string(), hard: z.boolean().default(false) }),
+    response: z.void(),
+  },
+
+  deleteAll: {
+    request: z.object({ hard: z.boolean().default(false) }),
+    response: z.void(),
+  },
+};
+
+export type Item = z.infer<typeof ItemSchema>;
+export type ItemMetadata = Item["metadata"];
+export type CreateItem = z.infer<typeof CreateItemSchema>;
+export type ItemImport = z.infer<typeof ItemSchemas.import>;
+export type ListItem = z.infer<typeof ItemSchemas.list.request>;
+export type UpdateItem = z.infer<typeof ItemSchemas.update.request>;

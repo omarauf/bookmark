@@ -1,14 +1,21 @@
 import z from "zod";
-import { BaseCreatorSchema, CreateBaseCreatorSchema } from "../base/creator";
 
-export const InstagramCreatorSchema = BaseCreatorSchema.extend({
-  platform: z.literal("instagram"),
-});
+// const InstagramMetadataCreatorSchema = z.object({
+//   username: z.string(),
+//   verified: z.boolean().optional(),
+//   name: z.string().optional(),
+// });
 
-export const CreateInstagramCreatorSchema = CreateBaseCreatorSchema.extend({
-  platform: z.literal("instagram"),
-});
+// export const CreateInstagramCreatorSchema = z.object({
+//   platform: z.literal("instagram"),
+//   kind: z.literal("profile"),
+//   metadata: InstagramMetadataCreatorSchema,
+// });
 
 export const InstagramMetadataCreatorSchema = z.object({
   platform: z.literal("instagram"),
+  kind: z.literal("profile"),
+  username: z.string(),
+  verified: z.boolean().optional(),
+  name: z.string().optional(),
 });

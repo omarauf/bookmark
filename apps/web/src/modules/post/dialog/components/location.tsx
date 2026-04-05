@@ -4,7 +4,8 @@ import { usePostContext } from "../utils/context";
 export function Location() {
   const { metadata } = usePostContext();
 
-  const location = metadata.platform === "instagram" ? metadata.location : undefined;
+  const location =
+    metadata.platform === "instagram" && metadata.kind === "post" ? metadata.location : undefined;
   if (!location) return null;
 
   return (

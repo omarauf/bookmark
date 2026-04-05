@@ -35,7 +35,7 @@ export const downloadTaskRouter = {
     }),
 
   stats: protectedProcedure.output(DownloadTaskSchemas.stats.response).handler(async () => {
-    const [statusStats, platformStats, referenceTypeStats] = await Promise.all([
+    const [statusStats, platformStats] = await Promise.all([
       db
         .select({ status: downloadTasks.status, count: count() })
         .from(downloadTasks)
@@ -44,10 +44,6 @@ export const downloadTaskRouter = {
         .select({ platform: downloadTasks.platform, count: count() })
         .from(downloadTasks)
         .groupBy(downloadTasks.platform),
-      db
-        .select({ referenceType: downloadTasks.referenceType, count: count() })
-        .from(downloadTasks)
-        .groupBy(downloadTasks.referenceType),
     ]);
 
     const result: z.infer<typeof DownloadTaskSchemas.stats.response> = {
@@ -62,10 +58,6 @@ export const downloadTaskRouter = {
         tiktok: 0,
         twitter: 0,
       },
-      byReferenceType: {
-        creator: 0,
-        post: 0,
-      },
     };
 
     for (const stat of statusStats) {
@@ -78,10 +70,6 @@ export const downloadTaskRouter = {
 
     for (const stat of platformStats) {
       result.byPlatform[stat.platform] = Number(stat.count);
-    }
-
-    for (const stat of referenceTypeStats) {
-      result.byReferenceType[stat.referenceType] = Number(stat.count);
     }
 
     return result;

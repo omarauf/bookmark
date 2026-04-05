@@ -1,5 +1,5 @@
 import { formOptions } from "@tanstack/react-form";
-import type { UpdatePost } from "@workspace/contracts/post";
+import type { UpdateItem } from "@workspace/contracts/item";
 
 export const formOpts = formOptions({
   defaultValues: {
@@ -9,5 +9,5 @@ export const formOpts = formOptions({
     favorite: undefined,
     note: undefined,
     rate: undefined,
-  } as UpdatePost,
+  } as UpdateItem,
 });

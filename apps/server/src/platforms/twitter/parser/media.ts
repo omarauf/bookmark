@@ -1,3 +1,4 @@
+import type { CreateDownloadTask } from "@workspace/contracts/download-task";
 import type {
   FluffyMedia,
   PurpleMedia,
@@ -5,44 +6,70 @@ import type {
   Variant,
 } from "@workspace/contracts/raw/twitter";
 import { MediaType } from "@workspace/contracts/raw/twitter";
-import type { TwitterMedia } from "@workspace/contracts/twitter";
 
-export function mediaParser(media: TentacledMedia | PurpleMedia | FluffyMedia): TwitterMedia {
-  switch (media.type) {
-    case MediaType.AnimatedGIF:
-    case MediaType.Video: {
-      const maxVideo = media.video_info?.variants.reduce<Variant | null>((max, v) => {
-        if (v.bitrate === undefined) return max; // skip items without bitrate
-        if (!max || (max.bitrate !== undefined && v.bitrate > max.bitrate)) {
-          return v;
+export function mediaParser(
+  externalId: string,
+  media: (TentacledMedia | PurpleMedia | FluffyMedia)[],
+): CreateDownloadTask[] {
+  const mediaDownloadTasks: CreateDownloadTask[] = [];
+
+  media.forEach((m, i) => {
+    switch (m.type) {
+      case MediaType.AnimatedGIF:
+      case MediaType.Video: {
+        const maxVideo = m.video_info?.variants.reduce<Variant | null>((max, v) => {
+          if (v.bitrate === undefined) return max; // skip items without bitrate
+          if (!max || (max.bitrate !== undefined && v.bitrate > max.bitrate)) {
+            return v;
+          }
+          return max;
+        }, null);
+
+        if (!maxVideo) {
+          throw new Error("No video variants found");
         }
-        return max;
-      }, null);
 
-      if (!maxVideo) {
-        throw new Error("No video variants found");
+        mediaDownloadTasks.push({
+          type: MediaType.Video ? "video" : "gif",
+          url: maxVideo.url,
+          key: `twitter/post/${externalId}-${i}.mp4`,
+          externalId,
+          platform: "twitter",
+          width: m.original_info.width,
+          height: m.original_info.height,
+          duration: m.video_info?.duration_millis ? m.video_info.duration_millis / 1000 : 0,
+          // TODO: add size if possible for all platform re-check again
+        });
+
+        mediaDownloadTasks.push({
+          type: "image",
+          url: m.media_url_https,
+          externalId,
+          platform: "twitter",
+          key: `twitter/post/${externalId}-${i}.jpg`,
+          width: m.original_info.width,
+          height: m.original_info.height,
+        });
+        break;
       }
 
-      return {
-        mediaType: MediaType.Video ? "video" : "gif",
-        url: maxVideo.url,
-        width: media.original_info.width,
-        height: media.original_info.height,
-        thumbnail: media.media_url_https,
-        duration: media.video_info?.duration_millis ? media.video_info.duration_millis / 1000 : 0,
-      };
-    }
+      case MediaType.Photo: {
+        mediaDownloadTasks.push({
+          externalId,
+          key: `twitter/post/${externalId}-${i}.jpg`,
+          platform: "twitter",
+          type: "image",
+          url: m.media_url_https,
+          width: m.original_info.width,
+          height: m.original_info.height,
+        });
+        break;
+      }
 
-    case MediaType.Photo: {
-      return {
-        mediaType: "image",
-        url: media.media_url_https,
-        width: media.original_info.width,
-        height: media.original_info.height,
-      };
+      default:
+        throw new Error(`Unknown media type: ${m.type}`);
     }
+  });
 
-    default:
-      throw new Error(`Unknown media type: ${media.type}`);
-  }
+  return mediaDownloadTasks;
 }

@@ -1,4 +1,3 @@
-import type { ReferenceType } from "@workspace/contracts/media";
 import type { Platform } from "@workspace/contracts/platform";
 
 type Props = {
@@ -10,7 +9,6 @@ type Props = {
     failed: number;
     exists: number;
     byPlatform: Record<Platform, number>;
-    byReferenceType: Record<ReferenceType, number>;
   };
 };
 
@@ -80,22 +78,6 @@ export function StatsOverview({ stats }: Props) {
                 <span className="font-mono text-2xl text-foreground tracking-tighter">{count}</span>
                 <span className="font-mono text-[10px] text-muted-foreground uppercase">
                   {platform}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <span className="mb-4 block font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-            By Reference Type
-          </span>
-          <div className="flex flex-wrap gap-6">
-            {Object.entries(stats.byReferenceType || {}).map(([refType, count]) => (
-              <div key={refType} className="flex flex-col gap-1">
-                <span className="font-mono text-2xl text-foreground tracking-tighter">{count}</span>
-                <span className="font-mono text-[10px] text-muted-foreground uppercase">
-                  {refType}
                 </span>
               </div>
             ))}

@@ -85,7 +85,7 @@ export class MiniRepository<T extends PgTable> implements IRepository<T> {
   ): Promise<InferSelectModel<T> | undefined> {
     const results = (await this.db
       .update(this.table)
-      .set(data)
+      .set(data as any)
       .where(eq(this.idColumn, id))
       .returning()) as InferSelectModel<T>[];
 

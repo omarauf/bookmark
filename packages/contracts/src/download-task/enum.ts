@@ -12,10 +12,3 @@ export const DownloadStatusValues = DownloadStatusEnum.options as [
   DownloadStatus,
   ...DownloadStatus[],
 ];
-
-export const DownloadTargetEnum = z.enum(["post", "creator"]);
-export type DownloadTarget = z.infer<typeof DownloadTargetEnum>;
-export const DownloadTargetValues = DownloadTargetEnum.options as [
-  DownloadTarget,
-  ...DownloadTarget[],
-];

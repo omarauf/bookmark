@@ -1,7 +1,6 @@
 import z from "zod";
 import { BasePaginationQuerySchema, PaginationResultSchema } from "../common/pagination-query";
 import { PlatformEnum } from "../common/platform";
-import { ReferenceTypeEnum } from "../media/enum";
 import { DownloadTaskSchema } from "./entity";
 import { DownloadStatusEnum } from "./enum";
 
@@ -23,7 +22,6 @@ export const DownloadTaskSchemas = {
       failed: z.number(),
       exists: z.number(),
       byPlatform: z.record(PlatformEnum, z.number()),
-      byReferenceType: z.record(ReferenceTypeEnum, z.number()),
     }),
   },
 };

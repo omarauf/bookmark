@@ -6,6 +6,7 @@ import { detectLanguage } from "@/utils/string";
 import * as icons from "./icons";
 import { TwitterMediaCard } from "./media";
 import { Stats } from "./stats";
+import { isVerified } from "./utils";
 
 type Props = {
   post: Post;
@@ -23,7 +24,7 @@ export function TwitterCard({ post }: Props) {
         <div className="ml-3">
           <div className="flex items-center gap-1">
             <p className="font-bold text-sm">{post.creator.name || "N/A"}</p>
-            {post.creator.verified && <icons.Verified />}
+            {isVerified(post.creator) && <icons.Verified />}
           </div>
           <p className="font-medium text-xs opacity-60">@{post.creator.username}</p>
         </div>

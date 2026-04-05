@@ -1,189 +1,86 @@
-import { type CreateCreator, CreatorSchemas } from "@workspace/contracts/creator";
-import type { CreateDownloadTask } from "@workspace/contracts/download-task";
-import { type CreateInstagramPost, InstagramSchemas } from "@workspace/contracts/instagram";
+import { type ItemImport, ItemSchemas } from "@workspace/contracts/item";
 import type { Platform } from "@workspace/contracts/platform";
-import { type CreatePost, PostSchemas } from "@workspace/contracts/post";
-import { type CreateTaggedCreator, TaggedCreatorSchemas } from "@workspace/contracts/post-tag";
-import type { Instagram } from "@workspace/contracts/raw/instagram";
-import z from "zod";
-import type { PlatformHandler, PostImportEntities } from "@/core/platform";
+import type { Instagram, Media } from "@workspace/contracts/raw/instagram";
+import type { PlatformHandler } from "@/core/platform";
+import { jsonParse } from "@/utils/object";
+import { itemRelation } from "../common/relation";
+import { toDownloadTasks } from "./download-job";
+import { creatorParser } from "./parser/creator";
 import { postParser } from "./parser/post";
+import { taggedCreatorParser } from "./parser/tagged-creator";
 
-export class InstagramHandler implements PlatformHandler<CreateInstagramPost> {
+export class InstagramHandler implements PlatformHandler {
   platform: Platform = "instagram";
 
-  _process(data: string) {
-    const jsonData = JSON.parse(data) as Instagram[];
+  validate(data: string): { valid: number; invalid: number } {
+    const jsonData = jsonParse<Instagram[]>(data) || [];
 
-    const parsedPosts = jsonData.flatMap((post) =>
-      post.items.map((item) => postParser(item.media)),
-    );
+    let valid = 0;
+    let invalid = 0;
 
-    const valid: CreateInstagramPost[] = [];
-    const invalid: CreateInstagramPost[] = [];
-
-    for (const post of parsedPosts) {
-      const result = InstagramSchemas.post.safeParse(post);
-      if (result.success) valid.push(post);
-      else {
-        const pretty = z.prettifyError(result.error);
-        console.error(pretty);
-        invalid.push(post);
+    for (const post of jsonData) {
+      for (const item of post.items ?? []) {
+        const parsed = this._handler(item.media);
+        if (parsed) valid++;
+        else invalid++;
       }
     }
 
-    return { valid: valid, invalid: invalid.length };
+    return { valid, invalid };
   }
 
-  validate(data: string): { valid: number; invalid: number } {
-    const { valid, invalid } = this._process(data);
-    return { valid: valid.length, invalid };
-  }
+  handler(data: string): ItemImport {
+    const jsonData = jsonParse<Instagram[]>(data);
 
-  parse(data: string): CreateInstagramPost[] {
-    const { valid } = this._process(data);
-    return valid;
-  }
+    if (jsonData === undefined) {
+      return { items: [], relations: [], downloadTask: [] };
+    }
 
-  map(data: CreateInstagramPost[]): PostImportEntities {
-    const creators = this.mapCreator(data);
-    const postCreatorTags = this.mapTaggedCreator(data);
-    const posts = this.mapPost(data);
-    const mediaDownloadTasks = this.mapMedia(data, creators);
+    const results = jsonData
+      .flatMap((post) => post.items)
+      .flatMap((item) => item.media)
+      .map(this._handler)
+      .filter(Boolean) as ItemImport[];
 
     return {
-      creators: creators,
-      posts: posts,
-      postTaggedCreators: postCreatorTags,
-      media: mediaDownloadTasks,
+      items: results.flatMap((r) => r.items),
+      relations: results.flatMap((r) => r.relations),
+      downloadTask: results.flatMap((r) => r.downloadTask),
     };
   }
 
-  mapMedia(posts: CreateInstagramPost[], creators: CreateCreator[]): CreateDownloadTask[] {
-    const mediaDownloadTasks: CreateDownloadTask[] = [];
+  private _handler(post: Media): ItemImport | undefined {
+    if (!post) return undefined;
 
-    for (const creator of creators) {
-      if (!creator.avatar) continue;
-      mediaDownloadTasks.push({
-        url: creator.avatar,
-        platform: "instagram",
-        type: "image",
-        externalId: creator.externalId,
-        referenceType: "creator",
-        key: `instagram/avatar/${creator.externalId}.jpg`,
-      });
-    }
+    const taggedCreators = taggedCreatorParser(post.usertags);
+    const creator = creatorParser(post.owner);
+    const postItem = postParser(post);
 
-    for (const post of posts) {
-      post.media.forEach((mediaItem, i) => {
-        const commonProps = {
-          platform: "instagram",
-          externalId: post.externalId,
-          referenceType: "post",
-          height: mediaItem.height,
-          width: mediaItem.width,
-        } as const;
+    const downloadTask = toDownloadTasks(post);
 
-        if (mediaItem.mediaType === "image") {
-          mediaDownloadTasks.push({
-            ...commonProps,
-            url: mediaItem.url,
-            type: "image",
-            key: `instagram/post/${post.externalId}-${i}.jpg`,
-          });
-        }
-
-        if (mediaItem.mediaType === "video") {
-          mediaDownloadTasks.push({
-            ...commonProps,
-            url: mediaItem.url,
-            type: "video",
-            duration: mediaItem.duration,
-            key: `instagram/post/${post.externalId}-${i}.mp4`,
-          });
-
-          // Push video thumbnail as image
-          mediaDownloadTasks.push({
-            ...commonProps,
-            url: mediaItem.thumbnail,
-            type: "image",
-            key: `instagram/post/${post.externalId}-${i}.jpg`,
-          });
-        }
-      });
-    }
-
-    return mediaDownloadTasks;
-  }
-
-  mapTaggedCreator(data: CreateInstagramPost[]): CreateTaggedCreator[] {
-    const taggedCreators: CreateTaggedCreator[] = data.flatMap((post) =>
-      post.taggedCreators.map((creatorTag) => ({
-        externalCreatorId: creatorTag.creator.externalId,
-        externalPostId: post.externalId,
-        x: creatorTag.x,
-        y: creatorTag.y,
+    const taggedRelations = itemRelation(
+      postItem,
+      taggedCreators.map((t) => ({
+        x: t.x,
+        y: t.y,
+        externalId: t.creator.externalId,
       })),
+      "tagged",
     );
 
-    const validPostCreatorTags = TaggedCreatorSchemas.create.array().safeParse(taggedCreators);
-    if (!validPostCreatorTags.success) {
-      console.error("Invalid post creator tags:", validPostCreatorTags.error);
-      throw new Error("Failed to map Instagram post creator tags due to validation errors.");
+    const createdRelations = itemRelation(postItem, creator, "created_by");
+
+    const items = [postItem, creator, ...taggedCreators.map((t) => t.creator)];
+    const relations = [...taggedRelations, ...createdRelations];
+
+    const itemImport = { items, relations, downloadTask };
+
+    const result = ItemSchemas.import.safeParse(itemImport);
+    if (!result.success) {
+      console.warn("Invalid import item:", result.error);
+      return undefined;
     }
 
-    return validPostCreatorTags.data;
-  }
-
-  mapPost(data: CreateInstagramPost[]): CreatePost[] {
-    const posts: CreatePost[] = data.map((post) => {
-      const { creator, createdAt, ...rest } = post;
-
-      return {
-        ...rest,
-        platform: "instagram",
-        createdAt: createdAt ? new Date(createdAt) : new Date(),
-        externalCreator: creator.externalId,
-        metadata: {
-          ...rest,
-        },
-      };
-    });
-
-    const validPosts = PostSchemas.create.array().safeParse(posts);
-    if (!validPosts.success) {
-      console.error("Invalid posts:", validPosts.error);
-      throw new Error("Failed to map Instagram posts due to validation errors.");
-    }
-
-    return validPosts.data;
-  }
-
-  mapCreator(data: CreateInstagramPost[]): CreateCreator[] {
-    const creators: CreateCreator[] = data
-      .flatMap((post) => [
-        post.creator,
-        ...post.taggedCreators.map((creatorTag) => creatorTag.creator),
-      ])
-      .map((creator) => {
-        const { createdAt, ...rest } = creator;
-
-        return {
-          ...rest,
-          platform: "instagram",
-          createdAt: createdAt ? new Date(createdAt) : new Date(),
-          metadata: {
-            ...rest,
-          },
-        };
-      });
-
-    const validCreators = CreatorSchemas.create.array().safeParse(creators);
-    if (!validCreators.success) {
-      console.error("Invalid creators:", validCreators.error);
-      throw new Error("Failed to map Instagram creators due to validation errors.");
-    }
-
-    return validCreators.data;
+    return result.data;
   }
 }

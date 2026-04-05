@@ -47,7 +47,6 @@ export function Main({ className, fixed, fluid, children, contentClassName, ...p
       className={cn(
         // If layout is fixed, make the main container flex and grow
         fixed && "flex grow flex-col overflow-hidden",
-
         className,
       )}
       {...props}

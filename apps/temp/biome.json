@@ -3,8 +3,6 @@
   "root": false,
   "extends": "//",
   "linter": {
-    "includes": [
-      "**"
-    ]
+    "includes": ["**"]
   }
 }

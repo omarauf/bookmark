@@ -1,9 +1,19 @@
 import z from "zod";
+import { KindEnum, PlatformEnum } from "./common";
 import { CreateDownloadTaskSchema } from "./download-task";
 import { CreateItemRelationSchema } from "./item-relation";
-import { CreateBaseItemSchema } from "./platform/base/item";
 import { CreateInstagramCreatorSchema } from "./platform/instagram/creator";
 import { CreateInstagramPostSchema } from "./platform/instagram/post";
+
+// this has no id and optional createdAt
+export const CreateBaseItemSchema = z.object({
+  externalId: z.string(),
+  url: z.url(),
+  platform: PlatformEnum,
+  kind: KindEnum,
+  createdAt: z.date().optional(),
+  caption: z.string().optional(),
+});
 
 export const CreateItemSchema = z.discriminatedUnion("platform", [
   z.discriminatedUnion("kind", [

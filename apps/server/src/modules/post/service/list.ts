@@ -149,7 +149,10 @@ function buildItemFilter(filter: PostFilter) {
   }
 
   if (to) {
-    whereClauses.push(lte(items.createdAt, parseDateWithFlexibleTZ(to)));
+    const toDate = parseDateWithFlexibleTZ(to);
+    // Add 1 day to include the entire 'to' date
+    toDate.setUTCDate(toDate.getUTCDate() + 1);
+    whereClauses.push(lte(items.createdAt, toDate));
   }
 
   return and(...whereClauses);

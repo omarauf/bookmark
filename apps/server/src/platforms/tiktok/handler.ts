@@ -32,18 +32,18 @@ export class TiktokHandler implements PlatformHandler {
     const jsonData = jsonParse<Tiktok[]>(data);
 
     if (jsonData === undefined) {
-      return { items: [], relations: [], downloadTask: [] };
+      return { items: [], relations: [], downloadTasks: [] };
     }
 
     const results = jsonData
       .flatMap((post) => post.itemList ?? [])
-      .map(this._handler)
+      .map(post => this._handler(post))
       .filter(Boolean) as ItemImport[];
 
     return {
       items: results.flatMap((r) => r.items),
       relations: results.flatMap((r) => r.relations),
-      downloadTask: results.flatMap((r) => r.downloadTask),
+      downloadTasks: results.flatMap((r) => r.downloadTasks),
     };
   }
 

@@ -112,7 +112,7 @@ export const importRouter = {
 
       const entities = itemOrchestrator.process(importItem.platform, fileContent);
       await importItems(entities.items, entities.relations);
-      await addDownloadTask(entities.downloadTask);
+      await addDownloadTask(entities.downloadTasks);
 
       if (importItem.importedAt === null) {
         await importRepo.update(id, { importedAt: new Date() });

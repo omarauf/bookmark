@@ -33,19 +33,19 @@ export class InstagramHandler implements PlatformHandler {
     const jsonData = jsonParse<Instagram[]>(data);
 
     if (jsonData === undefined) {
-      return { items: [], relations: [], downloadTask: [] };
+      return { items: [], relations: [], downloadTasks: [] };
     }
 
     const results = jsonData
       .flatMap((post) => post.items)
       .flatMap((item) => item.media)
-      .map(this._handler)
+      .map((media) => this._handler(media))
       .filter(Boolean) as ItemImport[];
 
     return {
       items: results.flatMap((r) => r.items),
       relations: results.flatMap((r) => r.relations),
-      downloadTask: results.flatMap((r) => r.downloadTask),
+      downloadTasks: results.flatMap((r) => r.downloadTasks),
     };
   }
 

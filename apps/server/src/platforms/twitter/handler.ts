@@ -40,20 +40,20 @@ export class TwitterHandler implements PlatformHandler {
     const jsonData = jsonParse<Twitter[]>(data);
 
     if (jsonData === undefined) {
-      return { items: [], relations: [], downloadTask: [] };
+      return { items: [], relations: [], downloadTasks: [] };
     }
 
     const results = jsonData
       .flatMap((post) => post.data.bookmark_timeline_v2.timeline.instructions)
       .flatMap((item) => item.entries)
       .map((entry) => entry.content.itemContent?.tweet_results)
-      .map(this._handler)
+      .map((tweet) => this._handler(tweet))
       .filter(Boolean) as ItemImport[];
 
     return {
       items: results.flatMap((r) => r.items),
       relations: results.flatMap((r) => r.relations),
-      downloadTask: results.flatMap((r) => r.downloadTask),
+      downloadTasks: results.flatMap((r) => r.downloadTasks),
     };
   }
 
@@ -90,7 +90,7 @@ export class TwitterHandler implements PlatformHandler {
     return result.data;
   }
 
-  getQuotedTweet(tweet: TweetResults) {
+  private getQuotedTweet(tweet: TweetResults) {
     if (tweet.result?.quoted_status_result?.result) {
       const q = tweet.result.quoted_status_result.result;
       if (q.tombstone === undefined) {

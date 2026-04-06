@@ -11,7 +11,7 @@ export const ItemSchemas = {
   import: z.object({
     items: CreateItemSchema.array(),
     relations: CreateRelationSchema.array(),
-    downloadTask: CreateDownloadTaskSchema.array(),
+    downloadTasks: CreateDownloadTaskSchema.array(),
   }),
 
   // list: {

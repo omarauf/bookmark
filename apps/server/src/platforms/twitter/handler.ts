@@ -1,184 +1,106 @@
-import { type CreateCreator, CreatorSchemas } from "@workspace/contracts/creator";
 import type { CreateDownloadTask } from "@workspace/contracts/download-task";
+import { type CreateItem, type ItemImport, ItemSchemas } from "@workspace/contracts/item";
 import type { Platform } from "@workspace/contracts/platform";
-import { type CreatePost, PostSchemas } from "@workspace/contracts/post";
-import type { Twitter } from "@workspace/contracts/raw/twitter";
-import { type CreateTwitterPost, TwitterSchemas } from "@workspace/contracts/twitter";
-import z from "zod";
-import type { PlatformHandler, PostImportEntities } from "@/core/platform";
+import type { TweetResults, Twitter } from "@workspace/contracts/raw/twitter";
+import type { CreateRelation } from "@workspace/contracts/relation";
+import type { PlatformHandler } from "@/core/platform";
+import { jsonParse } from "@/utils/object";
+import { relation } from "../common/relation";
+import { getCreator, getTweet } from "./parser/common";
+import { creatorParser } from "./parser/creator";
 import { postParser } from "./parser/post";
 
-export class TwitterHandler implements PlatformHandler<CreateTwitterPost> {
+export class TwitterHandler implements PlatformHandler {
   platform: Platform = "twitter";
 
-  _process(data: string) {
-    const jsonData = JSON.parse(data) as Twitter[];
+  validate(data: string): { valid: number; invalid: number } {
+    const jsonData = jsonParse<Twitter[]>(data) || [];
 
-    const parsedPosts = jsonData.flatMap((bookmark) =>
-      bookmark.data.bookmark_timeline_v2.timeline.instructions.flatMap((instruction) =>
-        instruction.entries.flatMap((entry) => {
-          if (entry.content.itemContent === undefined) return [];
-          if (Object.keys(entry.content.itemContent.tweet_results).length === 0) return [];
-          return postParser(entry.content.itemContent.tweet_results);
-        }),
-      ),
-    );
+    let valid = 0;
+    let invalid = 0;
 
-    const valid: CreateTwitterPost[] = [];
-    const invalid: CreateTwitterPost[] = [];
-
-    for (const post of parsedPosts) {
-      const result = TwitterSchemas.post.safeParse(post);
-      if (result.success) valid.push(post);
-      else {
-        const pretty = z.prettifyError(result.error);
-        console.error(pretty);
-        invalid.push(post);
+    for (const post of jsonData) {
+      for (const item of post.data.bookmark_timeline_v2.timeline.instructions) {
+        for (const entry of item.entries) {
+          if (entry.content.itemContent?.tweet_results === undefined) {
+            invalid++;
+            continue;
+          }
+          const parsed = this._handler(entry.content.itemContent?.tweet_results);
+          if (parsed) valid++;
+          else invalid++;
+        }
       }
     }
 
-    return { valid: valid, invalid: invalid.length };
+    return { valid, invalid };
   }
 
-  validate(data: string): { valid: number; invalid: number } {
-    const { valid, invalid } = this._process(data);
-    return { valid: valid.length, invalid };
-  }
+  handler(data: string): ItemImport {
+    const jsonData = jsonParse<Twitter[]>(data);
 
-  parse(data: string): CreateTwitterPost[] {
-    const { valid } = this._process(data);
-    return valid;
-  }
+    if (jsonData === undefined) {
+      return { items: [], relations: [], downloadTasks: [] };
+    }
 
-  map(data: CreateTwitterPost[]): PostImportEntities {
-    const creators = this.mapCreator(data);
-    const posts = this.mapPost(data);
-    const mediaDownloadTasks = this.mapMedia(data, creators);
+    const results = jsonData
+      .flatMap((post) => post.data.bookmark_timeline_v2.timeline.instructions)
+      .flatMap((item) => item.entries)
+      .map((entry) => entry.content.itemContent?.tweet_results)
+      .map((tweet) => this._handler(tweet))
+      .filter(Boolean) as ItemImport[];
 
     return {
-      creators: creators,
-      posts: posts,
-      postTaggedCreators: [],
-      media: mediaDownloadTasks,
+      items: results.flatMap((r) => r.items),
+      relations: results.flatMap((r) => r.relations),
+      downloadTasks: results.flatMap((r) => r.downloadTasks),
     };
   }
 
-  mapQuotedPost(posts: CreateTwitterPost[]) {
-    const quotedRelations: { externalPostId: string; externalQuotedId: string }[] = [];
+  private _handler(data: TweetResults | undefined): ItemImport | undefined {
+    if (!data) return undefined;
 
-    for (const post of posts) {
-      if (post.externalQuotedPostId === undefined) continue;
+    const tweet = postParser(getTweet(data));
+    const creator = creatorParser(getCreator(data));
+    const createdRelations = relation(tweet.item, creator.item, "created_by");
 
-      quotedRelations.push({
-        externalPostId: post.externalId,
-        externalQuotedId: post.externalQuotedPostId,
-      });
+    const items: CreateItem[] = [tweet.item, creator.item];
+    const relations: CreateRelation[] = [...createdRelations];
+    const downloadTasks: CreateDownloadTask[] = [...tweet.media, creator.media];
+
+    const quotedItem = this.getQuotedTweet(data);
+    if (quotedItem) {
+      const { quotedTweet, quotedCreator } = quotedItem;
+      const quotedRelations = relation(tweet.item, quotedTweet.item, "quoted");
+      const creatorRelations = relation(quotedTweet.item, quotedCreator.item, "created_by");
+
+      items.push(quotedTweet.item, quotedCreator.item);
+      relations.push(...quotedRelations, ...creatorRelations);
+      downloadTasks.push(...quotedTweet.media, quotedCreator.media);
     }
 
-    return quotedRelations;
+    const itemImportItemImport = { items, relations, downloadTasks };
+
+    const result = ItemSchemas.import.safeParse(itemImportItemImport);
+    if (!result.success) {
+      console.warn("Invalid import item:", result.error);
+      return undefined;
+    }
+
+    return result.data;
   }
 
-  mapMedia(posts: CreateTwitterPost[], creators: CreateCreator[]): CreateDownloadTask[] {
-    const mediaDownloadTasks: CreateDownloadTask[] = [];
+  private getQuotedTweet(tweet: TweetResults) {
+    if (tweet.result?.quoted_status_result?.result) {
+      const q = tweet.result.quoted_status_result.result;
+      if (q.tombstone === undefined) {
+        const quotedTweet = postParser(q);
+        const quotedCreator = creatorParser(q.core?.user_results);
 
-    for (const creator of creators) {
-      if (!creator.avatar) continue;
-      mediaDownloadTasks.push({
-        url: creator.avatar,
-        platform: "twitter",
-        type: "image",
-        externalId: creator.externalId,
-        referenceType: "creator",
-        key: `twitter/avatar/${creator.externalId}.jpg`,
-      });
+        return { quotedTweet, quotedCreator };
+      }
     }
 
-    for (const post of posts) {
-      post.media.forEach((mediaItem, i) => {
-        const commonProps = {
-          platform: "twitter",
-          externalId: post.externalId,
-          referenceType: "post",
-          height: mediaItem.height,
-          width: mediaItem.width,
-        } as const;
-
-        if (mediaItem.mediaType === "image") {
-          mediaDownloadTasks.push({
-            ...commonProps,
-            url: mediaItem.url,
-            type: "image",
-            key: `twitter/post/${post.externalId}-${i}.jpg`,
-          });
-        }
-
-        if (mediaItem.mediaType === "video") {
-          mediaDownloadTasks.push({
-            ...commonProps,
-            url: mediaItem.url,
-            type: "video",
-            duration: mediaItem.duration,
-            key: `twitter/post/${post.externalId}-${i}.mp4`,
-          });
-
-          // Push video thumbnail as image
-          mediaDownloadTasks.push({
-            ...commonProps,
-            url: mediaItem.thumbnail,
-            type: "image",
-            key: `twitter/post/${post.externalId}-${i}.jpg`,
-          });
-        }
-      });
-    }
-
-    return mediaDownloadTasks;
-  }
-
-  mapPost(data: CreateTwitterPost[]): CreatePost[] {
-    const posts: CreatePost[] = data.map((post) => {
-      const { creator, createdAt, ...rest } = post;
-
-      return {
-        ...rest,
-        platform: "twitter",
-        createdAt: createdAt ? new Date(createdAt) : new Date(),
-        externalCreator: creator.externalId,
-        metadata: {
-          ...rest,
-        },
-      };
-    });
-
-    const validPosts = PostSchemas.create.array().safeParse(posts);
-    if (!validPosts.success) {
-      console.error("Invalid posts:", validPosts.error);
-      throw new Error("Failed to map Twitter posts due to validation errors.");
-    }
-
-    return validPosts.data;
-  }
-
-  mapCreator(data: CreateTwitterPost[]): CreateCreator[] {
-    const creators: CreateCreator[] = data.map((post) => {
-      const { createdAt, ...rest } = post.creator;
-
-      return {
-        ...rest,
-        platform: "twitter",
-        createdAt: createdAt ? new Date(createdAt) : new Date(),
-        metadata: {
-          ...rest,
-        },
-      };
-    });
-
-    const validCreators = CreatorSchemas.create.array().safeParse(creators);
-    if (!validCreators.success) {
-      console.error("Invalid creators:", validCreators.error);
-      throw new Error("Failed to map Twitter creators due to validation errors.");
-    }
-
-    return validCreators.data;
+    return undefined;
   }
 }

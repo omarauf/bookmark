@@ -1,164 +1,74 @@
-import { type CreateCreator, CreatorSchemas } from "@workspace/contracts/creator";
-import type { CreateDownloadTask } from "@workspace/contracts/download-task";
+import { type ItemImport, ItemSchemas } from "@workspace/contracts/item";
 import type { Platform } from "@workspace/contracts/platform";
-import { type CreatePost, PostSchemas } from "@workspace/contracts/post";
-import type { Tiktok } from "@workspace/contracts/raw/tiktok";
-import { type CreateTiktokPost, TiktokSchemas } from "@workspace/contracts/tiktok";
-import z from "zod";
-import type { PlatformHandler, PostImportEntities } from "@/core/platform";
+import type { ItemList, Tiktok } from "@workspace/contracts/raw/tiktok";
+import type { PlatformHandler } from "@/core/platform";
+import { jsonParse } from "@/utils/object";
+import { relation } from "../common/relation";
+import { toDownloadTasks } from "./download-job";
+import { creatorParser } from "./parser/creator";
 import { postParser } from "./parser/post";
 
-export class TiktokHandler implements PlatformHandler<CreateTiktokPost> {
+export class TiktokHandler implements PlatformHandler {
   platform: Platform = "tiktok";
 
-  _process(data: string) {
-    const jsonData = JSON.parse(data) as Tiktok[];
+  validate(data: string): { valid: number; invalid: number } {
+    const jsonData = jsonParse<Tiktok[]>(data) || [];
 
-    const parsedPosts = jsonData.flatMap((page) =>
-      (page.itemList ?? []).map((item) => postParser(item)),
-    );
+    let valid = 0;
+    let invalid = 0;
 
-    const valid: CreateTiktokPost[] = [];
-    const invalid: CreateTiktokPost[] = [];
-
-    for (const post of parsedPosts) {
-      const result = TiktokSchemas.post.safeParse(post);
-      if (result.success) valid.push(post);
-      else {
-        const pretty = z.prettifyError(result.error);
-        console.error(pretty);
-        invalid.push(post);
+    for (const post of jsonData) {
+      for (const item of post.itemList ?? []) {
+        const parsed = this._handler(item);
+        if (parsed) valid++;
+        else invalid++;
       }
     }
 
-    return { valid: valid, invalid: invalid.length };
+    return { valid, invalid };
   }
 
-  validate(data: string): { valid: number; invalid: number } {
-    const { valid, invalid } = this._process(data);
-    return { valid: valid.length, invalid };
-  }
+  handler(data: string): ItemImport {
+    const jsonData = jsonParse<Tiktok[]>(data);
 
-  parse(data: string): CreateTiktokPost[] {
-    const { valid } = this._process(data);
-    return valid;
-  }
+    if (jsonData === undefined) {
+      return { items: [], relations: [], downloadTasks: [] };
+    }
 
-  map(data: CreateTiktokPost[]): PostImportEntities {
-    const creators = this.mapCreator(data);
-    const posts = this.mapPost(data);
-    const mediaDownloadTasks = this.mapMedia(data, creators);
+    const results = jsonData
+      .flatMap((post) => post.itemList ?? [])
+      .map(post => this._handler(post))
+      .filter(Boolean) as ItemImport[];
 
     return {
-      creators: creators,
-      posts: posts,
-      postTaggedCreators: [],
-      media: mediaDownloadTasks,
+      items: results.flatMap((r) => r.items),
+      relations: results.flatMap((r) => r.relations),
+      downloadTasks: results.flatMap((r) => r.downloadTasks),
     };
   }
 
-  mapMedia(posts: CreateTiktokPost[], creators: CreateCreator[]): CreateDownloadTask[] {
-    const mediaDownloadTasks: CreateDownloadTask[] = [];
+  private _handler(post: ItemList): ItemImport | undefined {
+    if (!post) return undefined;
 
-    for (const creator of creators) {
-      if (!creator.avatar) continue;
-      mediaDownloadTasks.push({
-        url: creator.avatar,
-        platform: "tiktok",
-        type: "image",
-        externalId: creator.externalId,
-        referenceType: "creator",
-        key: `tiktok/avatar/${creator.externalId}.jpg`,
-      });
+    const creator = creatorParser(post.author);
+    const postItem = postParser(post);
+
+    const downloadJob = toDownloadTasks(post);
+
+    const createdRelations = relation(postItem, creator, "created_by");
+
+    const items = [postItem, creator];
+    const relations = createdRelations;
+
+    const itemImportItemImport = { items, relations, downloadJob };
+
+    const result = ItemSchemas.import.safeParse(itemImportItemImport);
+    if (!result.success) {
+      console.warn("Invalid import item:", result.error);
+      return undefined;
     }
 
-    for (const post of posts) {
-      post.media.forEach((mediaItem, i) => {
-        const commonProps = {
-          platform: "tiktok",
-          externalId: post.externalId,
-          referenceType: "post",
-          height: mediaItem.height,
-          width: mediaItem.width,
-        } as const;
-
-        if (mediaItem.mediaType === "image") {
-          mediaDownloadTasks.push({
-            ...commonProps,
-            url: mediaItem.url,
-            type: "image",
-            key: `tiktok/post/${post.externalId}-${i}.jpg`,
-          });
-        }
-
-        if (mediaItem.mediaType === "video") {
-          mediaDownloadTasks.push({
-            ...commonProps,
-            url: mediaItem.url,
-            type: "video",
-            duration: mediaItem.duration,
-            key: `tiktok/post/${post.externalId}-${i}.mp4`,
-          });
-
-          // Push video thumbnail as image
-          mediaDownloadTasks.push({
-            ...commonProps,
-            url: mediaItem.thumbnail,
-            type: "image",
-            key: `tiktok/post/${post.externalId}-${i}.jpg`,
-          });
-        }
-      });
-    }
-
-    return mediaDownloadTasks;
-  }
-
-  mapPost(data: CreateTiktokPost[]): CreatePost[] {
-    const posts: CreatePost[] = data.map((post) => {
-      const { creator, createdAt, ...rest } = post;
-
-      return {
-        ...rest,
-        platform: "tiktok",
-        createdAt: createdAt ? new Date(createdAt) : new Date(),
-        externalCreator: creator.externalId,
-        metadata: {
-          ...rest,
-        },
-      };
-    });
-
-    const validPosts = PostSchemas.create.array().safeParse(posts);
-    if (!validPosts.success) {
-      console.error("Invalid posts:", validPosts.error);
-      throw new Error("Failed to map TikTok posts due to validation errors.");
-    }
-
-    return validPosts.data;
-  }
-
-  mapCreator(data: CreateTiktokPost[]): CreateCreator[] {
-    const creators: CreateCreator[] = data.map((post) => {
-      const { createdAt, ...rest } = post.creator;
-
-      return {
-        ...rest,
-        platform: "tiktok",
-        createdAt: createdAt ? new Date(createdAt) : new Date(),
-        metadata: {
-          ...rest,
-        },
-      };
-    });
-
-    const validCreators = CreatorSchemas.create.array().safeParse(creators);
-    if (!validCreators.success) {
-      console.error("Invalid creators:", validCreators.error);
-      throw new Error("Failed to map TikTok creators due to validation errors.");
-    }
-
-    return validCreators.data;
+    return result.data;
   }
 }
 

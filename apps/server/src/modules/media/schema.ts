@@ -1,5 +1,6 @@
-import { MediaTypeValues, ReferenceTypeValues } from "@workspace/contracts/media";
+import { MediaTypeValues } from "@workspace/contracts/media";
 import { PlatformValues } from "@workspace/contracts/platform";
+import type { InferSelectModel } from "drizzle-orm";
 import {
   doublePrecision,
   integer,
@@ -9,15 +10,18 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm/relations";
 import { IdentifiedEntityModel } from "@/core/db/helper/entity";
+import { items } from "../item/schema";
 
 export const media = pgTable(
   "media",
   {
     ...IdentifiedEntityModel,
 
-    referenceId: uuid().notNull(),
-    referenceType: text({ enum: ReferenceTypeValues }).notNull(),
+    itemId: uuid()
+      .notNull()
+      .references(() => items.id, { onDelete: "cascade" }),
 
     url: text().notNull(),
     platform: text({ enum: PlatformValues }).notNull(),
@@ -37,3 +41,13 @@ export const media = pgTable(
   },
   (table) => [uniqueIndex().on(table.key)],
 );
+
+export const mediaRelations = relations(media, ({ one }) => ({
+  item: one(items, {
+    relationName: "media",
+    fields: [media.itemId],
+    references: [items.id],
+  }),
+}));
+
+export type Media = InferSelectModel<typeof media>;

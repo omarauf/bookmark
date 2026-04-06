@@ -1,14 +1,21 @@
 import z from "zod";
-import { BaseCreatorSchema, CreateBaseCreatorSchema } from "../base/creator";
 
-export const TiktokCreatorSchema = BaseCreatorSchema.extend({
-  platform: z.literal("tiktok"),
-});
+// const TiktokMetadataCreatorSchema = z.object({
+//   username: z.string(),
+//   verified: z.boolean().optional(),
+//   name: z.string().optional(),
+// });
 
-export const CreateTiktokCreatorSchema = CreateBaseCreatorSchema.extend({
-  platform: z.literal("tiktok"),
-});
+// export const CreateTiktokCreatorSchema = z.object({
+//   platform: z.literal("tiktok"),
+//   kind: z.literal("profile"),
+//   metadata: TiktokMetadataCreatorSchema,
+// });
 
 export const TiktokMetadataCreatorSchema = z.object({
   platform: z.literal("tiktok"),
+  kind: z.literal("profile"),
+  username: z.string(),
+  verified: z.boolean().optional(),
+  name: z.string().optional(),
 });

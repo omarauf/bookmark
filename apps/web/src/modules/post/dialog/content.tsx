@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type Post, PostSchemas } from "@workspace/contracts/post";
+import { ItemSchemas } from "@workspace/contracts/item";
+import type { Post } from "@workspace/contracts/post";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useAppForm } from "@/components/form";
@@ -28,7 +29,7 @@ export function Content({ post }: Props) {
   console.log("Form");
 
   const updateMutation = useMutation(
-    orpc.post.update.mutationOptions({
+    orpc.item.update.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: orpc.post.list.key() });
         toast.success("Post updated successfully");
@@ -42,7 +43,7 @@ export function Content({ post }: Props) {
   const form = useAppForm({
     ...formOpts,
     defaultValues: postToUpdate(post),
-    validators: { onChange: PostSchemas.update.request },
+    validators: { onChange: ItemSchemas.update.request },
     listeners: {
       onChange({ formApi }) {
         const values = formApi.state.values;

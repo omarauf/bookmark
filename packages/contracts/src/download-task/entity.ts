@@ -1,7 +1,7 @@
 import z from "zod";
 import { PlatformEnum } from "../common/platform";
-import { MediaTypeEnum, ReferenceTypeEnum } from "../media/enum";
-import { DownloadStatusEnum, DownloadTargetEnum } from "./enum";
+import { MediaTypeEnum } from "../media/enum";
+import { DownloadStatusEnum } from "./enum";
 
 export const DownloadTaskSchema = z.object({
   id: z.uuid(),
@@ -11,7 +11,6 @@ export const DownloadTaskSchema = z.object({
   type: MediaTypeEnum,
   platform: PlatformEnum,
   status: DownloadStatusEnum,
-  referenceType: DownloadTargetEnum,
   error: z.string().nullable(),
   externalId: z.string(),
   completedAt: z.date().nullable(),
@@ -30,7 +29,6 @@ export const CreateDownloadTaskSchema = z.object({
   externalId: z.string(),
   key: z.string(),
   platform: PlatformEnum,
-  referenceType: ReferenceTypeEnum,
 
   size: z.number().optional(),
   width: z.number().optional(),

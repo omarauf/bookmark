@@ -2,9 +2,8 @@ import { eq } from "drizzle-orm";
 import { db } from "@/core/db";
 import { s3Client } from "@/core/s3";
 import { randomDelay } from "@/utils/delay";
-import { creators } from "../creator/schema";
+import { items } from "../item/schema";
 import { media } from "../media/schema";
-import { posts } from "../post/schema";
 import { downloadTaskRepo } from "./repo";
 import { type DownloadTask, downloadTasks } from "./schema";
 import { claimTasks } from "./service";
@@ -70,23 +69,11 @@ async function processTask(task: DownloadTask) {
 }
 
 async function getReferenceId(task: DownloadTask) {
-  if (task.referenceType === "creator") {
-    const creator = await db.query.creators.findFirst({
-      where: eq(creators.externalId, task.externalId),
-      columns: { id: true },
-    });
-    return creator?.id;
-  }
-
-  if (task.referenceType === "post") {
-    const mediaItem = await db.query.posts.findFirst({
-      where: eq(posts.externalId, task.externalId),
-      columns: { id: true },
-    });
-    return mediaItem?.id;
-  }
-
-  return undefined;
+  const item = await db.query.items.findFirst({
+    where: eq(items.externalId, task.externalId),
+    columns: { id: true },
+  });
+  return item?.id;
 }
 
 async function saveMediaRecord(
@@ -122,8 +109,7 @@ async function saveMediaRecord(
         key: key,
         platform: task.platform,
         type: task.type,
-        referenceId: referenceId,
-        referenceType: task.referenceType,
+        itemId: referenceId,
         createdAt: new Date(),
         mime: meta?.mime,
         size: meta?.size,

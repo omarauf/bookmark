@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX "media_key_index" ON "media" USING btree ("key");

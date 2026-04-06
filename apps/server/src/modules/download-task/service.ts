@@ -23,7 +23,6 @@ export async function addDownloadTask(data: CreateDownloadTask[]) {
       platform: task.platform,
       type: task.type,
       url: task.url,
-      referenceType: task.referenceType,
       externalId: task.externalId,
       size: task.size,
       width: task.width,

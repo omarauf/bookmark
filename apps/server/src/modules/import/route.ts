@@ -5,10 +5,9 @@ import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
 import { s3Client } from "@/core/s3";
 import { protectedProcedure } from "@/lib/orpc";
-import { addCreators } from "../creator/service";
 import { addDownloadTask } from "../download-task/service";
-import { postOrchestrator } from "../post/orchestrator";
-import { addPosts, addTaggedCreators } from "../post/service";
+import { itemOrchestrator } from "../item/orchestrator";
+import { importItems } from "../item/service/import";
 import { importRepo } from "./repo";
 import { imports } from "./schema";
 
@@ -82,7 +81,7 @@ export const importRouter = {
           }
 
           const data = buffer.toString("utf-8");
-          const parsedData = postOrchestrator.validate(platform, data);
+          const parsedData = itemOrchestrator.validate(platform, data);
 
           await importRepo.create({
             filename: filename,
@@ -111,17 +110,15 @@ export const importRouter = {
       );
       if (!fileContent) throw errors.NOT_FOUND();
 
-      const entities = postOrchestrator.bulkProcess(importItem.platform, fileContent);
-      await addCreators(entities.creators);
-      await addPosts(entities.posts);
-      await addDownloadTask(entities.media);
-      await addTaggedCreators(entities.postTaggedCreators);
+      const entities = itemOrchestrator.process(importItem.platform, fileContent);
+      await importItems(entities.items, entities.relations);
+      await addDownloadTask(entities.downloadTasks);
 
       if (importItem.importedAt === null) {
         await importRepo.update(id, { importedAt: new Date() });
       }
 
-      return { valid: entities.posts.length };
+      return { valid: entities.items.length };
     }),
 
   delete: protectedProcedure

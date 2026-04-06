@@ -45,7 +45,7 @@
     "axios": "^1.11.0",
     "better-auth": "^1.5.5",
     "dotenv": "^17.2.2",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.2",
     "hono": "^4.8.2",
     "link-preview-js": "^3.1.0",
     "pg": "^8.20.0",
@@ -58,7 +58,7 @@
     "@types/bun": "^1.2.21",
     "@types/pg": "^8.18.0",
     "@types/progress": "^2.0.7",
-    "drizzle-kit": "^0.31.9",
+    "drizzle-kit": "^0.31.10",
     "tsdown": "^0.14.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"

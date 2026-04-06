@@ -1,16 +1,23 @@
 import z from "zod";
-import { BaseCreatorSchema, CreateBaseCreatorSchema } from "../base/creator";
 
-export const TwitterCreatorSchema = BaseCreatorSchema.extend({
-  platform: z.literal("twitter"),
-});
+// const TwitterMetadataCreatorSchema = z.object({
+//   username: z.string(),
+//   verified: z.boolean().optional(),
+//   name: z.string().optional(),
+//   location: z.string().optional(),
+// });
 
-export const CreateTwitterCreatorSchema = CreateBaseCreatorSchema.extend({
-  platform: z.literal("twitter"),
-  location: z.string().optional(),
-});
+// export const CreateTwitterCreatorSchema = z.object({
+//   platform: z.literal("twitter"),
+//   kind: z.literal("profile"),
+//   metadata: TwitterMetadataCreatorSchema,
+// });
 
 export const TwitterMetadataCreatorSchema = z.object({
   platform: z.literal("twitter"),
+  kind: z.literal("profile"),
+  username: z.string(),
+  verified: z.boolean().optional(),
+  name: z.string().optional(),
   location: z.string().optional(),
 });

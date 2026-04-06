@@ -63,7 +63,7 @@ export function Filter({ className }: { className?: string }) {
         "z-40 flex w-full items-center gap-3 transition-all duration-300",
         isScrolled
           ? "sticky top-4 rounded-full border border-border/40 bg-background/80 px-5 py-3 shadow-sm backdrop-blur-md"
-          : "pb-6",
+          : "py-6",
         className,
       )}
     >

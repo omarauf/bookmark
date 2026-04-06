@@ -47,8 +47,8 @@ function Instagram() {
   const flatItems = postQuery.data.pages.flatMap((page) => page.items);
 
   return (
-    <Main className="py-0">
-      <Filter className="sticky top-0 z-10 flex w-full" />
+    <Main className="py-0" contentClassName="pt-0">
+      <Filter className="sticky z-10 flex w-full" />
 
       <InfiniteScroll
         onLoadMore={postQuery.fetchNextPage}

@@ -19,7 +19,7 @@ export function Delete() {
   const [hard, setHard] = useState(false);
 
   const deletePostMutation = useMutation(
-    orpc.post.deleteAll.mutationOptions({
+    orpc.item.deleteAll.mutationOptions({
       onSuccess: () => {
         toast.success("Instagram deleted successfully");
       },
@@ -27,7 +27,7 @@ export function Delete() {
   );
 
   const deleteCreatorMutation = useMutation(
-    orpc.creator.deleteAll.mutationOptions({
+    orpc.item.deleteAll.mutationOptions({
       onSuccess: () => {
         toast.success("Instagram deleted successfully");
       },

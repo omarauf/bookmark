@@ -1,11 +1,10 @@
 import z from "zod";
 import { PlatformEnum } from "../common/platform";
-import { MediaTypeEnum, MimeTypeEnum, ReferenceTypeEnum } from "./enum";
+import { MediaTypeEnum, MimeTypeEnum } from "./enum";
 
 export const MediaSchema = z.object({
   id: z.uuid(), // unique identifier for the media
-  referenceId: z.uuid(), // reference to the associated reference entity (e.g., post or creator)
-  referenceType: ReferenceTypeEnum,
+  itemId: z.uuid(), // reference to the associated reference entity (e.g., post or creator)
   url: z.string(), // external URL of the media file
   platform: PlatformEnum, // platform where the media is hosted (e.g., "twitter", "youtube")
   type: MediaTypeEnum, // type of media (e.g., "image", "video")

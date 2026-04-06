@@ -2,6 +2,14 @@
 
 Coding agent guidelines for this repository.
 
+
+## 🧠 Core Idea
+Build a **personal knowledge graph**, not just bookmarks.
+
+- Everything = **Item**
+- Items are connected via **Relations**
+- Add metadata via tags, collections, files, etc.
+
 ## Project Overview
 
 Monorepo using pnpm workspaces + Turborepo. Contains a bookmark manager application with:

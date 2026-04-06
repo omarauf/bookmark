@@ -1,12 +1,15 @@
-import type { Media, NormalizedMedia } from "@workspace/contracts/media";
+import type { NormalizedMedia } from "@workspace/contracts/media";
+import type { Media } from "./schema";
 
 const getBaseKey = (key: string) => key.replace(/\.[^/.]+$/, "");
 
-export function normalizeMedia(media: Media[]) {
+export function normalizeMedia(media: Media | Media[]) {
+  const m = Array.isArray(media) ? media : [media];
+
   const imageMap = new Map<string, Media>();
   const videoMap = new Map<string, Media>();
 
-  for (const item of media) {
+  for (const item of m) {
     const base = getBaseKey(item.key);
 
     if (item.type === "image") {

@@ -1,12 +1,13 @@
-import type { Post, UpdatePost } from "@workspace/contracts/post";
+import type { UpdateItem } from "@workspace/contracts/item";
+import type { Post } from "@workspace/contracts/post";
 
-export function postToUpdate(post: Post): UpdatePost {
+export function postToUpdate(post: Post): UpdateItem {
   return {
     id: post.id,
     note: post.note,
     rate: post.rate,
     tagIds: [],
-    collectionId: post.collectionId,
+    collectionIds: post.collectionIds,
     favorite: post.favorite,
   };
 }

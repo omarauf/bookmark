@@ -1,4 +1,4 @@
-import type { PostMetadata } from "@workspace/contracts/post";
+import type { ItemMetadata } from "@workspace/contracts/item";
 import { MusicIcon } from "lucide-react";
 import { usePostContext } from "../utils/context";
 
@@ -12,8 +12,8 @@ export function Music() {
   return null;
 }
 
-function InstagramMusic({ metadata }: { metadata: PostMetadata }) {
-  if (metadata.platform !== "instagram") return null;
+function InstagramMusic({ metadata }: { metadata: ItemMetadata }) {
+  if (metadata.platform !== "instagram" || metadata.kind !== "post") return null;
 
   const { music } = metadata;
   if (!music) return null;
@@ -35,8 +35,8 @@ function InstagramMusic({ metadata }: { metadata: PostMetadata }) {
   );
 }
 
-function TiktokMusic({ metadata }: { metadata: PostMetadata }) {
-  if (metadata.platform !== "tiktok") return null;
+function TiktokMusic({ metadata }: { metadata: ItemMetadata }) {
+  if (metadata.platform !== "tiktok" || metadata.kind !== "post") return null;
 
   const { music } = metadata;
   if (!music) return null;

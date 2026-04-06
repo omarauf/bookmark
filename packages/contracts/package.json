@@ -6,17 +6,18 @@
     "./link": "./src/link/index.ts",
     "./tag": "./src/tag.ts",
     "./collection": "./src/collection/index.ts",
-    "./import": "./src/import.ts",
-    "./post": "./src/post/index.ts",
-    "./post-tag": "./src/post-tag/index.ts",
-    "./creator": "./src/creator/index.ts",
+    "./import": "./src/import/index.ts",
+    "./item": "./src/item/index.ts",
+    "./relation": "./src/relation/index.ts",
     "./platform": "./src/common/platform.ts",
     "./instagram": "./src/platform/instagram/index.ts",
     "./twitter": "./src/platform/twitter/index.ts",
     "./tiktok": "./src/platform/tiktok/index.ts",
     "./media": "./src/media/index.ts",
     "./download-task": "./src/download-task/index.ts",
-    "./raw/*": "./src/raw/*.ts"
+    "./raw/*": "./src/raw/*.ts",
+    "./profile": "./src/profile/index.ts",
+    "./post": "./src/post/index.ts"
   },
   "peerDependencies": {
     "typescript": "^5"

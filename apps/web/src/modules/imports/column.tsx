@@ -115,8 +115,8 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
           <DataTableColumnHeader column={column} label="Valid Post Count" />
         ),
         cell: ({ cell }) => {
-          const validPosts = cell.getValue<Import["validPost"]>();
-          const invalidPosts = cell.row.original.invalidPost;
+          const validPosts = cell.getValue<Import["validItem"]>();
+          const invalidPosts = cell.row.original.invalidItem;
 
           return `${fNumber(validPosts)} / ${fNumber(validPosts + invalidPosts)}`;
         },

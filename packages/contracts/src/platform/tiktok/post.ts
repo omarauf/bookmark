@@ -1,23 +1,24 @@
 import z from "zod";
-import { CreateBasePostSchema } from "../base/post";
-import { CreateTiktokCreatorSchema } from "./creator";
-import { TiktokMediaSchema } from "./media";
 import { TiktokMusicSchema } from "./music";
 
-export const CreateTiktokPostSchema = CreateBasePostSchema.extend({
-  media: TiktokMediaSchema.array(),
-  likes: z.number(),
-  comments: z.number(),
-  shares: z.number(),
-  plays: z.number(),
-  collects: z.number(),
-  creator: CreateTiktokCreatorSchema,
-  music: TiktokMusicSchema,
-  platform: z.literal("tiktok"),
-});
+// const TiktokMetadataPostSchema = z.object({
+//   music: TiktokMusicSchema.optional(),
+//   likes: z.number(),
+//   comments: z.number(),
+//   shares: z.number(),
+//   plays: z.number(),
+//   collects: z.number(),
+// });
+
+// export const CreateTiktokPostSchema = z.object({
+//   platform: z.literal("tiktok"),
+//   kind: z.literal("post"),
+//   metadata: TiktokMetadataPostSchema,
+// });
 
 export const TiktokMetadataPostSchema = z.object({
   platform: z.literal("tiktok"),
+  kind: z.literal("post"),
   music: TiktokMusicSchema.optional(),
   likes: z.number(),
   comments: z.number(),

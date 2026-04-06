@@ -1,4 +1,4 @@
-import type { PostMetadata } from "@workspace/contracts/post";
+import type { ItemMetadata } from "@workspace/contracts/item";
 import { Eye, Heart, Play } from "lucide-react";
 import { fShortenNumber } from "@/utils/format-number";
 import { usePostContext } from "../utils/context";
@@ -13,8 +13,8 @@ export function Statistics() {
   return null;
 }
 
-function InstagramStatistics({ metadata }: { metadata: PostMetadata }) {
-  if (metadata.platform !== "instagram") return null;
+function InstagramStatistics({ metadata }: { metadata: ItemMetadata }) {
+  if (metadata.platform !== "instagram" || metadata.kind !== "post") return null;
 
   return (
     <div className="flex justify-between">
@@ -26,8 +26,8 @@ function InstagramStatistics({ metadata }: { metadata: PostMetadata }) {
   );
 }
 
-function TiktokStatistics({ metadata }: { metadata: PostMetadata }) {
-  if (metadata.platform !== "tiktok") return null;
+function TiktokStatistics({ metadata }: { metadata: ItemMetadata }) {
+  if (metadata.platform !== "tiktok" || metadata.kind !== "post") return null;
 
   return (
     <div className="flex justify-between">

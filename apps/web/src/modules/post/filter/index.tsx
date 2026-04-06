@@ -93,12 +93,12 @@ export function Filter({ className }: { className?: string }) {
           )}
         </form.AppField>
 
-        <form.AppField name="collectionIds">
+        <form.AppField name="collectionPaths">
           {(field) => (
             <field.MultiSelect
               placeholder="Collections"
               className="min-w-48 max-w-64 bg-background/50"
-              options={collectionsQuery.data?.map((t) => ({ label: t.label, value: t.id }))}
+              options={collectionsQuery.data?.map((t) => ({ label: t.label, value: t.path }))}
             />
           )}
         </form.AppField>

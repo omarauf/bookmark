@@ -37,7 +37,7 @@ export class TiktokHandler implements PlatformHandler {
 
     const results = jsonData
       .flatMap((post) => post.itemList ?? [])
-      .map(post => this._handler(post))
+      .map((post) => this._handler(post))
       .filter(Boolean) as ItemImport[];
 
     return {

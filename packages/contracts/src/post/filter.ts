@@ -8,9 +8,14 @@ export const PostFilterSchema = z.object({
   username: z.string().optional().catch(undefined),
   collectionIds: z
     .array(z.string())
+    .transform((val) => (val && val.length > 0 ? val : undefined))
     .optional()
-    .catch(undefined)
-    .transform((val) => (val?.length === 0 ? undefined : val)),
+    .catch(undefined),
+  collectionPaths: z
+    .array(z.string())
+    .transform((val) => (val && val.length > 0 ? val : undefined))
+    .optional()
+    .catch(undefined),
   type: InstagramPostTypeEnum.optional().catch(undefined),
   from: dateOnly().optional().catch(undefined),
   to: dateOnly().optional().catch(undefined),

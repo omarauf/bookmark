@@ -83,7 +83,7 @@ export function checkHierarchyConflicts(data: { path: string; label: string }[])
       // Check if one path is a descendant of another
       // We add "." to ensure "music.arabic" matches "music."
       // but "musician" does NOT match "music."
-      if (potentialChild.path.startsWith(potentialParent.path + ".")) {
+      if (potentialChild.path.startsWith(`${potentialParent.path}.`)) {
         conflicts.push({
           childItem: potentialChild.label,
           parentItem: potentialParent.label,

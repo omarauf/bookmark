@@ -1,8 +1,22 @@
 import type { ListPost, PostFilter } from "@workspace/contracts/post";
-import { and, count, eq, exists, gte, ilike, lte, type SQL, sql } from "drizzle-orm";
+import {
+  and,
+  arrayContained,
+  count,
+  eq,
+  exists,
+  gte,
+  ilike,
+  inArray,
+  lte,
+  or,
+  type SQL,
+  sql,
+} from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { parseDateWithFlexibleTZ } from "@/core/date";
 import { db } from "@/core/db";
+import { collectionItems, collections } from "@/modules/collection/schema";
 import { items } from "@/modules/item/schema";
 import { relations } from "@/modules/relation/schema";
 import { mapItemToPost } from "./mapper";
@@ -30,6 +44,8 @@ export async function listPosts(input: ListPost) {
       // },
       limit: input.perPage,
       offset: offset,
+      orderBy: (post, { asc, desc }) =>
+        input.sortOrder === "asc" ? asc(post.createdAt) : desc(post.createdAt),
     }),
 
     // Count query
@@ -53,7 +69,7 @@ export async function listPosts(input: ListPost) {
 }
 
 function buildItemFilter(filter: PostFilter) {
-  const { platform, username, type, from, to } = filter;
+  const { platform, username, type, from, to, collectionIds, collectionPaths } = filter;
   const whereClauses: SQL[] = [eq(items.kind, "post")];
 
   if (platform) {
@@ -80,9 +96,49 @@ function buildItemFilter(filter: PostFilter) {
     );
   }
 
-  //   if (collectionIds && collectionIds.length > 0) {
-  //     whereClauses.push(inArray(items.collectionId, collectionIds));
-  //   }
+  if (collectionPaths && collectionPaths.length > 0) {
+    whereClauses.push(
+      exists(
+        db
+          .select()
+          .from(collections)
+          .leftJoin(collectionItems, eq(collectionItems.collectionId, collections.id))
+          .where(
+            and(
+              eq(collectionItems.itemId, items.id),
+              or(...collectionPaths.map((path) => arrayContained(collections.path, path))),
+            ),
+          ),
+      ),
+    );
+  }
+
+  if (collectionIds && collectionIds.length > 0) {
+    // TODO: compare performance of the below two approaches and decide which one to use
+    // whereClauses.push(
+    //   inArray(
+    //     items.id,
+    //     db
+    //       .select({ itemId: collectionItems.itemId })
+    //       .from(items)
+    //       .leftJoin(collectionItems, eq(items.id, collectionItems.itemId))
+    //       .where(and(inArray(collectionItems.collectionId, collectionIds))),
+    //   ),
+    // );
+    whereClauses.push(
+      exists(
+        db
+          .select()
+          .from(collectionItems)
+          .where(
+            and(
+              eq(collectionItems.itemId, items.id),
+              inArray(collectionItems.collectionId, collectionIds),
+            ),
+          ),
+      ),
+    );
+  }
 
   if (type) {
     whereClauses.push(sql`${items.metadata}->>'type' = ${type}`);

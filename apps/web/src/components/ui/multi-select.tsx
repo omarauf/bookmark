@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "./scroll-area";
 
 type MultiSelectContextType = {
   open: boolean;
@@ -153,10 +154,12 @@ export function MultiSelectValue({
     const items = containerElement.querySelectorAll<HTMLElement>("[data-selected-item]");
 
     if (overflowElement != null) overflowElement.style.display = "none";
-    items.forEach((child) => child.style.removeProperty("display"));
+    items.forEach((child) => {
+      child.style.removeProperty("display");
+    });
     let amount = 0;
     for (let i = items.length - 1; i >= 0; i--) {
-      const child = items[i]!;
+      const child = items[i];
       if (containerElement.scrollWidth <= containerElement.clientWidth) {
         break;
       }
@@ -218,7 +221,8 @@ export function MultiSelectValue({
           <Badge
             variant="outline"
             data-selected-item
-            className="group flex items-center gap-1"
+            className="group/item flex items-center gap-1"
+            shape="rounded"
             key={value}
             onClick={
               clickToRemove
@@ -231,7 +235,7 @@ export function MultiSelectValue({
           >
             {items.get(value)}
             {clickToRemove && (
-              <XIcon className="size-2 text-muted-foreground group-hover:text-destructive" />
+              <XIcon className="size-2 text-muted-foreground group-hover/item:text-destructive" />
             )}
           </Badge>
         ))}
@@ -240,6 +244,7 @@ export function MultiSelectValue({
           display: overflowAmount > 0 && !shouldWrap ? "block" : "none",
         }}
         variant="outline"
+        shape="rounded"
         ref={overflowRef}
       >
         +{overflowAmount}
@@ -265,7 +270,7 @@ export function MultiSelectContent({
           <CommandList>{children}</CommandList>
         </Command>
       </div>
-      <PopoverContent className="min-w-[var(--radix-popover-trigger-width)] p-0">
+      <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)] p-0 shadow-xs">
         <Command {...props}>
           {canSearch ? (
             <CommandInput
@@ -274,14 +279,16 @@ export function MultiSelectContent({
           ) : (
             <button autoFocus className="sr-only" />
           )}
-          <CommandList>
-            {canSearch && (
-              <CommandEmpty>
-                {typeof search === "object" ? search.emptyMessage : undefined}
-              </CommandEmpty>
-            )}
-            {children}
-          </CommandList>
+          <ScrollArea className="h-60 has-data-[slot=command-empty]:h-fit">
+            <CommandList className="max-h-full">
+              {canSearch && (
+                <CommandEmpty>
+                  {typeof search === "object" ? search.emptyMessage : undefined}
+                </CommandEmpty>
+              )}
+              {children}
+            </CommandList>
+          </ScrollArea>
         </Command>
       </PopoverContent>
     </>
@@ -308,12 +315,25 @@ export function MultiSelectItem({
   return (
     <CommandItem
       {...props}
+      className={cn(
+        "cursor-pointer data-[selected=true]:bg-primary data-[selected=true]:text-foreground",
+        // note adding this ↓ class cause the item to lose its highlight on cursor hover outside the group
+        // you can set the group to Command component or any parent component of CommandItem
+        "data-[selected=true]:group-[:not(:hover)]:bg-transparent",
+        isSelected
+          ? "data-[selected=true]:group-[:not(:hover)]:text-foreground"
+          : "data-[selected=true]:group-[:not(:hover)]:text-foreground",
+        isSelected && "text-foreground",
+        props.className,
+      )}
       onSelect={() => {
         toggleValue(value);
         onSelect?.(value);
       }}
     >
-      <CheckIcon className={cn("mr-2 size-4", isSelected ? "opacity-100" : "opacity-0")} />
+      <CheckIcon
+        className={cn("mr-2 size-4 text-foreground", isSelected ? "opacity-100" : "opacity-0")}
+      />
       {children}
     </CommandItem>
   );

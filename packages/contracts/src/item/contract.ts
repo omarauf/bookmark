@@ -32,7 +32,7 @@ export const ItemSchemas = {
       note: z.string().optional(),
       rate: z.number().optional(),
       tagIds: z.uuid().array(),
-      collectionId: z.uuid().optional(),
+      collectionIds: z.uuid().array(),
       favorite: z.boolean().optional(),
     }),
     response: z.void(),

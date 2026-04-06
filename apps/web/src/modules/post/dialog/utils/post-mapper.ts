@@ -7,7 +7,7 @@ export function postToUpdate(post: Post): UpdateItem {
     note: post.note,
     rate: post.rate,
     tagIds: [],
-    collectionId: post.collectionId,
+    collectionIds: post.collectionIds,
     favorite: post.favorite,
   };
 }

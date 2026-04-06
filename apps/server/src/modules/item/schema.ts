@@ -4,6 +4,7 @@ import { boolean, integer, jsonb, pgTable, text, timestamp } from "drizzle-orm/p
 import { relations as drizzleRelations } from "drizzle-orm/relations";
 import type { InferSelectModel } from "drizzle-orm/table";
 import { baseTable } from "@/core/db/helper/entity";
+import { collectionItems } from "../collection/schema";
 import { media } from "../media/schema";
 import { relations } from "../relation/schema";
 
@@ -30,7 +31,8 @@ export const items = pgTable("items", {
 export const itemsRelations = drizzleRelations(items, ({ many }) => ({
   outgoing: many(relations, { relationName: "fromItem" }),
   incoming: many(relations, { relationName: "toItem" }),
-  media: many(media, { relationName: "media" }),
+  media: many(media),
+  collections: many(collectionItems),
 }));
 
 export type ItemEntity = InferSelectModel<typeof items>;

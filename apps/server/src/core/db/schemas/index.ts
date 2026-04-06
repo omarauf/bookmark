@@ -1,6 +1,5 @@
 export * from "@/core/auth/schema";
 export * from "@/modules/collection/schema";
-export * from "@/modules/collection/schema";
 export * from "@/modules/download-task/schema";
 export * from "@/modules/import/schema";
 export * from "@/modules/item/schema";

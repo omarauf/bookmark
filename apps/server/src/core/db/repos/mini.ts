@@ -1,5 +1,12 @@
 // biome-ignore-all lint/suspicious/noExplicitAny: This file needs a lot of any to work with Drizzle ORM
-import { eq, type InferInsertModel, type InferSelectModel, type SQL, sql } from "drizzle-orm";
+import {
+  eq,
+  type InferInsertModel,
+  type InferSelectModel,
+  inArray,
+  type SQL,
+  sql,
+} from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { PgColumn, PgTable, PgTableWithColumns } from "drizzle-orm/pg-core";
 
@@ -44,6 +51,15 @@ export class MiniRepository<T extends PgTable> implements IRepository<T> {
       .limit(1);
 
     return results[0] as InferSelectModel<T> | undefined;
+  }
+
+  async findByIds(ids: (string | number)[]): Promise<InferSelectModel<T>[]> {
+    const results = await this.db
+      .select()
+      .from(this.table as PgTableWithColumns<any>)
+      .where(inArray(this.idColumn, ids));
+
+    return results as InferSelectModel<T>[];
   }
 
   async findOne(where?: SQL): Promise<InferSelectModel<T> | undefined> {

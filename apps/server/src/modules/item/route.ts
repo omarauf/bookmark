@@ -4,6 +4,7 @@ import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
 import { itemRepo } from "./repo";
 import { items } from "./schema";
+import { updateItem } from "./service/update";
 
 export const itemRouter = {
   // list: protectedProcedure
@@ -21,17 +22,7 @@ export const itemRouter = {
   //     return item;
   //   }),
 
-  update: protectedProcedure
-    .input(ItemSchemas.update.request)
-    .output(ItemSchemas.update.response)
-    .errors({ NOT_FOUND: { message: "Item not found" } })
-    .handler(async ({ input: { id, ...rest }, errors }) => {
-      const item = await itemRepo.findById(id);
-
-      if (!item) throw errors.NOT_FOUND();
-
-      await itemRepo.update(id, rest);
-    }),
+  update: updateItem,
 
   delete: protectedProcedure
     .input(ItemSchemas.delete.request)

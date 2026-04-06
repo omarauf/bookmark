@@ -7,7 +7,7 @@ import { items } from "@/modules/item/schema";
 import { relations } from "@/modules/relation/schema";
 import { mapItemToPost } from "./mapper";
 
-export async function listItem(input: ListPost) {
+export async function listPosts(input: ListPost) {
   // Calculate offset based on current page
   const offset = (input.page - 1) * input.perPage;
 
@@ -21,6 +21,7 @@ export async function listItem(input: ListPost) {
       where: filterExpression,
       with: {
         outgoing: { with: { toItem: { with: { media: true } } } },
+        collections: { with: { collection: true } },
         media: true,
       },
       // extras: {
@@ -96,4 +97,23 @@ function buildItemFilter(filter: PostFilter) {
   }
 
   return and(...whereClauses);
+}
+
+export async function getPost(id: string) {
+  const post = await db.query.items.findFirst({
+    where: (items, { eq }) => eq(items.id, id),
+    with: {
+      outgoing: { with: { toItem: { with: { media: true } } } },
+      media: true,
+      collections: { with: { collection: true } },
+    },
+    // extras: {
+    //   // Add the window function as an extra column
+    //   totalCount: sql<number>`count(*) over()`.as("total_count"),
+    // },
+  });
+
+  if (!post) return null;
+
+  return mapItemToPost(post);
 }

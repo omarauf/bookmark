@@ -1,4 +1,5 @@
 import type { Post } from "@workspace/contracts/post";
+import type { CollectionEntity, CollectionItemEntity } from "@/modules/collection/schema";
 import type { ItemEntity } from "@/modules/item/schema";
 import type { Media } from "@/modules/media/schema";
 import { normalizeMedia } from "@/modules/media/service";
@@ -11,6 +12,7 @@ type RawItem = ItemEntity & {
       media: Media[];
     };
   })[];
+  collections: (CollectionItemEntity & { collection: CollectionEntity })[];
 };
 
 export function mapItemToPost(item: RawItem): Post {
@@ -29,6 +31,8 @@ export function mapItemToPost(item: RawItem): Post {
     creator: mapProfile(creator),
     media: normalizeMedia(item.media),
     taggedItems: taggedItem,
+    collections: mapCollection(item.collections),
+    collectionIds: item.collections.map((c) => c.collection.id),
   };
 }
 
@@ -36,7 +40,7 @@ function mapItem(item: ItemEntity & { media: Media[] }) {
   return {
     ...item,
     media: normalizeMedia(item.media),
-    collectionId: undefined,
+    collectionIds: [],
     tags: [],
     note: item.note ?? undefined,
     rate: item.rate ?? undefined,
@@ -61,4 +65,14 @@ function mapProfile(item: ItemEntity & { media: Media[] }) {
     // media: normalizeMedia(item.media)[0],
     avatar: `${item.platform}/avatar/${item.externalId}.jpg`,
   };
+}
+
+function mapCollection(collections: RawItem["collections"]) {
+  return collections.map((c) => ({
+    id: c.collection.id,
+    label: c.collection.label,
+    color: c.collection.color,
+    slug: c.collection.slug,
+    path: c.collection.path,
+  }));
 }

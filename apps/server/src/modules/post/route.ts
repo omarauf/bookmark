@@ -1,12 +1,12 @@
 import { PostSchemas } from "@workspace/contracts/post";
 import { protectedProcedure } from "@/lib/orpc";
-import { listItem } from "./service/list";
+import { listPosts } from "./service/list";
 
 export const postRouter = {
   list: protectedProcedure
     .input(PostSchemas.list.request)
     .output(PostSchemas.list.response)
-    .handler(async ({ input }) => listItem(input)),
+    .handler(async ({ input }) => listPosts(input)),
 
   // get: protectedProcedure
   //   .input(PostSchemas.get.request)

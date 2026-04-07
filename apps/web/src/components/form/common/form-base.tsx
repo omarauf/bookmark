@@ -62,7 +62,11 @@ export function FormBase({
     <Field
       data-invalid={isInvalid}
       orientation={horizontal ? "horizontal" : undefined}
-      className={cn("h-fit", classNames?.wrapper)}
+      className={cn(
+        "h-fit",
+        horizontal && "items-center! flex justify-between",
+        classNames?.wrapper,
+      )}
       dir={dir}
     >
       {controlFirst ? (

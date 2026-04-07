@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";
 import { containsData } from "@/utils/object";
+import { DisplaySettingsMenu } from "../controls";
 
 export function Filter({ className }: { className?: string }) {
   const collectionsQuery = useQuery(orpc.collection.all.queryOptions());
@@ -68,6 +69,8 @@ export function Filter({ className }: { className?: string }) {
       )}
     >
       <div className="no-scrollbar -mb-1 flex flex-1 items-center gap-3 overflow-x-auto pb-1">
+        <DisplaySettingsMenu />
+
         <form.AppField name="username">
           {(field) => (
             <field.Input

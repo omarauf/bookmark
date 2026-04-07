@@ -4,7 +4,10 @@ import { PostSchemas } from "@workspace/contracts/post";
 import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
+import { Header } from "@/layout/header";
 import { Main } from "@/layout/main";
+import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
+import { CollectionTree } from "@/modules/item/collection-tree";
 import { Filter } from "@/modules/post/filter";
 import { PostList } from "@/modules/post/list";
 
@@ -47,16 +50,26 @@ function Instagram() {
   const flatItems = postQuery.data.pages.flatMap((page) => page.items);
 
   return (
-    <Main className="py-0" contentClassName="pt-0">
-      <Filter className="sticky z-10 flex w-full" />
+    <Main className="bg-temp py-0" fluid>
+      <Header>
+        <CollectionBreadcrumb />
+      </Header>
 
-      <InfiniteScroll
-        onLoadMore={postQuery.fetchNextPage}
-        hasNextPage={postQuery.hasNextPage}
-        isFetchingNextPage={postQuery.isFetchingNextPage}
-      >
-        <PostList posts={flatItems} />
-      </InfiniteScroll>
+      <div className="flex w-full gap-6 py-4">
+        <CollectionTree className="shrink-0 rounded-xl" />
+
+        <div className="flex w-full flex-col">
+          <Filter className="sticky z-10 flex w-full" />
+
+          <InfiniteScroll
+            onLoadMore={postQuery.fetchNextPage}
+            hasNextPage={postQuery.hasNextPage}
+            isFetchingNextPage={postQuery.isFetchingNextPage}
+          >
+            <PostList posts={flatItems} />
+          </InfiniteScroll>
+        </div>
+      </div>
 
       <EmptyContent show={!flatItems.length} />
     </Main>

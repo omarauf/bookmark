@@ -18,6 +18,7 @@ type Props<T extends string | number> = FormControlProps & {
   placeholder?: string;
   options: { value: T; label: string }[] | undefined;
   className?: string;
+  horizontal?: boolean;
   classNames?: {
     content?: string;
   };

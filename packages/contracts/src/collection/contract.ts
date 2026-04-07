@@ -22,6 +22,7 @@ export const CollectionSchemas = {
         slug: z.string(),
         label: z.string(),
         isLast: z.boolean(),
+        path: z.string(),
         value: z.string(),
         createdAt: z.date(),
         updatedAt: z.date(),
@@ -68,4 +69,9 @@ export type UpdateCollection = z.infer<typeof CollectionSchemas.update.request>;
 
 export type CollectionTree = Collection & {
   children: CollectionTree[];
+};
+
+export type RichCollection = Collection & {
+  isLast: boolean;
+  value: string;
 };

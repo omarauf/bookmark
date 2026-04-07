@@ -32,3 +32,7 @@ export function containsData(obj: Record<string, unknown> | undefined): boolean 
       (!Array.isArray(value) || value.length > 0),
   );
 }
+
+export function keys<T extends object>(obj: T): Array<keyof T> {
+  return Object.keys(obj) as Array<keyof T>;
+}

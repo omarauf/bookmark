@@ -88,12 +88,8 @@
           "name": "collections_parent_id_fk",
           "tableFrom": "collections",
           "tableTo": "collections",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -103,9 +99,7 @@
         "collections_path_unique": {
           "name": "collections_path_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "path"
-          ]
+          "columns": ["path"]
         }
       },
       "policies": {},
@@ -552,12 +546,8 @@
           "name": "media_item_id_items_id_fk",
           "tableFrom": "media",
           "tableTo": "items",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -616,12 +606,8 @@
           "name": "relations_from_item_id_items_id_fk",
           "tableFrom": "relations",
           "tableTo": "items",
-          "columnsFrom": [
-            "from_item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["from_item_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -629,12 +615,8 @@
           "name": "relations_to_item_id_items_id_fk",
           "tableFrom": "relations",
           "tableTo": "items",
-          "columnsFrom": [
-            "to_item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["to_item_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -642,11 +624,7 @@
       "compositePrimaryKeys": {
         "relations_from_item_id_to_item_id_relation_type_pk": {
           "name": "relations_from_item_id_to_item_id_relation_type_pk",
-          "columns": [
-            "from_item_id",
-            "to_item_id",
-            "relation_type"
-          ]
+          "columns": ["from_item_id", "to_item_id", "relation_type"]
         }
       },
       "uniqueConstraints": {},
@@ -806,12 +784,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -898,12 +872,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -913,9 +883,7 @@
         "sessions_token_unique": {
           "name": "sessions_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -979,9 +947,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},

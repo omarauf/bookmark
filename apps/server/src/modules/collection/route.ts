@@ -1,5 +1,5 @@
 import { CollectionSchemas } from "@workspace/contracts/collection";
-import { and, arrayContained, eq, lte, ne, or, sql } from "drizzle-orm";
+import { and, arrayContained, eq, getTableColumns, lte, ne, or, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
 import { collections } from "./schema";
@@ -8,7 +8,13 @@ import { getSlugPath } from "./utils";
 
 export const collectionRouter = {
   all: protectedProcedure.output(CollectionSchemas.all.response).handler(async () => {
-    return await db.select().from(collections).orderBy(collections.path, collections.slug);
+    return await db
+      .select({
+        ...getTableColumns(collections),
+        value: collections.path,
+      })
+      .from(collections)
+      .orderBy(collections.path, collections.slug);
   }),
 
   list: protectedProcedure
@@ -24,6 +30,7 @@ export const collectionRouter = {
           id: collections.id,
           parentId: collections.parentId,
           value: collections.path,
+          path: collections.path,
           level: collections.level,
           slug: collections.slug,
           label: collections.label,

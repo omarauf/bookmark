@@ -42,7 +42,7 @@ function Tiktok() {
   const flatItems = postQuery.data.pages.flatMap((page) => page.items);
 
   return (
-    <Main className="py-0" contentClassName="pt-0">
+    <Main className="py-0">
       <Filter className="sticky z-10 flex w-full bg-background" />
 
       <InfiniteScroll

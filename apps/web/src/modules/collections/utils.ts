@@ -1,13 +1,19 @@
-import type { Collection, CollectionTree } from "@workspace/contracts/collection";
+type Base = {
+  id: string;
+  parentId: string | null;
+  slug: string;
+};
 
-export function listToTree(list: Collection[]): CollectionTree[] {
-  const byId = new Map<string, CollectionTree>();
+type TreeNode<T> = T & { children: TreeNode<T>[] };
+
+export function listToTree<T extends Base>(list: T[]): TreeNode<T>[] {
+  const byId = new Map<string, TreeNode<T>>();
 
   for (const r of list) {
     byId.set(r.id, { ...r, children: [] });
   }
 
-  const roots: CollectionTree[] = [];
+  const roots: TreeNode<T>[] = [];
 
   for (const r of list) {
     const node = byId.get(r.id);
@@ -26,7 +32,7 @@ export function listToTree(list: Collection[]): CollectionTree[] {
   }
 
   // sort recursively by slug
-  const sortRec = (nodes: CollectionTree[]) => {
+  const sortRec = (nodes: TreeNode<T>[]) => {
     nodes.sort((a, b) => a.slug.localeCompare(b.slug));
     for (const n of nodes) if (n.children.length) sortRec(n.children);
   };

@@ -18,8 +18,10 @@ import { PasswordField } from "./fields/password";
 import { RadioField } from "./fields/radio";
 import { SelectField } from "./fields/select";
 import { SliderRangeField } from "./fields/slider-range";
+import { SwitchField } from "./fields/switch";
 import { TabsField } from "./fields/tab";
 import { TextareaField } from "./fields/textarea";
+import { ToggleGroupField } from "./fields/toggle-group";
 
 export const { useAppForm, withForm, withFieldGroup } = createFormHook({
   fieldComponents: {
@@ -40,6 +42,8 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
     Date: DateField,
     DateRange: DateRangeField,
     SliderRange: SliderRangeField,
+    ToggleGroup: ToggleGroupField,
+    Switch: SwitchField,
   },
   formComponents: {
     SubmitButton,

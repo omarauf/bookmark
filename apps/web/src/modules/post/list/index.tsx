@@ -1,5 +1,7 @@
 import type { Post } from "@workspace/contracts/post";
 import { useCallback, useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useDisplaySettingsStore } from "../controls/store";
 import { PostListCard } from "./card";
 
 type Props = {
@@ -8,6 +10,8 @@ type Props = {
 
 export function PostList({ posts }: Props) {
   const [openPostId, setOpenPostId] = useState<string>();
+
+  const cardSize = useDisplaySettingsStore((s) => s.cardSize);
 
   const handleNavigation = useCallback(
     async (event: KeyboardEvent) => {
@@ -38,7 +42,13 @@ export function PostList({ posts }: Props) {
   }, [handleNavigation]);
 
   return (
-    <div className="grid 3xl:grid-cols-6 4xl:grid-cols-7 grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+    <div
+      // className="grid 3xl:grid-cols-6 4xl:grid-cols-7 grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+      className={cn("grid gap-4")}
+      style={{
+        gridTemplateColumns: `repeat(auto-fill, minmax(${cardSize === "S" ? 130 : cardSize === "M" ? 180 : 230}px, 1fr))`,
+      }}
+    >
       {posts.map((post) => (
         <PostListCard
           key={post.id}

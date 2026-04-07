@@ -6,6 +6,7 @@ import { InstagramPostTypeEnum } from "../platform/instagram/enum";
 export const PostFilterSchema = z.object({
   platform: PlatformEnum.optional().catch(undefined),
   username: z.string().optional().catch(undefined),
+  collectionPath: z.string().optional().catch(undefined),
   collectionIds: z
     .array(z.string())
     .transform((val) => (val && val.length > 0 ? val : undefined))

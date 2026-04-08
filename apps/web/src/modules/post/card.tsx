@@ -12,18 +12,26 @@ import { getThumbnailUrl } from "./utils";
 type Props = {
   post: Post;
   onClick: (id?: string) => void;
+  className?: string;
 };
 
-export function PostCard({ post, onClick }: Props) {
+export function PostCard({ post, onClick, className }: Props) {
   const { media } = post;
   const thumbnail = getThumbnailUrl(media);
 
-  const [aspectRatio, thumbnailScale, showCardInfo] = useDisplaySettingsStore(
-    useShallow((s) => [s.aspectRatio, s.thumbnailScale, s.showCardInfo]),
+  const [aspectRatio, thumbnailScale, showCardInfo, cardSize] = useDisplaySettingsStore(
+    useShallow((s) => [s.aspectRatio, s.thumbnailScale, s.showCardInfo, s.cardSize]),
   );
 
   return (
-    <Card className="cursor-pointer overflow-hidden p-0" onClick={() => onClick(post.id)}>
+    <Card
+      className={cn(
+        "cursor-pointer overflow-hidden p-0",
+        { S: "rounded-sm", M: "rounded-md", L: "rounded-lg" }[cardSize],
+        className,
+      )}
+      onClick={() => onClick(post.id)}
+    >
       <LazyImage
         src={staticFile(thumbnail)}
         className={cn(

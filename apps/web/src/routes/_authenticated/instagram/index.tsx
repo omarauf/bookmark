@@ -2,6 +2,7 @@ import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/post";
 import { InfiniteScroll } from "@/components/infinite-scroll";
+import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { orpc } from "@/integrations/orpc";
 import { Header } from "@/layout/header";
 import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
@@ -49,42 +50,52 @@ function Instagram() {
 
   return (
     <div
-      className="w-full overflow-hidden bg-yellow-900 pb-2"
-      style={{
-        display: "grid",
-        gridTemplateAreas: `
-      "top-bar top-bar top-bar"
-      "tree    filter   filter"
-      "tree    main     preview"
-    `,
-        gridTemplateRows: "auto auto 1fr", // last row takes remaining space
-        gridTemplateColumns: "auto minmax(0, 1fr) auto",
-      }}
+      className="h-full w-full gap-1 overflow-hidden bg-sidebar"
+      style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
     >
       {/* TOP BAR */}
-      <Header className="[grid-area:top-bar]">
+      <Header className="rounded-sm bg-background px-4">
         <CollectionBreadcrumb />
       </Header>
 
-      {/* TREE */}
-      <CollectionTree className="rounded-xl [grid-area:tree]" />
+      <ResizablePanelGroup orientation="horizontal" className="flex h-full min-h-0 gap-1">
+        <ResizablePanel defaultSize="20%" className="shrink-0">
+          <CollectionTree className="h-full rounded-sm" />
+        </ResizablePanel>
 
-      {/* FILTER */}
-      <Filter className="sticky z-10 [grid-area:filter]" />
+        {/*<ResizableHandle />*/}
 
-      {/* MAIN */}
-      <InfiniteScroll
-        onLoadMore={postQuery.fetchNextPage}
-        hasNextPage={postQuery.hasNextPage}
-        isFetchingNextPage={postQuery.isFetchingNextPage}
-        isLoading={postQuery.isLoading}
-        className="gap-4 bg-gray-800 px-4 [grid-area:main]"
-      >
-        <PostList posts={flatItems} />
-      </InfiniteScroll>
+        <ResizablePanel
+          defaultSize="80%"
+          className="flex grow flex-col overflow-auto rounded-sm bg-background"
+        >
+          {/* FILTER */}
+          <Filter className="sticky" />
 
-      {/* PREVIEW */}
-      <div className="w-20 [grid-area:preview]">Preview</div>
+          {/* MAIN */}
+          <InfiniteScroll
+            onLoadMore={postQuery.fetchNextPage}
+            hasNextPage={postQuery.hasNextPage}
+            isFetchingNextPage={postQuery.isFetchingNextPage}
+            isLoading={postQuery.isLoading}
+            className="gap-4 px-4"
+          >
+            <PostList posts={flatItems} />
+          </InfiniteScroll>
+        </ResizablePanel>
+
+        {/*<ResizableHandle className="transition-colors hover:bg-primary" />*/}
+
+        {/* PREVIEW */}
+        {/*<ResizablePanel
+          collapsible
+          minSize={100}
+          defaultSize="30%"
+          className="w-40 shrink-0 rounded-sm bg-background"
+        >
+          <div className="p-2">Preview</div>
+        </ResizablePanel>*/}
+      </ResizablePanelGroup>
     </div>
   );
 }

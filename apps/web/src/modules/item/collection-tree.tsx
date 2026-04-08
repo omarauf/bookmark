@@ -21,7 +21,7 @@ export function CollectionTree({ className }: Props) {
   };
 
   return (
-    <div className={cn("w-68.75 bg-background", className)}>
+    <div className={cn("w-full bg-background", className)}>
       <div className="flex items-center justify-between px-3 pt-2">
         <h3 className="font-bold text-sm">Collections</h3>
 

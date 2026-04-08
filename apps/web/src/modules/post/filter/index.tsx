@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/post";
-import { useEffect, useState } from "react";
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
@@ -47,24 +46,10 @@ export function Filter({ className }: { className?: string }) {
     form.reset(undefined);
   };
 
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <div
       className={cn(
-        "z-40 flex w-full items-center gap-3 transition-all duration-300",
-        isScrolled
-          ? "sticky top-4 rounded-full border border-border/40 bg-background/80 px-5 py-3 shadow-sm backdrop-blur-md"
-          : "py-6",
+        "flex w-full items-center gap-3 px-3 py-4 transition-all duration-300",
         className,
       )}
     >
@@ -124,18 +109,6 @@ export function Filter({ className }: { className?: string }) {
       </div>
 
       <div className="flex items-center gap-2 border-border/40 border-l pl-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            "text-muted-foreground transition-all duration-300",
-            !isScrolled && "pointer-events-none w-0 overflow-hidden p-0 opacity-0",
-          )}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        >
-          Top
-        </Button>
-
         <Button
           variant={hasData ? "secondary" : "ghost"}
           size="sm"

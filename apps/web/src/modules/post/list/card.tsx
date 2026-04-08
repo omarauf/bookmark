@@ -10,7 +10,7 @@ type Props = {
 };
 
 function PostListCardM({ post, isOpen, onClick }: Props) {
-  console.log("Render");
+  console.log("Render", post.externalId);
 
   return (
     <>

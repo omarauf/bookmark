@@ -53,14 +53,14 @@ export class TiktokHandler implements PlatformHandler {
     const creator = creatorParser(post.author);
     const postItem = postParser(post);
 
-    const downloadJob = toDownloadTasks(post);
+    const downloadTasks = toDownloadTasks(post);
 
     const createdRelations = relation(postItem, creator, "created_by");
 
     const items = [postItem, creator];
     const relations = createdRelations;
 
-    const itemImportItemImport = { items, relations, downloadJob };
+    const itemImportItemImport = { items, relations, downloadTasks };
 
     const result = ItemSchemas.import.safeParse(itemImportItemImport);
     if (!result.success) {

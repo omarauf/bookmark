@@ -56,7 +56,7 @@ export class InstagramHandler implements PlatformHandler {
     const creator = creatorParser(post.owner);
     const postItem = postParser(post);
 
-    const downloadTask = toDownloadTasks(post);
+    const downloadTasks = toDownloadTasks(post);
 
     const taggedRelations = relation(
       postItem,
@@ -73,7 +73,7 @@ export class InstagramHandler implements PlatformHandler {
     const items = [postItem, creator, ...taggedCreators.map((t) => t.creator)];
     const relations = [...taggedRelations, ...createdRelations];
 
-    const itemImport = { items, relations, downloadTask };
+    const itemImport = { items, relations, downloadTasks };
 
     const result = ItemSchemas.import.safeParse(itemImport);
     if (!result.success) {

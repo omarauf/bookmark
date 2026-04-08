@@ -1,11 +1,9 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/post";
-import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
 import { Header } from "@/layout/header";
-import { Main } from "@/layout/main";
 import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
 import { CollectionTree } from "@/modules/item/collection-tree";
 import { Filter } from "@/modules/post/filter";
@@ -22,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/instagram/")({
         input: (searchParams) => ({
           ...deps,
           page: searchParams,
-          limit: 30,
+          perPage: 65,
           platform: "instagram",
         }),
         getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
@@ -40,7 +38,7 @@ function Instagram() {
       input: (searchParams) => ({
         ...search,
         page: searchParams,
-        limit: 30,
+        perPage: 65,
         platform: "instagram",
       }),
       getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
@@ -50,28 +48,43 @@ function Instagram() {
   const flatItems = postQuery.data.pages.flatMap((page) => page.items);
 
   return (
-    <Main className="bg-temp py-0" fluid>
-      <Header>
+    <div
+      className="w-full overflow-hidden bg-yellow-900 pb-2"
+      style={{
+        display: "grid",
+        gridTemplateAreas: `
+      "top-bar top-bar top-bar"
+      "tree    filter   filter"
+      "tree    main     preview"
+    `,
+        gridTemplateRows: "auto auto 1fr", // last row takes remaining space
+        gridTemplateColumns: "auto minmax(0, 1fr) auto",
+      }}
+    >
+      {/* TOP BAR */}
+      <Header className="[grid-area:top-bar]">
         <CollectionBreadcrumb />
       </Header>
 
-      <div className="flex w-full gap-6 py-4">
-        <CollectionTree className="shrink-0 rounded-xl" />
+      {/* TREE */}
+      <CollectionTree className="rounded-xl [grid-area:tree]" />
 
-        <div className="flex w-full flex-col">
-          <Filter className="sticky z-10 flex w-full" />
+      {/* FILTER */}
+      <Filter className="sticky z-10 [grid-area:filter]" />
 
-          <InfiniteScroll
-            onLoadMore={postQuery.fetchNextPage}
-            hasNextPage={postQuery.hasNextPage}
-            isFetchingNextPage={postQuery.isFetchingNextPage}
-          >
-            <PostList posts={flatItems} />
-          </InfiniteScroll>
-        </div>
-      </div>
+      {/* MAIN */}
+      <InfiniteScroll
+        onLoadMore={postQuery.fetchNextPage}
+        hasNextPage={postQuery.hasNextPage}
+        isFetchingNextPage={postQuery.isFetchingNextPage}
+        isLoading={postQuery.isLoading}
+        className="gap-4 bg-gray-800 px-4 [grid-area:main]"
+      >
+        <PostList posts={flatItems} />
+      </InfiniteScroll>
 
-      <EmptyContent show={!flatItems.length} />
-    </Main>
+      {/* PREVIEW */}
+      <div className="w-20 [grid-area:preview]">Preview</div>
+    </div>
   );
 }

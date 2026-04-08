@@ -23,7 +23,7 @@ export function PostCard({ post, onClick }: Props) {
   );
 
   return (
-    <Card className="cursor-pointer gap-3 overflow-hidden p-0" onClick={() => onClick(post.id)}>
+    <Card className="cursor-pointer overflow-hidden p-0" onClick={() => onClick(post.id)}>
       <LazyImage
         src={staticFile(thumbnail)}
         className={cn(

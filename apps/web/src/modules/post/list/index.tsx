@@ -6,9 +6,10 @@ import { PostListCard } from "./card";
 
 type Props = {
   posts: Post[];
+  className?: string;
 };
 
-export function PostList({ posts }: Props) {
+export function PostList({ posts, className }: Props) {
   const [openPostId, setOpenPostId] = useState<string>();
 
   const cardSize = useDisplaySettingsStore((s) => s.cardSize);
@@ -43,8 +44,7 @@ export function PostList({ posts }: Props) {
 
   return (
     <div
-      // className="grid 3xl:grid-cols-6 4xl:grid-cols-7 grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-      className={cn("grid gap-4")}
+      className={cn("grid gap-4", className)}
       style={{
         gridTemplateColumns: `repeat(auto-fill, minmax(${cardSize === "S" ? 130 : cardSize === "M" ? 180 : 230}px, 1fr))`,
       }}

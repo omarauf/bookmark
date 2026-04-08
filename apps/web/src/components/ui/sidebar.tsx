@@ -131,7 +131,8 @@ function SidebarProvider({
             } as React.CSSProperties
           }
           className={cn(
-            "group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar",
+            // add h-full to make a full height and make the page use it own scrollbar
+            "group/sidebar-wrapper flex min-h-svh h-full w-full has-data-[variant=inset]:bg-sidebar",
             className,
           )}
           {...props}

@@ -1,3 +1,4 @@
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 type MainProps = React.HTMLAttributes<HTMLElement> & {
@@ -17,6 +18,12 @@ export function Main({ className, fixed, fluid, children, ...props }: MainProps)
         !fluid ? "@7xl/content:mx-auto @7xl/content:w-full @7xl/content:max-w-7xl" : "px-4",
         className,
       )}
+      style={
+        {
+          // gridTemplateColumns: "250px 1fr 300px",
+          // gridTemplateRows: "64px 1fr",
+        }
+      }
       {...props}
     >
       {children}

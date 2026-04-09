@@ -1,9 +1,9 @@
-import { useVirtualizer } from "@tanstack/react-virtual";
 import type { Post } from "@workspace/contracts/post";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { List, type RowComponentProps } from "react-window";
 import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
-import { CARD_MIN_WIDTH, ESTIMATED_ROW_HEIGHT } from "../card/constant";
+import { CARD_MIN_WIDTH } from "../card/constant";
 import { useDisplaySettingsStore } from "../controls/store";
 import { PostListCard } from "./card";
 
@@ -14,7 +14,7 @@ type Props = {
 
 const GAP = 16;
 
-export function PostListVirtual({ posts, className }: Props) {
+export function PostListVirtualWindow({ posts, className }: Props) {
   const [openPostId, setOpenPostId] = useState<string>();
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -33,18 +33,15 @@ export function PostListVirtual({ posts, className }: Props) {
     [posts.length, columnCount],
   );
 
-  const estimatedRowHeight = useMemo(
-    () => estimateRowHeight(cardSize, showCardInfo, aspectRatio),
-    [cardSize, showCardInfo, aspectRatio],
+  const estimatedColumnWidth = useMemo(
+    () => getColumnWidth(containerWidth, columnCount),
+    [containerWidth, columnCount],
   );
 
-  const virtualizer = useVirtualizer({
-    count: rowCount,
-    getScrollElement: () => parentRef?.current ?? null,
-    estimateSize: () => estimatedRowHeight,
-    overscan: 1,
-    debug: true,
-  });
+  const estimatedRowHeight = useMemo(
+    () => getRowHeight(estimatedColumnWidth, showCardInfo, aspectRatio),
+    [estimatedColumnWidth, showCardInfo, aspectRatio],
+  );
 
   const handleNavigation = useCallback(
     async (event: KeyboardEvent) => {
@@ -64,6 +61,10 @@ export function PostListVirtual({ posts, className }: Props) {
     [posts, openPostId],
   );
 
+  const handlePostClick = useCallback((id: string | undefined) => {
+    setOpenPostId(id);
+  }, []);
+
   useEffect(() => {
     document.addEventListener("keydown", handleNavigation);
     return () => {
@@ -71,46 +72,65 @@ export function PostListVirtual({ posts, className }: Props) {
     };
   }, [handleNavigation]);
 
-  const virtualItems = virtualizer.getVirtualItems();
+  const cellProps = useMemo<CellData>(
+    () => ({
+      posts,
+      columnCount,
+      openPostId,
+      onPostClick: handlePostClick,
+    }),
+    [posts, columnCount, openPostId, handlePostClick],
+  );
+
+  return (
+    <div ref={parentRef} className={cn("relative w-full overflow-hidden", className)}>
+      <List
+        rowComponent={PostListCell}
+        rowCount={rowCount}
+        rowHeight={estimatedRowHeight}
+        rowProps={cellProps}
+      />
+    </div>
+  );
+}
+
+type CellData = {
+  posts: Post[];
+  columnCount: number;
+  openPostId: string | undefined;
+  onPostClick: (id: string | undefined) => void;
+};
+
+function PostListCell({
+  index,
+  style,
+  columnCount,
+  posts,
+  openPostId,
+  onPostClick,
+}: RowComponentProps<CellData>) {
+  const startIdx = index * columnCount;
+  const rowPosts = posts.slice(startIdx, startIdx + columnCount);
 
   return (
     <div
-      ref={parentRef}
-      className={cn("relative w-full", className)}
-      style={{ height: virtualizer.getTotalSize() }}
+      className="grid"
+      style={{
+        ...style,
+        gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
+        gap: GAP,
+        // marginBottom: 16,
+        paddingBottom: GAP,
+      }}
     >
-      {virtualItems.map((virtualRow) => {
-        const startIdx = virtualRow.index * columnCount;
-        const rowPosts = posts.slice(startIdx, startIdx + columnCount);
-
-        return (
-          <div
-            key={virtualRow.index}
-            ref={virtualizer.measureElement}
-            data-index={virtualRow.index}
-            className="absolute left-0 w-full"
-            style={{ top: virtualRow.start }}
-          >
-            <div
-              className="grid"
-              style={{
-                gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
-                gap: GAP,
-                marginBottom: 16,
-              }}
-            >
-              {rowPosts.map((post) => (
-                <PostListCard
-                  key={post.id}
-                  post={post}
-                  isOpen={openPostId === post.id}
-                  onClick={(id) => setOpenPostId(id)}
-                />
-              ))}
-            </div>
-          </div>
-        );
-      })}
+      {rowPosts.map((post) => (
+        <PostListCard
+          key={post.id}
+          post={post}
+          isOpen={openPostId === post.id}
+          onClick={onPostClick}
+        />
+      ))}
     </div>
   );
 }
@@ -146,9 +166,25 @@ function getRowCount(postsCount: number, columnCount: number) {
   return Math.ceil(postsCount / columnCount);
 }
 
-function estimateRowHeight(cardSize: string, showCardInfo: boolean, aspectRatio: string) {
-  const base = ESTIMATED_ROW_HEIGHT[cardSize];
-  const infoHeight = showCardInfo ? 40 : 0;
+function getColumnWidth(containerWidth: number, columnCount: number) {
+  if (columnCount <= 0) return containerWidth;
+
+  // this get the post width
+  // const totalGapWidth = 0 * (columnCount - 1);
+  // const availableWidth = containerWidth - totalGapWidth;
+
+  // this get the column width (post width + gap)
+  const availableWidth = containerWidth;
+
+  return Math.floor(availableWidth / columnCount);
+}
+
+function getRowHeight(columnWith: number, showCardInfo: boolean, aspectRatio: string) {
   const ratio = aspectRatio === "landscape" ? 0.5625 : aspectRatio === "portrait" ? 1.33 : 1;
-  return Math.round(base * ratio + infoHeight);
+
+  const cardHeight = Math.round(columnWith * ratio);
+  const infoHeight = showCardInfo ? 40 : 0;
+  const estimatedHeight = cardHeight + infoHeight;
+
+  return estimatedHeight;
 }

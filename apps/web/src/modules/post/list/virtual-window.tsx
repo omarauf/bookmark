@@ -1,24 +1,37 @@
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
 import type { Post } from "@workspace/contracts/post";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { List, type RowComponentProps } from "react-window";
 import { useShallow } from "zustand/react/shallow";
-import { cn } from "@/lib/utils";
+import { orpc } from "@/integrations/orpc";
 import { CARD_MIN_WIDTH } from "../card/constant";
 import { useDisplaySettingsStore } from "../controls/store";
 import { PostListCard } from "./card";
 
-type Props = {
-  posts: Post[];
-  className?: string;
-};
-
 const GAP = 16;
+const LOAD_MORE_THRESHOLD = 5;
 
-export function PostListVirtualWindow({ posts, className }: Props) {
+export function PostListVirtualWindow() {
   const [openPostId, setOpenPostId] = useState<string>();
   const parentRef = useRef<HTMLDivElement>(null);
+  const search = useSearch({ from: "/_authenticated/instagram/virtual-window" });
+  const postQuery = useSuspenseInfiniteQuery(
+    orpc.post.list.infiniteOptions({
+      initialPageParam: 1,
+      input: (searchParams) => ({
+        ...search,
+        page: searchParams,
+        perPage: 65,
+        platform: "instagram",
+      }),
+      getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
+    }),
+  );
 
-  const containerWidth = useContainerWidth(parentRef);
+  const posts = postQuery.data.pages.flatMap((page) => page.items);
+
+  const { width: containerWidth, height: containerHeight } = useContainerSize(parentRef);
 
   const [cardSize, aspectRatio, showCardInfo] = useDisplaySettingsStore(
     useShallow((s) => [s.cardSize, s.aspectRatio, s.showCardInfo]),
@@ -82,14 +95,34 @@ export function PostListVirtualWindow({ posts, className }: Props) {
     [posts, columnCount, openPostId, handlePostClick],
   );
 
+  const handleRowsRendered = useCallback(
+    (
+      { stopIndex }: { startIndex: number; stopIndex: number },
+      _allRows: { startIndex: number; stopIndex: number },
+    ) => {
+      if (
+        stopIndex >= rowCount - LOAD_MORE_THRESHOLD &&
+        postQuery.hasNextPage &&
+        !postQuery.isFetchingNextPage
+      ) {
+        postQuery.fetchNextPage();
+      }
+    },
+    [rowCount, postQuery.hasNextPage, postQuery.isFetchingNextPage, postQuery.fetchNextPage],
+  );
+
   return (
-    <div ref={parentRef} className={cn("relative w-full overflow-hidden", className)}>
-      <List
-        rowComponent={PostListCell}
-        rowCount={rowCount}
-        rowHeight={estimatedRowHeight}
-        rowProps={cellProps}
-      />
+    <div ref={parentRef} className="h-full w-full">
+      {containerHeight > 0 && containerWidth > 0 && (
+        <List
+          style={{ height: containerHeight, width: containerWidth }}
+          rowComponent={PostListCell}
+          rowCount={rowCount}
+          rowHeight={estimatedRowHeight}
+          rowProps={cellProps}
+          onRowsRendered={handleRowsRendered}
+        />
+      )}
     </div>
   );
 }
@@ -119,7 +152,6 @@ function PostListCell({
         ...style,
         gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
         gap: GAP,
-        // marginBottom: 16,
         paddingBottom: GAP,
       }}
     >
@@ -135,8 +167,8 @@ function PostListCell({
   );
 }
 
-function useContainerWidth(parentRef: React.RefObject<HTMLDivElement | null>) {
-  const [containerWidth, setContainerWidth] = useState(0);
+function useContainerSize(parentRef: React.RefObject<HTMLDivElement | null>) {
+  const [size, setSize] = useState({ width: 0, height: 0 });
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: this is a ref
   useLayoutEffect(() => {
@@ -144,14 +176,17 @@ function useContainerWidth(parentRef: React.RefObject<HTMLDivElement | null>) {
     if (!el) return;
 
     const observer = new ResizeObserver(([entry]) => {
-      setContainerWidth(entry.contentRect.width);
+      setSize({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      });
     });
 
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
-  return containerWidth;
+  return size;
 }
 
 function getColumnCount(cardSize: string, containerWidth: number) {
@@ -169,11 +204,6 @@ function getRowCount(postsCount: number, columnCount: number) {
 function getColumnWidth(containerWidth: number, columnCount: number) {
   if (columnCount <= 0) return containerWidth;
 
-  // this get the post width
-  // const totalGapWidth = 0 * (columnCount - 1);
-  // const availableWidth = containerWidth - totalGapWidth;
-
-  // this get the column width (post width + gap)
   const availableWidth = containerWidth;
 
   return Math.floor(availableWidth / columnCount);

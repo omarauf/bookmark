@@ -1,9 +1,6 @@
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/post";
-import { InfiniteScroll } from "@/components/infinite-scroll";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { orpc } from "@/integrations/orpc";
 import { Header } from "@/layout/header";
 import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
 import { CollectionTree } from "@/modules/item/collection-tree";
@@ -32,22 +29,6 @@ export const Route = createFileRoute("/_authenticated/instagram/virtual-window")
 });
 
 function Instagram() {
-  const search = Route.useSearch();
-  const postQuery = useSuspenseInfiniteQuery(
-    orpc.post.list.infiniteOptions({
-      initialPageParam: 1,
-      input: (searchParams) => ({
-        ...search,
-        page: searchParams,
-        perPage: 65,
-        platform: "instagram",
-      }),
-      getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
-    }),
-  );
-
-  const flatItems = postQuery.data.pages.flatMap((page) => page.items);
-
   return (
     <div
       className="h-full w-full gap-1 overflow-hidden bg-sidebar"
@@ -73,15 +54,7 @@ function Instagram() {
           <Filter className="sticky" />
 
           {/* MAIN */}
-          <InfiniteScroll
-            onLoadMore={postQuery.fetchNextPage}
-            hasNextPage={postQuery.hasNextPage}
-            isFetchingNextPage={postQuery.isFetchingNextPage}
-            isLoading={postQuery.isLoading}
-            className="gap-4 px-4"
-          >
-            <PostListVirtualWindow posts={flatItems} />
-          </InfiniteScroll>
+          <PostListVirtualWindow />
         </ResizablePanel>
 
         {/*<ResizableHandle className="transition-colors hover:bg-primary" />*/}

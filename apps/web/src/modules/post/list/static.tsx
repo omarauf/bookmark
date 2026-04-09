@@ -1,6 +1,7 @@
 import type { Post } from "@workspace/contracts/post";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { CARD_MIN_WIDTH } from "../card/constant";
 import { useDisplaySettingsStore } from "../controls/store";
 import { PostListCard } from "./card";
 
@@ -22,9 +23,6 @@ export function PostList({ posts, className }: Props) {
       const currentIndex = posts.findIndex((post) => post.id === openPostId);
       if (currentIndex === -1) return;
 
-      // Submit current form before navigating
-      // await selectedPostRef.current?.submit();
-
       const direction = event.key === "ArrowLeft" ? -1 : 1;
       const targetIndex = currentIndex + direction;
 
@@ -42,11 +40,13 @@ export function PostList({ posts, className }: Props) {
     };
   }, [handleNavigation]);
 
+  const cardMinWidth = CARD_MIN_WIDTH[cardSize];
+
   return (
     <div
       className={cn("grid gap-4", className)}
       style={{
-        gridTemplateColumns: `repeat(auto-fill, minmax(${cardSize === "S" ? 130 : cardSize === "M" ? 180 : 230}px, 1fr))`,
+        gridTemplateColumns: `repeat(auto-fill, minmax(${cardMinWidth}px, 1fr))`,
       }}
     >
       {posts.map((post) => (

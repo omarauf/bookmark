@@ -26,6 +26,7 @@ import { Route as AuthenticatedInstagramIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedImportsIndexRouteImport } from './routes/_authenticated/imports/index'
 import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
 import { Route as AuthenticatedCollectionsIndexRouteImport } from './routes/_authenticated/collections/index'
+import { Route as AuthenticatedInstagramVirtualRouteImport } from './routes/_authenticated/instagram/virtual'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -117,6 +118,12 @@ const AuthenticatedCollectionsIndexRoute =
     path: '/collections/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedInstagramVirtualRoute =
+  AuthenticatedInstagramVirtualRouteImport.update({
+    id: '/instagram/virtual',
+    path: '/instagram/virtual',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/sign-in': typeof AuthSignInRoute
+  '/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
   '/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/imports/': typeof AuthenticatedImportsIndexRoute
@@ -144,6 +152,7 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/sign-in': typeof AuthSignInRoute
   '/': typeof AuthenticatedIndexRoute
+  '/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
   '/collections': typeof AuthenticatedCollectionsIndexRoute
   '/downloads': typeof AuthenticatedDownloadsIndexRoute
   '/imports': typeof AuthenticatedImportsIndexRoute
@@ -164,6 +173,7 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
   '/_authenticated/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/_authenticated/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/_authenticated/imports/': typeof AuthenticatedImportsIndexRoute
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/sign-in'
+    | '/instagram/virtual'
     | '/collections/'
     | '/downloads/'
     | '/imports/'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/503'
     | '/sign-in'
     | '/'
+    | '/instagram/virtual'
     | '/collections'
     | '/downloads'
     | '/imports'
@@ -221,6 +233,7 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_auth/sign-in'
     | '/_authenticated/'
+    | '/_authenticated/instagram/virtual'
     | '/_authenticated/collections/'
     | '/_authenticated/downloads/'
     | '/_authenticated/imports/'
@@ -363,11 +376,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCollectionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/instagram/virtual': {
+      id: '/_authenticated/instagram/virtual'
+      path: '/instagram/virtual'
+      fullPath: '/instagram/virtual'
+      preLoaderRoute: typeof AuthenticatedInstagramVirtualRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedInstagramVirtualRoute: typeof AuthenticatedInstagramVirtualRoute
   AuthenticatedCollectionsIndexRoute: typeof AuthenticatedCollectionsIndexRoute
   AuthenticatedDownloadsIndexRoute: typeof AuthenticatedDownloadsIndexRoute
   AuthenticatedImportsIndexRoute: typeof AuthenticatedImportsIndexRoute
@@ -381,6 +402,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedInstagramVirtualRoute: AuthenticatedInstagramVirtualRoute,
   AuthenticatedCollectionsIndexRoute: AuthenticatedCollectionsIndexRoute,
   AuthenticatedDownloadsIndexRoute: AuthenticatedDownloadsIndexRoute,
   AuthenticatedImportsIndexRoute: AuthenticatedImportsIndexRoute,

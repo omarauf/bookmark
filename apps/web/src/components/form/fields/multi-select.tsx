@@ -55,7 +55,7 @@ export function MultiSelectField<T extends string | number = string>({
       key={key}
       // disabled
       onValuesChange={field.handleChange}
-      values={value}
+      values={value || []}
     >
       <MultiSelectTrigger
         aria-invalid={isInvalid}

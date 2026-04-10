@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/post";
+import { useEffect } from "react";
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
@@ -45,6 +46,16 @@ export function Filter({ className }: { className?: string }) {
     navigate({ to: ".", search: undefined });
     form.reset(undefined);
   };
+
+  useEffect(() => {
+    form.reset({
+      ...searchData.data,
+      rangeData: {
+        from: searchData.data.from,
+        to: searchData.data.to,
+      },
+    });
+  }, [searchData, form.reset]);
 
   return (
     <div

@@ -4,7 +4,7 @@ import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Header } from "@/layout/header";
 import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
 import { CollectionTree } from "@/modules/item/collection-tree";
-import { PostListVirtualWindow } from "@/modules/post/archive/virtual-window";
+// import { PostListVirtualWindow } from "@/modules/post/archive/virtual-window";
 import { Filter } from "@/modules/post/filter";
 
 export const Route = createFileRoute("/_authenticated/instagram/virtual-window")({
@@ -54,7 +54,7 @@ function Instagram() {
           <Filter className="sticky" />
 
           {/* MAIN */}
-          <PostListVirtualWindow />
+          {/* <PostListVirtualWindow /> */}
         </ResizablePanel>
 
         {/*<ResizableHandle className="transition-colors hover:bg-primary" />*/}

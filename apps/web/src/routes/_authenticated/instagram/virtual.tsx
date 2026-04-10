@@ -7,7 +7,7 @@ import { orpc } from "@/integrations/orpc";
 import { Header } from "@/layout/header";
 import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
 import { CollectionTree } from "@/modules/item/collection-tree";
-import { PostListVirtual } from "@/modules/post/archive/virtual";
+// import { PostListVirtual } from "@/modules/post/archive/virtual";
 import { Filter } from "@/modules/post/filter";
 
 export const Route = createFileRoute("/_authenticated/instagram/virtual")({
@@ -80,7 +80,7 @@ function Instagram() {
             isLoading={postQuery.isLoading}
             className="gap-4 px-4"
           >
-            <PostListVirtual posts={flatItems} />
+            {/* <PostListVirtual posts={flatItems} /> */}
           </InfiniteScroll>
         </ResizablePanel>
 

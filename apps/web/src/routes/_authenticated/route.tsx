@@ -9,6 +9,7 @@ import { LayoutProvider } from "@/settings/context/layout-provider";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
+  ssr: "data-only",
   beforeLoad: async ({ location, context: { session } }) => {
     if (session == null) {
       throw redirect({ to: "/sign-in", search: { redirect: location.href } });

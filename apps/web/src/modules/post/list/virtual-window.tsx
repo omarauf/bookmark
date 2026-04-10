@@ -6,7 +6,7 @@ import { List, type RowComponentProps } from "react-window";
 import { useShallow } from "zustand/react/shallow";
 import { orpc } from "@/integrations/orpc";
 import { CARD_MIN_WIDTH } from "../card/constant";
-import { useDisplaySettingsStore } from "../controls/store";
+import { useDisplaySettingsStore } from "../controls/display-setting-store";
 import { PostListCard } from "./card";
 
 const GAP = 16;

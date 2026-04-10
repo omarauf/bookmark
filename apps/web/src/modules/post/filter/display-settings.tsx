@@ -3,7 +3,7 @@ import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useDisplaySettingsStore } from "./store"; // Adjust path
+import { useDisplaySettingsStore } from "../controls/display-setting-store"; // Adjust path
 
 export function DisplaySettingsMenu() {
   const store = useDisplaySettingsStore();
@@ -29,9 +29,8 @@ export function DisplaySettingsMenu() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost">
-          <Layout className="mr-2" />
-          Appearance
+        <Button variant="ghost" size="icon">
+          <Layout />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 space-y-4" align="start">

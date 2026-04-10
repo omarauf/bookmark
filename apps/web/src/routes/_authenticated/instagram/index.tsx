@@ -1,52 +1,23 @@
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/post";
-import { InfiniteScroll } from "@/components/infinite-scroll";
+import { useShallow } from "zustand/react/shallow";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { orpc } from "@/integrations/orpc";
 import { Header } from "@/layout/header";
 import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
 import { CollectionTree } from "@/modules/item/collection-tree";
+import { useLayoutStore } from "@/modules/post/controls/layout-store";
 import { Filter } from "@/modules/post/filter";
 import { PostList } from "@/modules/post/list";
 
 export const Route = createFileRoute("/_authenticated/instagram/")({
   component: Instagram,
   validateSearch: PostSchemas.list.request,
-  loaderDeps: ({ search }) => search,
-  loader: async ({ context: { orpc, queryClient }, deps }) => {
-    await queryClient.prefetchInfiniteQuery(
-      orpc.post.list.infiniteOptions({
-        initialPageParam: 1,
-        input: (searchParams) => ({
-          ...deps,
-          page: searchParams,
-          perPage: 65,
-          platform: "instagram",
-        }),
-        getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
-      }),
-    );
-    return;
-  },
 });
 
 function Instagram() {
-  const search = Route.useSearch();
-  const postQuery = useSuspenseInfiniteQuery(
-    orpc.post.list.infiniteOptions({
-      initialPageParam: 1,
-      input: (searchParams) => ({
-        ...search,
-        page: searchParams,
-        perPage: 65,
-        platform: "instagram",
-      }),
-      getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
-    }),
-  );
-
-  const flatItems = postQuery.data.pages.flatMap((page) => page.items);
+  const layout = useLayoutStore(useShallow((state) => state.layout));
+  const setLayout = useLayoutStore(useShallow((state) => state.setLayout));
+  const ref = useLayoutStore(useShallow((state) => state.ref));
 
   return (
     <div
@@ -58,43 +29,42 @@ function Instagram() {
         <CollectionBreadcrumb />
       </Header>
 
-      <ResizablePanelGroup orientation="horizontal" className="flex h-full min-h-0 gap-1">
-        <ResizablePanel defaultSize="20%" className="shrink-0">
+      <ResizablePanelGroup
+        orientation="horizontal"
+        className="flex h-full min-h-0 gap-1"
+        defaultLayout={layout}
+        groupRef={ref}
+        onLayoutChanged={setLayout}
+      >
+        <ResizablePanel id="tree" className="shrink-0" collapsible minSize={200} maxSize="25%">
           <CollectionTree className="h-full rounded-sm" />
         </ResizablePanel>
 
         {/*<ResizableHandle />*/}
 
         <ResizablePanel
-          defaultSize="80%"
+          id="main"
+          // defaultSize="50%"
           className="flex grow flex-col overflow-auto rounded-sm bg-background"
         >
           {/* FILTER */}
           <Filter className="sticky" />
 
           {/* MAIN */}
-          <InfiniteScroll
-            onLoadMore={postQuery.fetchNextPage}
-            hasNextPage={postQuery.hasNextPage}
-            isFetchingNextPage={postQuery.isFetchingNextPage}
-            isLoading={postQuery.isLoading}
-            className="gap-4 px-4"
-          >
-            <PostList posts={flatItems} />
-          </InfiniteScroll>
+          <PostList />
         </ResizablePanel>
 
         {/*<ResizableHandle className="transition-colors hover:bg-primary" />*/}
 
-        {/* PREVIEW */}
-        {/*<ResizablePanel
+        <ResizablePanel
           collapsible
           minSize={100}
-          defaultSize="30%"
+          id="preview"
+          // defaultSize="30%"
           className="w-40 shrink-0 rounded-sm bg-background"
         >
           <div className="p-2">Preview</div>
-        </ResizablePanel>*/}
+        </ResizablePanel>
       </ResizablePanelGroup>
     </div>
   );

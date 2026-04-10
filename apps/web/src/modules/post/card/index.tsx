@@ -6,7 +6,7 @@ import { LazyImage } from "@/components/ui/lazy-image";
 import { cn } from "@/lib/utils";
 import { CreatorAvatar } from "@/modules/creator/avatar";
 import { fDate } from "@/utils/format-time";
-import { useDisplaySettingsStore } from "../controls/store";
+import { useDisplaySettingsStore } from "../controls/display-setting-store";
 import { getThumbnailUrl } from "../utils";
 
 type Props = {

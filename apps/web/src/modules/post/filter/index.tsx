@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";
 import { containsData } from "@/utils/object";
-import { DisplaySettingsMenu } from "../controls";
+import { DisplaySettingsMenu } from "./display-settings";
 
 export function Filter({ className }: { className?: string }) {
   const collectionsQuery = useQuery(orpc.collection.all.queryOptions());

@@ -1,4 +1,6 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
+import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
+import Loader from "./components/loader";
 import { orpc } from "./integrations/orpc";
 import TanStackQueryProvider, { getContext } from "./integrations/tanstack-query/root-provider";
 import { routeTree } from "./routeTree.gen";
@@ -13,6 +15,8 @@ export function getRouter() {
 
     defaultNotFoundComponent: () => <div>Not found</div>,
     defaultErrorComponent: ({ error }) => <div>{`Error: ${error.message}`}</div>,
+    defaultPendingComponent: () => <Loader className="h-screen w-screen" />,
+
     Wrap: (props: { children: React.ReactNode }) => {
       return (
         <TanStackQueryProvider queryClient={queryClient}>{props.children}</TanStackQueryProvider>
@@ -23,6 +27,8 @@ export function getRouter() {
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
   });
+
+  setupRouterSsrQueryIntegration({ router, queryClient });
 
   return router;
 }

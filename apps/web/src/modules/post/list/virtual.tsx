@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
 import { CARD_MIN_WIDTH, ESTIMATED_ROW_HEIGHT } from "../card/constant";
-import { useDisplaySettingsStore } from "../controls/store";
+import { useDisplaySettingsStore } from "../controls/display-setting-store";
 import { PostListCard } from "./card";
 
 type Props = {

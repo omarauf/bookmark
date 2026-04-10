@@ -1,29 +1,14 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useSearch } from "@tanstack/react-router";
 import { InfiniteScroll } from "@/components/infinite-scroll";
-import { orpc } from "@/integrations/orpc";
 import { CARD_MIN_WIDTH } from "../card/constant";
 import { EmptyPosts } from "../components/empty";
 import { LoadingCards } from "../components/loading-cards";
 import { useDisplaySettingsStore } from "../controls/display-setting-store";
 import { usePostNavigation } from "../controls/use-post-navigation";
+import { usePostQuery } from "../hooks/use-post-query";
 import { PostListCard } from "./post-list";
 
 export function PostList() {
-  const search = useSearch({ from: "/_authenticated/instagram/" });
-
-  const postQuery = useInfiniteQuery(
-    orpc.post.list.infiniteOptions({
-      initialPageParam: 1,
-      input: (searchParams) => ({
-        ...search,
-        page: searchParams,
-        perPage: 65,
-        platform: "instagram",
-      }),
-      getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
-    }),
-  );
+  const postQuery = usePostQuery();
 
   const flatItems = postQuery.data?.pages.flatMap((page) => page.items);
   usePostNavigation(flatItems);
@@ -51,7 +36,7 @@ export function PostList() {
         ))}
       </div>
 
-      {postQuery.isLoading && <LoadingCards count={30} />}
+      {postQuery.isLoading && <LoadingCards count={45} />}
 
       <EmptyPosts isEmpty={isEmpty} />
     </InfiniteScroll>

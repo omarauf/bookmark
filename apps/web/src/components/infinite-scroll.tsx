@@ -84,7 +84,7 @@ export function InfiniteScroll({
         <LoaderIcon className="animate-spin" />
       </div>
 
-      <div ref={sentinelRef} className="h-1" />
+      {!isLoading && <div ref={sentinelRef} className="h-1" />}
     </ScrollArea>
   );
 }

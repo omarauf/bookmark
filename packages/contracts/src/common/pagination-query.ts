@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const PaginationParamsSchema = z.object({
   page: z.number().int().min(1).optional().default(1).catch(1),
-  perPage: z.number().int().min(1).max(65).optional().default(24).catch(24),
+  perPage: z.number().int().min(1).max(65).optional().default(40).catch(40),
 });
 
 export const SortingParamsSchema = z.object({

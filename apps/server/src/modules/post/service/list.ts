@@ -24,6 +24,7 @@ import { mapItemToPost } from "./mapper";
 export async function listPosts(input: ListPost) {
   // Calculate offset based on current page
   const offset = (input.page - 1) * input.perPage;
+  console.log("Calculated offset:", offset);
 
   // 1. Extract the complex EXISTS condition to reuse it in both queries
   const filterExpression = buildItemFilter(input);

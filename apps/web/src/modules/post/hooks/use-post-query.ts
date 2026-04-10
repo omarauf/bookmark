@@ -22,7 +22,7 @@ export function usePostQuery() {
       initialPageParam: 1,
       input: (searchParams) => ({ ...search, page: searchParams, platform: "instagram" }),
     });
-    
+
     queryClient.setQueryData(keys, (oldData) => {
       if (!oldData) return undefined;
 

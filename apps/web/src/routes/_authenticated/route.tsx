@@ -3,6 +3,7 @@ import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { SearchProvider } from "@/layout/search/search-provider";
 import { AppSidebar } from "@/layout/sidebar";
+import { getCookie } from "@/lib/cookie";
 import { cn } from "@/lib/utils";
 import { DirectionProvider } from "@/settings/context/direction-provider";
 import { LayoutProvider } from "@/settings/context/layout-provider";
@@ -22,11 +23,13 @@ type Props = {
 };
 
 function AuthenticatedLayout({ children }: Props) {
+  const defaultOpen = getCookie("sidebar_state") !== "false";
+
   return (
     <NuqsAdapter>
       <SearchProvider>
         <LayoutProvider>
-          <SidebarProvider>
+          <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar />
 
             <SidebarInset

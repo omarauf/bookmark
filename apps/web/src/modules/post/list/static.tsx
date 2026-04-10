@@ -3,6 +3,8 @@ import { useSearch } from "@tanstack/react-router";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
 import { CARD_MIN_WIDTH } from "../card/constant";
+import { EmptyPosts } from "../components/empty";
+import { LoadingCards } from "../components/loading-cards";
 import { useDisplaySettingsStore } from "../controls/display-setting-store";
 import { usePostNavigation } from "../controls/use-post-navigation";
 import { PostListCard } from "./card";
@@ -28,6 +30,7 @@ export function PostList() {
 
   const cardSize = useDisplaySettingsStore((s) => s.cardSize);
   const cardMinWidth = CARD_MIN_WIDTH[cardSize];
+  const isEmpty = flatItems?.length === 0 && !postQuery.isLoading;
 
   return (
     <InfiniteScroll
@@ -52,6 +55,10 @@ export function PostList() {
           />
         ))}
       </div>
+
+      {postQuery.isLoading && <LoadingCards count={30} />}
+
+      <EmptyPosts isEmpty={isEmpty} />
     </InfiniteScroll>
   );
 }

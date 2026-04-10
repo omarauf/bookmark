@@ -69,7 +69,8 @@ export async function listPosts(input: ListPost) {
 }
 
 function buildItemFilter(filter: PostFilter) {
-  const { platform, username, type, from, to, collectionIds, collectionPaths } = filter;
+  const { platform, username, type, from, to, collectionIds, collectionPath, collectionPaths } =
+    filter;
   const whereClauses: SQL[] = [eq(items.kind, "post")];
 
   if (platform) {
@@ -107,6 +108,23 @@ function buildItemFilter(filter: PostFilter) {
             and(
               eq(collectionItems.itemId, items.id),
               or(...collectionPaths.map((path) => arrayContained(collections.path, path))),
+            ),
+          ),
+      ),
+    );
+  }
+
+  if (collectionPath) {
+    whereClauses.push(
+      exists(
+        db
+          .select()
+          .from(collections)
+          .leftJoin(collectionItems, eq(collectionItems.collectionId, collections.id))
+          .where(
+            and(
+              eq(collectionItems.itemId, items.id),
+              or(arrayContained(collections.path, collectionPath)),
             ),
           ),
       ),

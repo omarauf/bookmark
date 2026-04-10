@@ -26,7 +26,7 @@ export function PostCard({ post, onClick, className }: Props) {
   return (
     <Card
       className={cn(
-        "cursor-pointer overflow-hidden p-0",
+        "cursor-pointer gap-0 overflow-hidden p-0",
         { S: "rounded-sm", M: "rounded-md", L: "rounded-lg" }[cardSize],
         className,
       )}
@@ -48,7 +48,7 @@ export function PostCard({ post, onClick, className }: Props) {
       />
 
       {showCardInfo && (
-        <CardContent className="flex flex-row items-center justify-between px-1 pb-3">
+        <CardContent className="flex flex-row items-center justify-between px-1 py-2">
           <div className="flex max-w-[60%] flex-row gap-2 overflow-hidden">
             <CreatorAvatar creator={post.creator} size="small" />
             <p className="flex items-center text-nowrap text-sm">{post.creator.username}</p>

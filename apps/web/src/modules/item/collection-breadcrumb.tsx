@@ -12,7 +12,6 @@ export function CollectionBreadcrumb() {
   const { active, pathNode, onClickHandler } = useCollection({ defaultPath });
 
   const onItemClickHandler = (value: string) => {
-    console.log("Breadcrumb clicked:", value);
     navigate({ to: ".", search: (s) => ({ ...s, collectionPath: value }) });
     onClickHandler(value);
   };

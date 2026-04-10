@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/imports/")({
   },
 });
 
-export function ImportList() {
+function ImportList() {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 

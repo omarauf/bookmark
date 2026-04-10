@@ -5,7 +5,7 @@ import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
 import { CARD_MIN_WIDTH, ESTIMATED_ROW_HEIGHT } from "../card/constant";
 import { useDisplaySettingsStore } from "../controls/display-setting-store";
-import { PostListCard } from "./card";
+import { PostListCard } from "../list/post-list";
 
 type Props = {
   posts: Post[];

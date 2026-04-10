@@ -1,5 +1,5 @@
 import type { Post } from "@workspace/contracts/post";
-import { Dialog, DialogContent, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Content } from "./content";
 
 type Props = {
@@ -16,6 +16,7 @@ export function PostDialog({ post, open, onOpenChange }: Props) {
         onOpenAutoFocus={(e) => e.preventDefault()}
         showCloseButton={false}
       >
+        <DialogTitle className="sr-only">{`Post by ${post.creator.name}`}</DialogTitle>
         <DialogDescription className="sr-only">Instagram post content</DialogDescription>
 
         <Content post={post} />

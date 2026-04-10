@@ -8,6 +8,7 @@ import { CollectionTree } from "@/modules/item/collection-tree";
 import { useLayoutStore } from "@/modules/post/controls/layout-store";
 import { Filter } from "@/modules/post/filter";
 import { PostList } from "@/modules/post/list";
+import { PostPreview } from "@/modules/post/preview";
 
 export const Route = createFileRoute("/_authenticated/instagram/")({
   component: Instagram,
@@ -63,7 +64,7 @@ function Instagram() {
           // defaultSize="30%"
           className="w-40 shrink-0 rounded-sm bg-background"
         >
-          <div className="p-2">Preview</div>
+          <PostPreview />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

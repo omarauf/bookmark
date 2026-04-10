@@ -6,7 +6,7 @@ import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
 import { Filter } from "@/modules/post/filter";
-import { PostList } from "@/modules/post/list/static";
+import { PostList } from "@/modules/post/list";
 
 export const Route = createFileRoute("/_authenticated/tiktok/")({
   component: Tiktok,

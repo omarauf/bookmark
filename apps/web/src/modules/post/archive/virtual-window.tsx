@@ -7,7 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 import { orpc } from "@/integrations/orpc";
 import { CARD_MIN_WIDTH } from "../card/constant";
 import { useDisplaySettingsStore } from "../controls/display-setting-store";
-import { PostListCard } from "./card";
+import { PostListCard } from "../list/post-list";
 
 const GAP = 16;
 const LOAD_MORE_THRESHOLD = 5;

@@ -19,6 +19,7 @@ type LayoutActions = {
   getToggleValue: () => string[];
   handleToggleChange: (value: string[]) => void;
   setLayout: (layout: Layout) => void;
+  isPreviewVisible: () => boolean;
 };
 
 const initialState: LayoutState = {
@@ -85,6 +86,11 @@ const layoutStore: StateCreator<LayoutState & LayoutActions> = (set, get) => ({
 
   setLayout: (layout) => {
     set({ layout: layout as LayoutState["layout"] });
+  },
+
+  isPreviewVisible: () => {
+    const { layout } = get();
+    return layout.preview > 0;
   },
 });
 

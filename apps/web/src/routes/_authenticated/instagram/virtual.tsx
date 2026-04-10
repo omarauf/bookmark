@@ -7,8 +7,8 @@ import { orpc } from "@/integrations/orpc";
 import { Header } from "@/layout/header";
 import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
 import { CollectionTree } from "@/modules/item/collection-tree";
+import { PostListVirtual } from "@/modules/post/archive/virtual";
 import { Filter } from "@/modules/post/filter";
-import { PostListVirtual } from "@/modules/post/list";
 
 export const Route = createFileRoute("/_authenticated/instagram/virtual")({
   component: Instagram,

@@ -7,7 +7,7 @@ import { EmptyPosts } from "../components/empty";
 import { LoadingCards } from "../components/loading-cards";
 import { useDisplaySettingsStore } from "../controls/display-setting-store";
 import { usePostNavigation } from "../controls/use-post-navigation";
-import { PostListCard } from "./card";
+import { PostListCard } from "./post-list";
 
 export function PostList() {
   const search = useSearch({ from: "/_authenticated/instagram/" });
@@ -26,7 +26,7 @@ export function PostList() {
   );
 
   const flatItems = postQuery.data?.pages.flatMap((page) => page.items);
-  const { openPostId, setOpenPostId } = usePostNavigation(flatItems);
+  usePostNavigation(flatItems);
 
   const cardSize = useDisplaySettingsStore((s) => s.cardSize);
   const cardMinWidth = CARD_MIN_WIDTH[cardSize];
@@ -47,12 +47,7 @@ export function PostList() {
         }}
       >
         {flatItems?.map((post) => (
-          <PostListCard
-            key={post.id}
-            post={post}
-            isOpen={openPostId === post.id}
-            onClick={(id) => setOpenPostId(id)}
-          />
+          <PostListCard key={post.id} post={post} />
         ))}
       </div>
 

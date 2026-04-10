@@ -4,8 +4,8 @@ import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Header } from "@/layout/header";
 import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
 import { CollectionTree } from "@/modules/item/collection-tree";
+import { PostListVirtualWindow } from "@/modules/post/archive/virtual-window";
 import { Filter } from "@/modules/post/filter";
-import { PostListVirtualWindow } from "@/modules/post/list";
 
 export const Route = createFileRoute("/_authenticated/instagram/virtual-window")({
   component: Instagram,

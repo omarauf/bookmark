@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import type { Post } from "@workspace/contracts/post";
+import { useCallback, useEffect } from "react";
+import { usePreviewStore } from "./preview-store";
 
-export function usePostNavigation<T extends { id: string }>(posts: T[] = []) {
-  const [openPostId, setOpenPostId] = useState<string>();
+export function usePostNavigation(posts: Post[] = []) {
+  const openPostId = usePreviewStore((s) => s.post?.id);
+  const setPost = usePreviewStore((s) => s.setSelectedPost);
 
   const handleNavigation = useCallback(
     async (event: KeyboardEvent) => {
@@ -15,10 +18,10 @@ export function usePostNavigation<T extends { id: string }>(posts: T[] = []) {
       const targetIndex = currentIndex + direction;
 
       if (targetIndex >= 0 && targetIndex < posts.length) {
-        setOpenPostId(posts[targetIndex].id);
+        setPost(posts[targetIndex]);
       }
     },
-    [posts, openPostId],
+    [posts, openPostId, setPost],
   );
 
   useEffect(() => {
@@ -28,5 +31,5 @@ export function usePostNavigation<T extends { id: string }>(posts: T[] = []) {
     };
   }, [handleNavigation]);
 
-  return { openPostId, setOpenPostId };
+  return { openPostId };
 }

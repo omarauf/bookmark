@@ -1,4 +1,3 @@
-import { DialogTitle } from "@/components/ui/dialog";
 import { CreatorAvatar } from "@/modules/creator/avatar";
 import { usePostContext } from "../utils/context";
 
@@ -9,7 +8,7 @@ export function CreatorProfile() {
     <div className="flex items-center gap-3">
       <CreatorAvatar creator={creator} size="large" />
       <div>
-        <DialogTitle className="font-medium text-base">{creator.name}</DialogTitle>
+        <p className="font-medium text-base">{creator.name}</p>
         <a
           className="text-muted-foreground text-sm"
           href={`https://www.instagram.com/${creator.username}`}

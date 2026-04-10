@@ -60,7 +60,8 @@ export function Filter({ className }: { className?: string }) {
           {(field) => (
             <field.Input
               placeholder="Search username..."
-              className="w-48 bg-background/50 transition-colors focus:bg-background"
+              className="bg-background/50 transition-colors focus:bg-background"
+              classNames={{ wrapper: "w-64 shrink-0" }}
             />
           )}
         </form.AppField>
@@ -69,7 +70,8 @@ export function Filter({ className }: { className?: string }) {
           {(field) => (
             <field.Select
               placeholder="All Types"
-              className="w-36 bg-background/50"
+              className="bg-background/50"
+              classNames={{ wrapper: "w-36 shrink-0" }}
               options={[
                 { label: "Photo", value: "Photo" },
                 { label: "Video", value: "Video" },
@@ -85,14 +87,16 @@ export function Filter({ className }: { className?: string }) {
           {(field) => (
             <field.MultiSelect
               placeholder="Collections"
-              className="min-w-48 max-w-64 bg-background/50"
+              className="w-64 bg-background/50"
               options={collectionsQuery.data?.map((t) => ({ label: t.label, value: t.path }))}
             />
           )}
         </form.AppField>
 
         <form.AppField name="rangeData">
-          {(field) => <field.DateRange placeholder="Date Range" />}
+          {(field) => (
+            <field.DateRange placeholder="Date Range" classNames={{ wrapper: "w-60 shrink-0" }} />
+          )}
         </form.AppField>
 
         <form.AppField name="sortOrder">

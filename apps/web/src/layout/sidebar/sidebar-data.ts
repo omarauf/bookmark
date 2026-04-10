@@ -1,4 +1,22 @@
-import { AudioWaveform, Command, GalleryVerticalEnd } from "lucide-react";
+import {
+  AudioWaveform,
+  Command,
+  Construction,
+  Download,
+  FileQuestion,
+  Folder,
+  GalleryVerticalEnd,
+  Link,
+  ServerCrash,
+  Settings,
+  ShieldAlert,
+  ShieldBan,
+  Tags,
+  Upload,
+  Users,
+  Video,
+} from "lucide-react";
+import { InstagramIcon, TwitterIcon } from "@/assets/icons";
 import type { SidebarData } from "./types";
 
 export const sidebarData: SidebarData = {
@@ -21,106 +39,50 @@ export const sidebarData: SidebarData = {
   ],
   navGroups: [
     {
-      title: "General",
+      title: "Content",
       items: [
-        {
-          title: "Links",
-          url: "/links",
-        },
-        {
-          title: "Instagram",
-          url: "/instagram",
-        },
-        {
-          title: "Twitter",
-          url: "/twitter",
-        },
-        {
-          title: "Tiktok",
-          url: "/tiktok",
-        },
-        {
-          title: "Collections",
-          url: "/collections",
-        },
-        {
-          title: "Tags",
-          url: "/tags",
-        },
-        {
-          title: "Imports",
-          url: "/imports",
-        },
-        {
-          title: "Downloads",
-          url: "/downloads",
-        },
-        {
-          title: "Users",
-          url: "/users",
-        },
+        { title: "Links", url: "/links", icon: Link },
+        { title: "Collections", url: "/collections", icon: Folder },
+        { title: "Tags", url: "/tags", icon: Tags },
       ],
     },
     {
-      title: "Pages",
+      title: "Social",
       items: [
-        // {
-        //   title: "Auth",
-        //   // icon: IconLockAccess,
-        //   items: [
-        //     {
-        //       title: "Sign In",
-        //       url: "/sign-in",
-        //     },
-        //     {
-        //       title: "Sign Up",
-        //       url: "/sign-up",
-        //     },
-        //     {
-        //       title: "Forgot Password",
-        //       url: "/forgot-password",
-        //     },
-        //   ],
-        // },
+        { title: "Instagram", url: "/instagram", icon: InstagramIcon },
+        { title: "Twitter", url: "/twitter", icon: TwitterIcon },
+        { title: "TikTok", url: "/tiktok", icon: Video },
+      ],
+    },
+    {
+      title: "Data & Operations",
+      items: [
+        { title: "Imports", url: "/imports", icon: Upload },
+        { title: "Downloads", url: "/downloads", icon: Download },
+      ],
+    },
+    {
+      title: "Management",
+      items: [{ title: "Users", url: "/users", icon: Users }],
+    },
+    {
+      title: "System",
+      items: [
         {
-          title: "Errors",
-          // icon: IconBug,
+          title: "Pages",
+          icon: ShieldAlert,
           items: [
-            {
-              title: "Unauthorized",
-              url: "/401",
-              // icon: IconLock,
-            },
-            {
-              title: "Forbidden",
-              url: "/403",
-              // icon: IconUserOff,
-            },
-            {
-              title: "Not Found",
-              url: "/404",
-              // icon: IconError404,
-            },
-            {
-              title: "Internal Server Error",
-              url: "/500",
-              // icon: IconServerOff,
-            },
-            {
-              title: "Maintenance Error",
-              url: "/503",
-              // icon: IconBarrierBlock,
-            },
+            { title: "Unauthorized", url: "/401", icon: ShieldBan },
+            { title: "Forbidden", url: "/403", icon: ShieldBan },
+            { title: "Not Found", url: "/404", icon: FileQuestion },
+            { title: "Internal Server Error", url: "/500", icon: ServerCrash },
+            { title: "Maintenance", url: "/503", icon: Construction },
           ],
         },
-      ],
-    },
-    {
-      title: "Other",
-      items: [
         {
           title: "Settings",
           url: "/settings",
+          icon: Settings,
         },
       ],
     },

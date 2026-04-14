@@ -1,15 +1,12 @@
 import { useShallow } from "zustand/shallow";
-import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStore } from "../../store";
-import { Scrollbar } from "../scrollbar";
 
 interface DragSelectContainerProps {
   children: React.ReactNode;
-  className?: string;
-  selectionRectClassName?: string;
 }
 
-export function DragSelectContainer({ children, className }: DragSelectContainerProps) {
+export function DragSelectContainer({ children }: DragSelectContainerProps) {
   const [containerRef, onPointerDown, onPointerMove, onPointerUp, onScroll, onKeyDown, onKeyUp] =
     useStore(
       useShallow((s) => [
@@ -24,8 +21,8 @@ export function DragSelectContainer({ children, className }: DragSelectContainer
     );
 
   return (
-    <Scrollbar
-      scrollableNodeProps={{
+    <ScrollArea
+      viewportProps={{
         ref: containerRef,
         onPointerDown,
         onPointerMove,
@@ -34,11 +31,11 @@ export function DragSelectContainer({ children, className }: DragSelectContainer
         onKeyDown,
         onKeyUp,
         tabIndex: -1,
+        className: "relative select-none focus:outline-none",
       }}
-      className={cn("relative select-none focus:outline-none", className)}
-      classNames={{ contentEl: "h-full" }}
+      className="flex min-h-0 min-w-0 grow flex-col"
     >
       {children}
-    </Scrollbar>
+    </ScrollArea>
   );
 }

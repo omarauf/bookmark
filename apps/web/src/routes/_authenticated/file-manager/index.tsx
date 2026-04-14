@@ -61,7 +61,7 @@ function RouteComponent() {
 
           <ResizableHandle withHandle />
 
-          <ResizablePanel defaultSize={100 - treeWidth}>
+          <ResizablePanel defaultSize={100 - treeWidth} className="flex flex-col">
             <FolderContent />
           </ResizablePanel>
         </ResizablePanelGroup>

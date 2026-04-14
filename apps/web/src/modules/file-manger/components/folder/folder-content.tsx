@@ -52,7 +52,7 @@ export function FolderContent() {
       </div>
 
       {/* Content area */}
-      <DragSelectContainer className="">
+      <DragSelectContainer>
         <FileContextMenu>
           <div
             className={cn(

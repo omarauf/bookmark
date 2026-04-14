@@ -1,0 +1,81 @@
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
+import type { FileItem } from "../../types";
+import { ItemIcon } from "./icon";
+import { useItem } from "./use-item";
+
+interface FileGridItemProps {
+  item: FileItem;
+  index: number;
+}
+
+export function FileGridItem({ item, index }: FileGridItemProps) {
+  const {
+    isFocused,
+    isSelected,
+    isDragging,
+    isOver,
+    attributes,
+    listeners,
+    isGlobalDragging,
+    setFocusedIndex,
+    onClick,
+    onDoubleClick,
+    combinedRef,
+  } = useItem(item, index);
+
+  return (
+    <div
+      ref={combinedRef}
+      id={item.id}
+      className={cn(
+        "relative flex cursor-pointer flex-col items-center rounded-lg p-3",
+        "group transition-colors hover:bg-accent/50",
+        "focus:outline-none focus:ring-2 focus:ring-blue-500",
+        isSelected && "bg-accent text-accent-foreground ring-2 ring-ring",
+        isFocused && "outline-none ring-2 ring-blue-500",
+        (isDragging || (isGlobalDragging && isSelected)) && "opacity-50",
+        isOver && item.type === "folder" && "bg-primary/20 ring-2 ring-primary",
+        "opacity-100!",
+      )}
+      onClick={(e) => onClick(item, index, e)}
+      onDoubleClick={() => onDoubleClick(item)}
+      aria-selected={isSelected}
+      {...attributes}
+      // tabIndex={0}
+      {...listeners}
+      onPointerDown={(e) => {
+        e.stopPropagation();
+        setFocusedIndex(index);
+        listeners?.onPointerDown(e);
+      }}
+    >
+      {/* Selection checkbox */}
+      <div
+        className={cn(
+          "absolute top-2 left-2 opacity-0 transition-opacity",
+          "group-hover:opacity-100",
+          isSelected && "opacity-100",
+        )}
+      >
+        <Checkbox checked={isSelected} className="pointer-events-none" />
+      </div>
+
+      {/* File icon */}
+      <div className="mb-2">
+        <ItemIcon item={item} />
+      </div>
+
+      {/* File name */}
+      <div className="w-full text-center">
+        <div className="truncate px-1 font-medium text-sm" title={item.name}>
+          {index}. {item.name}
+        </div>
+
+        {/* {item.type === "file" && item.size && (
+          <div className="mt-1 text-muted-foreground text-xs">{formatFileSize(item.size)}</div>
+        )} */}
+      </div>
+    </div>
+  );
+}

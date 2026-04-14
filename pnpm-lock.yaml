@@ -335,6 +335,9 @@ importers:
       shadcn:
         specifier: ^4.0.2
         version: 4.0.6(@types/node@25.5.0)(typescript@5.9.3)
+      simplebar-react:
+        specifier: ^3.3.2
+        version: 3.3.2(react@19.2.4)
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -5064,11 +5067,17 @@ packages:
     resolution: {integrity: sha512-FvrLltjOPGbTzt+RugbzM7g8XuUNLPO2U/INSLczrYdAA32E7nZVUrVL1gr61DGOArGJA2QkPGMEvNMLLsXREA==}
     engines: {node: '>=18'}
 
+  lodash-es@4.18.1:
+    resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
+
   lodash.defaults@4.2.0:
     resolution: {integrity: sha512-qjxPLHd3r5DnsdGacqOMU6pb/avJzdh9tFX2ymgoZE27BmjXrNy/y4LoaiTeAb+O3gL8AfpJGtqfX/ae2leYYQ==}
 
   lodash.isarguments@3.1.0:
     resolution: {integrity: sha512-chi4NHZlZqZD18a0imDHnZPrDeBbTtVN7GXMwuGdRH9qotxAjYs3aVLKc7zNOG9eddR5Ksd8rvFEBc9SsggPpg==}
+
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   log-symbols@6.0.0:
     resolution: {integrity: sha512-i24m8rpwhmPIS4zscNzK6MSEhk0DUWa/8iYQWxhffV8jkI4Phvs3F+quL5xvS0gdQR0FyTCMMH33Y78dDTzzIw==}
@@ -5878,6 +5887,14 @@ packages:
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
+
+  simplebar-core@1.3.2:
+    resolution: {integrity: sha512-qKgTTuTqapjsFGkNhCjyPhysnbZGpQqNmjk0nOYjFN5ordC/Wjvg+RbYCyMSnW60l/Z0ZS82GbNltly6PMUH1w==}
+
+  simplebar-react@3.3.2:
+    resolution: {integrity: sha512-ZsgcQhKLtt5ra0BRIJeApfkTBQCa1vUPA/WXI4HcYReFt+oCEOvdVz6rR/XsGJcKxTlCRPmdGx1uJIUChupo+A==}
+    peerDependencies:
+      react: '>=16.8.0'
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
@@ -11431,11 +11448,15 @@ snapshots:
       cheerio: 1.0.0-rc.11
       url: 0.11.0
 
+  lodash-es@4.18.1: {}
+
   lodash.defaults@4.2.0:
     optional: true
 
   lodash.isarguments@3.1.0:
     optional: true
+
+  lodash@4.18.1: {}
 
   log-symbols@6.0.0:
     dependencies:
@@ -12356,6 +12377,16 @@ snapshots:
   signal-exit@3.0.7: {}
 
   signal-exit@4.1.0: {}
+
+  simplebar-core@1.3.2:
+    dependencies:
+      lodash: 4.18.1
+      lodash-es: 4.18.1
+
+  simplebar-react@3.3.2(react@19.2.4):
+    dependencies:
+      react: 19.2.4
+      simplebar-core: 1.3.2
 
   sisteransi@1.0.5: {}
 

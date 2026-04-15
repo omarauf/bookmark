@@ -3,15 +3,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useRef } from "react";
 import { useShallow } from "zustand/shallow";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { DragPreview } from "@/modules/file-manger/components/drag-preview";
-import { FolderContent } from "@/modules/file-manger/components/folder/folder-content";
-import { Toolbar } from "@/modules/file-manger/components/toolbar";
-import { FileTree } from "@/modules/file-manger/components/tree";
-import { NewFolderDialog } from "@/modules/file-manger/dialogs/new-folder";
-import { PropertiesDialog } from "@/modules/file-manger/dialogs/properties";
-import { RenameDialog } from "@/modules/file-manger/dialogs/rename";
-import { useDebounce } from "@/modules/file-manger/hooks/use-debounce";
-import { useStore } from "@/modules/file-manger/store";
+import { DragPreview } from "@/modules/file-manager/components/drag-preview";
+import { FolderContent } from "@/modules/file-manager/components/folder/folder-content";
+import { Toolbar } from "@/modules/file-manager/components/toolbar";
+import { FileTree } from "@/modules/file-manager/components/tree";
+import { NewFolderDialog } from "@/modules/file-manager/dialogs/new-folder";
+import { PropertiesDialog } from "@/modules/file-manager/dialogs/properties";
+import { RenameDialog } from "@/modules/file-manager/dialogs/rename";
+import { useDebounce } from "@/modules/file-manager/hooks/use-debounce";
+import { useStore } from "@/modules/file-manager/store";
 
 export const Route = createFileRoute("/_authenticated/file-manager/")({
   component: RouteComponent,

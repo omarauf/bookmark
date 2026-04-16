@@ -1,6 +1,6 @@
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
 import { ChevronRight } from "lucide-react";
-import type { ElementType, ReactNode } from "react";
+import type { ElementType, MouseEvent, ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ interface TreeNodeData {
   label: string;
   children?: this[];
   icon?: ElementType;
+  iconRender?: (state: { expanded: boolean }) => ReactNode;
   color?: string;
   action?: ReactNode;
   onClick?: () => void;
@@ -21,12 +22,27 @@ interface TreeNodeData {
 
 type TreeViewProps<T extends TreeNodeData> = {
   data: T[] | T;
-  value: string[];
+  value: string[] | string;
   onPathChange: (value: string[], node: T) => void;
   className?: string;
   hideUnselected?: boolean | number;
   autoCollapse?: boolean;
+  expandOn?: "item" | "icon";
+  icon?: ElementType;
+  iconRender?: (state: { expanded: boolean }) => ReactNode;
 };
+
+// TODO: move this function to utils since it's used in multiple places (not sure if it's the same as findPath in tree/utils)
+export function findPath<T extends TreeNodeData>(nodes: T[], target: string): string[] {
+  for (const node of nodes) {
+    if (node.value === target) return [node.value];
+    if (node.children) {
+      const childPath = findPath(node.children, target);
+      if (childPath.length > 0) return [node.value, ...childPath];
+    }
+  }
+  return [];
+}
 
 type TreeNodeProps<T extends TreeNodeData> = {
   node: T;
@@ -36,6 +52,10 @@ type TreeNodeProps<T extends TreeNodeData> = {
   hideUnselected?: boolean | number;
   autoCollapse?: boolean;
   openNodes?: Set<string>;
+  expandOn?: "item" | "icon";
+  onToggle?: (nodeValue: string) => void;
+  icon?: ElementType;
+  iconRender?: (state: { expanded: boolean }) => ReactNode;
 };
 
 // ================================================================
@@ -45,12 +65,16 @@ type TreeNodeProps<T extends TreeNodeData> = {
 export function TreeView<T extends TreeNodeData>({
   data,
   className,
-  value: path,
+  value,
   onPathChange,
   hideUnselected,
   autoCollapse = true,
+  expandOn = "icon",
+  icon,
+  iconRender,
 }: TreeViewProps<T>) {
   const nodes = Array.isArray(data) ? data : [data];
+  const path = typeof value === "string" ? findPath(nodes, value) : value;
   const [openNodes, setOpenNodes] = useState<Set<string>>(new Set(path));
 
   useEffect(() => {
@@ -64,8 +88,17 @@ export function TreeView<T extends TreeNodeData>({
       if (autoCollapse) {
         setOpenNodes(new Set(newPath));
         onPathChange(newPath, node);
-      } else {
+      } else if (expandOn === "icon") {
+        setOpenNodes((prev) => {
+          const next = new Set(prev);
+          next.add(node.value);
+          return next;
+        });
         const isAlreadySelected = path.at(-1) === node.value;
+        if (!isAlreadySelected) {
+          onPathChange(newPath, node);
+        }
+      } else {
         setOpenNodes((prev) => {
           const next = new Set(prev);
           if (next.has(node.value)) {
@@ -75,13 +108,26 @@ export function TreeView<T extends TreeNodeData>({
           }
           return next;
         });
+        const isAlreadySelected = path.at(-1) === node.value;
         if (!isAlreadySelected) {
           onPathChange(newPath, node);
         }
       }
     },
-    [autoCollapse, onPathChange, path],
+    [autoCollapse, expandOn, onPathChange, path],
   );
+
+  const handleToggle = useCallback((nodeValue: string) => {
+    setOpenNodes((prev) => {
+      const next = new Set(prev);
+      if (next.has(nodeValue)) {
+        next.delete(nodeValue);
+      } else {
+        next.add(nodeValue);
+      }
+      return next;
+    });
+  }, []);
 
   return (
     <div className={cn("relative overflow-auto px-3 py-2", className)} role="tree">
@@ -94,8 +140,12 @@ export function TreeView<T extends TreeNodeData>({
             onPathChange={handleNodeClick}
             trace={[]}
             hideUnselected={hideUnselected}
-            openNodes={autoCollapse ? undefined : openNodes}
+            openNodes={openNodes}
             autoCollapse={autoCollapse}
+            expandOn={expandOn}
+            onToggle={handleToggle}
+            icon={icon}
+            iconRender={iconRender}
           />
         ))}
       </ul>
@@ -147,11 +197,16 @@ export function TreeNode<T extends TreeNodeData>({
   hideUnselected,
   autoCollapse = true,
   openNodes,
+  expandOn = "icon",
+  onToggle,
+  icon,
+  iconRender,
 }: TreeNodeProps<T>) {
   const hasChildren = node.children && node.children.length > 0;
-  const isOpen = autoCollapse
-    ? [...trace, node.value].every((item, index) => item === path[index])
-    : [...trace, node.value].every((item) => openNodes?.has(item));
+  const isOpen =
+    expandOn === "icon" || !autoCollapse
+      ? [...trace, node.value].every((item) => openNodes?.has(item))
+      : [...trace, node.value].every((item, index) => item === path[index]);
   const isSelected = path.at(-1) === node.value;
 
   const depth = trace.length;
@@ -164,9 +219,16 @@ export function TreeNode<T extends TreeNodeData>({
 
   if (shouldHide) return null;
 
-  const handleClick = () => {
+  const handleItemClick = () => {
     if (node.disabled) return;
-    onPathChange([...trace, node.value], node);
+
+    const newPath = [...trace, node.value];
+    onPathChange(newPath, node);
+  };
+
+  const handleChevronClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onToggle?.(node.value);
   };
 
   return (
@@ -180,9 +242,17 @@ export function TreeNode<T extends TreeNodeData>({
             isSelected ? "bg-primary text-accent-foreground" : "hover:bg-secondary",
             node.disabled && "pointer-events-none cursor-not-allowed opacity-50",
           )}
-          onClick={handleClick}
+          onClick={handleItemClick}
         >
-          {node.icon && <node.icon className="h-4 w-4 shrink-0" aria-hidden="true" />}
+          {node.iconRender ? (
+            node.iconRender({ expanded: isOpen })
+          ) : node.icon ? (
+            <node.icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+          ) : iconRender ? (
+            iconRender({ expanded: isOpen })
+          ) : (
+            icon && <DefaultIcon component={icon} />
+          )}
           {node.color && (
             <div
               className="mt-0.5 h-3 w-3 shrink-0 rounded-full"
@@ -192,15 +262,31 @@ export function TreeNode<T extends TreeNodeData>({
           )}
           <span className="grow truncate text-sm">{node.label}</span>
           <TreeActions isSelected={isSelected}>{node.action}</TreeActions>
-          {hasChildren && (
-            <ChevronRight
-              className={cn(
-                "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-                isOpen && "rotate-90",
-              )}
-              aria-hidden="true"
-            />
-          )}
+          {hasChildren &&
+            (expandOn === "icon" ? (
+              <button
+                type="button"
+                onClick={handleChevronClick}
+                className="shrink-0 rounded-sm p-0.5 hover:bg-secondary"
+                tabIndex={-1}
+              >
+                <ChevronRight
+                  className={cn(
+                    "h-4 w-4 text-muted-foreground transition-transform duration-200",
+                    isOpen && "rotate-90",
+                  )}
+                  aria-hidden="true"
+                />
+              </button>
+            ) : (
+              <ChevronRight
+                className={cn(
+                  "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+                  isOpen && "rotate-90",
+                )}
+                aria-hidden="true"
+              />
+            ))}
         </div>
 
         <CollapsiblePrimitive.Content
@@ -222,6 +308,10 @@ export function TreeNode<T extends TreeNodeData>({
                   trace={[...trace, node.value]}
                   autoCollapse={autoCollapse}
                   openNodes={openNodes}
+                  expandOn={expandOn}
+                  onToggle={onToggle}
+                  icon={icon}
+                  iconRender={iconRender}
                 />
               ))}
             </ul>
@@ -235,6 +325,10 @@ export function TreeNode<T extends TreeNodeData>({
 // ================================================================
 // UI HELPERS (Internal)
 // ================================================================
+
+function DefaultIcon({ component: Icon }: { component: ElementType }) {
+  return <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />;
+}
 
 function TreeActions({ children, isSelected }: { children: ReactNode; isSelected: boolean }) {
   if (!children) return null;

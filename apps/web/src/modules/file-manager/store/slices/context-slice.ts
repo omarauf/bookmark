@@ -13,13 +13,9 @@ export type ContextSlice = {
   toggleNewFolder: (open: boolean) => void;
   toggleProperties: (open: boolean) => void;
 
-  onCopy: (items: FileItem[]) => Promise<void>;
-  onMove: (items: FileItem[]) => Promise<void>;
   onDelete: (items: FileItem[]) => Promise<void>;
   onRename: (item: FileItem) => Promise<void>;
-  onDownload: (items: FileItem[]) => Promise<void>;
   onNewFolder: () => Promise<void>;
-  onUpload: () => Promise<void>;
   onProperties: (item: FileItem) => Promise<void>;
 };
 
@@ -42,14 +38,6 @@ export const createContextSlice: StateCreator<StoreState, [], [], ContextSlice> 
     set({ properties: { open, item: properties.item } });
   },
 
-  onCopy: async (items) => {
-    toast.success(`${items.length} item(s) copied to clipboard`);
-  },
-
-  onMove: async (items) => {
-    toast.success(`${items.length} item(s) cut to clipboard`);
-  },
-
   onDelete: async (items) => {
     try {
       const result = await mockApi.deleteItems(items.map((item) => item.id));
@@ -67,16 +55,8 @@ export const createContextSlice: StateCreator<StoreState, [], [], ContextSlice> 
     set({ rename: { open: true, item } });
   },
 
-  onDownload: async (items) => {
-    toast.success(`Downloading ${items.length} item(s)...`);
-  },
-
   onNewFolder: async () => {
     set({ newFolder: { open: true } });
-  },
-
-  onUpload: async () => {
-    toast.success("Upload functionality would be implemented here");
   },
 
   onProperties: async (item) => {

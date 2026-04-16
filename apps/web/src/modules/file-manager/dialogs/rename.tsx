@@ -19,7 +19,6 @@ export function RenameDialog() {
   const [open, item, onOpenChange] = useStore(
     useShallow((s) => [s.rename.open, s.rename.item, s.toggleRename]),
   );
-  const onRename = useStore((s) => s.handleRename);
 
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +35,7 @@ export function RenameDialog() {
 
     setIsLoading(true);
     try {
-      await onRename(item.id, name.trim());
+      // Call the rename api
       onOpenChange(false);
     } catch (error) {
       console.error("Rename failed:", error);

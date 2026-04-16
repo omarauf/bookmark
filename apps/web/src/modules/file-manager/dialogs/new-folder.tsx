@@ -17,9 +17,6 @@ import { useStore } from "../store";
 
 export function NewFolderDialog() {
   const [open, onOpenChange] = useStore(useShallow((s) => [s.newFolder.open, s.toggleNewFolder]));
-  // TODO: check function naming
-  // onSelectionChange={handleSelectionChange}
-  const onCreateFolder = useStore((s) => s.handleCreateFolder);
 
   const [name, setName] = useState("New Folder");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +27,7 @@ export function NewFolderDialog() {
 
     setIsLoading(true);
     try {
-      await onCreateFolder(name.trim());
+      // Call the create folder api
       onOpenChange(false);
       setName("New Folder");
     } catch (error) {

@@ -1,8 +1,12 @@
-import { useEffect } from "react";
-import { useShallow } from "zustand/shallow";
+import { useQuery } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
+import type { BrowseItem, File, Folder } from "@workspace/contracts/file-manager";
+import { useRef } from "react";
+import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";
+import { useFolderNavigation } from "../../hooks/use-folder-navigation";
+import { useSyncGridColumns } from "../../hooks/use-sync-grid-columns";
 import { useStore } from "../../store";
-import { findItemById } from "../../utils/file-utils";
 import { FileContextMenu } from "../context-menu";
 import { DragSelectContainer } from "../drag-select/container";
 import { SelectBox } from "../drag-select/select-box";
@@ -11,41 +15,22 @@ import { FileListItem } from "../item/list-item";
 import { FolderBreadcrumb } from "./breadcrub";
 
 export function FolderContent() {
-  const [tree, currentFolderId, viewMode, handleWindowResize, handleKeyNavigation] = useStore(
-    useShallow((s) => [
-      s.fileTree,
-      s.currentFolderId,
-      s.viewMode,
-      s.handleWindowResize,
-      s.handleKeyNavigation,
-    ]),
+  const viewMode = useStore((s) => s.viewMode);
+
+  const folderId = useSearch({ from: "/_authenticated/file-manager/", select: (s) => s.folderId });
+  const browseListQuery = useQuery(
+    orpc.browse.list.queryOptions({ input: { parentId: folderId } }),
   );
+  const items = mapToItem(browseListQuery.data?.folders, browseListQuery.data?.files);
+  const orderedIds = items.map((item) => item.id);
 
-  // Get current folder and its contents
-  const currentFolder = findItemById(tree, currentFolderId);
-  const items = currentFolder?.children || [];
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    handleWindowResize();
-
-    window.addEventListener("resize", handleWindowResize);
-    document.addEventListener("keydown", handleKeyNavigation);
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-      document.removeEventListener("keydown", handleKeyNavigation);
-    };
-  }, [handleKeyNavigation, handleWindowResize]);
-
-  if (!currentFolder) {
-    return (
-      <div className="flex h-full items-center justify-center text-muted-foreground">
-        Folder not found
-      </div>
-    );
-  }
+  useSyncGridColumns(gridRef);
+  useFolderNavigation(orderedIds);
 
   return (
-    <div className="flex flex-col overflow-auto">
+    <div className="flex h-full flex-col overflow-auto">
       {/* Breadcrumb */}
       <div className="border-border border-b p-3">
         <FolderBreadcrumb />
@@ -55,6 +40,7 @@ export function FolderContent() {
       <DragSelectContainer>
         <FileContextMenu>
           <div
+            ref={gridRef}
             className={cn(
               "relative h-full p-4",
               viewMode === "grid"
@@ -67,20 +53,11 @@ export function FolderContent() {
                 This folder is empty
               </div>
             )}
-            {/* {items.map((item, index) => (
-              <FileContextMenu key={item.id} item={item}>
-                {viewMode === "grid" ? (
-                  <FileGridItem item={item} index={index} />
-                ) : (
-                  <FileListItem item={item} index={index} />
-                )}
-              </FileContextMenu>
-            ))} */}
             {items.map((item, index) =>
               viewMode === "grid" ? (
-                <FileGridItem key={item.id} item={item} index={index} />
+                <FileGridItem key={item.id} item={item} orderedIds={orderedIds} index={index} />
               ) : (
-                <FileListItem key={item.id} item={item} index={index} />
+                <FileListItem key={item.id} item={item} orderedIds={orderedIds} index={index} />
               ),
             )}
           </div>
@@ -89,4 +66,13 @@ export function FolderContent() {
       </DragSelectContainer>
     </div>
   );
+}
+
+function mapToItem(folders: Folder[] = [], files: File[] = []): BrowseItem[] {
+  const folderItems: BrowseItem[] = folders.map((folder) => ({
+    ...folder,
+    type: "folder",
+  }));
+
+  return [...folderItems, ...files];
 }

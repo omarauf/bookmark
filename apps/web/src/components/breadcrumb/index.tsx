@@ -27,6 +27,7 @@ export function XBreadcrumb({ breadcrumbs, onClick, homeLabel, skeletonCount = 0
         {/* Home */}
         <BreadcrumbItem>
           <Item
+            // TODO: make instead of empty string pass make it undefined and handle it in the Item component since it makes more sense
             onClick={isOnClickable ? () => onClick("", 0) : undefined}
             label={homeLabel || "Home"}
             isLast={false}

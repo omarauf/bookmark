@@ -1,15 +1,16 @@
+import type { BrowseItem } from "@workspace/contracts/file-manager";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import type { FileItem } from "../../types";
 import { ItemIcon } from "./icon";
 import { useItem } from "./use-item";
 
 interface FileGridItemProps {
-  item: FileItem;
+  item: BrowseItem;
+  orderedIds: string[];
   index: number;
 }
 
-export function FileGridItem({ item, index }: FileGridItemProps) {
+export function FileGridItem({ item, orderedIds, index }: FileGridItemProps) {
   const {
     isFocused,
     isSelected,
@@ -38,7 +39,7 @@ export function FileGridItem({ item, index }: FileGridItemProps) {
         isOver && item.type === "folder" && "bg-primary/20 ring-2 ring-primary",
         "opacity-100!",
       )}
-      onClick={(e) => onClick(item, index, e)}
+      onClick={(e) => onClick(item.id, orderedIds, index, e)}
       onDoubleClick={() => onDoubleClick(item)}
       aria-selected={isSelected}
       {...attributes}

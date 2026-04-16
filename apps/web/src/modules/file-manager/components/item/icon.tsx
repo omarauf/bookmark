@@ -1,8 +1,8 @@
+import type { BrowseItem } from "@workspace/contracts/file-manager";
 import { Archive, File, FileText, Folder, ImageIcon } from "lucide-react";
-import type { FileItem } from "../../types";
 
 type Props = {
-  item: FileItem;
+  item: BrowseItem;
   size?: "small" | "large";
 };
 

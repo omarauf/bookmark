@@ -1,16 +1,18 @@
+import type { BrowseItem } from "@workspace/contracts/file-manager";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import type { FileItem } from "../../types";
-import { formatDate, formatFileSize } from "../../utils/file-utils";
+import { fDate } from "@/utils/format-time";
+import { formatFileSize } from "../../utils/file-utils";
 import { ItemIcon } from "./icon";
 import { useItem } from "./use-item";
 
 interface FileListItemProps {
-  item: FileItem;
+  item: BrowseItem;
+  orderedIds: string[];
   index: number;
 }
 
-export function FileListItem({ item, index }: FileListItemProps) {
+export function FileListItem({ item, orderedIds, index }: FileListItemProps) {
   const {
     isFocused,
     isSelected,
@@ -38,7 +40,7 @@ export function FileListItem({ item, index }: FileListItemProps) {
         isOver && item.type === "folder" && "bg-primary/20 ring-2 ring-primary",
       )}
       // style={style}
-      onClick={(e) => onClick(item, index, e)}
+      onClick={(e) => onClick(item.id, orderedIds, index, e)}
       onDoubleClick={() => onDoubleClick(item)}
       // role="row"
       aria-selected={isSelected}
@@ -71,7 +73,7 @@ export function FileListItem({ item, index }: FileListItemProps) {
 
       {/* File size */}
       <div className="w-20 shrink-0 text-right">
-        {item.type === "file" && item.size ? (
+        {item.type !== "folder" && item.size ? (
           <div className="text-muted-foreground text-xs">{formatFileSize(item.size)}</div>
         ) : (
           <div className="text-muted-foreground text-xs">—</div>
@@ -80,7 +82,7 @@ export function FileListItem({ item, index }: FileListItemProps) {
 
       {/* Modified date */}
       <div className="w-32 shrink-0 text-right">
-        <div className="text-muted-foreground text-xs">{formatDate(item.modifiedAt)}</div>
+        <div className="text-muted-foreground text-xs">{fDate(item.createdAt)}</div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef } from "react";
+import z from "zod";
 import { useShallow } from "zustand/shallow";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { DragPreview } from "@/modules/file-manager/components/drag-preview";
@@ -14,6 +15,9 @@ import { useDebounce } from "@/modules/file-manager/hooks/use-debounce";
 import { useStore } from "@/modules/file-manager/store";
 
 export const Route = createFileRoute("/_authenticated/file-manager/")({
+  validateSearch: z.object({
+    folderId: z.string().optional(),
+  }),
   component: RouteComponent,
 });
 
@@ -45,7 +49,7 @@ function RouteComponent() {
         ref={fileManagerRef}
         className="h-full w-full bg-background"
         style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
-        tabIndex={-1}
+        // tabIndex={-1}
       >
         <Toolbar />
 

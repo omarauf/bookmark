@@ -17,7 +17,8 @@
     "./download-task": "./src/download-task/index.ts",
     "./raw/*": "./src/raw/*.ts",
     "./profile": "./src/profile/index.ts",
-    "./post": "./src/post/index.ts"
+    "./post": "./src/post/index.ts",
+    "./file-manager": "./src/file-manager/index.ts"
   },
   "peerDependencies": {
     "typescript": "^5"

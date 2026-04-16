@@ -1,6 +1,7 @@
 import { Copy, Download, Edit, FolderPlus, Info, Scissors, Trash2, Upload } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
 import {
   ContextMenu,
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/context-menu";
 import { useStore } from "../store";
 import type { FileItem } from "../types";
-import { findItemById } from "../utils/file-utils";
 
 interface FileContextMenuProps {
   children: React.ReactNode;
@@ -30,33 +30,19 @@ export function FileContextMenu({ children, item }: FileContextMenuProps) {
 }
 
 function Content({ item }: { item?: FileItem }) {
-  const selectedItems = useStore(
-    useShallow(
-      (s) =>
-        Array.from(s.selectedItems)
-          .map((id) => findItemById(s.fileTree, id))
-          .filter(Boolean) as FileItem[],
-    ),
-  );
+  const selectedItemIds = useStore(useShallow((s) => Array.from(s.selectedItems)));
 
   const itemsToAction =
-    item && selectedItems.some((selected) => selected.id === item.id)
-      ? selectedItems
-      : item
-        ? [item]
-        : [];
+    item && selectedItemIds.some((id) => id === item.id) ? selectedItemIds : item ? [item] : [];
 
-  const isMultipleItems = itemsToAction.length > 1;
-  const isSingleItem = itemsToAction.length === 1;
-  const hasItems = itemsToAction.length > 0;
+  const itemCount = itemsToAction.length;
+  const isMultipleItems = itemCount > 1;
+  const isSingleItem = itemCount === 1;
+  const hasItems = itemCount > 0;
 
-  const onCopy = useStore((s) => s.onCopy);
-  const onMove = useStore((s) => s.onMove);
   const onDelete = useStore((s) => s.onDelete);
   const onRename = useStore((s) => s.onRename);
-  const onDownload = useStore((s) => s.onDownload);
   const onNewFolder = useStore((s) => s.onNewFolder);
-  const onUpload = useStore((s) => s.onUpload);
   const onProperties = useStore((s) => s.onProperties);
 
   return (
@@ -67,7 +53,9 @@ function Content({ item }: { item?: FileItem }) {
             <FolderPlus className="mr-2 h-4 w-4" />
             New Folder
           </ContextMenuItem>
-          <ContextMenuItem onClick={onUpload}>
+          <ContextMenuItem
+            onClick={() => toast.success("Upload functionality would be implemented here")}
+          >
             <Upload className="mr-2 h-4 w-4" />
             Upload Files
           </ContextMenuItem>
@@ -76,21 +64,23 @@ function Content({ item }: { item?: FileItem }) {
 
       {hasItems && (
         <>
-          <ContextMenuItem onClick={() => onCopy(itemsToAction)}>
+          <ContextMenuItem
+            onClick={() => toast.success(`${itemCount} item(s) copied to clipboard`)}
+          >
             <Copy className="mr-2 h-4 w-4" />
-            Copy {isMultipleItems ? `${itemsToAction.length} items` : ""}
+            Copy {isMultipleItems ? `${itemCount} items` : ""}
           </ContextMenuItem>
 
-          <ContextMenuItem onClick={() => onMove(itemsToAction)}>
+          <ContextMenuItem onClick={() => toast.success(`${itemCount} item(s) cut to clipboard`)}>
             <Scissors className="mr-2 h-4 w-4" />
-            Cut {isMultipleItems ? `${itemsToAction.length} items` : ""}
+            Cut {isMultipleItems ? `${itemCount} items` : ""}
           </ContextMenuItem>
 
           <ContextMenuSeparator />
 
-          <ContextMenuItem onClick={() => onDownload(itemsToAction)}>
+          <ContextMenuItem onClick={() => toast.success(`Downloading ${itemCount} item(s)...`)}>
             <Download className="mr-2 h-4 w-4" />
-            Download {isMultipleItems ? `${itemsToAction.length} items` : ""}
+            Download {isMultipleItems ? `${itemCount} items` : ""}
           </ContextMenuItem>
 
           <ContextMenuSeparator />
@@ -107,7 +97,7 @@ function Content({ item }: { item?: FileItem }) {
             className="text-destructive focus:text-destructive"
           >
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete {isMultipleItems ? `${itemsToAction.length} items` : ""}
+            Delete {isMultipleItems ? `${itemCount} items` : ""}
           </ContextMenuItem>
 
           {isSingleItem && (

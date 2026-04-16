@@ -1,10 +1,11 @@
 import { useDraggable, useDroppable } from "@dnd-kit/core";
+import { useNavigate } from "@tanstack/react-router";
+import type { BrowseItem } from "@workspace/contracts/file-manager";
 import { useCallback } from "react";
 import { useShallow } from "zustand/shallow";
 import { useStore } from "../../store";
-import type { FileItem } from "../../types";
 
-export function useItem(item: FileItem, index: number) {
+export function useItem(item: BrowseItem, index: number) {
   const {
     attributes,
     listeners,
@@ -15,31 +16,24 @@ export function useItem(item: FileItem, index: number) {
     id: item.id,
     data: { item },
   });
+  const navigate = useNavigate();
 
   const { setNodeRef: setDropRef, isOver } = useDroppable({
     id: item.id,
     disabled: item.type !== "folder",
   });
 
-  const [
-    isFocused,
-    isSelected,
-    isGlobalDragging,
-    registerItemRef,
-    onClick,
-    onDoubleClick,
-    setFocusedIndex,
-  ] = useStore(
-    useShallow((s) => [
-      s.focusedIndex === index,
-      s.selectedItems.has(item.id),
-      s.draggedItems.length > 0,
-      s.registerItemRef,
-      s.handleItemClick,
-      s.handleItemDoubleClick,
-      s.setFocusedIndex,
-    ]),
-  );
+  const [isFocused, isSelected, isGlobalDragging, registerItemRef, onClick, setFocusedIndex] =
+    useStore(
+      useShallow((s) => [
+        s.focusedIndex === index,
+        s.selectedItems.has(item.id),
+        s.draggedItems.length > 0,
+        s.registerItemRef,
+        s.handleItemClick,
+        s.setFocusedIndex,
+      ]),
+    );
 
   const combinedRef = useCallback(
     (element: HTMLDivElement | null) => {
@@ -48,6 +42,15 @@ export function useItem(item: FileItem, index: number) {
       registerItemRef(element);
     },
     [registerItemRef, setDragRef, setDropRef],
+  );
+
+  const onDoubleClick = useCallback(
+    (item: BrowseItem) => {
+      if (item.type === "folder") {
+        navigate({ to: ".", search: (s) => ({ ...s, folderId: item.id }) });
+      }
+    },
+    [navigate],
   );
 
   // const style = transform

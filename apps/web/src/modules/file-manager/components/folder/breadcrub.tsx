@@ -1,42 +1,25 @@
-import React from "react";
-import { useShallow } from "zustand/shallow";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { useStore } from "../../store";
-import { getAllInceptors } from "../../utils/file-utils";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { XBreadcrumb } from "@/components/breadcrumb";
+import { orpc } from "@/integrations/orpc";
 
 export function FolderBreadcrumb() {
-  const [tree, currentFolderId, handleFolderChange] = useStore(
-    useShallow((s) => [s.fileTree, s.currentFolderId, s.handleFolderChange]),
+  const folderId = useSearch({ from: "/_authenticated/file-manager/", select: (s) => s.folderId });
+
+  const query = useQuery(
+    orpc.folder.breadcrumb.queryOptions({
+      input: { folderId: folderId || "" },
+      enabled: !!folderId,
+    }),
   );
 
-  const inceptors = getAllInceptors(tree, currentFolderId);
+  const breadcrumbs = [...(query.data || [])];
 
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        {inceptors.map((item, index) => {
-          const isLast = index === inceptors.length - 1;
-          return (
-            <React.Fragment key={item.id}>
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  onClick={() => handleFolderChange(item.id)}
-                  className="cursor-pointer"
-                >
-                  {item.name}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {!isLast && <BreadcrumbSeparator />}
-            </React.Fragment>
-          );
-        })}
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
+  const navigate = useNavigate();
+  const onClickHandler = (value: string) => {
+    const result = value === "" ? undefined : value;
+    navigate({ to: ".", search: (s) => ({ ...s, folderId: result }) });
+  };
+
+  return <XBreadcrumb breadcrumbs={breadcrumbs} onClick={onClickHandler} />;
 }

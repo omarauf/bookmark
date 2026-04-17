@@ -19,7 +19,6 @@ export const createSelectionSlice: StateCreator<StoreState, [], [], SelectionSli
   set,
   get,
 ) => ({
-  selectionHistory: new Map(),
   focusedIndex: 0,
   // lastSelectedIndex: -1,
 

@@ -1,5 +1,5 @@
 import { useNavigate, useRouter } from "@tanstack/react-router";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 import { useStore } from "../store";
 
@@ -17,6 +17,7 @@ export function useFolderNavigation(orderedIds: string[]) {
 
   const navigate = useNavigate({ from: "/file-manager/" });
   const router = useRouter();
+  const shiftSelectionAnchorRef = useRef<number | null>(null);
 
   const navigationHandler = useCallback(
     (event: KeyboardEvent) => {
@@ -26,6 +27,7 @@ export function useFolderNavigation(orderedIds: string[]) {
       const isMultiSelect = ctrlKey || metaKey;
 
       const total = orderedIds.length;
+      if (total === 0) return;
 
       switch (key) {
         case "ArrowUp":
@@ -51,8 +53,11 @@ export function useFolderNavigation(orderedIds: string[]) {
           itemRefs.get(newId)?.focus();
 
           if (shiftKey) {
-            const start = Math.min(focusedIndex, newIndex);
-            const end = Math.max(focusedIndex, newIndex);
+            const anchor = shiftSelectionAnchorRef.current ?? focusedIndex;
+            shiftSelectionAnchorRef.current = anchor;
+
+            const start = Math.min(anchor, newIndex);
+            const end = Math.max(anchor, newIndex);
 
             const newSelection = new Set<string>();
             for (let i = start; i <= end; i++) {
@@ -61,7 +66,10 @@ export function useFolderNavigation(orderedIds: string[]) {
 
             useStore.setState({ selectedItems: newSelection });
           } else if (!isMultiSelect) {
+            shiftSelectionAnchorRef.current = newIndex;
             useStore.setState({ selectedItems: new Set([newId]) });
+          } else {
+            shiftSelectionAnchorRef.current = newIndex;
           }
 
           break;
@@ -85,8 +93,11 @@ export function useFolderNavigation(orderedIds: string[]) {
           itemRefs.get(newId)?.focus();
 
           if (shiftKey) {
-            const start = Math.min(focusedIndex, newIndex);
-            const end = Math.max(focusedIndex, newIndex);
+            const anchor = shiftSelectionAnchorRef.current ?? focusedIndex;
+            shiftSelectionAnchorRef.current = anchor;
+
+            const start = Math.min(anchor, newIndex);
+            const end = Math.max(anchor, newIndex);
 
             const newSelection = new Set<string>();
             for (let i = start; i <= end; i++) {
@@ -95,7 +106,10 @@ export function useFolderNavigation(orderedIds: string[]) {
 
             useStore.setState({ selectedItems: newSelection });
           } else if (!isMultiSelect) {
+            shiftSelectionAnchorRef.current = newIndex;
             useStore.setState({ selectedItems: new Set<string>([newId]) });
+          } else {
+            shiftSelectionAnchorRef.current = newIndex;
           }
 
           break;
@@ -112,6 +126,7 @@ export function useFolderNavigation(orderedIds: string[]) {
 
         case " ": {
           event.preventDefault();
+          shiftSelectionAnchorRef.current = focusedIndex;
 
           const currentId = orderedIds[focusedIndex];
           const newSelection = new Set(selectedItems);
@@ -135,12 +150,14 @@ export function useFolderNavigation(orderedIds: string[]) {
         case "a":
           if (isMultiSelect) {
             event.preventDefault();
+            shiftSelectionAnchorRef.current = focusedIndex;
             useStore.setState({ selectedItems: new Set(orderedIds) });
           }
           break;
 
         case "Escape":
           event.preventDefault();
+          shiftSelectionAnchorRef.current = focusedIndex;
           useStore.setState({ selectedItems: new Set() });
           break;
       }

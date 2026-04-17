@@ -45,6 +45,7 @@ export function FileTree() {
         onPathChange={onClickHandler}
         className="pt-1"
         autoCollapse={false}
+        syncOpenWithValue
         iconRender={({ expanded }) =>
           expanded ? (
             <FolderOpenIcon className="h-4 w-4 text-blue-500" aria-hidden="true" />

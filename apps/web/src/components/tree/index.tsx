@@ -27,6 +27,7 @@ type TreeViewProps<T extends TreeNodeData> = {
   className?: string;
   hideUnselected?: boolean | number;
   autoCollapse?: boolean;
+  syncOpenWithValue?: boolean;
   expandOn?: "item" | "icon";
   icon?: ElementType;
   iconRender?: (state: { expanded: boolean }) => ReactNode;
@@ -69,6 +70,7 @@ export function TreeView<T extends TreeNodeData>({
   onPathChange,
   hideUnselected,
   autoCollapse = true,
+  syncOpenWithValue = true,
   expandOn = "icon",
   icon,
   iconRender,
@@ -80,8 +82,14 @@ export function TreeView<T extends TreeNodeData>({
   useEffect(() => {
     if (autoCollapse) {
       setOpenNodes(new Set(path));
+    } else if (syncOpenWithValue) {
+      setOpenNodes((prev) => {
+        const next = new Set(prev);
+        for (const node of path) next.add(node);
+        return next;
+      });
     }
-  }, [path, autoCollapse]);
+  }, [path, autoCollapse, syncOpenWithValue]);
 
   const handleNodeClick = useCallback(
     (newPath: string[], node: T) => {

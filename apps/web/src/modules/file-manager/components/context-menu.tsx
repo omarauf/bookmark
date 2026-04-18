@@ -11,29 +11,26 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { useStore } from "../store";
-import type { FileItem } from "../types";
 
 interface FileContextMenuProps {
   children: React.ReactNode;
-  item?: FileItem;
 }
 
-export function FileContextMenu({ children, item }: FileContextMenuProps) {
+export function FileContextMenu({ children }: FileContextMenuProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <ContextMenu onOpenChange={setOpen}>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-      {open && <Content item={item} />}
+      {open && <Content />}
     </ContextMenu>
   );
 }
 
-function Content({ item }: { item?: FileItem }) {
+function Content() {
   const selectedItemIds = useStore(useShallow((s) => Array.from(s.selectedItems)));
 
-  const itemsToAction =
-    item && selectedItemIds.some((id) => id === item.id) ? selectedItemIds : item ? [item] : [];
+  const itemsToAction = selectedItemIds;
 
   const itemCount = itemsToAction.length;
   const isMultipleItems = itemCount > 1;

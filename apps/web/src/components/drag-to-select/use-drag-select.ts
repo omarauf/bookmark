@@ -23,6 +23,11 @@ export function useDragSelect({
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const dragStartSelectionRef = useRef<Set<string>>(new Set());
+  const isCtrlPressedRef = useRef(false);
+  const isShiftPressedRef = useRef(false);
+  const isMetaPressedRef = useRef(false);
+
   const isControlled = controlledSelectedItems !== undefined;
   const selectedItems = isControlled ? controlledSelectedItems : internalSelectedItems;
 
@@ -66,7 +71,32 @@ export function useDragSelect({
         }
       });
 
-      setter(new Set(Object.keys(next)));
+      const dragStartSelection = dragStartSelectionRef.current;
+      const isCtrlPressed = isCtrlPressedRef.current;
+      const isShiftPressed = isShiftPressedRef.current;
+      const isMetaPressed = isMetaPressedRef.current;
+
+      let newSelection: Set<string>;
+
+      if (isShiftPressed) {
+        newSelection = new Set(dragStartSelection);
+        for (const id of Object.keys(next)) {
+          newSelection.add(id);
+        }
+      } else if (isCtrlPressed || isMetaPressed) {
+        newSelection = new Set(dragStartSelection);
+        for (const id of Object.keys(next)) {
+          if (dragStartSelection.has(id)) {
+            newSelection.delete(id);
+          } else {
+            newSelection.add(id);
+          }
+        }
+      } else {
+        newSelection = new Set(Object.keys(next));
+      }
+
+      setter(newSelection);
     },
     [itemSelector, itemDataAttribute, disabled, setter],
   );
@@ -130,12 +160,12 @@ export function useDragSelect({
       if (e.button !== 0 || disabled) return;
       const containerRect = e.currentTarget.getBoundingClientRect();
 
+      dragStartSelectionRef.current = new Set(selectedItems);
+
       setDragVector(new DOMVector(e.clientX - containerRect.x, e.clientY - containerRect.y, 0, 0));
       setScrollVector(new DOMVector(e.currentTarget.scrollLeft, e.currentTarget.scrollTop, 0, 0));
-
-      e.currentTarget.setPointerCapture(e.pointerId);
     },
-    [disabled],
+    [disabled, selectedItems],
   );
 
   const handlePointerMove = useCallback(
@@ -166,6 +196,7 @@ export function useDragSelect({
 
       if (!isDragging) {
         setIsDragging(true);
+        e.currentTarget.setPointerCapture(e.pointerId);
         onSelectionStart?.();
       }
 
@@ -186,18 +217,22 @@ export function useDragSelect({
     ],
   );
 
-  const handlePointerUp = useCallback(() => {
-    if (disabled) return;
-    if (!isDragging) {
-      clearSelection();
-      setDragVector(null);
-    } else {
-      setDragVector(null);
-      setIsDragging(false);
-      onSelectionEnd?.();
-    }
-    setScrollVector(null);
-  }, [isDragging, disabled, clearSelection, onSelectionEnd]);
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (disabled) return;
+      const isModifier = e.altKey || e.metaKey || e.ctrlKey || e.shiftKey;
+      if (!isDragging && !isModifier) {
+        clearSelection();
+        setDragVector(null);
+      } else {
+        setDragVector(null);
+        setIsDragging(false);
+        onSelectionEnd?.();
+      }
+      setScrollVector(null);
+    },
+    [isDragging, disabled, clearSelection, onSelectionEnd],
+  );
 
   const handleScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
@@ -227,10 +262,30 @@ export function useDragSelect({
         setDragVector(null);
         setIsDragging(false);
       }
-      setScrollVector(null);
+      if (e.key === "Control") {
+        isCtrlPressedRef.current = true;
+      }
+      if (e.key === "Shift") {
+        isShiftPressedRef.current = true;
+      }
+      if (e.key === "Meta") {
+        isMetaPressedRef.current = true;
+      }
     },
     [clearSelection],
   );
+
+  const handleKeyUp = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Control") {
+      isCtrlPressedRef.current = false;
+    }
+    if (e.key === "Shift") {
+      isShiftPressedRef.current = false;
+    }
+    if (e.key === "Meta") {
+      isMetaPressedRef.current = false;
+    }
+  }, []);
 
   return {
     selectedItems,
@@ -246,6 +301,7 @@ export function useDragSelect({
       onPointerUp: handlePointerUp,
       onScroll: handleScroll,
       onKeyDown: handleKeyDown,
+      onKeyUp: handleKeyUp,
     },
   };
 }

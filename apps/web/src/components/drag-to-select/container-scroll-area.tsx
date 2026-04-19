@@ -24,12 +24,7 @@ export function ContainerScrollArea({ children, className }: ContainerProps) {
   return (
     <ScrollArea
       viewportProps={{
-        ref: containerProps.ref,
-        onPointerDown: containerProps.onPointerDown,
-        onPointerMove: containerProps.onPointerMove,
-        onPointerUp: containerProps.onPointerUp,
-        onScroll: containerProps.onScroll,
-        onKeyDown: containerProps.onKeyDown,
+        ...containerProps,
         className: cn("relative select-none focus:outline-none", className),
       }}
       className="flex min-h-0 w-fit min-w-0 grow flex-col"

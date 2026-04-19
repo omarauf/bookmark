@@ -4,9 +4,10 @@ export type ContainerProps = {
   disabled?: boolean;
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
-  onPointerUp: () => void;
+  onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
   onScroll: (e: React.UIEvent<HTMLDivElement>) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  onKeyUp: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 };
 
 export interface UseDragSelectOptions {

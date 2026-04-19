@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import type { BrowseItem } from "@workspace/contracts/file-manager";
 import { useCallback } from "react";
 import { useShallow } from "zustand/shallow";
-import { useStore } from "../../store";
+import { useStore } from "../store";
 
 export function useItem(item: BrowseItem, index: number) {
   const {
@@ -23,17 +23,27 @@ export function useItem(item: BrowseItem, index: number) {
     disabled: item.type !== "folder",
   });
 
-  const [isFocused, isSelected, isGlobalDragging, registerItemRef, onClick, setFocusedIndex] =
-    useStore(
-      useShallow((s) => [
-        s.focusedIndex === index,
-        s.selectedItems.has(item.id),
-        s.draggedItems.length > 0,
-        s.registerItemRef,
-        s.handleItemClick,
-        s.setFocusedIndex,
-      ]),
-    );
+  const [
+    isFocused,
+    isSelected,
+    isGlobalDragging,
+    registerItemRef,
+    setFocusedIndex,
+    selectItemRange,
+    toggleSelectedItem,
+    selectSingleItem,
+  ] = useStore(
+    useShallow((s) => [
+      s.focusedIndex === index,
+      s.selectedItems.has(item.id),
+      s.draggedItems.length > 0,
+      s.registerItemRef,
+      s.setFocusedIndex,
+      s.selectItemRange,
+      s.toggleSelectedItem,
+      s.selectSingleItem,
+    ]),
+  );
 
   const combinedRef = useCallback(
     (element: HTMLDivElement | null) => {
@@ -51,6 +61,28 @@ export function useItem(item: BrowseItem, index: number) {
       }
     },
     [navigate],
+  );
+
+  const onClick = useCallback(
+    (itemId: string, orderedIds: string[], index: number, event: React.MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
+
+      const isRangeSelect = event.shiftKey;
+      const isMultiSelect = event.ctrlKey || event.metaKey;
+
+      if (isRangeSelect) {
+        selectItemRange(orderedIds, index);
+        return;
+      }
+
+      if (isMultiSelect) {
+        toggleSelectedItem(itemId, index);
+        return;
+      }
+      selectSingleItem(itemId, index);
+    },
+    [selectItemRange, toggleSelectedItem, selectSingleItem],
   );
 
   // const style = transform

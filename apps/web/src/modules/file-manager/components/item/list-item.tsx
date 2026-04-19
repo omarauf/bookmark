@@ -2,9 +2,9 @@ import type { BrowseItem } from "@workspace/contracts/file-manager";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { fDate } from "@/utils/format-time";
+import { useItem } from "../../hooks/use-item";
 import { formatFileSize } from "../../utils/file-utils";
 import { ItemIcon } from "./icon";
-import { useItem } from "./use-item";
 
 interface FileListItemProps {
   item: BrowseItem;

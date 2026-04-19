@@ -27,7 +27,7 @@ export function ContainerScrollArea({ children, className }: ContainerProps) {
         ...containerProps,
         className: cn("relative select-none focus:outline-none", className),
       }}
-      className="flex min-h-0 w-fit min-w-0 grow flex-col"
+      className="flex min-h-0 min-w-0 grow flex-col"
     >
       {children}
 

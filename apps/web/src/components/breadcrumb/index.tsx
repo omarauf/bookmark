@@ -9,20 +9,27 @@ import {
 } from "@/components/ui/breadcrumb";
 
 type Props = {
+  className?: string;
   breadcrumbs: { label: string; value?: string }[] | undefined;
   onClick?: (value: string, index: number) => void;
   homeLabel?: string;
   skeletonCount?: number;
 };
 
-export function XBreadcrumb({ breadcrumbs, onClick, homeLabel, skeletonCount = 0 }: Props) {
+export function XBreadcrumb({
+  className,
+  breadcrumbs,
+  onClick,
+  homeLabel,
+  skeletonCount = 0,
+}: Props) {
   const isOnClickable = onClick !== undefined;
 
   const showSkeleton = (breadcrumbs === undefined || breadcrumbs === null) && skeletonCount > 0;
   const hasItems = !!breadcrumbs && breadcrumbs.length > 0;
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className={className}>
       <BreadcrumbList className="no-scrollbar flex-nowrap overflow-x-auto overflow-y-hidden whitespace-nowrap">
         {/* Home */}
         <BreadcrumbItem>

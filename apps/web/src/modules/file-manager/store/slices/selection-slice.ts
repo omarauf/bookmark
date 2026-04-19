@@ -1,18 +1,27 @@
+import type { BrowseItem } from "@workspace/contracts/file-manager";
+import { createRef } from "react";
 import type { StateCreator } from "zustand";
 import type { StoreState } from "../type";
 
 export type SelectionSlice = {
   focusedIndex: number;
-  // lastSelectedIndex: number;
+  selectionAnchorIndex: number | null;
+  selectedItems: Set<string>;
+  selectedItemsData: Map<string, BrowseItem>;
+  setSelectedItems: (selectedItems: Set<string>) => void;
+  setSelectedItemsData: (items: BrowseItem[]) => void;
+
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  itemRefs: Map<string, HTMLElement>;
+  registerItemRef: (element: HTMLElement | null) => void;
 
   setFocusedIndex: (index: number) => void;
-
-  handleItemClick: (
-    item: string,
-    orderIds: string[],
-    index: number,
-    event: React.MouseEvent,
-  ) => void;
+  clearSelection: () => void;
+  selectAllItems: (orderedIds: string[]) => void;
+  selectSingleItem: (itemId: string, index: number) => void;
+  toggleSelectedItem: (itemId: string, index: number) => void;
+  selectItemRange: (orderedIds: string[], index: number) => void;
+  toggleFocusedItemSelection: (orderedIds: string[]) => void;
 };
 
 export const createSelectionSlice: StateCreator<StoreState, [], [], SelectionSlice> = (
@@ -20,126 +29,111 @@ export const createSelectionSlice: StateCreator<StoreState, [], [], SelectionSli
   get,
 ) => ({
   focusedIndex: 0,
-  // lastSelectedIndex: -1,
+  selectionAnchorIndex: null,
+  selectedItems: new Set<string>(),
+  selectedItemsData: new Map<string, BrowseItem>(),
+  setSelectedItems: (selectedItems) => set({ selectedItems }),
+
+  setSelectedItemsData: (data) => {
+    const { selectedItems } = get();
+
+    const selectedItemsData = new Map(
+      data.filter((item) => selectedItems.has(item.id)).map((item) => [item.id, item]),
+    );
+
+    set({ selectedItemsData });
+  },
+
+  containerRef: createRef<HTMLDivElement>(),
+  itemRefs: new Map<string, HTMLElement>(),
+
+  registerItemRef: (element) => {
+    const elementId = element?.id;
+    if (!elementId) return;
+
+    set((state) => {
+      const refs = new Map(state.itemRefs);
+      if (element) refs.set(elementId, element);
+      else refs.delete(elementId);
+      return { itemRefs: refs };
+    });
+  },
 
   setFocusedIndex: (index) => set({ focusedIndex: index }),
 
-  handleItemClick: (itemId, orderedIds, index, event) => {
-    const { selectedItems, focusedIndex } = get();
-    const { ctrlKey, metaKey, shiftKey } = event;
+  clearSelection: () =>
+    set((state) => ({
+      selectedItems: new Set<string>(),
+      selectionAnchorIndex: state.focusedIndex,
+    })),
 
-    const isMultiSelect = ctrlKey || metaKey;
-    const isRangeSelect = shiftKey;
+  selectAllItems: (orderedIds) =>
+    set((state) => ({
+      selectedItems: new Set(orderedIds),
+      selectionAnchorIndex: state.focusedIndex,
+    })),
 
-    event.stopPropagation();
-    event.preventDefault();
+  selectSingleItem: (itemId, index) =>
+    set({
+      selectedItems: new Set([itemId]),
+      focusedIndex: index,
+      selectionAnchorIndex: index,
+    }),
 
-    let newSelection = new Set(selectedItems);
+  toggleSelectedItem: (itemId, index) =>
+    set((state) => {
+      const selectedItems = new Set(state.selectedItems);
 
-    // ✅ SHIFT → range selection (based on last focused index)
-    if (isRangeSelect && focusedIndex !== -1) {
-      const start = Math.min(focusedIndex, index);
-      const end = Math.max(focusedIndex, index);
+      if (selectedItems.has(itemId)) {
+        selectedItems.delete(itemId);
+      } else {
+        selectedItems.add(itemId);
+      }
 
-      newSelection.clear();
+      return {
+        selectedItems,
+        focusedIndex: index,
+        selectionAnchorIndex: index,
+      };
+    }),
+
+  selectItemRange: (orderedIds, index) =>
+    set((state) => {
+      const anchor = state.selectionAnchorIndex ?? state.focusedIndex;
+      const start = Math.min(anchor, index);
+      const end = Math.max(anchor, index);
+      const selectedItems = new Set<string>();
 
       for (let i = start; i <= end; i++) {
-        const id = orderedIds[i];
-        if (id) newSelection.add(id);
+        const itemId = orderedIds[i];
+        if (itemId) selectedItems.add(itemId);
       }
-    }
 
-    // ✅ CTRL / CMD → toggle selection
-    else if (isMultiSelect) {
-      if (newSelection.has(itemId)) {
-        newSelection.delete(itemId);
+      return {
+        selectedItems,
+        focusedIndex: index,
+        selectionAnchorIndex: anchor,
+      };
+    }),
+
+  toggleFocusedItemSelection: (orderedIds) =>
+    set((state) => {
+      const itemId = orderedIds[state.focusedIndex];
+      if (!itemId) {
+        return state;
+      }
+
+      const selectedItems = new Set(state.selectedItems);
+
+      if (selectedItems.has(itemId)) {
+        selectedItems.delete(itemId);
       } else {
-        newSelection.add(itemId);
+        selectedItems.add(itemId);
       }
-    }
 
-    // ✅ Normal click → single selection
-    else {
-      newSelection = new Set([itemId]);
-    }
-
-    // ✅ Always update focus to last clicked item
-    set({
-      selectedItems: newSelection,
-      focusedIndex: index,
-    });
-  },
-  // handleItemClick: (item, index, event) => {
-  //   const { fileTree, currentFolderId, focusedIndex, selectedItems } = get();
-  //   const { ctrlKey, metaKey, shiftKey } = event;
-  //   const isMultiSelect = ctrlKey || metaKey;
-  //   const isRangeSelect = shiftKey;
-  //   event.stopPropagation();
-  //   event.preventDefault();
-
-  //   // TODO: idea to move the items to state in the store
-  //   const currentFolder = findItemById(fileTree, currentFolderId);
-  //   const items = currentFolder?.children || [];
-
-  //   set({ focusedIndex: index });
-
-  //   let newSelection = new Set(selectedItems);
-
-  //   if (isRangeSelect && focusedIndex !== -1) {
-  //     const selectedIndices = items
-  //       .map((i, idx) => (newSelection.has(i.id) ? idx : -1))
-  //       .filter((idx) => idx !== -1);
-
-  //     if (selectedIndices.length === 0) return;
-
-  //     const lower = Math.min(...selectedIndices);
-  //     const upper = Math.max(...selectedIndices);
-
-  //     let start = index;
-  //     let end = index;
-
-  //     if (selectedIndices.length > 1) {
-  //       if (focusedIndex > lower && index < lower) {
-  //         start = index;
-  //         end = lower;
-  //       } else if (focusedIndex < upper && index > upper) {
-  //         start = upper;
-  //         end = index;
-  //       } else if (focusedIndex > lower && index < upper) {
-  //         start = lower;
-  //         end = index;
-  //       } else if (focusedIndex < upper && index > lower) {
-  //         start = index;
-  //         end = upper;
-  //       } else {
-  //         start = Math.min(lower, index);
-  //         end = Math.max(upper, index);
-  //       }
-  //     } else {
-  //       start = Math.min(lower, index);
-  //       end = Math.max(upper, index);
-  //     }
-
-  //     newSelection.clear();
-  //     for (let i = start; i <= end; i++) {
-  //       if (items[i]) {
-  //         newSelection.add(items[i].id);
-  //       }
-  //     }
-  //   } else if (isMultiSelect) {
-  //     // Toggle selection
-  //     if (newSelection.has(item.id)) {
-  //       newSelection.delete(item.id);
-  //     } else {
-  //       newSelection.add(item.id);
-  //     }
-  //     set({ focusedIndex: index });
-  //   } else {
-  //     // Single selection
-  //     newSelection = new Set([item.id]);
-  //     set({ focusedIndex: index });
-  //   }
-
-  //   set({ selectedItems: newSelection });
-  // },
+      return {
+        selectedItems,
+        selectionAnchorIndex: state.focusedIndex,
+      };
+    }),
 });

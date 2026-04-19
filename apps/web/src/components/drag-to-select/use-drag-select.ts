@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DOMVector } from "./dom-vector";
 import type { UseDragSelectOptions, UseDragSelectReturn } from "./type";
-import { intersect } from "./utils";
+import { areSetsEqual, intersect } from "./utils";
 
 export function useDragSelect({
   selectedItems: controlledSelectedItems,
@@ -33,12 +33,18 @@ export function useDragSelect({
 
   const setter = useCallback(
     (v: Set<string>) => {
+      const current = isControlled ? controlledSelectedItems : internalSelectedItems;
+
+      // 🚀 no change → skip render
+      if (current && areSetsEqual(current, v)) return;
+
       if (!isControlled) {
         setInternalSelectedItems(v);
       }
+
       controlledSetSelectedItems?.(v);
     },
-    [isControlled, controlledSetSelectedItems],
+    [isControlled, controlledSelectedItems, internalSelectedItems, controlledSetSelectedItems],
   );
 
   const clearSelection = useCallback(() => {
@@ -219,6 +225,20 @@ export function useDragSelect({
 
   const handlePointerUp = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.button === 2) {
+        const target = e.target as HTMLElement;
+        const itemEl = target.closest?.(`[data-${itemDataAttribute}]`) as HTMLElement | null;
+        const clickedItemId = itemEl?.dataset[itemDataAttribute];
+        if (clickedItemId != null && typeof clickedItemId === "string") {
+          if (!selectedItems.has(clickedItemId)) {
+            setter(new Set([clickedItemId]));
+          }
+        } else {
+          setter(new Set());
+        }
+        return;
+      }
+
       if (disabled) return;
       const isModifier = e.altKey || e.metaKey || e.ctrlKey || e.shiftKey;
       if (!isDragging && !isModifier) {
@@ -231,7 +251,15 @@ export function useDragSelect({
       }
       setScrollVector(null);
     },
-    [isDragging, disabled, clearSelection, onSelectionEnd],
+    [
+      isDragging,
+      disabled,
+      clearSelection,
+      onSelectionEnd,
+      setter,
+      itemDataAttribute,
+      selectedItems.has,
+    ],
   );
 
   const handleScroll = useCallback(

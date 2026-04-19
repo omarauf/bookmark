@@ -21,5 +21,11 @@ export function FolderBreadcrumb() {
     navigate({ to: ".", search: (s) => ({ ...s, folderId: result }) });
   };
 
-  return <XBreadcrumb breadcrumbs={breadcrumbs} onClick={onClickHandler} />;
+  return (
+    <XBreadcrumb
+      className="border-border border-b p-3"
+      breadcrumbs={breadcrumbs}
+      onClick={onClickHandler}
+    />
+  );
 }

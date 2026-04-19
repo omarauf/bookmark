@@ -5,3 +5,11 @@ export function intersect(rect1: DOMRect, rect2: DOMRect): boolean {
 
   return true;
 }
+
+export function areSetsEqual(a: Set<string>, b: Set<string>) {
+  if (a.size !== b.size) return false;
+  for (const val of a) {
+    if (!b.has(val)) return false;
+  }
+  return true;
+}

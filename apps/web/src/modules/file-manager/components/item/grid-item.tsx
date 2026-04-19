@@ -1,8 +1,8 @@
 import type { BrowseItem } from "@workspace/contracts/file-manager";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
+import { useItem } from "../../hooks/use-item";
 import { ItemIcon } from "./icon";
-import { useItem } from "./use-item";
 
 interface FileGridItemProps {
   item: BrowseItem;
@@ -29,6 +29,7 @@ export function FileGridItem({ item, orderedIds, index }: FileGridItemProps) {
     <div
       ref={combinedRef}
       id={item.id}
+      data-item={item.id}
       className={cn(
         "relative flex cursor-pointer flex-col items-center rounded-lg p-3",
         "group transition-colors hover:bg-accent/50",

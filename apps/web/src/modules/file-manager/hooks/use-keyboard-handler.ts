@@ -1,10 +1,24 @@
 import { useNavigate, useRouter } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { useStore } from "../store";
 
-export function useFolderNavigation(orderedIds: string[]) {
-  const [columns, containerRef, itemRefs, focusedIndex, selectedItems, viewMode] = useStore(
+export function useKeyboardHandler(orderedIds: string[]) {
+  const [
+    columns,
+    containerRef,
+    itemRefs,
+    focusedIndex,
+    selectedItems,
+    viewMode,
+    openDialog,
+    setFocusedIndex,
+    selectSingleItem,
+    selectItemRange,
+    toggleFocusedItemSelection,
+    selectAllItems,
+    clearSelection,
+  ] = useStore(
     useShallow((s) => [
       s.columns,
       s.containerRef,
@@ -12,12 +26,18 @@ export function useFolderNavigation(orderedIds: string[]) {
       s.focusedIndex,
       s.selectedItems,
       s.viewMode,
+      s.openDialog,
+      s.setFocusedIndex,
+      s.selectSingleItem,
+      s.selectItemRange,
+      s.toggleFocusedItemSelection,
+      s.selectAllItems,
+      s.clearSelection,
     ]),
   );
 
   const navigate = useNavigate({ from: "/file-manager/" });
   const router = useRouter();
-  const shiftSelectionAnchorRef = useRef<number | null>(null);
 
   const navigationHandler = useCallback(
     (event: KeyboardEvent) => {
@@ -48,28 +68,13 @@ export function useFolderNavigation(orderedIds: string[]) {
 
           const newId = orderedIds[newIndex];
 
-          // Focus DOM
-          useStore.setState({ focusedIndex: newIndex });
+          setFocusedIndex(newIndex);
           itemRefs.get(newId)?.focus();
 
           if (shiftKey) {
-            const anchor = shiftSelectionAnchorRef.current ?? focusedIndex;
-            shiftSelectionAnchorRef.current = anchor;
-
-            const start = Math.min(anchor, newIndex);
-            const end = Math.max(anchor, newIndex);
-
-            const newSelection = new Set<string>();
-            for (let i = start; i <= end; i++) {
-              newSelection.add(orderedIds[i]);
-            }
-
-            useStore.setState({ selectedItems: newSelection });
+            selectItemRange(orderedIds, newIndex);
           } else if (!isMultiSelect) {
-            shiftSelectionAnchorRef.current = newIndex;
-            useStore.setState({ selectedItems: new Set([newId]) });
-          } else {
-            shiftSelectionAnchorRef.current = newIndex;
+            selectSingleItem(newId, newIndex);
           }
 
           break;
@@ -89,27 +94,13 @@ export function useFolderNavigation(orderedIds: string[]) {
 
           const newId = orderedIds[newIndex];
 
-          useStore.setState({ focusedIndex: newIndex });
+          setFocusedIndex(newIndex);
           itemRefs.get(newId)?.focus();
 
           if (shiftKey) {
-            const anchor = shiftSelectionAnchorRef.current ?? focusedIndex;
-            shiftSelectionAnchorRef.current = anchor;
-
-            const start = Math.min(anchor, newIndex);
-            const end = Math.max(anchor, newIndex);
-
-            const newSelection = new Set<string>();
-            for (let i = start; i <= end; i++) {
-              newSelection.add(orderedIds[i]);
-            }
-
-            useStore.setState({ selectedItems: newSelection });
+            selectItemRange(orderedIds, newIndex);
           } else if (!isMultiSelect) {
-            shiftSelectionAnchorRef.current = newIndex;
-            useStore.setState({ selectedItems: new Set<string>([newId]) });
-          } else {
-            shiftSelectionAnchorRef.current = newIndex;
+            selectSingleItem(newId, newIndex);
           }
 
           break;
@@ -126,18 +117,7 @@ export function useFolderNavigation(orderedIds: string[]) {
 
         case " ": {
           event.preventDefault();
-          shiftSelectionAnchorRef.current = focusedIndex;
-
-          const currentId = orderedIds[focusedIndex];
-          const newSelection = new Set(selectedItems);
-
-          if (newSelection.has(currentId)) {
-            newSelection.delete(currentId);
-          } else {
-            newSelection.add(currentId);
-          }
-
-          useStore.setState({ selectedItems: newSelection });
+          toggleFocusedItemSelection(orderedIds);
           break;
         }
 
@@ -150,16 +130,27 @@ export function useFolderNavigation(orderedIds: string[]) {
         case "a":
           if (isMultiSelect) {
             event.preventDefault();
-            shiftSelectionAnchorRef.current = focusedIndex;
-            useStore.setState({ selectedItems: new Set(orderedIds) });
+            selectAllItems(orderedIds);
           }
           break;
 
         case "Escape":
           event.preventDefault();
-          shiftSelectionAnchorRef.current = focusedIndex;
-          useStore.setState({ selectedItems: new Set() });
+          clearSelection();
           break;
+
+        case "F2": {
+          event.preventDefault();
+          if (selectedItems.size === 1) {
+            const [itemId] = selectedItems;
+            const { selectedItemsData } = useStore.getState();
+            const item = selectedItemsData.get(itemId);
+            if (item) {
+              openDialog({ type: item.type === "folder" ? "rename-folder" : "rename-file", item });
+            }
+          }
+          break;
+        }
       }
     },
     [
@@ -172,6 +163,13 @@ export function useFolderNavigation(orderedIds: string[]) {
       selectedItems,
       viewMode,
       router,
+      openDialog,
+      setFocusedIndex,
+      selectSingleItem,
+      selectItemRange,
+      toggleFocusedItemSelection,
+      selectAllItems,
+      clearSelection,
     ],
   );
 

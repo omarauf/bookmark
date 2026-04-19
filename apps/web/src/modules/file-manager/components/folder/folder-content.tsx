@@ -4,15 +4,13 @@ import type { BrowseItem, File, Folder } from "@workspace/contracts/file-manager
 import { useRef } from "react";
 import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";
-import { useFolderNavigation } from "../../hooks/use-folder-navigation";
+import { useKeyboardHandler } from "../../hooks/use-keyboard-handler";
 import { useSyncGridColumns } from "../../hooks/use-sync-grid-columns";
 import { useStore } from "../../store";
 import { FileContextMenu } from "../context-menu";
-import { DragSelectContainer } from "../drag-select/container";
-import { SelectBox } from "../drag-select/select-box";
 import { FileGridItem } from "../item/grid-item";
 import { FileListItem } from "../item/list-item";
-import { FolderBreadcrumb } from "./breadcrub";
+import { DragSelectionArea } from "./drag-selection-area";
 
 export function FolderContent() {
   const viewMode = useStore((s) => s.viewMode);
@@ -25,20 +23,23 @@ export function FolderContent() {
   const orderedIds = items.map((item) => item.id);
 
   const gridRef = useRef<HTMLDivElement>(null);
+  const containerRef = useStore((s) => s.containerRef);
 
   useSyncGridColumns(gridRef);
-  useFolderNavigation(orderedIds);
+  useKeyboardHandler(orderedIds);
+
+  if (items.length === 0) {
+    return (
+      <div className="col-span-full flex items-center justify-center py-12 text-muted-foreground">
+        This folder is empty
+      </div>
+    );
+  }
 
   return (
-    <div className="flex h-full flex-col overflow-auto">
-      {/* Breadcrumb */}
-      <div className="border-border border-b p-3">
-        <FolderBreadcrumb />
-      </div>
-
-      {/* Content area */}
-      <DragSelectContainer>
-        <FileContextMenu>
+    <FileContextMenu>
+      <div className="flex h-full flex-col overflow-auto" ref={containerRef}>
+        <DragSelectionArea items={items}>
           <div
             ref={gridRef}
             className={cn(
@@ -48,11 +49,6 @@ export function FolderContent() {
                 : "space-y-1",
             )}
           >
-            {items.length === 0 && (
-              <div className="col-span-full flex items-center justify-center py-12 text-muted-foreground">
-                This folder is empty
-              </div>
-            )}
             {items.map((item, index) =>
               viewMode === "grid" ? (
                 <FileGridItem key={item.id} item={item} orderedIds={orderedIds} index={index} />
@@ -61,10 +57,9 @@ export function FolderContent() {
               ),
             )}
           </div>
-        </FileContextMenu>
-        <SelectBox />
-      </DragSelectContainer>
-    </div>
+        </DragSelectionArea>
+      </div>
+    </FileContextMenu>
   );
 }
 

@@ -5,12 +5,11 @@ import z from "zod";
 import { useShallow } from "zustand/shallow";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { DragPreview } from "@/modules/file-manager/components/drag-preview";
+import { FolderBreadcrumb } from "@/modules/file-manager/components/folder/breadcrub";
 import { FolderContent } from "@/modules/file-manager/components/folder/folder-content";
 import { Toolbar } from "@/modules/file-manager/components/toolbar";
 import { FileTree } from "@/modules/file-manager/components/tree";
-import { NewFolderDialog } from "@/modules/file-manager/dialogs/new-folder";
-import { PropertiesDialog } from "@/modules/file-manager/dialogs/properties";
-import { RenameDialog } from "@/modules/file-manager/dialogs/rename";
+import { DialogRenderer } from "@/modules/file-manager/dialogs/dialog-renderer";
 import { useDebounce } from "@/modules/file-manager/hooks/use-debounce";
 import { useStore } from "@/modules/file-manager/store";
 
@@ -66,6 +65,8 @@ function RouteComponent() {
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={100 - treeWidth} className="flex flex-col">
+            <FolderBreadcrumb />
+
             <FolderContent />
           </ResizablePanel>
         </ResizablePanelGroup>
@@ -75,12 +76,7 @@ function RouteComponent() {
         <DragPreview />
       </DragOverlay>
 
-      {/* Dialogs */}
-      <RenameDialog />
-
-      <NewFolderDialog />
-
-      <PropertiesDialog />
+      <DialogRenderer />
     </DndContext>
   );
 }

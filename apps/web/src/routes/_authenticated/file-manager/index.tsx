@@ -1,4 +1,4 @@
-import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, PointerSensor, pointerWithin, useSensor, useSensors } from "@dnd-kit/core";
 import { createFileRoute } from "@tanstack/react-router";
 import z from "zod";
 import { useShallow } from "zustand/shallow";
@@ -41,6 +41,7 @@ function RouteComponent() {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
+      collisionDetection={pointerWithin}
     >
       <div
         className="h-full w-full bg-background"

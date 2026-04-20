@@ -1,9 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { useSearch } from "@tanstack/react-router";
-import type { BrowseItem, File, Folder } from "@workspace/contracts/file-manager";
 import { useRef } from "react";
-import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";
+import { useItems } from "../../hooks/use-items";
 import { useKeyboardHandler } from "../../hooks/use-keyboard-handler";
 import { useSyncGridColumns } from "../../hooks/use-sync-grid-columns";
 import { useStore } from "../../store";
@@ -15,11 +12,7 @@ import { DragSelectionArea } from "./drag-selection-area";
 export function FolderContent() {
   const viewMode = useStore((s) => s.viewMode);
 
-  const folderId = useSearch({ from: "/_authenticated/file-manager/", select: (s) => s.folderId });
-  const browseListQuery = useQuery(
-    orpc.browse.list.queryOptions({ input: { parentId: folderId } }),
-  );
-  const items = mapToItem(browseListQuery.data?.folders, browseListQuery.data?.files);
+  const { items } = useItems();
   const orderedIds = items.map((item) => item.id);
 
   const gridRef = useRef<HTMLDivElement>(null);
@@ -39,7 +32,7 @@ export function FolderContent() {
   return (
     <FileContextMenu>
       <div className="flex h-full flex-col overflow-auto" ref={containerRef}>
-        <DragSelectionArea items={items}>
+        <DragSelectionArea>
           <div
             ref={gridRef}
             className={cn(
@@ -61,13 +54,4 @@ export function FolderContent() {
       </div>
     </FileContextMenu>
   );
-}
-
-function mapToItem(folders: Folder[] = [], files: File[] = []): BrowseItem[] {
-  const folderItems: BrowseItem[] = folders.map((folder) => ({
-    ...folder,
-    type: "folder",
-  }));
-
-  return [...folderItems, ...files];
 }

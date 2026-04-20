@@ -1,4 +1,3 @@
-import type { BrowseItem } from "@workspace/contracts/file-manager";
 import { createRef } from "react";
 import type { StateCreator } from "zustand";
 import type { StoreState } from "../type";
@@ -7,9 +6,7 @@ export type SelectionSlice = {
   focusedIndex: number;
   selectionAnchorIndex: number | null;
   selectedItems: Set<string>;
-  selectedItemsData: Map<string, BrowseItem>;
   setSelectedItems: (selectedItems: Set<string>) => void;
-  setSelectedItemsData: (items: BrowseItem[]) => void;
 
   containerRef: React.RefObject<HTMLDivElement | null>;
   itemRefs: Map<string, HTMLElement>;
@@ -24,25 +21,11 @@ export type SelectionSlice = {
   toggleFocusedItemSelection: (orderedIds: string[]) => void;
 };
 
-export const createSelectionSlice: StateCreator<StoreState, [], [], SelectionSlice> = (
-  set,
-  get,
-) => ({
+export const createSelectionSlice: StateCreator<StoreState, [], [], SelectionSlice> = (set) => ({
   focusedIndex: 0,
   selectionAnchorIndex: null,
   selectedItems: new Set<string>(),
-  selectedItemsData: new Map<string, BrowseItem>(),
   setSelectedItems: (selectedItems) => set({ selectedItems }),
-
-  setSelectedItemsData: (data) => {
-    const { selectedItems } = get();
-
-    const selectedItemsData = new Map(
-      data.filter((item) => selectedItems.has(item.id)).map((item) => [item.id, item]),
-    );
-
-    set({ selectedItemsData });
-  },
 
   containerRef: createRef<HTMLDivElement>(),
   itemRefs: new Map<string, HTMLElement>(),

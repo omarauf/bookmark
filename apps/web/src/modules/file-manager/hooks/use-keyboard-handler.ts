@@ -2,8 +2,11 @@ import { useNavigate, useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { useStore } from "../store";
+import { useItems } from "./use-items";
 
 export function useKeyboardHandler(orderedIds: string[]) {
+  const { getItemData } = useItems();
+
   const [
     columns,
     containerRef,
@@ -141,14 +144,11 @@ export function useKeyboardHandler(orderedIds: string[]) {
 
         case "F2": {
           event.preventDefault();
-          if (selectedItems.size === 1) {
-            const [itemId] = selectedItems;
-            const { selectedItemsData } = useStore.getState();
-            const item = selectedItemsData.get(itemId);
-            if (item) {
-              openDialog({ type: item.type === "folder" ? "rename-folder" : "rename-file", item });
-            }
-          }
+          if (selectedItems.size !== 1) return;
+          const [itemId] = selectedItems;
+          const item = getItemData(itemId);
+          if (!item) return;
+          openDialog({ type: item.type === "folder" ? "rename-folder" : "rename-file", item });
           break;
         }
       }
@@ -170,6 +170,7 @@ export function useKeyboardHandler(orderedIds: string[]) {
       toggleFocusedItemSelection,
       selectAllItems,
       clearSelection,
+      getItemData,
     ],
   );
 

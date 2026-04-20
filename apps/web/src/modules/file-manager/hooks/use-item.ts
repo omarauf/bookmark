@@ -36,7 +36,7 @@ export function useItem(item: BrowseItem, index: number) {
     useShallow((s) => [
       s.focusedIndex === index,
       s.selectedItems.has(item.id),
-      s.draggedItems.length > 0,
+      s.isDragging,
       s.registerItemRef,
       s.setFocusedIndex,
       s.selectItemRange,
@@ -95,7 +95,7 @@ export function useItem(item: BrowseItem, index: number) {
     isFocused,
     isSelected,
     isDragging,
-    isOver,
+    isOver: item.type === "folder" ? isOver : false,
     attributes,
     listeners,
     isGlobalDragging,

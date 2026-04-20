@@ -2,9 +2,10 @@ import { BrowseSchemas } from "@workspace/contracts/file-manager";
 import { and, asc, desc, eq, ilike, isNull } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure, publicProcedure } from "@/lib/orpc";
+import { moveHandler } from "./handler/move";
 import { folderRepo } from "./repo";
 import { files, folders } from "./schema";
-import { seedFileManagerDummyData, seedFilesForFolder } from "./seed";
+import { seedFilesForFolder } from "./seed";
 
 export const browseRouter = {
   seed: publicProcedure.handler(async () => {
@@ -98,4 +99,6 @@ export const browseRouter = {
         files: matchedFiles,
       };
     }),
+
+  move: moveHandler,
 };

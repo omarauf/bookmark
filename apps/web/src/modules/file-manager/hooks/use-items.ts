@@ -8,7 +8,7 @@ export function useItems() {
   const folderId = useSearch({ from: "/_authenticated/file-manager/", select: (s) => s.folderId });
 
   const browseListQuery = useQuery(
-    orpc.browse.list.queryOptions({ input: { parentId: folderId } }),
+    orpc.browse.list.queryOptions({ input: { parentId: folderId }, refetchOnMount: false }),
   );
 
   const items = useMemo(

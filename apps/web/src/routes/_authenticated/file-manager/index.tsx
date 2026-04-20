@@ -1,6 +1,5 @@
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef } from "react";
 import z from "zod";
 import { useShallow } from "zustand/shallow";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -11,6 +10,7 @@ import { Toolbar } from "@/modules/file-manager/components/toolbar";
 import { FileTree } from "@/modules/file-manager/components/tree";
 import { DialogRenderer } from "@/modules/file-manager/dialogs/dialog-renderer";
 import { useDebounce } from "@/modules/file-manager/hooks/use-debounce";
+import { useFileManagerDnd } from "@/modules/file-manager/hooks/use-file-manager-dnd";
 import { useStore } from "@/modules/file-manager/store";
 
 export const Route = createFileRoute("/_authenticated/file-manager/")({
@@ -21,11 +21,8 @@ export const Route = createFileRoute("/_authenticated/file-manager/")({
 });
 
 function RouteComponent() {
-  const fileManagerRef = useRef<HTMLDivElement>(null);
-
-  const [treeWidth, setTreeWidth, handleDragStart, handleDragEnd] = useStore(
-    useShallow((s) => [s.treeWidth, s.setTreeWidth, s.handleDragStart, s.handleDragEnd]),
-  );
+  const [treeWidth, setTreeWidth] = useStore(useShallow((s) => [s.treeWidth, s.setTreeWidth]));
+  const { handleDragStart, handleDragOver, handleDragEnd, handleDragCancel } = useFileManagerDnd();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -40,15 +37,14 @@ function RouteComponent() {
   return (
     <DndContext
       sensors={sensors}
-      // collisionDetection={closestCenter}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
     >
       <div
-        ref={fileManagerRef}
         className="h-full w-full bg-background"
         style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
-        // tabIndex={-1}
       >
         <Toolbar />
 
@@ -72,9 +68,7 @@ function RouteComponent() {
         </ResizablePanelGroup>
       </div>
 
-      <DragOverlay>
-        <DragPreview />
-      </DragOverlay>
+      <DragPreview />
 
       <DialogRenderer />
     </DndContext>

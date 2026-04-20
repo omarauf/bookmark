@@ -27,4 +27,16 @@ export const BrowseSchemas = {
       files: FileSchema.array(),
     }),
   },
+
+  move: {
+    request: z.object({
+      itemIds: z.uuid().array(),
+      sourceFolderId: z.uuid().optional(),
+      targetFolderId: z.uuid().optional(),
+    }),
+    response: z.object({
+      movedFiles: z.number().int(),
+      movedFolders: z.number().int(),
+    }),
+  },
 };

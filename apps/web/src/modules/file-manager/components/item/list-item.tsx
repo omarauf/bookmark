@@ -1,9 +1,9 @@
 import type { BrowseItem } from "@workspace/contracts/file-manager";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
+import { fSize } from "@/utils/format-number";
 import { fDate } from "@/utils/format-time";
 import { useItem } from "../../hooks/use-item";
-import { formatFileSize } from "../../utils/file-utils";
 import { ItemIcon } from "./icon";
 
 interface FileListItemProps {
@@ -74,7 +74,7 @@ export function FileListItem({ item, orderedIds, index }: FileListItemProps) {
       {/* File size */}
       <div className="w-20 shrink-0 text-right">
         {item.type !== "folder" && item.size ? (
-          <div className="text-muted-foreground text-xs">{formatFileSize(item.size)}</div>
+          <div className="text-muted-foreground text-xs">{fSize(item.size)}</div>
         ) : (
           <div className="text-muted-foreground text-xs">—</div>
         )}

@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { orpc } from "@/integrations/orpc";
+import { fSize } from "@/utils/format-number";
 import { fDate } from "@/utils/format-time";
-import { formatFileSize } from "../utils/file-utils";
 
 type Props = {
   onClose: () => void;
@@ -45,7 +45,7 @@ export function PropertiesDialog({ itemId }: Props) {
         {query.data?.size && (
           <div>
             <div className="font-medium text-muted-foreground text-sm">Size</div>
-            <div className="text-sm">{formatFileSize(query.data?.size)}</div>
+            <div className="text-sm">{fSize(query.data?.size)}</div>
           </div>
         )}
 

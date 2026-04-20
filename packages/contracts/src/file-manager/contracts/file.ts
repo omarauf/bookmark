@@ -117,7 +117,6 @@ export const FileSchemas = {
 
 export type Folder = z.infer<typeof FolderSchema>;
 export type File = z.infer<typeof FileSchema>;
-// export type BrowseItem = (Folder & { itemType: "folder" }) | (File & { itemType: "file" });
 export type BrowseItem = (Folder & { type: "folder" }) | File;
 
 export type FolderTree = z.infer<typeof FolderSchema> & {

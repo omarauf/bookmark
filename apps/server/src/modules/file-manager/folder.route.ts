@@ -5,7 +5,7 @@ import { protectedProcedure } from "@/lib/orpc";
 import { folderRepo } from "./repo";
 import { files, folders } from "./schema";
 import * as service from "./service";
-import * as utils from "./utils";
+import * as treeUtils from "./utils/tree";
 
 export const folderRouter = {
   tree: protectedProcedure
@@ -25,13 +25,13 @@ export const folderRouter = {
         .from(folders)
         .orderBy(asc(folders.name), asc(folders.createdAt));
 
-      const nodes = utils.folderRowsToNodes(rows);
+      const nodes = treeUtils.folderRowsToNodes(rows);
 
       if (!parentId) {
         return nodes.filter((node) => node.parentId === null);
       }
 
-      const map = utils.buildMap(nodes);
+      const map = treeUtils.buildMap(nodes);
 
       return map.get(parentId)?.children ?? [];
     }),

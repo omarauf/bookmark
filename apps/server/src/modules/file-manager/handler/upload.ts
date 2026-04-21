@@ -6,7 +6,8 @@ import { s3Client } from "@/core/s3";
 import { protectedProcedure } from "@/lib/orpc";
 import { folderRepo } from "../repo";
 import { files } from "../schema";
-import { extractFileMetadata } from "../utils";
+import { extractRichMetadata } from "../utils/extract-metadata";
+import { parseFileUpload } from "../utils/file";
 
 export const uploadHandler = protectedProcedure
   .route({ path: "/file/upload" })
@@ -14,7 +15,6 @@ export const uploadHandler = protectedProcedure
   .output(FileSchemas.upload.response)
   .errors({ BAD_REQUEST: { message: "Folder not found" } })
   .handler(async ({ input: { files: fileList, folderId }, errors }) => {
-    // ✅ Validate folder
     if (folderId) {
       const exists = await folderRepo.existsById(folderId);
       if (!exists) throw errors.BAD_REQUEST();
@@ -26,33 +26,32 @@ export const uploadHandler = protectedProcedure
     };
 
     for (const file of fileList) {
-      // ✅ Extract metadata
-      const metadata = extractFileMetadata(file);
+      const metadata = parseFileUpload(file);
       if (!metadata) {
         result.failed.push(file.name);
         continue;
       }
 
-      // ✅ Check if file exists (by name + folder)
       const existingFile = await getExistingFile(file, folderId);
 
-      // ✅ Decide S3 key
       const s3Key = existingFile ? existingFile.s3Key : `files/${nanoid(12)}.${metadata.extension}`;
 
-      // ✅ Upload to S3
-      const uploadedS3Key = await uploadToS3(file, s3Key);
-      if (!uploadedS3Key) {
+      const buffer = await file.arrayBuffer().then(Buffer.from);
+      const [_, s3Error] = await s3Client.upload(s3Key, buffer);
+      if (s3Error) {
         result.failed.push(file.name);
         continue;
       }
 
+      const richMetadata = await extractRichMetadata(buffer, metadata.mimeType, metadata.type);
+
       if (existingFile) {
         await db
           .update(files)
-          .set({ ...metadata, folderId, metadata: null })
+          .set({ ...metadata, folderId, metadata: richMetadata })
           .where(eq(files.id, existingFile.id));
       } else {
-        await db.insert(files).values({ ...metadata, folderId, s3Key, metadata: null });
+        await db.insert(files).values({ ...metadata, folderId, s3Key, metadata: richMetadata });
       }
 
       result.success.push(file.name);
@@ -74,14 +73,4 @@ async function getExistingFile(file: File, folderId?: string) {
     .limit(1);
 
   return currentFile.length ? currentFile[0] : undefined;
-}
-
-async function uploadToS3(file: File, s3Key: string) {
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
-
-  const [_, s3Error] = await s3Client.upload(s3Key, buffer);
-  if (s3Error) return undefined;
-
-  return s3Key;
 }

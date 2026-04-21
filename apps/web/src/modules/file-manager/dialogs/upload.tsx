@@ -259,7 +259,9 @@ export function UploadDialog({ onClose }: Props) {
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-sm">{selected.file.name}</p>
-                    <p className="text-muted-foreground text-xs">{fSize(selected.file.size)}</p>
+                    <p className="text-muted-foreground text-xs">
+                      {fSize(selected.file.size / 1024)}
+                    </p>
                   </div>
                   <Button
                     variant="ghost"

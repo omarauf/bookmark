@@ -1,14 +1,13 @@
-import type { BrowseItem } from "@workspace/contracts/file-manager";
 import type { StateCreator } from "zustand";
 import type { StoreState } from "../type";
 
 export type DialogState =
-  | { type: "rename-file"; item: BrowseItem }
-  | { type: "rename-folder"; item: BrowseItem }
-  | { type: "newFolder"; parentId?: string }
-  | { type: "properties"; itemId: string }
-  | { type: "delete"; itemIds: string[] }
-  | { type: "move"; itemIds: string[] };
+  | { type: "rename" }
+  | { type: "newFolder" }
+  | { type: "properties" }
+  | { type: "delete" }
+  | { type: "move" }
+  | { type: "upload" };
 
 export type DialogSlice = {
   dialog: DialogState | null;

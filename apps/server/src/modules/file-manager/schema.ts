@@ -5,7 +5,7 @@ import {
   MimeTypeValues,
 } from "@workspace/contracts/file-manager";
 import { relations } from "drizzle-orm";
-import { boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const folders = pgTable("folders", {
   id: uuid().primaryKey().defaultRandom(),
@@ -49,8 +49,6 @@ export const files = pgTable("files", {
   folderId: uuid().references(() => folders.id, { onDelete: "cascade" }),
 
   metadata: jsonb().$type<FileMetadata>(),
-
-  isDeleted: boolean().default(false),
 
   createdAt: timestamp().defaultNow().notNull(),
 });

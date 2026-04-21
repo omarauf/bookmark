@@ -1,9 +1,10 @@
-import { Copy, Download, Edit, FolderPlus, Info, Move, Scissors, Trash2 } from "lucide-react";
+import { Copy, Download, Edit, Info, Move, Scissors, Trash2 } from "lucide-react";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
 } from "@/components/ui/context-menu";
+import { useItems } from "../../hooks/use-items";
 import { useStore } from "../../store";
 
 type Props = {
@@ -13,8 +14,9 @@ type Props = {
 export function SingleContextMenu({ itemId }: Props) {
   const openDialog = useStore((s) => s.openDialog);
 
-  const item = useStore((s) => s.selectedItemsData.get(itemId));
+  const { getItemData } = useItems();
 
+  const item = getItemData(itemId);
   if (item === undefined) {
     console.warn(`Item with ID ${itemId} not found in store.`);
     return null;
@@ -25,11 +27,13 @@ export function SingleContextMenu({ itemId }: Props) {
       <ContextMenuItem>
         <Copy className="mr-2 h-4 w-4" />
         Copy
+        <ContextMenuShortcut>Ctrl+C</ContextMenuShortcut>
       </ContextMenuItem>
 
       <ContextMenuItem>
         <Scissors className="mr-2 h-4 w-4" />
         Cut
+        <ContextMenuShortcut>Ctrl+X</ContextMenuShortcut>
       </ContextMenuItem>
 
       <ContextMenuSeparator />
@@ -39,18 +43,14 @@ export function SingleContextMenu({ itemId }: Props) {
         Download
       </ContextMenuItem>
 
-      <ContextMenuItem onClick={() => openDialog({ type: "move", itemIds: [itemId] })}>
+      <ContextMenuItem onClick={() => openDialog({ type: "move" })}>
         <Move className="mr-2 h-4 w-4" />
         Move to...
       </ContextMenuItem>
 
       <ContextMenuSeparator />
 
-      <ContextMenuItem
-        onClick={() =>
-          openDialog({ type: item.type === "folder" ? "rename-folder" : "rename-file", item })
-        }
-      >
+      <ContextMenuItem onClick={() => openDialog({ type: "rename" })}>
         <Edit className="mr-2 h-4 w-4" />
         Rename
         <ContextMenuShortcut>F2</ContextMenuShortcut>
@@ -58,7 +58,7 @@ export function SingleContextMenu({ itemId }: Props) {
 
       <ContextMenuItem
         className="text-destructive focus:text-destructive"
-        onClick={() => openDialog({ type: "delete", itemIds: [itemId] })}
+        onClick={() => openDialog({ type: "delete" })}
       >
         <Trash2 className="mr-2 h-4 w-4" />
         Delete
@@ -66,12 +66,7 @@ export function SingleContextMenu({ itemId }: Props) {
 
       <ContextMenuSeparator />
 
-      <ContextMenuItem onClick={() => openDialog({ type: "newFolder" })}>
-        <FolderPlus className="mr-2 h-4 w-4" />
-        New Folder
-      </ContextMenuItem>
-
-      <ContextMenuItem onClick={() => openDialog({ type: "properties", itemId })}>
+      <ContextMenuItem onClick={() => openDialog({ type: "properties" })}>
         <Info className="mr-2 h-4 w-4" />
         Properties
       </ContextMenuItem>

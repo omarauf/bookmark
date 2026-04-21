@@ -50,12 +50,9 @@ export const moveHandler = protectedProcedure
       db
         .select({ id: files.id, name: files.name })
         .from(files)
-        .where(and(inArray(files.id, itemIds), sourceFileWhere, eq(files.isDeleted, false))),
+        .where(and(inArray(files.id, itemIds), sourceFileWhere)),
       db.select({ name: folders.name }).from(folders).where(targetFolderWhere),
-      db
-        .select({ name: files.name })
-        .from(files)
-        .where(and(targetFileWhere, eq(files.isDeleted, false))),
+      db.select({ name: files.name }).from(files).where(targetFileWhere),
       db.select({ id: folders.id, parentId: folders.parentId }).from(folders),
     ]);
 

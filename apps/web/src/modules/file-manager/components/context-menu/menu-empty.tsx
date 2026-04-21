@@ -12,7 +12,7 @@ export function EmptyContextMenu() {
         New Folder
       </ContextMenuItem>
 
-      <ContextMenuItem>
+      <ContextMenuItem onClick={() => openDialog({ type: "upload" })}>
         <Upload className="mr-2 h-4 w-4" />
         Upload Files
       </ContextMenuItem>

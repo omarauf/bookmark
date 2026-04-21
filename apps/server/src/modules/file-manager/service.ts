@@ -26,7 +26,6 @@ export async function isFileNameTaken(
 ): Promise<boolean> {
   const conditions = and(
     eq(files.name, name),
-    eq(files.isDeleted, false),
     excludeId ? ne(files.id, excludeId) : undefined,
     folderId ? eq(files.folderId, folderId) : isNull(files.folderId),
   );

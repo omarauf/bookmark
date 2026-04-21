@@ -39,4 +39,17 @@ export const BrowseSchemas = {
       movedFolders: z.number().int(),
     }),
   },
+
+  delete: {
+    request: z.array(
+      z.object({
+        itemId: z.uuid(),
+        type: z.enum(["folder", "file"]),
+      }),
+    ),
+    response: z.object({
+      deletedFolders: z.number().int(),
+      deletedFiles: z.number().int(),
+    }),
+  },
 };

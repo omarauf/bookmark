@@ -1,8 +1,8 @@
 import { FileSchemas } from "@workspace/contracts/file-manager";
-import { and, asc, desc, eq, ilike, inArray, isNull, sql } from "drizzle-orm";
-import { v7 as uuidV7 } from "uuid";
+import { and, asc, desc, eq, ilike, isNull, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
+import { uploadHandler } from "./handler/upload";
 import { fileRepo, folderRepo } from "./repo";
 import { files } from "./schema";
 import * as service from "./service";
@@ -36,46 +36,7 @@ export const fileRouter = {
       return file;
     }),
 
-  create: protectedProcedure
-    .input(FileSchemas.create.request)
-    .output(FileSchemas.create.response)
-    .errors({
-      BAD_REQUEST: { message: "Folder not found" },
-      CONFLICT: { message: "File already exists in this location" },
-    })
-    .handler(async ({ input, errors }) => {
-      const { folderId } = input;
-      if (folderId) {
-        const exists = await folderRepo.existsById(folderId);
-        if (!exists) throw errors.BAD_REQUEST();
-      }
-
-      const conflict = await service.isFileNameTaken(folderId, input.name);
-      if (conflict) throw errors.CONFLICT();
-
-      const fileId = uuidV7();
-
-      // S3 presigned upload URL generation will go here later.
-      // const uploadUrl = await s3.getSignedUrl("putObject", { Key: s3Key, ContentType: input.mimeType });
-
-      const [created] = await db
-        .insert(files)
-        .values({
-          id: fileId,
-          name: input.name,
-          mimeType: input.mimeType,
-          size: input.size,
-          type: input.type,
-          extension: input.extension,
-          folderId,
-          metadata: input.metadata ?? null,
-          s3Key: `files/${uuidV7()}-${input.name}`, // TODO generate proper S3 key after integrating with S3 service
-          isDeleted: false,
-        })
-        .returning();
-
-      return created;
-    }),
+  upload: uploadHandler,
 
   rename: protectedProcedure
     .input(FileSchemas.rename.request)
@@ -137,83 +98,14 @@ export const fileRouter = {
       const exists = await fileRepo.existsById(input.id);
       if (!exists) throw errors.NOT_FOUND();
 
-      const [updated] = await db
-        .update(files)
-        .set({ isDeleted: true })
-        .where(eq(files.id, input.id))
-        .returning();
-
-      return updated;
-    }),
-
-  bulkDelete: protectedProcedure
-    .input(FileSchemas.bulkDelete.request)
-    .output(FileSchemas.bulkDelete.response)
-    .handler(async ({ input }) => {
-      const result = await db
-        .update(files)
-        .set({ isDeleted: true })
-        .where(inArray(files.id, input.ids))
-        .returning({ id: files.id });
-
-      return { count: result.length };
-    }),
-
-  restore: protectedProcedure
-    .input(FileSchemas.restore.request)
-    .output(FileSchemas.restore.response)
-    .errors({ NOT_FOUND: { message: "File not found" } })
-    .handler(async ({ input, errors }) => {
-      const exists = await fileRepo.existsById(input.id);
-      if (!exists) throw errors.NOT_FOUND();
-
-      const [updated] = await db
-        .update(files)
-        .set({ isDeleted: false })
-        .where(eq(files.id, input.id))
-        .returning();
-
-      return updated;
-    }),
-
-  permanentDelete: protectedProcedure
-    .input(FileSchemas.permanentDelete.request)
-    .output(FileSchemas.permanentDelete.response)
-    .errors({ NOT_FOUND: { message: "File not found" } })
-    .handler(async ({ input, errors }) => {
-      const exists = await fileRepo.existsById(input.id);
-      if (!exists) throw errors.NOT_FOUND();
-
-      // S3 cleanup will be wired here later:
-      // await s3.deleteObject(file.s3Key);
-
       const [deleted] = await db.delete(files).where(eq(files.id, input.id)).returning();
       return deleted;
     }),
-
-  trash: protectedProcedure.output(FileSchemas.trash.response).handler(async () => {
-    return await db
-      .select()
-      .from(files)
-      .where(eq(files.isDeleted, true))
-      .orderBy(desc(files.createdAt), asc(files.name));
-  }),
-
-  recent: protectedProcedure.output(FileSchemas.recent.response).handler(async () => {
-    return await db
-      .select()
-      .from(files)
-      .where(eq(files.isDeleted, false))
-      .orderBy(desc(files.createdAt), asc(files.name))
-      .limit(20);
-  }),
 
   stats: protectedProcedure.output(FileSchemas.stats.response).handler(async () => {
     const [summary] = await db
       .select({
         totalCount: sql<number>`cast(count(*) as int)`,
-        activeCount: sql<number>`cast(coalesce(sum(case when ${files.isDeleted} = false then 1 else 0 end), 0) as int)`,
-        deletedCount: sql<number>`cast(coalesce(sum(case when ${files.isDeleted} = true then 1 else 0 end), 0) as int)`,
         totalSize: sql<number>`cast(coalesce(sum(${files.size}), 0) as int)`,
       })
       .from(files);
@@ -225,7 +117,6 @@ export const fileRouter = {
         size: sql<number>`cast(coalesce(sum(${files.size}), 0) as int)`,
       })
       .from(files)
-      .where(eq(files.isDeleted, false))
       .groupBy(files.type)
       .orderBy(files.type);
 
@@ -235,14 +126,11 @@ export const fileRouter = {
         count: sql<number>`cast(count(*) as int)`,
       })
       .from(files)
-      .where(eq(files.isDeleted, false))
       .groupBy(files.extension)
       .orderBy(files.extension);
 
     return {
       totalCount: summary.totalCount,
-      activeCount: summary.activeCount,
-      deletedCount: summary.deletedCount,
       totalSize: summary.totalSize,
       byType,
       byExtension,

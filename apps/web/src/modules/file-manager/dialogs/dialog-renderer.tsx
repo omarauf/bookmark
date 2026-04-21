@@ -6,8 +6,9 @@ import { DeleteDialog } from "./delete";
 import { MoveDialog } from "./move";
 import { NewFolderDialog } from "./new-folder";
 import { PropertiesDialog } from "./properties";
-import { RenameFileDialog } from "./rename-file";
-import { RenameFolderDialog } from "./rename-folder";
+import { RenameDialog } from "./rename";
+
+import { UploadDialog } from "./upload";
 
 export function DialogRenderer() {
   const dialog = useStore((s) => s.dialog);
@@ -21,8 +22,7 @@ export function DialogRenderer() {
   const activeDialog = dialog ?? lastDialogRef.current;
 
   const onOpenChangeHandler = (open: boolean) => {
-    if (open) return;
-    closeDialog();
+    if (!open) closeDialog();
   };
 
   return (
@@ -34,22 +34,25 @@ export function DialogRenderer() {
 
 function DialogContent({ dialog, onClose }: { dialog: DialogState; onClose: () => void }) {
   switch (dialog.type) {
-    case "rename-file":
-      return <RenameFileDialog onClose={onClose} {...dialog} />;
-
-    case "rename-folder":
-      return <RenameFolderDialog onClose={onClose} {...dialog} />;
+    case "rename":
+      return <RenameDialog onClose={onClose} />;
 
     case "newFolder":
-      return <NewFolderDialog onClose={onClose} {...dialog} />;
+      return <NewFolderDialog onClose={onClose} />;
 
     case "properties":
-      return <PropertiesDialog onClose={onClose} {...dialog} />;
+      return <PropertiesDialog />;
 
     case "delete":
-      return <DeleteDialog onClose={onClose} {...dialog} />;
+      return <DeleteDialog onClose={onClose} />;
 
     case "move":
-      return <MoveDialog onClose={onClose} {...dialog} />;
+      return <MoveDialog onClose={onClose} />;
+
+    case "upload":
+      return <UploadDialog onClose={onClose} />;
+
+    default:
+      return null;
   }
 }

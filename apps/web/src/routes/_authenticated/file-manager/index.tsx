@@ -44,7 +44,7 @@ function RouteComponent() {
       collisionDetection={pointerWithin}
     >
       <div
-        className="h-full w-full bg-background"
+        className="h-full w-full border-l bg-background"
         style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
       >
         <Toolbar />

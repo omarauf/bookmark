@@ -94,3 +94,42 @@ export const FileExtensionEnum = z.enum([
 ]);
 export type FileExtension = z.infer<typeof FileExtensionEnum>;
 export const FileExtensionValues = FileExtensionEnum.options as [FileExtension, ...FileExtension[]];
+
+export const MimeToFileTypeMap: Record<MimeType, FileType> = {
+  // 🖼️ Images
+  "image/jpeg": "image",
+  "image/png": "image",
+  "image/webp": "image",
+  "image/gif": "image",
+  "image/svg+xml": "image",
+  "image/heic": "image",
+
+  // 🎬 Video
+  "video/mp4": "video",
+  "video/webm": "video",
+  "video/quicktime": "video",
+  "video/x-matroska": "video",
+
+  // 🎵 Audio
+  "audio/mpeg": "audio",
+  "audio/wav": "audio",
+  "audio/ogg": "audio",
+  "audio/webm": "audio",
+
+  // 📄 Documents
+  "application/pdf": "pdf",
+  "application/msword": "document",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "document",
+  "application/vnd.ms-excel": "document",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "document",
+
+  // 🗜️ Archives
+  "application/zip": "archive",
+  "application/x-rar-compressed": "archive",
+  "application/x-7z-compressed": "archive",
+
+  // 📜 Text
+  "text/plain": "text",
+  "text/csv": "text",
+  "application/json": "text",
+};

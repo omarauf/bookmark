@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
 import type React from "react";
-import { useState } from "react";
+import { useId } from "react";
+import { toast } from "sonner";
+import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,
@@ -10,40 +13,40 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { orpc } from "@/integrations/orpc";
+import { getError } from "@/utils/error";
 
 type Props = {
   onClose: () => void;
-  parentId?: string;
 };
 
-export function NewFolderDialog({ onClose, parentId }: Props) {
+export function NewFolderDialog({ onClose }: Props) {
   const queryClient = useQueryClient();
-  const [name, setName] = useState("New Folder");
+  const formId = useId();
 
+  const folderId = useSearch({ from: "/_authenticated/file-manager/", select: (s) => s.folderId });
   const createMutation = useMutation(orpc.folder.create.mutationOptions());
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const form = useAppForm({
+    formId,
+    defaultValues: { name: "" },
+    onSubmit: async ({ value }) => {
+      try {
+        await createMutation.mutateAsync({ name: value.name.trim(), parentId: folderId });
+        await queryClient.invalidateQueries({ queryKey: orpc.browse.list.key() });
+        await queryClient.invalidateQueries({ queryKey: orpc.folder.tree.key() });
+        onClose();
+        toast.success("Folder created successfully");
+      } catch (error) {
+        const msg = getError(error, "An error occurred while creating the folder.");
+        toast.error(msg);
+      }
+    },
+  });
+
+  const onSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
-
-    try {
-      await createMutation.mutateAsync({ name: name.trim(), parentId });
-      queryClient.invalidateQueries({ queryKey: orpc.browse.list.key() });
-      queryClient.invalidateQueries({ queryKey: orpc.folder.tree.key() });
-      onClose();
-      setName("New Folder");
-    } catch (error) {
-      console.error("Failed to create folder:", error);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
-      onClose();
-    }
+    form.handleSubmit();
   };
 
   return (
@@ -53,31 +56,19 @@ export function NewFolderDialog({ onClose, parentId }: Props) {
         <DialogDescription>Enter a name for the new folder</DialogDescription>
       </DialogHeader>
 
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Folder Name</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Enter folder name..."
-              autoFocus
-            />
-          </div>
-        </div>
+      <form onSubmit={onSubmitHandler}>
+        <form.AppField name="name">
+          {(field) => <field.Input placeholder="Enter name..." />}
+        </form.AppField>
 
-        <DialogFooter className="mt-6">
+        <DialogFooter className="mt-4">
           <DialogClose asChild>
-            <Button type="button" variant="outline" disabled={createMutation.isPending}>
-              Cancel
-            </Button>
+            <Button variant="outline">Cancel</Button>
           </DialogClose>
 
-          <Button type="submit" disabled={createMutation.isPending || !name.trim()}>
-            {createMutation.isPending ? "Creating..." : "Create Folder"}
-          </Button>
+          <form.AppForm>
+            <form.SubmitButton>Create</form.SubmitButton>
+          </form.AppForm>
         </DialogFooter>
       </form>
     </DialogContent>

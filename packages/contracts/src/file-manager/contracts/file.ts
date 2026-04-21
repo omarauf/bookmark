@@ -1,7 +1,6 @@
 import z from "zod";
 import { FileSchema, type FolderSchema } from "../entity";
-import { FileExtensionEnum, FileTypeEnum, MimeTypeEnum } from "../enum";
-import { FileMetadataSchema } from "../metadata";
+import { FileExtensionEnum, FileTypeEnum } from "../enum";
 
 export const FileSchemas = {
   fileList: {
@@ -15,20 +14,6 @@ export const FileSchemas = {
 
   get: {
     request: z.object({ id: z.uuid() }),
-    response: FileSchema,
-  },
-
-  create: {
-    request: z.object({
-      name: z.string().min(1),
-      mimeType: MimeTypeEnum,
-      size: z.number().int().nonnegative(),
-      type: FileTypeEnum,
-      extension: FileExtensionEnum,
-      folderId: z.uuid().optional(),
-      metadata: FileMetadataSchema.optional(),
-      s3Key: z.string().optional(),
-    }),
     response: FileSchema,
   },
 
@@ -53,34 +38,9 @@ export const FileSchemas = {
     response: FileSchema,
   },
 
-  bulkDelete: {
-    request: z.object({ ids: z.array(z.uuid()).min(1) }),
-    response: z.object({ count: z.number().int() }),
-  },
-
-  restore: {
-    request: z.object({ id: z.uuid() }),
-    response: FileSchema,
-  },
-
-  permanentDelete: {
-    request: z.object({ id: z.uuid() }),
-    response: FileSchema,
-  },
-
-  trash: {
-    response: FileSchema.array(),
-  },
-
-  recent: {
-    response: FileSchema.array(),
-  },
-
   stats: {
     response: z.object({
       totalCount: z.number().int(),
-      activeCount: z.number().int(),
-      deletedCount: z.number().int(),
       totalSize: z.number().int(),
       byType: z.array(
         z.object({
@@ -111,6 +71,17 @@ export const FileSchemas = {
     response: z.object({
       s3Key: z.string(),
       downloadUrl: z.string().optional(),
+    }),
+  },
+
+  upload: {
+    request: z.object({
+      files: z.file().array().min(1),
+      folderId: z.uuid().optional(),
+    }),
+    response: z.object({
+      success: z.string().array(),
+      failed: z.string().array(),
     }),
   },
 };

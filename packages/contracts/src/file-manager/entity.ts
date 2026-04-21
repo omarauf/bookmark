@@ -29,6 +29,5 @@ export const FileSchema = z.object({
   s3Key: z.string(),
   folderId: z.uuid().nullable(),
   metadata: FileMetadataSchema.nullable(),
-  isDeleted: z.boolean().nullable(),
   createdAt: z.date(),
 });

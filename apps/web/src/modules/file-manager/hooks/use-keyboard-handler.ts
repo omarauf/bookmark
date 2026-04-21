@@ -2,11 +2,8 @@ import { useNavigate, useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { useStore } from "../store";
-import { useItems } from "./use-items";
 
 export function useKeyboardHandler(orderedIds: string[]) {
-  const { getItemData } = useItems();
-
   const [
     columns,
     containerRef,
@@ -145,10 +142,14 @@ export function useKeyboardHandler(orderedIds: string[]) {
         case "F2": {
           event.preventDefault();
           if (selectedItems.size !== 1) return;
-          const [itemId] = selectedItems;
-          const item = getItemData(itemId);
-          if (!item) return;
-          openDialog({ type: item.type === "folder" ? "rename-folder" : "rename-file", item });
+          openDialog({ type: "rename" });
+          break;
+        }
+
+        case "Delete": {
+          event.preventDefault();
+          if (selectedItems.size === 0) return;
+          openDialog({ type: "delete" });
           break;
         }
       }
@@ -170,7 +171,6 @@ export function useKeyboardHandler(orderedIds: string[]) {
       toggleFocusedItemSelection,
       selectAllItems,
       clearSelection,
-      getItemData,
     ],
   );
 

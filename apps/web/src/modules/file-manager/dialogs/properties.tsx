@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import {
   DialogContent,
   DialogDescription,
@@ -6,59 +5,62 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { orpc } from "@/integrations/orpc";
 import { fSize } from "@/utils/format-number";
 import { fDate } from "@/utils/format-time";
+import { useItems } from "../hooks/use-items";
+import { useStore } from "../store";
 
-type Props = {
-  onClose: () => void;
-  itemId?: string;
-};
+export function PropertiesDialog() {
+  const selectedItems = useStore((s) => s.selectedItems);
+  const { getItemData } = useItems();
 
-export function PropertiesDialog({ itemId }: Props) {
-  const query = useQuery(
-    orpc.file.get.queryOptions({ input: { id: itemId || "" }, enabled: !!itemId }),
-  );
+  const firstId = selectedItems.values().next().value;
+  const item = firstId ? getItemData(firstId) : undefined;
+  const isFolder = item?.type === "folder";
 
   return (
     <DialogContent className="sm:max-w-md">
       <DialogHeader>
         <DialogTitle>Properties</DialogTitle>
-        <DialogDescription>Details for "{query.data?.name}"</DialogDescription>
+        <DialogDescription>Details for "{item?.name}"</DialogDescription>
       </DialogHeader>
 
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+      {!item ? (
+        <div className="py-6 text-center text-muted-foreground text-sm">No item selected</div>
+      ) : (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <div className="font-medium text-muted-foreground text-sm">Name</div>
+              <div className="text-sm">{item.name}</div>
+            </div>
+
+            <div>
+              <div className="font-medium text-muted-foreground text-sm">Type</div>
+              <div className="text-sm">{isFolder ? "Folder" : item.type}</div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {"size" in item && item.size != null && (
+            <div>
+              <div className="font-medium text-muted-foreground text-sm">Size</div>
+              <div className="text-sm">{fSize(item.size)}</div>
+            </div>
+          )}
+
           <div>
-            <div className="font-medium text-muted-foreground text-sm">Name</div>
-            <div className="text-sm">{query.data?.name}</div>
+            <div className="font-medium text-muted-foreground text-sm">Created At</div>
+            <div className="text-sm">{fDate(item.createdAt)}</div>
           </div>
 
           <div>
-            <div className="font-medium text-muted-foreground text-sm">Type</div>
-            <div className="text-sm capitalize">{query.data?.type}</div>
+            <div className="font-medium text-muted-foreground text-sm">ID</div>
+            <div className="font-mono text-xs">{item.id}</div>
           </div>
         </div>
-
-        <Separator />
-
-        {query.data?.size && (
-          <div>
-            <div className="font-medium text-muted-foreground text-sm">Size</div>
-            <div className="text-sm">{fSize(query.data?.size)}</div>
-          </div>
-        )}
-
-        <div>
-          <div className="font-medium text-muted-foreground text-sm">Created At</div>
-          <div className="text-sm">{fDate(query.data?.createdAt)}</div>
-        </div>
-
-        <div>
-          <div className="font-medium text-muted-foreground text-sm">ID</div>
-          <div className="font-mono text-xs">{query.data?.id}</div>
-        </div>
-      </div>
+      )}
     </DialogContent>
   );
 }

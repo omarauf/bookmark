@@ -191,7 +191,6 @@ export async function seedFileManagerDummyData(
         s3Key: `seed/${folderId}/${name}`,
         folderId,
         metadata: template.metadataFactory(i),
-        isDeleted: false,
       };
     });
 
@@ -231,7 +230,6 @@ export async function seedFilesForFolder(folderId: string): Promise<{ fileCount:
       s3Key: `seed/${folderId}/${name}`,
       folderId,
       metadata: template.metadataFactory(i),
-      isDeleted: false,
     };
   });
 

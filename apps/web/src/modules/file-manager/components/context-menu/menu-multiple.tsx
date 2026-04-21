@@ -28,7 +28,7 @@ export function MultipleContextMenu({ itemIds }: Props) {
         Download
       </ContextMenuItem>
 
-      <ContextMenuItem onClick={() => openDialog({ type: "move", itemIds })}>
+      <ContextMenuItem onClick={() => openDialog({ type: "move" })}>
         <Move className="mr-2 h-4 w-4" />
         Move to...
       </ContextMenuItem>
@@ -37,7 +37,7 @@ export function MultipleContextMenu({ itemIds }: Props) {
 
       <ContextMenuItem
         className="text-destructive focus:text-destructive"
-        onClick={() => openDialog({ type: "delete", itemIds })}
+        onClick={() => openDialog({ type: "delete" })}
       >
         <Trash2 className="mr-2 h-4 w-4" />
         Delete {itemIds.length} items

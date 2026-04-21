@@ -29,6 +29,13 @@
       "when": 1775502508836,
       "tag": "0003_familiar_hex",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1776282935598,
+      "tag": "0004_steady_captain_midlands",
+      "breakpoints": true
     }
   ]
 }

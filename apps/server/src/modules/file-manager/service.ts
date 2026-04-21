@@ -1,86 +1,117 @@
-import { createWriteStream } from "node:fs";
-import { access, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
-import path from "node:path";
-import type { Readable } from "node:stream";
-import type { Platform } from "@workspace/contracts/platform";
+import { and, eq, isNull, ne, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
+import { db } from "@/core/db";
+import { files, folders } from "./schema";
 
-export type FilePath =
-  | `json/${string}.json`
-  | `link/${string}.jpg`
-  //
-  | `${Platform}/user/${string}.jpg`
-  //
-  | `${Platform}/image/${string}.jpg`
-  //
-  | `${Platform}/video/${string}.jpg`
-  | `${Platform}/video/${string}.mp4`
-  //
-  | `${Platform}/music/${string}.mp3`
-  | `${Platform}/music/${string}.mp4`
-  //
-  | `${Platform}/carousel/${string}-${number}.jpg`
-  | `${Platform}/carousel/${string}-${number}.mp4`;
+export async function isFolderNameTaken(
+  parentId: string | undefined | null,
+  name: string,
+  excludeId?: string,
+): Promise<boolean> {
+  const conditions = and(
+    eq(folders.name, name),
+    excludeId ? ne(folders.id, excludeId) : undefined,
+    parentId ? eq(folders.parentId, parentId) : isNull(folders.parentId),
+  );
 
-const dataDir = path.join(path.resolve(process.cwd()), "src", "data");
-const resolveFullPath = (filePath: FilePath | string) => path.join(dataDir, ...filePath.split("/"));
+  const [existing] = await db.select({ id: folders.id }).from(folders).where(conditions).limit(1);
 
-const fileExists = async (filePath: string): Promise<boolean> => {
-  try {
-    await access(filePath);
-    return true;
-  } catch {
-    return false;
+  return !!existing;
+}
+
+export async function isFileNameTaken(
+  folderId: string | undefined | null,
+  name: string,
+  excludeId?: string,
+): Promise<boolean> {
+  const conditions = and(
+    eq(files.name, name),
+    excludeId ? ne(files.id, excludeId) : undefined,
+    folderId ? eq(files.folderId, folderId) : isNull(files.folderId),
+  );
+
+  const [existing] = await db.select({ id: files.id }).from(files).where(conditions).limit(1);
+
+  return !!existing;
+}
+
+export async function collectFolderDescendants(rootId: string) {
+  const allFolders = await db.select().from(folders);
+
+  const childrenByParent = new Map<string | null, string[]>();
+
+  for (const folder of allFolders) {
+    const key = folder.parentId ?? null;
+
+    const bucket = childrenByParent.get(key) ?? [];
+    bucket.push(folder.id);
+
+    childrenByParent.set(key, bucket);
   }
-};
 
-export const fileManager = {
-  async write(filePath: FilePath, data: Buffer | string): Promise<void> {
-    const fullPath = resolveFullPath(filePath);
-    await mkdir(path.dirname(fullPath), { recursive: true });
-    await writeFile(fullPath, data);
-  },
+  const result = new Set<string>();
+  const stack = [rootId];
 
-  async saveFile(data: Readable | Buffer, filePath: FilePath | string): Promise<string> {
-    const fullPath = resolveFullPath(filePath);
-    await mkdir(path.dirname(fullPath), { recursive: true });
-    const writer = createWriteStream(fullPath);
+  while (stack.length) {
+    const current = stack.pop();
+    if (!current) continue;
+    result.add(current);
 
-    if (Buffer.isBuffer(data)) {
-      writer.write(data);
-      writer.end();
-    } else {
-      data.pipe(writer);
+    const children = childrenByParent.get(current) ?? [];
+    for (const child of children) {
+      if (!result.has(child)) stack.push(child);
     }
+  }
 
-    return new Promise<string>((resolve, reject) => {
-      writer.on("finish", () => resolve(fullPath));
-      writer.on("error", reject);
-    });
-  },
+  return [...result];
+}
 
-  async readFileAsString(filePath: FilePath): Promise<string> {
-    const fullPath = resolveFullPath(filePath);
-    return readFile(fullPath, "utf-8");
-  },
+export async function getFolderDescendants(rootId: string): Promise<Set<string>> {
+  const allFolders = await db.select().from(folders);
 
-  async readFile(filePath: FilePath | string) {
-    const fullPath = resolveFullPath(filePath);
-    return await readFile(fullPath);
-  },
+  const childrenByParent = new Map<string | null, string[]>();
 
-  async getPath(filePath: FilePath): Promise<string> {
-    return resolveFullPath(filePath);
-  },
+  for (const folder of allFolders) {
+    const key = folder.parentId ?? null;
 
-  async delete(filePath: FilePath): Promise<void> {
-    const fullPath = resolveFullPath(filePath);
-    if (await fileExists(fullPath)) {
-      await unlink(fullPath);
-    }
-  },
+    const bucket = childrenByParent.get(key) ?? [];
+    bucket.push(folder.id);
 
-  async exists(filePath: FilePath | string): Promise<boolean> {
-    const fullPath = resolveFullPath(filePath);
-    return fileExists(fullPath);
-  },
-};
+    childrenByParent.set(key, bucket);
+  }
+
+  const descendants = new Set<string>();
+
+  const walk = (id: string) => {
+    descendants.add(id);
+    const children = childrenByParent.get(id) ?? [];
+    for (const childId of children) walk(childId);
+  };
+
+  walk(rootId);
+
+  return descendants;
+}
+
+export async function getFolderBreadcrumb(folderId: string) {
+  const parent = alias(folders, "parent");
+
+  const result = await db.execute(sql`
+    WITH RECURSIVE breadcrumb AS (
+      SELECT ${folders.id}, ${folders.name}, ${folders.parentId}
+      FROM ${folders}
+      WHERE id = ${folderId}
+
+      UNION ALL
+
+      SELECT ${parent.id}, ${parent.name}, ${parent.parentId}
+      FROM ${folders} ${parent}
+      INNER JOIN breadcrumb ON ${parent.id} = breadcrumb."parent_id"
+    )
+    SELECT id as value, name as label
+    FROM breadcrumb;
+  `);
+
+  // Reverse to get root → leaf order
+  return result.rows.reverse() as { value: string; label: string }[];
+}

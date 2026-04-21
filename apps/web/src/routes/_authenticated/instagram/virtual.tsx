@@ -46,7 +46,7 @@ function Instagram() {
     }),
   );
 
-  const flatItems = postQuery.data.pages.flatMap((page) => page.items);
+  const _flatItems = postQuery.data.pages.flatMap((page) => page.items);
 
   return (
     <div

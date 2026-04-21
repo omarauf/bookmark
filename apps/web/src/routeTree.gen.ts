@@ -24,6 +24,7 @@ import { Route as AuthenticatedTagsIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
 import { Route as AuthenticatedInstagramIndexRouteImport } from './routes/_authenticated/instagram/index'
 import { Route as AuthenticatedImportsIndexRouteImport } from './routes/_authenticated/imports/index'
+import { Route as AuthenticatedFileManagerIndexRouteImport } from './routes/_authenticated/file-manager/index'
 import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
 import { Route as AuthenticatedCollectionsIndexRouteImport } from './routes/_authenticated/collections/index'
 import { Route as AuthenticatedInstagramVirtualWindowRouteImport } from './routes/_authenticated/instagram/virtual-window'
@@ -108,6 +109,12 @@ const AuthenticatedImportsIndexRoute =
     path: '/imports/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFileManagerIndexRoute =
+  AuthenticatedFileManagerIndexRouteImport.update({
+    id: '/file-manager/',
+    path: '/file-manager/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDownloadsIndexRoute =
   AuthenticatedDownloadsIndexRouteImport.update({
     id: '/downloads/',
@@ -152,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
   '/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/downloads/': typeof AuthenticatedDownloadsIndexRoute
+  '/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/imports/': typeof AuthenticatedImportsIndexRoute
   '/instagram/': typeof AuthenticatedInstagramIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
@@ -173,6 +181,7 @@ export interface FileRoutesByTo {
   '/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
   '/collections': typeof AuthenticatedCollectionsIndexRoute
   '/downloads': typeof AuthenticatedDownloadsIndexRoute
+  '/file-manager': typeof AuthenticatedFileManagerIndexRoute
   '/imports': typeof AuthenticatedImportsIndexRoute
   '/instagram': typeof AuthenticatedInstagramIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
@@ -196,6 +205,7 @@ export interface FileRoutesById {
   '/_authenticated/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
   '/_authenticated/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/_authenticated/downloads/': typeof AuthenticatedDownloadsIndexRoute
+  '/_authenticated/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/_authenticated/imports/': typeof AuthenticatedImportsIndexRoute
   '/_authenticated/instagram/': typeof AuthenticatedInstagramIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/instagram/virtual-window'
     | '/collections/'
     | '/downloads/'
+    | '/file-manager/'
     | '/imports/'
     | '/instagram/'
     | '/links/'
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/instagram/virtual-window'
     | '/collections'
     | '/downloads'
+    | '/file-manager'
     | '/imports'
     | '/instagram'
     | '/links'
@@ -262,6 +274,7 @@ export interface FileRouteTypes {
     | '/_authenticated/instagram/virtual-window'
     | '/_authenticated/collections/'
     | '/_authenticated/downloads/'
+    | '/_authenticated/file-manager/'
     | '/_authenticated/imports/'
     | '/_authenticated/instagram/'
     | '/_authenticated/links/'
@@ -388,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImportsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/file-manager/': {
+      id: '/_authenticated/file-manager/'
+      path: '/file-manager'
+      fullPath: '/file-manager/'
+      preLoaderRoute: typeof AuthenticatedFileManagerIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/downloads/': {
       id: '/_authenticated/downloads/'
       path: '/downloads'
@@ -433,6 +453,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInstagramVirtualWindowRoute: typeof AuthenticatedInstagramVirtualWindowRoute
   AuthenticatedCollectionsIndexRoute: typeof AuthenticatedCollectionsIndexRoute
   AuthenticatedDownloadsIndexRoute: typeof AuthenticatedDownloadsIndexRoute
+  AuthenticatedFileManagerIndexRoute: typeof AuthenticatedFileManagerIndexRoute
   AuthenticatedImportsIndexRoute: typeof AuthenticatedImportsIndexRoute
   AuthenticatedInstagramIndexRoute: typeof AuthenticatedInstagramIndexRoute
   AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
@@ -450,6 +471,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedInstagramVirtualWindowRoute,
   AuthenticatedCollectionsIndexRoute: AuthenticatedCollectionsIndexRoute,
   AuthenticatedDownloadsIndexRoute: AuthenticatedDownloadsIndexRoute,
+  AuthenticatedFileManagerIndexRoute: AuthenticatedFileManagerIndexRoute,
   AuthenticatedImportsIndexRoute: AuthenticatedImportsIndexRoute,
   AuthenticatedInstagramIndexRoute: AuthenticatedInstagramIndexRoute,
   AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,

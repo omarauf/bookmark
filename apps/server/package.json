@@ -37,6 +37,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1008.0",
     "@aws-sdk/lib-storage": "^3.1009.0",
+    "@ffprobe-installer/ffprobe": "^2.1.2",
     "@orpc/openapi": "^1.13.7",
     "@orpc/server": "^1.13.7",
     "@orpc/zod": "^1.13.7",
@@ -48,6 +49,8 @@
     "drizzle-orm": "^0.45.2",
     "hono": "^4.8.2",
     "link-preview-js": "^3.1.0",
+    "nanoid": "^5.1.6",
+    "pdf-lib": "^1.17.1",
     "pg": "^8.20.0",
     "progress": "^2.0.3",
     "sharp": "^0.34.3",
@@ -56,6 +59,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.2.21",
+
     "@types/pg": "^8.18.0",
     "@types/progress": "^2.0.7",
     "drizzle-kit": "^0.31.10",

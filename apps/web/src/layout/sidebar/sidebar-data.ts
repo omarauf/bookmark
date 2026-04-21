@@ -59,6 +59,7 @@ export const sidebarData: SidebarData = {
       items: [
         { title: "Imports", url: "/imports", icon: Upload },
         { title: "Downloads", url: "/downloads", icon: Download },
+        { title: "File Manager", url: "/file-manager", icon: Folder },
       ],
     },
     {

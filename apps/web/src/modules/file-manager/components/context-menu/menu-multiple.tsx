@@ -1,5 +1,7 @@
-import { Copy, Download, Move, Scissors, Trash2 } from "lucide-react";
+import { useSearch } from "@tanstack/react-router";
+import { ClipboardPaste, Copy, Download, Move, Scissors, Trash2 } from "lucide-react";
 import { ContextMenuItem, ContextMenuSeparator } from "@/components/ui/context-menu";
+import { useClipboardPaste } from "../../hooks/use-clipboard-paste";
 import { useStore } from "../../store";
 
 type Props = {
@@ -8,17 +10,31 @@ type Props = {
 
 export function MultipleContextMenu({ itemIds }: Props) {
   const openDialog = useStore((s) => s.openDialog);
+  const cutItems = useStore((s) => s.cutItems);
+  const clipboard = useStore((s) => s.clipboard);
+
+  const currentFolderId = useSearch({
+    from: "/_authenticated/file-manager/",
+    select: (s) => s.folderId,
+  });
+
+  const { handlePaste } = useClipboardPaste();
 
   return (
     <>
-      <ContextMenuItem>
+      <ContextMenuItem disabled>
         <Copy className="mr-2 h-4 w-4" />
         Copy
       </ContextMenuItem>
 
-      <ContextMenuItem>
+      <ContextMenuItem onClick={() => cutItems(new Set(itemIds), currentFolderId)}>
         <Scissors className="mr-2 h-4 w-4" />
         Cut
+      </ContextMenuItem>
+
+      <ContextMenuItem onClick={() => handlePaste()} disabled={!clipboard}>
+        <ClipboardPaste className="mr-2 h-4 w-4" />
+        Paste
       </ContextMenuItem>
 
       <ContextMenuSeparator />

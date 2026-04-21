@@ -18,6 +18,7 @@ export function FileListItem({ item, orderedIds, index }: FileListItemProps) {
     isSelected,
     isDragging,
     isOver,
+    isCut,
     attributes,
     listeners,
     onClick,
@@ -37,6 +38,7 @@ export function FileListItem({ item, orderedIds, index }: FileListItemProps) {
         isSelected && "bg-accent text-accent-foreground ring-2 ring-ring",
         isFocused && "ring-2 ring-ring/50",
         isDragging && "opacity-50",
+        isCut && "opacity-40",
         isOver && item.type === "folder" && "bg-primary/20 ring-2 ring-primary",
       )}
       // style={style}

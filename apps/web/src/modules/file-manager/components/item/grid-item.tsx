@@ -19,6 +19,7 @@ export function FileGridItem({ item, orderedIds, index }: FileGridItemProps) {
     attributes,
     listeners,
     isGlobalDragging,
+    isCut,
     setFocusedIndex,
     onClick,
     onDoubleClick,
@@ -37,8 +38,8 @@ export function FileGridItem({ item, orderedIds, index }: FileGridItemProps) {
         isSelected && "bg-accent text-accent-foreground ring-2 ring-ring",
         isFocused && "outline-none ring-2 ring-blue-500",
         (isDragging || (isGlobalDragging && isSelected)) && "opacity-50",
+        isCut && "opacity-40",
         isOver && item.type === "folder" && "bg-primary/20 ring-2 ring-primary",
-        "opacity-100!",
       )}
       onClick={(e) => onClick(item.id, orderedIds, index, e)}
       onDoubleClick={() => onDoubleClick(item)}

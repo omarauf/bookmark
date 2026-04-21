@@ -1,7 +1,8 @@
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import { useCallback, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { useStore } from "../store";
+import { useClipboardPaste } from "./use-clipboard-paste";
 
 export function useKeyboardHandler(orderedIds: string[]) {
   const [
@@ -18,6 +19,9 @@ export function useKeyboardHandler(orderedIds: string[]) {
     toggleFocusedItemSelection,
     selectAllItems,
     clearSelection,
+    clipboard,
+    cutItems,
+    clearClipboard,
   ] = useStore(
     useShallow((s) => [
       s.columns,
@@ -33,11 +37,20 @@ export function useKeyboardHandler(orderedIds: string[]) {
       s.toggleFocusedItemSelection,
       s.selectAllItems,
       s.clearSelection,
+      s.clipboard,
+      s.cutItems,
+      s.clearClipboard,
     ]),
   );
 
+  const currentFolderId = useSearch({
+    from: "/_authenticated/file-manager/",
+    select: (s) => s.folderId,
+  });
+
   const navigate = useNavigate({ from: "/file-manager/" });
   const router = useRouter();
+  const { handlePaste } = useClipboardPaste();
 
   const navigationHandler = useCallback(
     (event: KeyboardEvent) => {
@@ -47,7 +60,7 @@ export function useKeyboardHandler(orderedIds: string[]) {
       const isMultiSelect = ctrlKey || metaKey;
 
       const total = orderedIds.length;
-      if (total === 0) return;
+      if (total === 0 && key !== "Escape" && !isMultiSelect) return;
 
       switch (key) {
         case "ArrowUp":
@@ -109,7 +122,6 @@ export function useKeyboardHandler(orderedIds: string[]) {
         case "Enter": {
           event.preventDefault();
           const currentId = orderedIds[focusedIndex];
-          // TODO check if it's a folder
           navigate({ to: "/file-manager", search: { folderId: currentId } });
           containerRef.current?.focus();
           break;
@@ -127,6 +139,20 @@ export function useKeyboardHandler(orderedIds: string[]) {
           break;
         }
 
+        case "x":
+          if (!isMultiSelect) return;
+          event.preventDefault();
+          if (selectedItems.size === 0) return;
+          cutItems(selectedItems, currentFolderId);
+          break;
+
+        case "v":
+          if (!isMultiSelect) return;
+          event.preventDefault();
+          if (!clipboard) return;
+          handlePaste();
+          break;
+
         case "a":
           if (isMultiSelect) {
             event.preventDefault();
@@ -136,6 +162,7 @@ export function useKeyboardHandler(orderedIds: string[]) {
 
         case "Escape":
           event.preventDefault();
+          clearClipboard();
           clearSelection();
           break;
 
@@ -171,6 +198,11 @@ export function useKeyboardHandler(orderedIds: string[]) {
       toggleFocusedItemSelection,
       selectAllItems,
       clearSelection,
+      clipboard,
+      cutItems,
+      clearClipboard,
+      currentFolderId,
+      handlePaste,
     ],
   );
 

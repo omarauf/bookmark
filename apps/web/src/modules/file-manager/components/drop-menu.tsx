@@ -1,3 +1,4 @@
+import { useSearch } from "@tanstack/react-router";
 import { MoreHorizontal } from "lucide-react";
 import { useShallow } from "zustand/shallow";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,16 @@ import {
 import { useStore } from "../store";
 
 export function FilesDropMenu() {
-  const [selectedCount, openDialog] = useStore(
-    useShallow((s) => [s.selectedItems.size, s.openDialog]),
+  const [selectedCount, openDialog, cutItems] = useStore(
+    useShallow((s) => [s.selectedItems.size, s.openDialog, s.cutItems]),
   );
+
+  const currentFolderId = useSearch({
+    from: "/_authenticated/file-manager/",
+    select: (s) => s.folderId,
+  });
+
+  const selectedItems = useStore((s) => s.selectedItems);
 
   if (selectedCount === 0) return null;
 
@@ -31,6 +39,11 @@ export function FilesDropMenu() {
           <DropdownMenuItem disabled title="Coming soon">
             Copy
           </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={() => cutItems(selectedItems, currentFolderId)}>
+            Cut
+          </DropdownMenuItem>
+
           <DropdownMenuItem onClick={() => openDialog({ type: "move" })}>
             Move to...
           </DropdownMenuItem>

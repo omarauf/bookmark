@@ -25,7 +25,7 @@ export const browseRouter = {
     .output(BrowseSchemas.list.response)
     .errors({ NOT_FOUND: { message: "Folder not found" } })
     .handler(async ({ input, errors }) => {
-      const parentId = input.parentId ?? undefined;
+      const parentId = input.parentId;
 
       const folder = parentId ? await folderRepo.findById(parentId) : undefined;
 

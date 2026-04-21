@@ -48,7 +48,7 @@ export function MoveDialog({ onClose }: Props) {
     select: (s) => s.folderId,
   });
 
-  const [targetFolderId, setTargetFolderId] = useState<string | null>(null);
+  const [targetFolderId, setTargetFolderId] = useState<string>();
 
   const folderTreeQuery = useQuery(
     orpc.folder.tree.queryOptions({ input: {} as Record<string, never> }),
@@ -68,8 +68,8 @@ export function MoveDialog({ onClose }: Props) {
     try {
       await moveMutation.mutateAsync({
         itemIds: selectedIds,
-        sourceFolderId: currentFolderId ?? undefined,
-        targetFolderId: targetFolderId ?? undefined,
+        sourceFolderId: currentFolderId,
+        targetFolderId: targetFolderId,
       });
 
       setSelectedItems(new Set());
@@ -84,7 +84,7 @@ export function MoveDialog({ onClose }: Props) {
     }
   };
 
-  const isRootSelected = targetFolderId === null;
+  const isRootSelected = targetFolderId === undefined;
 
   return (
     <DialogContent className="sm:max-w-md">
@@ -98,7 +98,7 @@ export function MoveDialog({ onClose }: Props) {
       <div className="flex flex-col gap-1">
         <button
           type="button"
-          onClick={() => setTargetFolderId(null)}
+          onClick={() => setTargetFolderId(undefined)}
           className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors ${
             isRootSelected
               ? "bg-primary/10 font-medium text-primary"

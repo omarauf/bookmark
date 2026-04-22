@@ -38,7 +38,7 @@ export const scrapeChromeBookmark = async () => {
     traverse(bookmark.children, [bookmark.title]);
   }
 
-  const importedLink: CreateLink[] = result
+  const importedLink: CreateLink = result
     .filter((l) => l.url)
     .filter((l) => l.url?.startsWith("http"))
     .map((l) => ({
@@ -49,5 +49,5 @@ export const scrapeChromeBookmark = async () => {
       url: String(l.url),
     }));
 
-  await client.links.create(importedLink);
+  await client.link.create(importedLink);
 };

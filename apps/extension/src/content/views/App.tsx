@@ -1,5 +1,5 @@
-import { Button } from "@workspace/ui/components/button";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 function App() {
   const [show, setShow] = useState(false);

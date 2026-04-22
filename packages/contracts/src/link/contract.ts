@@ -38,11 +38,15 @@ export const LinkSchemas = {
   },
 
   create: {
-    request: LinkSchema.omit({
-      id: true,
-      updatedAt: true,
-      preview: true,
-    }).array(),
+    request: z
+      .object({
+        title: z.string().optional(),
+        url: z.url(),
+        folder: z.string(),
+        path: z.string(),
+        createdAt: z.date().optional(),
+      })
+      .array(),
     response: z.void(),
   },
 

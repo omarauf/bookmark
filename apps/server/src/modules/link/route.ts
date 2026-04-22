@@ -1,4 +1,4 @@
-import { LinkSchemas, type TreeNode } from "@workspace/contracts/link";
+import { LinkSchemas, type PathNode } from "@workspace/contracts/link";
 import axios from "axios";
 import {
   and,
@@ -27,14 +27,12 @@ export const linkRouter = {
     .handler(async ({ input }) => {
       const basePath = input.path?.replace(/\/+$/, "") ?? "";
 
-      const prefix = basePath ? `${basePath}/` : "";
-
       const selectedLinks = await db.query.items.findMany({
         where: and(
-          like(sql`(${items.metadata} ->> 'path')`, `${prefix}%`),
+          like(sql`(${items.metadata} ->> 'path')`, `${basePath}%`),
           isNull(items.deletedAt),
           eq(items.platform, "chrome"),
-          sql`${items.metadata} ->> 'kind' = 'link'`,
+          // sql`${items.metadata} ->> 'kind' = 'link'`,
         ),
         orderBy: [desc(items.createdAt), desc(items.id)],
       });
@@ -140,8 +138,8 @@ export const linkRouter = {
       .sort((a, b) => b.count - a.count);
   }),
 
-  folders: protectedProcedure.handler(async () => {
-    const folders: TreeNode[] = [];
+  folders: protectedProcedure.output(LinkSchemas.folders.response).handler(async () => {
+    const folders: PathNode[] = [];
 
     // 1. Fetch distinct paths from the database using Drizzle
     const distinctRecords = await db
@@ -173,6 +171,7 @@ export const linkRouter = {
         }
       }
     }
+
     return folders;
   }),
 

@@ -33,3 +33,11 @@ export const LinkSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
 });
+
+export const PathTree = z.object({
+  name: z.string(),
+  path: z.string(),
+  get children() {
+    return PathTree.array().optional();
+  },
+});

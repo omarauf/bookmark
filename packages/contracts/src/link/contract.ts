@@ -4,7 +4,7 @@ import {
   PaginationResultSchema,
   SortingParamsSchema,
 } from "../common/pagination-query";
-import { LinkSchema } from "./entity";
+import { LinkSchema, PathTree } from "./entity";
 
 export const LinkSchemas = {
   tree: {
@@ -33,8 +33,7 @@ export const LinkSchemas = {
   },
 
   folders: {
-    request: z.any(),
-    response: z.void(),
+    response: PathTree.array(),
   },
 
   preview: {
@@ -42,16 +41,8 @@ export const LinkSchemas = {
     response: z.void(),
   },
 
-  favicon: {
-    request: z.any(),
-    response: z.void(),
-  },
-
   move: {
-    request: z.object({
-      ids: z.string().array(),
-      path: z.string(),
-    }),
+    request: z.object({ ids: z.string().array(), path: z.string() }),
     response: z.void(),
   },
 
@@ -67,9 +58,4 @@ export const LinkSchemas = {
 export type Link = z.infer<typeof LinkSchema>;
 export type ListLink = z.infer<typeof LinkSchemas.list.request>;
 export type LinkPreview = z.infer<typeof LinkSchema.shape.preview>;
-
-export interface TreeNode {
-  path: string;
-  name: string;
-  children?: TreeNode[];
-}
+export type PathNode = z.infer<typeof PathTree>;

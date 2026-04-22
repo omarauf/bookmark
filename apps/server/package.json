@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.2.21",
-
+    "@types/chrome": "0.1.40",
     "@types/pg": "^8.18.0",
     "@types/progress": "^2.0.7",
     "drizzle-kit": "^0.31.10",

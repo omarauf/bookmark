@@ -1,5 +1,6 @@
 import type { Platform } from "@workspace/contracts/platform";
 import type { PlatformHandler } from "@/core/platform";
+import { ChromeHandler } from "@/platforms/chrome/handler";
 import { InstagramHandler } from "@/platforms/instagram/handler";
 import { TiktokHandler } from "@/platforms/tiktok/handler";
 import { TwitterHandler } from "@/platforms/twitter/handler";
@@ -11,9 +12,11 @@ class ItemOrchestrator {
     const instagramHandler = new InstagramHandler();
     const tiktokHandler = new TiktokHandler();
     const twitterHandler = new TwitterHandler();
+    const chromeHandler = new ChromeHandler();
     this.handlers.set(instagramHandler.platform, instagramHandler);
     this.handlers.set(tiktokHandler.platform, tiktokHandler);
     this.handlers.set(twitterHandler.platform, twitterHandler);
+    this.handlers.set(chromeHandler.platform, chromeHandler);
   }
 
   validate(type: Platform, data: string) {

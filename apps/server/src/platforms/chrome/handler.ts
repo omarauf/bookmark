@@ -23,6 +23,24 @@ export class ChromeHandler implements PlatformHandler {
 
     const { validItems } = this.processBookmarks(bookmarkTree);
 
+    //  for (const link of input) {
+    //     const existingLink = await db.query.links.findFirst({
+    //       where: and(eq(links.url, link.url), eq(links.path, link.path)),
+    //     });
+
+    //     if (existingLink) continue;
+    //     const domain = new URL(link.url).hostname.replace(/^www\./, "");
+    //     const imageUrl = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(domain)}`;
+    //     const response = await axios.get<ArrayBuffer>(imageUrl, { responseType: "arraybuffer" });
+
+    //     await s3Client.upload(`links/${domain}.png`, Buffer.from(response.data));
+
+    //     await db.insert(links).values({
+    //       ...link,
+    //       createdAt: link.createdAt || new Date(),
+    //     });
+    //   }
+
     return {
       items: validItems,
       relations: [],

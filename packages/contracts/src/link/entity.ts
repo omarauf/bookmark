@@ -25,9 +25,8 @@ const PreviewSchema = z.object({
 
 export const LinkSchema = z.object({
   id: z.string(),
-  title: z.string().optional(),
+  caption: z.string().optional(),
   url: z.url(),
-  folder: z.string(),
   path: z.string(),
   preview: PreviewSchema.optional(),
   deletedAt: z.date().optional(),

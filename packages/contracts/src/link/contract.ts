@@ -37,26 +37,8 @@ export const LinkSchemas = {
     response: z.void(),
   },
 
-  create: {
-    request: z
-      .object({
-        title: z.string().optional(),
-        url: z.url(),
-        folder: z.string(),
-        path: z.string(),
-        createdAt: z.date().optional(),
-      })
-      .array(),
-    response: z.void(),
-  },
-
-  test: {
-    request: z.any(),
-    response: z.void(),
-  },
-
   preview: {
-    request: z.any(),
+    request: z.object({ id: z.string() }),
     response: z.void(),
   },
 
@@ -85,7 +67,6 @@ export const LinkSchemas = {
 export type Link = z.infer<typeof LinkSchema>;
 export type ListLink = z.infer<typeof LinkSchemas.list.request>;
 export type LinkPreview = z.infer<typeof LinkSchema.shape.preview>;
-export type CreateLink = z.infer<typeof LinkSchemas.create.request>;
 
 export interface TreeNode {
   path: string;

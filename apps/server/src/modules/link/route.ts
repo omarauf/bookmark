@@ -1,4 +1,4 @@
-import { LinkSchemas, type PathNode } from "@workspace/contracts/link";
+import { type FolderTree, LinkSchemas } from "@workspace/contracts/link";
 import {
   and,
   count,
@@ -64,9 +64,9 @@ export const linkRouter = {
       }
 
       return {
-        folders: [...foldersMap.entries()].map(([path, folder]) => ({
+        folders: [...foldersMap.entries()].map(([path, name]) => ({
           path,
-          folder,
+          name,
         })),
         links,
       };
@@ -76,7 +76,7 @@ export const linkRouter = {
     .input(LinkSchemas.list.request)
     .output(LinkSchemas.list.response)
     .handler(async ({ input }) => {
-      const { q, domain } = input;
+      const { q, domain, path } = input;
 
       const filter = and(
         isNull(items.deletedAt),
@@ -87,6 +87,9 @@ export const linkRouter = {
 
         // 3. Conditional search for 'domain'
         domain ? ilike(items.url, `%${domain}%`) : undefined,
+
+        // 4. Conditional search for 'path'
+        path ? ilike(sql`(${items.metadata} ->> 'path')`, `${path}%`) : undefined,
       );
 
       const dataQuery = db.select().from(items);
@@ -137,8 +140,8 @@ export const linkRouter = {
       .sort((a, b) => b.count - a.count);
   }),
 
-  folders: protectedProcedure.output(LinkSchemas.folders.response).handler(async () => {
-    const folders: PathNode[] = [];
+  folderTree: protectedProcedure.output(LinkSchemas.folderTree.response).handler(async () => {
+    const folders: FolderTree[] = [];
 
     // 1. Fetch distinct paths from the database using Drizzle
     const distinctRecords = await db
@@ -172,6 +175,20 @@ export const linkRouter = {
     }
 
     return folders;
+  }),
+
+  folderList: protectedProcedure.output(LinkSchemas.folderList.response).handler(async () => {
+    const distinctRecords = await db
+      .selectDistinct({ path: sql<string>`(${items.metadata} -> 'path')` })
+      .from(items)
+      .where(and(isNotNull(items.url), eq(items.platform, "chrome"), isNull(items.deletedAt)));
+
+    return distinctRecords.map((record) => {
+      const fullPath = record.path;
+      const parts = fullPath.split("/").filter(Boolean);
+      const name = parts[parts.length - 1] || "";
+      return { path: fullPath, name };
+    });
   }),
 
   move: protectedProcedure

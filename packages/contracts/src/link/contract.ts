@@ -5,23 +5,24 @@ import {
   SortingParamsSchema,
 } from "../common/pagination-query";
 import type { PreviewSchema } from "../platform/chrome";
-import { LinkSchema, PathTree } from "./entity";
+import { FolderTreeSchema, LinkSchema } from "./entity";
 
 export const LinkSchemas = {
   tree: {
     request: SortingParamsSchema.extend({
-      path: z.string().default("/").catch("/"),
-      // q: z.string().optional(),
+      path: z.string().optional().catch(undefined),
+      q: z.string().optional().catch(undefined),
+      domain: z.string().optional().catch(undefined),
     }),
     response: z.object({
-      folders: z.object({ path: z.string(), folder: z.string() }).array(),
+      folders: z.object({ path: z.string(), name: z.string() }).array(),
       links: LinkSchema.array(),
     }),
   },
 
   list: {
     request: BasePaginationQuerySchema.extend({
-      path: z.string().default("/").catch("/"),
+      path: z.string().optional().catch(undefined),
       q: z.string().optional(),
       domain: z.string().optional(),
     }),
@@ -33,8 +34,12 @@ export const LinkSchemas = {
     response: z.object({ domain: z.string(), count: z.number() }).array(),
   },
 
-  folders: {
-    response: PathTree.array(),
+  folderTree: {
+    response: FolderTreeSchema.array(),
+  },
+
+  folderList: {
+    response: z.object({ path: z.string(), name: z.string() }).array(),
   },
 
   move: {
@@ -61,4 +66,5 @@ export const LinkSchemas = {
 export type Link = z.infer<typeof LinkSchema>;
 export type ListLink = z.infer<typeof LinkSchemas.list.request>;
 export type LinkPreview = z.infer<typeof PreviewSchema>;
-export type PathNode = z.infer<typeof PathTree>;
+export type FolderTree = z.infer<typeof FolderTreeSchema>;
+export type FolderList = z.infer<typeof LinkSchemas.folderList.response>;

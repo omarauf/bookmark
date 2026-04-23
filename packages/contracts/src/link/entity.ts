@@ -12,10 +12,10 @@ export const LinkSchema = z.object({
   updatedAt: z.date(),
 });
 
-export const PathTree = z.object({
+export const FolderTreeSchema = z.object({
   name: z.string(),
   path: z.string(),
   get children() {
-    return PathTree.array().optional();
+    return FolderTreeSchema.array().optional();
   },
 });

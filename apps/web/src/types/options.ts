@@ -1,7 +1,9 @@
+import type { ComponentType, SVGProps } from "react";
+
 export type Option<T = number, U = string> = {
   value: T;
-  label: U;
+  label?: U;
   color?: string;
-  icon?: string;
+  icon?: ComponentType<SVGProps<SVGSVGElement>>;
   info?: string;
 };

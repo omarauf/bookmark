@@ -11,10 +11,29 @@ type HeaderProps = React.HTMLAttributes<HTMLElement> & {
   fixed?: boolean;
   ref?: React.Ref<HTMLElement>;
   children?: React.ReactNode;
+  hideSearch?: boolean;
+  hideProfile?: boolean;
+  hideThemeSwitch?: boolean;
+  hideConfigDrawer?: boolean;
+  hideSidebarTrigger?: boolean;
+  // contentClassName?: string;
 };
 
-export function Header({ className, fixed, children, ...props }: HeaderProps) {
+export function Header({
+  className,
+  fixed,
+  children,
+  hideSearch,
+  hideProfile,
+  hideThemeSwitch,
+  hideConfigDrawer,
+  hideSidebarTrigger,
+  // contentClassName,
+  ...props
+}: HeaderProps) {
   const [offset, setOffset] = useState(0);
+
+  const allRightHidden = hideSearch && hideProfile && hideThemeSwitch && hideConfigDrawer;
 
   useEffect(() => {
     const onScroll = () => {
@@ -31,7 +50,7 @@ export function Header({ className, fixed, children, ...props }: HeaderProps) {
   return (
     <header
       className={cn(
-        "z-50 py-4",
+        "z-50 px-4 py-4",
         fixed && "header-fixed peer/header sticky top-0 w-[inherit]",
         offset > 10 && fixed ? "shadow" : "shadow-none",
         className,
@@ -46,18 +65,25 @@ export function Header({ className, fixed, children, ...props }: HeaderProps) {
             "after:absolute after:inset-0 after:-z-10 after:bg-background/20 after:backdrop-blur-lg",
         )}
       >
-        <SidebarTrigger variant="outline" className="max-md:scale-125" />
-        <Separator orientation="vertical" className="h-6" />
+        {!hideSidebarTrigger && (
+          <>
+            <SidebarTrigger variant="outline" className="max-md:scale-125" />
+            <Separator orientation="vertical" className="h-6" />
+          </>
+        )}
 
+        {/* <div className={cn("flex grow gap-2", contentClassName)}>{children}</div> */}
         {children}
 
         {/* <TopNav links={topNav} /> */}
-        <div className="ms-auto flex items-center space-x-4">
-          <Search />
-          <ThemeSwitch />
-          <ConfigDrawer />
-          <ProfileDropdown />
-        </div>
+        {!allRightHidden && (
+          <div className="ms-auto flex items-center space-x-4">
+            {!hideSearch && <Search />}
+            {!hideThemeSwitch && <ThemeSwitch />}
+            {!hideConfigDrawer && <ConfigDrawer />}
+            {!hideProfile && <ProfileDropdown />}
+          </div>
+        )}
       </div>
     </header>
   );

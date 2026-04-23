@@ -48,7 +48,7 @@
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.45.2",
     "hono": "^4.8.2",
-    "link-preview-js": "^3.1.0",
+    "link-preview-js": "^4.0.0",
     "nanoid": "^5.1.6",
     "pdf-lib": "^1.17.1",
     "pg": "^8.20.0",

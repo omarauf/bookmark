@@ -4,6 +4,7 @@ import {
   PaginationResultSchema,
   SortingParamsSchema,
 } from "../common/pagination-query";
+import type { PreviewSchema } from "../platform/chrome";
 import { LinkSchema, PathTree } from "./entity";
 
 export const LinkSchemas = {
@@ -36,20 +37,22 @@ export const LinkSchemas = {
     response: PathTree.array(),
   },
 
-  preview: {
-    request: z.object({ id: z.string() }),
-    response: z.void(),
-  },
-
   move: {
-    request: z.object({ ids: z.string().array(), path: z.string() }),
+    request: z.object({ ids: z.uuidv7().array(), path: z.string() }),
     response: z.void(),
   },
 
   delete: {
     request: z.object({
-      ids: z.string().array(),
+      ids: z.uuidv7().array(),
       hard: z.boolean().optional().default(false),
+    }),
+    response: z.void(),
+  },
+
+  fetchPreviews: {
+    request: z.object({
+      batchSize: z.number().int().min(1).max(500).optional().default(50),
     }),
     response: z.void(),
   },
@@ -57,5 +60,5 @@ export const LinkSchemas = {
 
 export type Link = z.infer<typeof LinkSchema>;
 export type ListLink = z.infer<typeof LinkSchemas.list.request>;
-export type LinkPreview = z.infer<typeof LinkSchema.shape.preview>;
+export type LinkPreview = z.infer<typeof PreviewSchema>;
 export type PathNode = z.infer<typeof PathTree>;

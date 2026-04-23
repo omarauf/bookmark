@@ -1,5 +1,4 @@
 import { LinkSchemas, type PathNode } from "@workspace/contracts/link";
-import axios from "axios";
 import {
   and,
   count,
@@ -13,11 +12,11 @@ import {
   or,
   sql,
 } from "drizzle-orm";
-import { getPreviewFromContent } from "link-preview-js";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
 import { protectedProcedure } from "@/lib/orpc";
 import { items } from "../item/schema";
+import { fetchLinkPreviews } from "./background";
 import { mapItemToLink } from "./mapper";
 
 export const linkRouter = {
@@ -175,60 +174,6 @@ export const linkRouter = {
     return folders;
   }),
 
-  preview: protectedProcedure
-    .input(LinkSchemas.preview.request)
-    .errors({
-      BAD_REQUEST: { message: "Failed to fetch link preview" },
-      NOT_FOUND: { message: "Link not found" },
-    })
-    .handler(async ({ input: { id }, errors }) => {
-      const link = await db.query.items.findFirst({ where: eq(items.id, id) });
-
-      if (link === undefined) throw errors.NOT_FOUND();
-
-      // if (link?.preview) return link.preview;
-
-      const { url } = link;
-
-      try {
-        // const data = await getLinkPreview(url);
-        const response = await axios.get<string>(url, {
-          responseType: "text",
-          timeout: 10000,
-          maxRedirects: 5,
-          validateStatus: () => true, // don't throw on non-200 status
-        });
-
-        const preFetched = {
-          headers: { "content-type": String(response.headers["content-type"]) },
-          status: response.status,
-          url: url,
-          data: response.data,
-        };
-
-        const data = await getPreviewFromContent(preFetched);
-
-        const preview = {
-          url: data.url,
-          mediaType: data.mediaType,
-          favicons: data.favicons,
-          title: "title" in data ? data.title || undefined : undefined,
-          charset: "charset" in data ? data.charset || undefined : undefined,
-          siteName: "siteName" in data ? data.siteName || undefined : undefined,
-          description: "description" in data ? data.description || undefined : undefined,
-          contentType: "contentType" in data ? data.contentType || undefined : undefined,
-          images: "images" in data ? data.images || undefined : undefined,
-          videos: "videos" in data ? data.videos || undefined : undefined,
-        };
-
-        // await db.update(items).set({ preview: link.preview }).where(eq(items.id, id));
-
-        return preview;
-      } catch {
-        throw errors.BAD_REQUEST();
-      }
-    }),
-
   move: protectedProcedure
     .input(LinkSchemas.move.request)
     .handler(async ({ input: { ids, path } }) => {
@@ -248,5 +193,13 @@ export const linkRouter = {
       } else {
         await db.update(items).set({ deletedAt: new Date() }).where(inArray(items.id, ids));
       }
+    }),
+
+  fetchPreviews: protectedProcedure
+    .input(LinkSchemas.fetchPreviews.request)
+    .handler(async ({ input }) => {
+      fetchLinkPreviews(input.batchSize).catch((err) => {
+        console.error("[LinkPreview] Background fetch failed:", err);
+      });
     }),
 };

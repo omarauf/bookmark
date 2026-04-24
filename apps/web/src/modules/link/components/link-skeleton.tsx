@@ -6,7 +6,7 @@ type Props = {
 export function LinkSkeletons({ folderCount = 10, linkCount = 13 }: Props) {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3">
         {Array.from({ length: folderCount }).map((_, i) => (
           <FolderCardSkeleton key={i} />
         ))}
@@ -52,13 +52,13 @@ function LinkCardSkeleton() {
 
 function FolderCardSkeleton() {
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border bg-card p-4 shadow-sm">
+    <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border bg-card p-2 shadow-sm">
       {/* Folder icon placeholder */}
       <div className="h-8 w-8 animate-pulse rounded bg-muted" />
 
       {/* Name lines */}
       <div className="flex w-full flex-col items-center gap-1">
-        <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
+        <div className="h-3 w-full animate-pulse rounded bg-muted" />
       </div>
     </div>
   );

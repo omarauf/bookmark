@@ -18,13 +18,13 @@ export function FolderCard({ name, path, className }: Props) {
       type="button"
       onClick={onClickHandler}
       className={cn(
-        "flex w-full flex-col items-center justify-center gap-2 rounded-lg border bg-card p-4 shadow-sm transition-all hover:border-primary/50 hover:shadow-md",
+        "flex w-full flex-col items-center justify-center gap-2 rounded-lg border bg-card p-2 shadow-sm transition-all hover:border-primary/50 hover:shadow-md",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
     >
       <FolderIcon className="h-8 w-8 text-primary" />
-      <span className="line-clamp-2 max-w-full text-center font-medium text-sm">{name}</span>
+      <span className="line-clamp-1 w-full text-center font-medium text-sm">{name}</span>
     </button>
   );
 }

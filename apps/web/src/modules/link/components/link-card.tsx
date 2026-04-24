@@ -26,7 +26,7 @@ export function LinkCard({ link, className, onSelect }: Props) {
       type="button"
       onClick={() => onSelect?.(link)}
       className={cn(
-        "group relative flex w-full flex-col overflow-hidden rounded-lg border bg-card text-left shadow-sm transition-all hover:border-primary/50 hover:shadow-md",
+        "group relative flex h-full w-full flex-col overflow-hidden rounded-lg border bg-card text-left shadow-sm transition-all hover:border-primary/50 hover:shadow-md",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}

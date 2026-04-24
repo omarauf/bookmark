@@ -1,7 +1,7 @@
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
 import { ChevronRight } from "lucide-react";
 import type { ElementType, MouseEvent, ReactNode } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 
 // ================================================================
@@ -76,7 +76,10 @@ export function TreeView<T extends TreeNodeData>({
   iconRender,
 }: TreeViewProps<T>) {
   const nodes = Array.isArray(data) ? data : [data];
-  const path = typeof value === "string" ? findPath(nodes, value) : value;
+  const path = useMemo(
+    () => (typeof value === "string" ? findPath(nodes, value) : value),
+    [value, nodes],
+  );
   const [openNodes, setOpenNodes] = useState<Set<string>>(new Set(path));
 
   useEffect(() => {

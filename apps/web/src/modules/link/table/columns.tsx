@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import type { Column, ColumnDef } from "@tanstack/react-table";
 import type { Link } from "@workspace/contracts/link";
 import { ExternalLink, Globe, MoreHorizontal, Trash2 } from "lucide-react";
@@ -12,15 +13,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { orpc } from "@/integrations/orpc";
 import type { DataTableRowAction } from "@/types/data-table";
 import { fDate } from "@/utils/format-time";
 
 type Props = {
   setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<Link> | undefined>>;
-  folderPaths: { path: string; name: string }[];
 };
 
-export function useLinkTableColumns({ setRowAction, folderPaths }: Props): ColumnDef<Link>[] {
+export function useLinkTableColumns({ setRowAction }: Props): ColumnDef<Link>[] {
+  const folderQuery = useSuspenseQuery(orpc.link.folderList.queryOptions());
+
   const columns = useMemo<ColumnDef<Link>[]>(
     () => [
       {
@@ -132,7 +135,8 @@ export function useLinkTableColumns({ setRowAction, folderPaths }: Props): Colum
           //   { label: "Work", value: "/work" },
           //   { label: "Personal", value: "/personal" },
           // ],
-          options: folderPaths?.map((folder) => ({ label: folder.name, value: folder.path })),
+          options:
+            folderQuery.data?.map((folder) => ({ label: folder.name, value: folder.path })) || [],
         },
         enableColumnFilter: true,
       },
@@ -187,7 +191,7 @@ export function useLinkTableColumns({ setRowAction, folderPaths }: Props): Colum
         size: 48,
       },
     ],
-    [setRowAction, folderPaths?.map],
+    [setRowAction, folderQuery.data],
   );
 
   return columns;

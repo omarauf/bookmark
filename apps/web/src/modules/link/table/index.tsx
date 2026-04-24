@@ -17,9 +17,7 @@ function InnerLinkTable({ search }: { search: ListLink }) {
 
   const linkQuery = useSuspenseQuery(orpc.link.list.queryOptions({ input: search }));
 
-  const folderQuery = useSuspenseQuery(orpc.link.folderList.queryOptions());
-
-  const columns = useLinkTableColumns({ setRowAction, folderPaths: folderQuery.data });
+  const columns = useLinkTableColumns({ setRowAction });
 
   const { table } = useDataTable({
     data: linkQuery.data.items,
@@ -27,10 +25,6 @@ function InnerLinkTable({ search }: { search: ListLink }) {
     columns,
     pageCount: linkQuery.data.totalPages,
     getRowId: (row) => row.id,
-    // queryKeys: {
-    //   page: "page",
-    //   perPage: "perPage",
-    // },
   });
 
   return (
@@ -38,7 +32,6 @@ function InnerLinkTable({ search }: { search: ListLink }) {
       <ScrollArea className="w-full">
         <DataTable table={table} className="p-4">
           <DataTableToolbar table={table} />
-          <p>{linkQuery.data.items.length}</p>
         </DataTable>
 
         {rowAction?.variant === "delete" && (
@@ -67,7 +60,7 @@ export function LinkTable() {
         <DataTableSkeleton
           className="p-4"
           columnCount={6}
-          rowCount={20}
+          rowCount={search.perPage ?? 10}
           filterCount={3}
           cellWidths={["40px", "900px", "300px", "200px", "150px", "50px"]}
         />

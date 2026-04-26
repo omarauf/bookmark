@@ -11,6 +11,7 @@ import {
 import { orpc } from "@/integrations/orpc";
 import { FolderCard } from "../components/folder-card";
 import { LinkCard } from "../components/link-card";
+import { LinkContextMenu } from "../components/link-context-menu";
 import { LinkSkeletons } from "../components/link-skeleton";
 
 export function Content() {
@@ -45,12 +46,19 @@ export function Content() {
     <div className="space-y-4">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3">
         {folders.map((folder) => (
-          <FolderCard key={folder.path} name={folder.name} path={folder.path} />
+          <LinkContextMenu
+            key={folder.path}
+            item={{ type: "folder", name: folder.name, path: folder.path }}
+          >
+            <FolderCard name={folder.name} path={folder.path} />
+          </LinkContextMenu>
         ))}
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {links.map((link) => (
-          <LinkCard key={link.id} link={link} />
+          <LinkContextMenu key={link.id} item={{ type: "link", link }}>
+            <LinkCard link={link} />
+          </LinkContextMenu>
         ))}
       </div>
     </div>

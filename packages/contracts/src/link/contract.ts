@@ -58,8 +58,16 @@ export const LinkSchemas = {
   fetchPreviews: {
     request: z.object({
       batchSize: z.number().int().min(1).max(500).optional().default(50),
+      headers: z.record(z.string(), z.string()).optional(),
+      domain: z.string().optional(),
+      overwrite: z.boolean().optional().default(false),
     }),
     response: z.void(),
+  },
+
+  fetchPreview: {
+    request: z.object({ id: z.uuidv7() }),
+    response: LinkSchema,
   },
 };
 

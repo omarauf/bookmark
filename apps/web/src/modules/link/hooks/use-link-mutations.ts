@@ -28,3 +28,29 @@ export function useMoveLinks() {
     }),
   );
 }
+
+export function useFetchPreviews() {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    orpc.link.fetchPreviews.mutationOptions({
+      onSuccess: () => {
+        void queryClient.invalidateQueries({ queryKey: orpc.link.tree.key() });
+        void queryClient.invalidateQueries({ queryKey: orpc.link.list.key() });
+      },
+    }),
+  );
+}
+
+export function useRefreshPreview() {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    orpc.link.fetchPreview.mutationOptions({
+      onSuccess: () => {
+        void queryClient.invalidateQueries({ queryKey: orpc.link.tree.key() });
+        void queryClient.invalidateQueries({ queryKey: orpc.link.list.key() });
+      },
+    }),
+  );
+}

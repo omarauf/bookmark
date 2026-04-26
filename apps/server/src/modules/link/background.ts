@@ -1,13 +1,21 @@
-import type { LinkPreview } from "@workspace/contracts/link";
-import axios from "axios";
+import type { LinkSchemas } from "@workspace/contracts/link";
 import { and, eq, isNull, sql } from "drizzle-orm";
-import { getPreviewFromContent } from "link-preview-js";
+import type z from "zod";
 import { db } from "@/core/db";
 import { randomDelay } from "@/utils/delay";
 import { items } from "../item/schema";
+import { mapItemToLink } from "./mapper";
+import { fetchPreviewForUrl } from "./service";
+import { mergeMetadata } from "./utils";
 
-export async function fetchLinkPreviews(batchSize = 50) {
-  console.log(`[LinkPreview] Starting batch, batchSize=${batchSize}`);
+type FetchRequest = z.infer<typeof LinkSchemas.fetchPreviews.request>;
+
+export async function fetchLinkPreviews({ batchSize, headers, domain, overwrite }: FetchRequest) {
+  console.log(
+    `[LinkPreview] Starting batch, batchSize=${batchSize}`,
+    domain ? `, domain=${domain}` : "All domains",
+    `, overwrite=${overwrite ? "true" : "false"}`,
+  );
 
   const result = {
     processed: 0,
@@ -16,13 +24,14 @@ export async function fetchLinkPreviews(batchSize = 50) {
   };
 
   const linksWithoutPreview = await db
-    .select({ id: items.id, url: items.url })
+    .select({ id: items.id, url: items.url, metadata: items.metadata })
     .from(items)
     .where(
       and(
         eq(items.platform, "chrome"),
         isNull(items.deletedAt),
-        sql`${items.metadata} ->> 'preview' IS NULL`,
+        overwrite ? undefined : sql`${items.metadata} ->> 'preview' IS NULL`,
+        domain ? sql`${items.url} LIKE ${`%${domain}%`}` : undefined,
       ),
     )
     .limit(batchSize);
@@ -36,6 +45,8 @@ export async function fetchLinkPreviews(batchSize = 50) {
 
   for (const link of linksWithoutPreview) {
     try {
+      if (link.metadata.platform !== "chrome") continue;
+
       await randomDelay(500, 1500);
 
       if (!link.url.startsWith("http")) {
@@ -45,13 +56,15 @@ export async function fetchLinkPreviews(batchSize = 50) {
         continue;
       }
 
-      const preview = await fetchPreviewForUrl(link.url);
+      const preview = await fetchPreviewForUrl(link.url, headers);
 
       if (preview) {
+        const newMetadata = mergeMetadata(link.metadata?.preview, preview);
+
         await db
           .update(items)
           .set({
-            metadata: sql`jsonb_set(${items.metadata}, '{preview}', ${JSON.stringify(preview)}::jsonb)`,
+            metadata: sql`jsonb_set(${items.metadata}, '{preview}', ${JSON.stringify(newMetadata)}::jsonb)`,
           })
           .where(eq(items.id, link.id));
 
@@ -77,48 +90,29 @@ export async function fetchLinkPreviews(batchSize = 50) {
   return result;
 }
 
-async function fetchPreviewForUrl(url: string): Promise<LinkPreview | null> {
-  try {
-    // console.log(`[LinkPreview] Fetching ${url}`);
-    const response = await axios.get<string>(url, {
-      responseType: "text",
-      timeout: 10000,
-      maxRedirects: 5,
-      validateStatus: () => true,
-    });
+export async function fetchLinkPreviewById(id: string) {
+  const [item] = await db
+    .select()
+    .from(items)
+    .where(and(eq(items.id, id), isNull(items.deletedAt)))
+    .limit(1);
 
-    if (response.status >= 400) {
-      // console.log(`[LinkPreview] HTTP ${response.status} for ${url}, skipping`);
-      return null;
-    }
+  if (!item) throw new Error(`Link with id ${id} not found`);
+  if (!item.url?.startsWith("http")) throw new Error(`Invalid URL: ${item.url}`);
 
-    const preFetched = {
-      headers: { "content-type": String(response.headers["content-type"]) },
-      status: response.status,
-      url,
-      data: response.data,
-    };
+  const preview = await fetchPreviewForUrl(item.url);
+  if (!preview) throw new Error(`Failed to fetch preview for ${item.url}`);
+  if (item.metadata.platform !== "chrome") throw new Error(`Item with id ${id} is not a link`);
 
-    const data = await getPreviewFromContent(preFetched);
+  const newMetadata = mergeMetadata(item.metadata?.preview, preview);
 
-    return {
-      url: data.url,
-      mediaType: data.mediaType,
-      favicons: data.favicons,
-      title: "title" in data ? data.title || undefined : undefined,
-      siteName: "siteName" in data ? data.siteName || undefined : undefined,
-      description: "description" in data ? data.description || undefined : undefined,
-      images: "images" in data ? data.images || undefined : undefined,
+  await db
+    .update(items)
+    .set({
+      metadata: sql`jsonb_set(${items.metadata}, '{preview}', ${JSON.stringify(newMetadata)}::jsonb)`,
+    })
+    .where(eq(items.id, id));
 
-      charset: "charset" in data ? data.charset || undefined : undefined,
-      contentType: "contentType" in data ? data.contentType || undefined : undefined,
-      videos: "videos" in data ? data.videos || undefined : undefined,
-    };
-  } catch {
-    // console.error(
-    //   `[LinkPreview] Failed to fetch ${url}:`,
-    //   err instanceof Error ? err.message : err,
-    // );
-    return null;
-  }
+  const [updated] = await db.select().from(items).where(eq(items.id, id)).limit(1);
+  return mapItemToLink(updated);
 }

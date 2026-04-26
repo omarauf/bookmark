@@ -3,6 +3,8 @@ import { LayoutGrid, LayoutList, Search } from "lucide-react";
 import { XToggleGroup } from "@/components/inputs/toggle-group";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/layout/header";
+import { FetchPreviewsDialog } from "../dialogs/fetch-previews-dialog";
+import { RefreshButton } from "./refresh-button";
 
 type Props = {
   className?: string;
@@ -40,6 +42,10 @@ export function Toolbar({ className }: Props) {
         ]}
         onChange={(v) => v && handleViewChange(v)}
       />
+
+      <RefreshButton />
+
+      <FetchPreviewsDialog />
     </Header>
   );
 }

@@ -16,7 +16,7 @@ import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
 import { protectedProcedure } from "@/lib/orpc";
 import { items } from "../item/schema";
-import { fetchLinkPreviews } from "./background";
+import { fetchLinkPreviewById, fetchLinkPreviews } from "./background";
 import { mapItemToLink } from "./mapper";
 
 export const linkRouter = {
@@ -215,8 +215,15 @@ export const linkRouter = {
   fetchPreviews: protectedProcedure
     .input(LinkSchemas.fetchPreviews.request)
     .handler(async ({ input }) => {
-      fetchLinkPreviews(input.batchSize).catch((err) => {
+      fetchLinkPreviews(input).catch((err) => {
         console.error("[LinkPreview] Background fetch failed:", err);
       });
+    }),
+
+  fetchPreview: protectedProcedure
+    .input(LinkSchemas.fetchPreview.request)
+    .output(LinkSchemas.fetchPreview.response)
+    .handler(async ({ input }) => {
+      return fetchLinkPreviewById(input.id);
     }),
 };

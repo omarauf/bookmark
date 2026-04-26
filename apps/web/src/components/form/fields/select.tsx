@@ -25,6 +25,7 @@ type Props<T extends string | number> = FormControlProps & {
   variant?: "default" | "floating";
   clearable?: boolean;
   icon?: React.ReactNode;
+  position?: "popper" | "item-aligned";
 };
 
 export function SelectField<T extends string | number = string>({
@@ -36,6 +37,7 @@ export function SelectField<T extends string | number = string>({
   variant = "default",
   clearable,
   icon,
+  position,
   ...props
 }: Props<T>) {
   const id = useId();
@@ -85,7 +87,10 @@ export function SelectField<T extends string | number = string>({
           <SelectValue placeholder={variant === "default" ? placeholder : ""} />
         )}
       </SelectTrigger>
-      <SelectContent className={cn("max-h-96", classNames?.content)}>
+      <SelectContent
+        position={position}
+        className={cn(position === "popper" && "max-h-96!", classNames?.content)}
+      >
         {options && options.length > 0 ? (
           <>
             {options.map((option) => (

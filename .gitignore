@@ -7,3 +7,4 @@ node_modules
 apps/server/src/data
 
 apps/parser/*
+apps/server/src/temp.ts

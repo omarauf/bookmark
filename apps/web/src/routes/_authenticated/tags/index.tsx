@@ -1,29 +1,38 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { TagSchemas } from "@workspace/contracts/tag";
 import { Search, Tag } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
+import { EmptyTags } from "@/modules/tags/components/empty";
+import { CreateTagDialog } from "@/modules/tags/dialogs/create";
+import { DeleteTagDialog } from "@/modules/tags/dialogs/delete";
 import { UpdateTagDialog } from "@/modules/tags/update";
 
 export const Route = createFileRoute("/_authenticated/tags/")({
   component: Tags,
-  validateSearch: TagSchemas.list.request,
-  loaderDeps: ({ search: { name } }) => ({ name }),
-  loader: async ({ context: { orpc, queryClient }, deps }) => {
-    await queryClient.ensureQueryData(orpc.tag.list.queryOptions({ input: deps }));
+  loader: async ({ context: { orpc, queryClient } }) => {
+    await queryClient.ensureQueryData(orpc.tag.list.queryOptions({ input: {} }));
     return;
   },
 });
 
 function Tags() {
-  const { name } = Route.useSearch();
-  const navigate = Route.useNavigate();
+  const [search, setSearch] = useState("");
 
-  const tagsQuery = useSuspenseQuery(orpc.tag.list.queryOptions({ input: { name } }));
+  const tagsQuery = useSuspenseQuery(orpc.tag.list.queryOptions({ input: {} }));
+  const allTags = tagsQuery.data;
+
+  const filteredTags = useMemo(() => {
+    if (!search.trim()) return allTags;
+    const term = search.trim().toLowerCase();
+    return allTags.filter((tag) => tag.name.toLowerCase().includes(term));
+  }, [allTags, search]);
+
+  const maxCount = useMemo(() => Math.max(1, ...filteredTags.map((t) => t.count)), [filteredTags]);
 
   const handleTagClick = () => {
     // navigate({ to: "/instagram", search: { tags: [tagId] } });
@@ -33,14 +42,17 @@ function Tags() {
     <Main>
       {/* Header */}
       <div className="mb-8">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="rounded-lg bg-primary/10 p-2">
-            <Tag className="h-6 w-6 text-primary" />
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-2">
+              <Tag className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="font-bold text-3xl">All Tags</h1>
+              <p className="text-muted-foreground">Organize and explore your bookmarks by tags</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-bold text-3xl">All Tags</h1>
-            <p className="text-muted-foreground">Organize and explore your bookmarks by tags</p>
-          </div>
+          <CreateTagDialog />
         </div>
       </div>
 
@@ -50,33 +62,17 @@ function Tags() {
           <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
           <Input
             placeholder="Search tags..."
-            value={name}
-            onChange={(e) => navigate({ search: { name: e.target.value } })}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
           />
-        </div>
-        <div className="flex gap-2">
-          {/* <Button
-            variant={sortBy === "count" ? "default" : "outline"}
-            size="sm"
-            onClick={() => navigate({ search: { name, sortBy: "count" } })}
-          >
-            Sort by Count
-          </Button>
-          <Button
-            variant={sortBy === "name" ? "default" : "outline"}
-            size="sm"
-            onClick={() => navigate({ search: { name, sortBy: "name" } })}
-          >
-            Sort by Name
-          </Button> */}
         </div>
       </div>
 
       {/* Tags Grid */}
-      {tagsQuery.data.length > 0 ? (
+      {filteredTags.length > 0 ? (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {tagsQuery.data.map((tag) => (
+          {filteredTags.map((tag) => (
             <Card key={tag.id} className="py-0 transition-shadow duration-200 hover:shadow-md">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -87,15 +83,16 @@ function Tags() {
                   >
                     <Badge
                       variant="secondary"
-                      className={
-                        "font-medium text-xs transition-transform duration-200 group-hover:scale-105"
-                      }
+                      className="font-medium text-xs transition-transform duration-200 group-hover:scale-105"
                       style={{ backgroundColor: tag.color }}
                     >
                       #{tag.name}
                     </Badge>
                   </div>
-                  <UpdateTagDialog tag={tag} />
+                  <div className="flex items-center">
+                    <UpdateTagDialog tag={tag} />
+                    <DeleteTagDialog tag={tag} />
+                  </div>
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                   <span className="text-muted-foreground text-sm">
@@ -105,7 +102,7 @@ function Tags() {
                     <div
                       className="h-1.5 rounded-full bg-primary transition-all duration-300"
                       style={{
-                        width: `${Math.min((tag.count / Math.max(...tagsQuery.data.map((t) => t.count))) * 100, 100)}%`,
+                        width: `${Math.min((tag.count / maxCount) * 100, 100)}%`,
                       }}
                     />
                   </div>
@@ -115,32 +112,28 @@ function Tags() {
           ))}
         </div>
       ) : (
-        <Card className="py-0">
-          <CardContent className="p-8 text-center">
-            <Tag className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="mb-2 font-semibold text-lg">No tags found</h3>
-            <p className="text-muted-foreground">
-              {name ? `No tags match ${name}` : "No tags available"}
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyTags hasFilter={search.trim().length > 0} />
       )}
 
       {/* Popular Tags Section */}
-      {name === "" && (
+      {search === "" && filteredTags.length > 0 && (
         <div className="mt-12">
           <h2 className="mb-4 font-semibold text-xl">Most Popular Tags</h2>
           <div className="flex flex-wrap gap-2">
-            {tagsQuery.data.slice(0, 10).map((tag) => (
-              <Badge
-                key={tag.id}
-                variant="outline"
-                className="cursor-pointer px-3 py-1 transition-colors duration-200 hover:bg-primary hover:text-primary-foreground"
-                onClick={() => handleTagClick()}
-              >
-                #{tag.name} ({tag.count})
-              </Badge>
-            ))}
+            {filteredTags
+              .slice()
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 10)
+              .map((tag) => (
+                <Badge
+                  key={tag.id}
+                  variant="outline"
+                  className="cursor-pointer px-3 py-1 transition-colors duration-200 hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => handleTagClick()}
+                >
+                  #{tag.name} ({tag.count})
+                </Badge>
+              ))}
           </div>
         </div>
       )}

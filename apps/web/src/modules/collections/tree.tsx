@@ -3,9 +3,10 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CreateCollectionDialog } from "./create";
-import { DeleteCollectionDialog } from "./delete";
-import { UpdateCollectionDialog } from "./update";
+import { EmptyCollections } from "./components/empty";
+import { CreateCollectionDialog } from "./dialogs/create";
+import { DeleteCollectionDialog } from "./dialogs/delete";
+import { UpdateCollectionDialog } from "./dialogs/update";
 
 type Props = {
   nodes: CollectionTree[];
@@ -13,11 +14,7 @@ type Props = {
 
 export function RenderCollectionTree({ nodes }: Props) {
   if (nodes.length === 0) {
-    return (
-      <div className="rounded-lg border border-border bg-card p-12 text-center">
-        <p className="text-muted-foreground">No collections found</p>
-      </div>
-    );
+    return <EmptyCollections />;
   }
 
   return (

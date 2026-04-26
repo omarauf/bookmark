@@ -8,21 +8,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DeleteCollectionDialog } from "./delete";
-import { UpdateCollectionDialog } from "./update";
+import { EmptyCollections } from "./components/empty";
+import { DeleteCollectionDialog } from "./dialogs/delete";
+import { UpdateCollectionDialog } from "./dialogs/update";
 
 type Props = {
   collections: Collection[];
 };
 
 export function CollectionTable({ collections }: Props) {
-  if (collections.length === 0) {
-    return (
-      <div className="rounded-lg border border-border bg-card p-12 text-center">
-        <p className="text-muted-foreground">No collections found</p>
-      </div>
-    );
-  }
+  if (collections.length === 0) return <EmptyCollections />;
 
   return (
     <div className="overflow-hidden rounded-lg border border-border">

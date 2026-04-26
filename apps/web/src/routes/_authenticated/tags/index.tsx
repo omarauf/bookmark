@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { orpc } from "@/integrations/orpc";
+import { Main } from "@/layout/main";
 import { UpdateTagDialog } from "@/modules/tags/update";
 
 export const Route = createFileRoute("/_authenticated/tags/")({
@@ -29,7 +30,7 @@ function Tags() {
   };
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-8">
+    <Main>
       {/* Header */}
       <div className="mb-8">
         <div className="mb-4 flex items-center gap-3">
@@ -143,6 +144,6 @@ function Tags() {
           </div>
         </div>
       )}
-    </div>
+    </Main>
   );
 }

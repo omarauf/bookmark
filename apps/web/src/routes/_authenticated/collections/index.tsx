@@ -5,7 +5,7 @@ import z from "zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
-import { CreateCollectionDialog } from "@/modules/collections/create";
+import { CreateCollectionDialog } from "@/modules/collections/dialogs/create";
 import { CollectionTable } from "@/modules/collections/table";
 import { RenderCollectionTree } from "@/modules/collections/tree";
 import { listToTree } from "@/modules/collections/utils";
@@ -30,24 +30,11 @@ function Collections() {
 
   return (
     <Main>
-      <div className="flex flex-col gap-6">
+      <Tabs
+        value={view}
+        onValueChange={(v) => navigate({ search: { view: v as "tree" | "table" } })}
+      >
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-semibold text-3xl text-foreground">Collections</h1>
-            <p className="mt-1 text-muted-foreground text-sm">
-              Manage advertisement collections and their hierarchy
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <CreateCollectionDialog />
-          </div>
-        </div>
-
-        <Tabs
-          value={view}
-          onValueChange={(v) => navigate({ search: { view: v as "tree" | "table" } })}
-        >
           <TabsList>
             <TabsTrigger value="tree">
               <Network className="mr-2 h-4 w-4" />
@@ -59,15 +46,17 @@ function Collections() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="tree" className="mt-6">
-            <RenderCollectionTree nodes={listToTree(collections ?? [])} />
-          </TabsContent>
+          <CreateCollectionDialog />
+        </div>
 
-          <TabsContent value="table" className="mt-6">
-            <CollectionTable collections={collections} />
-          </TabsContent>
-        </Tabs>
-      </div>
+        <TabsContent value="tree" className="mt-6">
+          <RenderCollectionTree nodes={listToTree(collections ?? [])} />
+        </TabsContent>
+
+        <TabsContent value="table" className="mt-6">
+          <CollectionTable collections={collections} />
+        </TabsContent>
+      </Tabs>
     </Main>
   );
 }

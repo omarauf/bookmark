@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CollectionSchemas } from "@workspace/contracts/collection";
-import { Edit } from "lucide-react";
+import { Plus } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -18,22 +18,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { orpc } from "@/integrations/orpc";
-import { ParentSelector } from "./form/parent-selector";
-import { CollectionPreview } from "./form/preview";
+import { ParentSelector } from "../form/parent-selector";
+import { CollectionPreview } from "../form/preview";
 
 type Props = {
-  collection: z.infer<typeof CollectionSchemas.update.request>;
+  parentId?: string;
 };
 
-export function UpdateCollectionDialog({ collection }: Props) {
+export function CreateCollectionDialog({ parentId }: Props) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const { mutateAsync } = useMutation(
-    orpc.collection.update.mutationOptions({
+    orpc.collection.create.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries({ queryKey: orpc.collection.all.key() });
-        toast.success("Collection updated successfully");
+        toast.success("Collection created successfully");
         setOpen(false);
       },
       onError(error) {
@@ -43,8 +43,17 @@ export function UpdateCollectionDialog({ collection }: Props) {
   );
 
   const form = useAppForm({
-    defaultValues: collection,
-    validators: { onSubmit: CollectionSchemas.update.request },
+    defaultValues: {
+      parentId: parentId || null,
+      slug: "",
+      nameEn: "",
+      nameAr: "",
+      descriptionEn: "",
+      descriptionAr: "",
+      color: "#000000",
+      label: "",
+    } as z.infer<typeof CollectionSchemas.create.request>,
+    validators: { onSubmit: CollectionSchemas.create.request },
     onSubmit: async ({ value }) => await mutateAsync(value),
   });
 
@@ -62,13 +71,13 @@ export function UpdateCollectionDialog({ collection }: Props) {
     <Dialog open={open} onOpenChange={onOpenHandler}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon">
-          <Edit className="h-4 w-4" />
+          <Plus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="overflow-hidden rounded-2xl border-none shadow-2xl sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Update Collection</DialogTitle>
-          <DialogDescription>Edit collection details.</DialogDescription>
+          <DialogTitle>Create Collection</DialogTitle>
+          <DialogDescription>Fill in the details to create a new collection.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={onSubmitHandler} className="flex flex-col">
@@ -109,7 +118,7 @@ export function UpdateCollectionDialog({ collection }: Props) {
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <form.AppForm>
-              <form.SubmitButton>Update</form.SubmitButton>
+              <form.SubmitButton>Create</form.SubmitButton>
             </form.AppForm>
           </DialogFooter>
         </form>

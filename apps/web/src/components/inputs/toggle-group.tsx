@@ -28,7 +28,7 @@ export function XToggleGroup<T extends Value>({ value, options, onChange }: Prop
           aria-label={option.label}
           // className="h-8 w-auto min-w-auto rounded-md"
         >
-          {/* {option.icon && <Iconify icon={option.icon} className="h-4 w-4" />} */}
+          {option.icon && <option.icon className="h-4 w-4" />}
           {option.label && <span>{option.label}</span>}
         </ToggleGroupItem>
       ))}

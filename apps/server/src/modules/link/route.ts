@@ -1,59 +1,74 @@
-import { LinkSchemas, type TreeNode } from "@workspace/contracts/link";
-import axios from "axios";
-import { and, count, desc, eq, ilike, inArray, isNotNull, isNull, like, or } from "drizzle-orm";
-import { getPreviewFromContent } from "link-preview-js";
+import { type FolderTree, LinkSchemas } from "@workspace/contracts/link";
+import {
+  and,
+  count,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  isNotNull,
+  isNull,
+  like,
+  or,
+  sql,
+} from "drizzle-orm";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
-import { s3Client } from "@/core/s3";
 import { protectedProcedure } from "@/lib/orpc";
-import { countCharacter, trimAfterXCharacter } from "@/lib/string";
-import { links } from "./schema";
+import { items } from "../item/schema";
+import { fetchLinkPreviewById, fetchLinkPreviews } from "./background";
+import { mapItemToLink } from "./mapper";
 
 export const linkRouter = {
   tree: protectedProcedure
     .input(LinkSchemas.tree.request)
     .output(LinkSchemas.tree.response)
     .handler(async ({ input }) => {
-      const { path } = input;
-      const level = path === "/" ? 1 : path ? path.split("/").length : 0;
+      const basePath = input.path?.replace(/\/+$/, "") ?? "";
 
-      const selectedLinks = await db.query.links.findMany({
+      const selectedLinks = await db.query.items.findMany({
         where: and(
-          // Equivalent to $regex: `^${path}` (starts with)
-          like(links.path, `${path}%`),
-          // Equivalent to $exists: false (assuming this means the field is null)
-          isNull(links.deletedAt),
+          like(sql`(${items.metadata} ->> 'path')`, `${basePath}%`),
+          isNull(items.deletedAt),
+          eq(items.platform, "chrome"),
+          // sql`${items.metadata} ->> 'kind' = 'link'`,
         ),
-        orderBy: [desc(links.createdAt), desc(links.id)],
+        orderBy: [desc(items.createdAt), desc(items.id)],
       });
 
-      const results = new Map<string, string>();
-      // selectedLinks
-      //   .map((l) => l.path)
-      //   .filter((link) => link.startsWith(p))
-      //   .filter((link) => countCharacter("/", link) >= level)
-      //   .map((l) => trimAfterXCharacter(l, level + 1, "/"))
-      //   .forEach((f) => results.set(f, f.replace(p, "")));
-      selectedLinks.forEach((link) => {
-        const { path } = link;
-        if (path.startsWith(path) && countCharacter("/", path) >= level) {
-          const folderPath = trimAfterXCharacter(path, level + 1, "/");
-          if (results.has(folderPath)) return;
-          results.set(folderPath, folderPath.replace(path, "").replace(/^\/+/, ""));
+      const foldersMap = new Map<string, string>();
+
+      const links = [];
+
+      for (const item of selectedLinks) {
+        if (item.metadata.kind !== "link") continue;
+        const itemPath = item.metadata?.path;
+        if (!itemPath) continue;
+
+        // direct links
+        if (itemPath === basePath) {
+          links.push(mapItemToLink(item));
+          continue;
         }
-      });
 
-      const folders = [...results].map(([path, folder]) => ({ path, folder }));
-      const _links = selectedLinks.filter((link) => link.path === path);
+        // folder extraction
+        const relative = basePath ? itemPath.replace(`${basePath}/`, "") : itemPath;
+        const parts = relative.split("/").filter(Boolean);
+
+        if (parts.length > 0) {
+          const folder = parts[0];
+          const folderPath = basePath ? `${basePath}/${folder}` : folder;
+
+          foldersMap.set(folderPath, folder);
+        }
+      }
 
       return {
-        folders,
-        links: _links.map((item) => ({
-          ...item,
-          title: item.title || undefined,
-          deletedAt: item.deletedAt || undefined,
-          preview: item.preview || undefined,
+        folders: [...foldersMap.entries()].map(([path, name]) => ({
+          path,
+          name,
         })),
+        links,
       };
     }),
 
@@ -61,21 +76,25 @@ export const linkRouter = {
     .input(LinkSchemas.list.request)
     .output(LinkSchemas.list.response)
     .handler(async ({ input }) => {
-      const { q, domain } = input;
+      const { q, domain, path } = input;
 
       const filter = and(
-        isNull(links.deletedAt),
+        isNull(items.deletedAt),
+        eq(items.platform, "chrome"),
 
         // 2. Conditional $or for 'q' (Title or URL search)
-        q ? or(ilike(links.title, `%${q}%`), ilike(links.url, `%${q}%`)) : undefined,
+        q ? or(ilike(items.caption, `%${q}%`), ilike(items.url, `%${q}%`)) : undefined,
 
         // 3. Conditional search for 'domain'
-        domain ? ilike(links.url, `%${domain}%`) : undefined,
+        domain ? ilike(items.url, `%${domain}%`) : undefined,
+
+        // 4. Conditional search for 'path'
+        path ? ilike(sql`(${items.metadata} ->> 'path')`, `${path}%`) : undefined,
       );
 
-      const dataQuery = db.select().from(links);
+      const dataQuery = db.select().from(items);
 
-      const countQuery = db.select({ count: count() }).from(links);
+      const countQuery = db.select({ count: count() }).from(items);
 
       const data = await withPagination({
         dataQuery,
@@ -83,26 +102,21 @@ export const linkRouter = {
         filters: filter,
         page: input.page,
         perPage: input.perPage,
-        orderByColumn: links.createdAt,
+        orderByColumn: items.createdAt,
         orderDirection: "desc",
       });
 
       return {
         ...data,
-        items: data.items.map((item) => ({
-          ...item,
-          title: item.title || undefined,
-          deletedAt: item.deletedAt || undefined,
-          preview: item.preview || undefined,
-        })),
+        items: data.items.map(mapItemToLink),
       };
     }),
 
   domains: protectedProcedure.output(LinkSchemas.domains.response).handler(async () => {
     const distinctRecords = await db
-      .selectDistinct({ url: links.url })
-      .from(links)
-      .where(isNotNull(links.url));
+      .selectDistinct({ url: items.url })
+      .from(items)
+      .where(and(isNotNull(items.url), eq(items.platform, "chrome"), isNull(items.deletedAt)));
 
     const domainCountMap = new Map<string, number>();
 
@@ -126,14 +140,14 @@ export const linkRouter = {
       .sort((a, b) => b.count - a.count);
   }),
 
-  folders: protectedProcedure.handler(async () => {
-    const folders: TreeNode[] = [];
+  folderTree: protectedProcedure.output(LinkSchemas.folderTree.response).handler(async () => {
+    const folders: FolderTree[] = [];
 
     // 1. Fetch distinct paths from the database using Drizzle
     const distinctRecords = await db
-      .selectDistinct({ path: links.path })
-      .from(links)
-      .where(isNotNull(links.path)); // Safeguard against null paths
+      .selectDistinct({ path: sql<string>`(${items.metadata} -> 'path')` })
+      .from(items)
+      .where(and(isNotNull(items.url), eq(items.platform, "chrome"), isNull(items.deletedAt)));
 
     // 2. Map the result to an array of strings to match your existing logic
     const paths = distinctRecords.map((record) => record.path);
@@ -148,7 +162,7 @@ export const linkRouter = {
         let existingNode = currentLevel.find((node) => node.name === part);
 
         if (!existingNode) {
-          existingNode = { path: `/${parts.slice(0, i + 1).join("/")}`, name: part };
+          existingNode = { path: `${parts.slice(0, i + 1).join("/")}`, name: part };
           currentLevel.push(existingNode);
         }
 
@@ -159,120 +173,57 @@ export const linkRouter = {
         }
       }
     }
+
     return folders;
   }),
 
-  create: protectedProcedure
-    .input(LinkSchemas.create.request)
-    .output(LinkSchemas.create.response)
-    .handler(async ({ input }) => {
-      // if (!Array.isArray(input)) {
-      //   const existingLink = await db.query.links.findFirst({
-      //     where: eq(links.url, input.url),
-      //   });
+  folderList: protectedProcedure.output(LinkSchemas.folderList.response).handler(async () => {
+    const distinctRecords = await db
+      .selectDistinct({ path: sql<string>`(${items.metadata} -> 'path')` })
+      .from(items)
+      .where(and(isNotNull(items.url), eq(items.platform, "chrome"), isNull(items.deletedAt)));
 
-      //   if (existingLink) return;
-
-      //   const [createdLink] = await db
-      //     .insert(links)
-      //     .values({
-      //       ...input,
-      //       createdAt: input.createdAt || new Date(),
-      //     })
-      //     .returning(); // .returning() gets the saved record back
-
-      //   return createdLink;
-      // }
-
-      for (const link of input) {
-        const existingLink = await db.query.links.findFirst({
-          where: and(eq(links.url, link.url), eq(links.path, link.path)),
-        });
-
-        if (existingLink) continue;
-        const domain = new URL(link.url).hostname.replace(/^www\./, "");
-        const imageUrl = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(domain)}`;
-        const response = await axios.get<ArrayBuffer>(imageUrl, { responseType: "arraybuffer" });
-
-        await s3Client.upload(`links/${domain}.png`, Buffer.from(response.data));
-
-        await db.insert(links).values({
-          ...link,
-          createdAt: link.createdAt || new Date(),
-        });
-      }
-    }),
-
-  preview: protectedProcedure
-    .input(LinkSchemas.preview.request)
-    .errors({
-      BAD_REQUEST: { message: "Failed to fetch link preview xx" },
-      NOT_FOUND: { message: "Link not found xx" },
-    })
-    .handler(async ({ input: { id }, errors }) => {
-      const link = await db.query.links.findFirst({ where: eq(links.id, id) });
-
-      if (link === undefined) throw errors.NOT_FOUND();
-
-      if (link?.preview) return link.preview;
-
-      const { url } = link;
-
-      try {
-        // const data = await getLinkPreview(url);
-        const response = await axios.get<string>(url, {
-          responseType: "text",
-          timeout: 10000,
-          maxRedirects: 5,
-          validateStatus: () => true, // don't throw on non-200 status
-        });
-
-        const preFetched = {
-          headers: { "content-type": String(response.headers["content-type"]) },
-          status: response.status,
-          url: url,
-          data: response.data,
-        };
-
-        const data = await getPreviewFromContent(preFetched);
-
-        link.preview = {
-          url: data.url,
-          mediaType: data.mediaType,
-          favicons: data.favicons,
-          title: "title" in data ? data.title || undefined : undefined,
-          charset: "charset" in data ? data.charset || undefined : undefined,
-          siteName: "siteName" in data ? data.siteName || undefined : undefined,
-          description: "description" in data ? data.description || undefined : undefined,
-          contentType: "contentType" in data ? data.contentType || undefined : undefined,
-          images: "images" in data ? data.images || undefined : undefined,
-          videos: "videos" in data ? data.videos || undefined : undefined,
-        };
-
-        await db.update(links).set({ preview: link.preview }).where(eq(links.id, id));
-
-        return link.preview;
-      } catch {
-        throw errors.BAD_REQUEST();
-      }
-    }),
+    return distinctRecords.map((record) => {
+      const fullPath = record.path;
+      const parts = fullPath.split("/").filter(Boolean);
+      const name = parts[parts.length - 1] || "";
+      return { path: fullPath, name };
+    });
+  }),
 
   move: protectedProcedure
     .input(LinkSchemas.move.request)
     .handler(async ({ input: { ids, path } }) => {
-      const items = await db.query.links.findMany({ where: inArray(links.id, ids) });
-      if (items.length === 0) throw new Error(`Links with ids ${ids.join(", ")} not found`);
-      await db.update(links).set({ path }).where(inArray(links.id, ids));
-      return items;
+      const links = await db.query.items.findMany({ where: inArray(items.id, ids) });
+      if (links.length === 0) throw new Error(`Links with ids ${ids.join(", ")} not found`);
+      await db
+        .update(items)
+        .set({ metadata: sql`jsonb_set(${items.metadata}, '{path}', to_jsonb(${path}::text))` })
+        .where(inArray(items.id, ids));
     }),
 
   delete: protectedProcedure
     .input(LinkSchemas.delete.request)
     .handler(async ({ input: { ids, hard } }) => {
       if (hard) {
-        await db.delete(links).where(inArray(links.id, ids));
+        await db.delete(items).where(inArray(items.id, ids));
       } else {
-        await db.update(links).set({ deletedAt: new Date() }).where(inArray(links.id, ids));
+        await db.update(items).set({ deletedAt: new Date() }).where(inArray(items.id, ids));
       }
+    }),
+
+  fetchPreviews: protectedProcedure
+    .input(LinkSchemas.fetchPreviews.request)
+    .handler(async ({ input }) => {
+      fetchLinkPreviews(input).catch((err) => {
+        console.error("[LinkPreview] Background fetch failed:", err);
+      });
+    }),
+
+  fetchPreview: protectedProcedure
+    .input(LinkSchemas.fetchPreview.request)
+    .output(LinkSchemas.fetchPreview.response)
+    .handler(async ({ input }) => {
+      return fetchLinkPreviewById(input.id);
     }),
 };

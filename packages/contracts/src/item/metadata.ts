@@ -1,4 +1,5 @@
 import z from "zod";
+import { ChromeLinkMetadataSchema } from "../platform/chrome";
 import { InstagramMetadataCreatorSchema } from "../platform/instagram/creator";
 import { InstagramMetadataPostSchema } from "../platform/instagram/post";
 import { TiktokMetadataCreatorSchema } from "../platform/tiktok/creator";
@@ -12,4 +13,6 @@ export const ItemMetadataSchema = z.discriminatedUnion("platform", [
   z.discriminatedUnion("kind", [TiktokMetadataCreatorSchema, TiktokMetadataPostSchema]),
 
   z.discriminatedUnion("kind", [TwitterMetadataCreatorSchema, TwitterMetadataPostSchema]),
+
+  z.discriminatedUnion("kind", [ChromeLinkMetadataSchema]),
 ]);

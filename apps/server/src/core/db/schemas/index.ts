@@ -3,7 +3,6 @@ export * from "@/modules/collection/schema";
 export * from "@/modules/download-task/schema";
 export * from "@/modules/import/schema";
 export * from "@/modules/item/schema";
-export * from "@/modules/link/schema";
 export * from "@/modules/media/schema";
 export * from "@/modules/relation/schema";
 export * from "@/modules/tag/schema";

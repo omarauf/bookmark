@@ -4,23 +4,25 @@ import {
   PaginationResultSchema,
   SortingParamsSchema,
 } from "../common/pagination-query";
-import { LinkSchema } from "./entity";
+import type { PreviewSchema } from "../platform/chrome";
+import { FolderTreeSchema, LinkSchema } from "./entity";
 
 export const LinkSchemas = {
   tree: {
     request: SortingParamsSchema.extend({
-      path: z.string().default("/").catch("/"),
-      // q: z.string().optional(),
+      path: z.string().optional().catch(undefined),
+      q: z.string().optional().catch(undefined),
+      domain: z.string().optional().catch(undefined),
     }),
     response: z.object({
-      folders: z.object({ path: z.string(), folder: z.string() }).array(),
+      folders: z.object({ path: z.string(), name: z.string() }).array(),
       links: LinkSchema.array(),
     }),
   },
 
   list: {
     request: BasePaginationQuerySchema.extend({
-      path: z.string().default("/").catch("/"),
+      path: z.string().optional().catch(undefined),
       q: z.string().optional(),
       domain: z.string().optional(),
     }),
@@ -32,59 +34,45 @@ export const LinkSchemas = {
     response: z.object({ domain: z.string(), count: z.number() }).array(),
   },
 
-  folders: {
-    request: z.any(),
-    response: z.void(),
+  folderTree: {
+    response: FolderTreeSchema.array(),
   },
 
-  create: {
-    request: LinkSchema.omit({
-      id: true,
-      updatedAt: true,
-      preview: true,
-    }).array(),
-    response: z.void(),
-  },
-
-  test: {
-    request: z.any(),
-    response: z.void(),
-  },
-
-  preview: {
-    request: z.any(),
-    response: z.void(),
-  },
-
-  favicon: {
-    request: z.any(),
-    response: z.void(),
+  folderList: {
+    response: z.object({ path: z.string(), name: z.string() }).array(),
   },
 
   move: {
-    request: z.object({
-      ids: z.string().array(),
-      path: z.string(),
-    }),
+    request: z.object({ ids: z.uuidv7().array(), path: z.string() }),
     response: z.void(),
   },
 
   delete: {
     request: z.object({
-      ids: z.string().array(),
+      ids: z.uuidv7().array(),
       hard: z.boolean().optional().default(false),
     }),
     response: z.void(),
+  },
+
+  fetchPreviews: {
+    request: z.object({
+      batchSize: z.number().int().min(1).max(500).optional().default(50),
+      headers: z.record(z.string(), z.string()).optional(),
+      domain: z.string().optional(),
+      overwrite: z.boolean().optional().default(false),
+    }),
+    response: z.void(),
+  },
+
+  fetchPreview: {
+    request: z.object({ id: z.uuidv7() }),
+    response: LinkSchema,
   },
 };
 
 export type Link = z.infer<typeof LinkSchema>;
 export type ListLink = z.infer<typeof LinkSchemas.list.request>;
-export type LinkPreview = z.infer<typeof LinkSchema.shape.preview>;
-export type CreateLink = z.infer<typeof LinkSchemas.create.request>;
-
-export interface TreeNode {
-  path: string;
-  name: string;
-  children?: TreeNode[];
-}
+export type LinkPreview = z.infer<typeof PreviewSchema>;
+export type FolderTree = z.infer<typeof FolderTreeSchema>;
+export type FolderList = z.infer<typeof LinkSchemas.folderList.response>;

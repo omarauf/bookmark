@@ -54,7 +54,7 @@ function Instagram() {
       style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
     >
       {/* TOP BAR */}
-      <Header className="rounded-sm bg-background px-4">
+      <Header className="rounded-sm bg-background">
         <CollectionBreadcrumb />
       </Header>
 

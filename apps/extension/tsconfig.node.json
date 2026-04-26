@@ -4,8 +4,12 @@
     "target": "ES2022",
     "lib": ["ES2023"],
     "moduleDetection": "force",
+    "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "allowImportingTsExtensions": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,

@@ -8,6 +8,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { DeleteLinksDialog } from "../dialogs/delete-dialog";
+import { EditLinkDialog } from "../dialogs/edit-dialog";
 import { useRefreshPreview } from "../hooks/use-link-mutations";
 
 type FolderItem = {
@@ -30,6 +31,7 @@ type Props = {
 
 export function LinkContextMenu({ item, children }: Props) {
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const refreshPreview = useRefreshPreview();
 
   return (
@@ -37,7 +39,9 @@ export function LinkContextMenu({ item, children }: Props) {
       <ContextMenu>
         <ContextMenuTrigger>{children}</ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem onClick={() => console.log("Edit", item)}>Edit</ContextMenuItem>
+          {item.type === "link" && (
+            <ContextMenuItem onClick={() => setEditOpen(true)}>Edit</ContextMenuItem>
+          )}
           {item.type === "link" && (
             <ContextMenuItem
               disabled={refreshPreview.isPending}
@@ -52,6 +56,15 @@ export function LinkContextMenu({ item, children }: Props) {
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
+
+      {item.type === "link" && (
+        <EditLinkDialog
+          link={item.link}
+          showTrigger={false}
+          open={editOpen}
+          onOpenChange={setEditOpen}
+        />
+      )}
 
       {item.type === "link" && (
         <DeleteLinksDialog

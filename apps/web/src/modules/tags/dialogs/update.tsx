@@ -58,6 +58,8 @@ export function UpdateTagDialog({ tag }: Props) {
       >
         <DialogTrigger asChild>
           <Button
+            variant="ghost"
+            size="icon"
             onClick={openHandler}
             className="rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground"
           >
@@ -71,7 +73,7 @@ export function UpdateTagDialog({ tag }: Props) {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <form.AppField name="name">{(field) => <field.Input label="Name" />}</form.AppField>
-            <form.AppField name="color">{(field) => <field.Input label="Color" />}</form.AppField>
+            <form.AppField name="color">{(field) => <field.Color label="Color" />}</form.AppField>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>

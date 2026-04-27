@@ -1,3 +1,5 @@
+import { createKeys } from "@/utils/array";
+
 type Props = {
   folderCount?: number;
   linkCount?: number;
@@ -7,13 +9,13 @@ export function LinkSkeletons({ folderCount = 10, linkCount = 13 }: Props) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3">
-        {Array.from({ length: folderCount }).map((_, i) => (
+        {createKeys(folderCount).map((i) => (
           <FolderCardSkeleton key={i} />
         ))}
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-        {Array.from({ length: linkCount }).map((_, i) => (
+        {createKeys(linkCount).map((i) => (
           <LinkCardSkeleton key={i} />
         ))}
       </div>

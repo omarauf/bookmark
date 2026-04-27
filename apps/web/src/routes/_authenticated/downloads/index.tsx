@@ -47,7 +47,6 @@ function DownloadsPage() {
   const flatItems = data.pages.flatMap((page) => page.items);
 
   return (
-    // <div className="min-h-screen bg-background/50 pb-24">
     <Main>
       {/* 
         Custom Minimal Styling Keyframes and Class overrides 

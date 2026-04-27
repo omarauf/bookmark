@@ -5,6 +5,7 @@ import { protectedProcedure } from "@/lib/orpc";
 import { collectionRepo } from "@/modules/collection/repo";
 import { collectionItems } from "@/modules/collection/schema";
 import { filterForDeepestPaths } from "@/modules/collection/utils";
+import { itemTags } from "@/modules/tag/schema";
 import { itemRepo } from "../repo";
 import { items } from "../schema";
 
@@ -12,7 +13,7 @@ export const updateItem = protectedProcedure
   .input(ItemSchemas.update.request)
   .output(ItemSchemas.update.response)
   .errors({ NOT_FOUND: { message: "Item not found" } })
-  .handler(async ({ input: { id, collectionIds, ...rest }, errors }) => {
+  .handler(async ({ input: { id, collectionIds, tagIds, ...rest }, errors }) => {
     const itemId = id;
     const item = await itemRepo.findById(itemId);
 
@@ -43,6 +44,19 @@ export const updateItem = protectedProcedure
         await tx
           .insert(collectionItems)
           .values(newCollectionIds.map((collectionId) => ({ collectionId, itemId })))
+          .onConflictDoNothing();
+      }
+
+      // Remove tags that are no longer associated
+      await tx
+        .delete(itemTags)
+        .where(and(eq(itemTags.itemId, itemId), notInArray(itemTags.tagId, tagIds)));
+
+      // Add item to new tags
+      if (tagIds.length > 0) {
+        await tx
+          .insert(itemTags)
+          .values(tagIds.map((tagId) => ({ tagId, itemId })))
           .onConflictDoNothing();
       }
     });

@@ -59,7 +59,10 @@ export const collectionItems = pgTable(
 
     createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
   },
-  (t) => [primaryKey({ columns: [t.collectionId, t.itemId] })],
+  (t) => [
+    primaryKey({ columns: [t.collectionId, t.itemId] }),
+    index("collection_items_item_id_idx").on(t.itemId),
+  ],
 );
 
 export const collectionItemsRelations = relations(collectionItems, ({ one }) => ({

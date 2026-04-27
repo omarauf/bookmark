@@ -2,10 +2,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { List, Network } from "lucide-react";
 import z from "zod";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
-import { CreateCollectionDialog } from "@/modules/collections/create";
+import { CreateCollectionDialog } from "@/modules/collections/dialogs/create";
 import { CollectionTable } from "@/modules/collections/table";
 import { RenderCollectionTree } from "@/modules/collections/tree";
 import { listToTree } from "@/modules/collections/utils";
@@ -29,25 +30,13 @@ function Collections() {
   const collections = query.data;
 
   return (
-    <Main>
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-semibold text-3xl text-foreground">Collections</h1>
-            <p className="mt-1 text-muted-foreground text-sm">
-              Manage advertisement collections and their hierarchy
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <CreateCollectionDialog />
-          </div>
-        </div>
-
-        <Tabs
-          value={view}
-          onValueChange={(v) => navigate({ search: { view: v as "tree" | "table" } })}
-        >
+    <Main className="p-0">
+      <Tabs
+        value={view}
+        className="h-full"
+        onValueChange={(v) => navigate({ search: { view: v as "tree" | "table" } })}
+      >
+        <div className="flex items-center justify-between px-6 pt-6">
           <TabsList>
             <TabsTrigger value="tree">
               <Network className="mr-2 h-4 w-4" />
@@ -59,15 +48,19 @@ function Collections() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="tree" className="mt-6">
+          <CreateCollectionDialog />
+        </div>
+
+        <ScrollArea className="min-h-0 px-6">
+          <TabsContent value="tree" className="py-6">
             <RenderCollectionTree nodes={listToTree(collections ?? [])} />
           </TabsContent>
 
-          <TabsContent value="table" className="mt-6">
+          <TabsContent value="table" className="py-6">
             <CollectionTable collections={collections} />
           </TabsContent>
-        </Tabs>
-      </div>
+        </ScrollArea>
+      </Tabs>
     </Main>
   );
 }

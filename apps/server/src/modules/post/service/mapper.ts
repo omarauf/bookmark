@@ -13,6 +13,7 @@ type RawItem = ItemEntity & {
     };
   })[];
   collections: (CollectionItemEntity & { collection: CollectionEntity })[];
+  tags: { tag: { id: string; name: string; color: string; createdAt: Date; updatedAt: Date } }[];
 };
 
 export function mapItemToPost(item: RawItem): Post {
@@ -33,15 +34,17 @@ export function mapItemToPost(item: RawItem): Post {
     taggedItems: taggedItem,
     collections: mapCollection(item.collections),
     collectionIds: item.collections.map((c) => c.collection.id),
+    tags: item.tags.map((t) => t.tag),
+    tagIds: item.tags.map((t) => t.tag.id),
   };
 }
 
-function mapItem(item: ItemEntity & { media: Media[] }) {
+function mapItem(item: ItemEntity & { media: Media[]; tags?: { tag: { id: string } }[] }) {
   return {
     ...item,
     media: normalizeMedia(item.media),
     collectionIds: [],
-    tags: [],
+    tagIds: item.tags?.map((t) => t.tag.id) ?? [],
     note: item.note ?? undefined,
     rate: item.rate ?? undefined,
     caption: item.caption ?? undefined,

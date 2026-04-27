@@ -1,13 +1,15 @@
+import { cn } from "@/lib/utils";
 import { createKeys } from "@/utils/array";
 
 type Props = {
   folderCount?: number;
   linkCount?: number;
+  className?: string;
 };
 
-export function LinkSkeletons({ folderCount = 10, linkCount = 13 }: Props) {
+export function LinkSkeletons({ folderCount = 10, linkCount = 13, className }: Props) {
   return (
-    <div className="space-y-4">
+    <div className={cn("space-y-4", className)}>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3">
         {createKeys(folderCount).map((i) => (
           <FolderCardSkeleton key={i} />

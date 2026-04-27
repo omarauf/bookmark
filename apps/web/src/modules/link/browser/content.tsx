@@ -1,15 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
-import { Globe } from "lucide-react";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
 import { orpc } from "@/integrations/orpc";
 import { FolderCard } from "../components/folder-card";
+import { EmptyFolder } from "../components/folder-empty";
 import { LinkCard } from "../components/link-card";
 import { LinkContextMenu } from "../components/link-context-menu";
 import { LinkSkeletons } from "../components/link-skeleton";
@@ -27,19 +20,7 @@ export function Content() {
   }
 
   if (folders.length === 0 && links.length === 0) {
-    return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Globe />
-          </EmptyMedia>
-          <EmptyTitle>No links here</EmptyTitle>
-          <EmptyDescription>
-            This folder is empty. Navigate to a different folder or add some bookmarks.
-          </EmptyDescription>
-        </EmptyHeader>
-      </Empty>
-    );
+    return <EmptyFolder />;
   }
 
   return (

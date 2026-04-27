@@ -1,9 +1,18 @@
+import { useSearch } from "@tanstack/react-router";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FolderTree } from "../components/folder-tree";
 import { LinkBreadcrumb } from "../components/link-breadcrumb";
 import { Content } from "./content";
+import { SearchResults } from "./search-results";
 
 export function LinkBrowserView() {
+  const q = useSearch({ from: "/_authenticated/links/", select: (s) => s.q });
+  const isSearching = !!q;
+
+  if (isSearching) {
+    return <SearchResults />;
+  }
+
   return (
     <div className="flex min-h-0">
       <FolderTree className="flex min-h-0 w-64 flex-col border-r" />

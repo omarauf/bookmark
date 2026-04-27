@@ -12,14 +12,9 @@ const searchSchema = z
   ])
   .catch({ view: "tree" });
 
-// const searchSchema = LinkSchemas.tree.request.extend({
-//   view: z.enum(["tree", "table"]).default("tree").catch("tree"),
-// });
-
 export const Route = createFileRoute("/_authenticated/links/")({
   component: LinksPage,
   validateSearch: searchSchema,
-  loaderDeps: ({ search }) => search,
 });
 
 function LinksPage() {

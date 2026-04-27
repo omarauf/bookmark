@@ -7,6 +7,17 @@ export const CollectionSchemas = {
     response: CollectionSchema.array(),
   },
 
+  options: {
+    response: z
+      .object({
+        value: z.string(),
+        label: z.string(),
+        color: ColorSchema,
+        parentId: z.string().nullable(),
+      })
+      .array(),
+  },
+
   list: {
     request: z.object({
       path: z.string().optional(),

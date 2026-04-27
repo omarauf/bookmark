@@ -1,26 +1,28 @@
 import { TagSchemas } from "@workspace/contracts/tag";
-import { eq, ilike } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
-import { tags } from "./schema";
+import { itemTags, tags } from "./schema";
 
 export const tagRouter = {
-  list: protectedProcedure
-    .input(TagSchemas.list.request)
-    .output(TagSchemas.list.response)
-    .handler(async ({ input }) => {
-      const filters = input.name ? ilike(tags.name, `%${input.name}%`) : undefined;
+  list: protectedProcedure.output(TagSchemas.list.response).handler(async () => {
+    const dataQuery = await db.select().from(tags).orderBy(tags.name);
 
-      const dataQuery = await db.select().from(tags).where(filters).orderBy(tags.name);
+    const counts = await db
+      .select({ tagId: itemTags.tagId, count: count() })
+      .from(itemTags)
+      .groupBy(itemTags.tagId);
 
-      return dataQuery.map((d) => ({ ...d, count: 0 }));
-    }),
+    const countMap = new Map(counts.map((c) => [c.tagId, c.count]));
+
+    return dataQuery.map((d) => ({ ...d, count: countMap.get(d.id) ?? 0 }));
+  }),
 
   options: protectedProcedure
     .input(TagSchemas.options.request)
     .output(TagSchemas.options.response)
     .handler(async () => {
-      return await db.select({ id: tags.id, name: tags.name, color: tags.color }).from(tags);
+      return await db.select({ value: tags.id, label: tags.name, color: tags.color }).from(tags);
     }),
 
   create: protectedProcedure
@@ -59,11 +61,21 @@ export const tagRouter = {
   delete: protectedProcedure
     .input(TagSchemas.delete.request)
     .output(TagSchemas.delete.response)
-    .errors({ NOT_FOUND: { message: "Tag not found" } })
+    .errors({
+      NOT_FOUND: { message: "Tag not found" },
+      CONFLICT: { message: "Cannot delete tag with associated items" },
+    })
     .handler(async ({ input: { id }, errors }) => {
       const [existing] = await db.select().from(tags).where(eq(tags.id, id)).limit(1);
 
       if (existing === undefined) throw errors.NOT_FOUND();
+
+      const [linked] = await db
+        .select({ count: count() })
+        .from(itemTags)
+        .where(eq(itemTags.tagId, id));
+
+      if (linked.count > 0) throw errors.CONFLICT();
 
       await db.delete(tags).where(eq(tags.id, id));
     }),

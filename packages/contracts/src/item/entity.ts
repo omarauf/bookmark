@@ -20,7 +20,7 @@ export const ItemSchema = CreateItemSchema.extend({
 
   // user input
   favorite: z.boolean().optional(),
-  tags: z.array(z.string()),
+  tagIds: z.uuid().array(),
   collectionIds: z.uuid().array(),
   note: z.string().optional(),
   rate: z.number().min(0).max(10).optional(),

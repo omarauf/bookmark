@@ -17,6 +17,20 @@ export const collectionRouter = {
       .orderBy(collections.path, collections.slug);
   }),
 
+  options: protectedProcedure.output(CollectionSchemas.options.response).handler(async () => {
+    const rows = await db
+      .select({
+        value: collections.id,
+        label: collections.label,
+        color: collections.color,
+        parentId: collections.parentId,
+      })
+      .from(collections)
+      .orderBy(collections.path, collections.slug);
+
+    return rows;
+  }),
+
   list: protectedProcedure
     .input(CollectionSchemas.list.request)
     .output(CollectionSchemas.list.response)

@@ -8,7 +8,7 @@ const nameSchema = z
 
 const colorSchema = z.string().regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/, "Invalid hex color");
 
-const TagSchema = z.object({
+export const TagSchema = z.object({
   id: z.string(),
   name: nameSchema,
   color: colorSchema,
@@ -18,15 +18,12 @@ const TagSchema = z.object({
 
 export const TagSchemas = {
   list: {
-    request: z.object({
-      name: z.string().optional(),
-    }),
     response: z.object({ ...TagSchema.shape, count: z.number() }).array(),
   },
 
   options: {
     request: z.void(),
-    response: z.object({ id: z.uuid(), name: z.string(), color: colorSchema }).array(),
+    response: z.object({ value: z.uuid(), label: z.string(), color: colorSchema }).array(),
   },
 
   create: {

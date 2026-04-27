@@ -17,6 +17,11 @@ export const PostFilterSchema = z.object({
     .transform((val) => (val && val.length > 0 ? val : undefined))
     .optional()
     .catch(undefined),
+  tagIds: z
+    .array(z.string())
+    .transform((val) => (val && val.length > 0 ? val : undefined))
+    .optional()
+    .catch(undefined),
   type: InstagramPostTypeEnum.optional().catch(undefined),
   from: dateOnly().optional().catch(undefined),
   to: dateOnly().optional().catch(undefined),

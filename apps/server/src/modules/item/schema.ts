@@ -7,6 +7,7 @@ import { baseTable } from "@/core/db/helper/entity";
 import { collectionItems } from "../collection/schema";
 import { media } from "../media/schema";
 import { relations } from "../relation/schema";
+import { itemTags } from "../tag/schema";
 
 export const items = pgTable("items", {
   ...baseTable,
@@ -33,6 +34,7 @@ export const itemsRelations = drizzleRelations(items, ({ many }) => ({
   incoming: many(relations, { relationName: "toItem" }),
   media: many(media),
   collections: many(collectionItems),
+  tags: many(itemTags),
 }));
 
 export type ItemEntity = InferSelectModel<typeof items>;

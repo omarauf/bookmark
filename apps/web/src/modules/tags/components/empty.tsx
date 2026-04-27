@@ -9,12 +9,18 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { cn } from "@/lib/utils";
 
-export function EmptyTags({ hasFilter }: { hasFilter: boolean }) {
+type Props = {
+  hasFilter: boolean;
+  className?: string;
+};
+
+export function EmptyTags({ hasFilter, className }: Props) {
   const navigate = useNavigate();
 
   return (
-    <Empty className="border border-dashed">
+    <Empty className={cn("border border-dashed", className)}>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <CircleAlert />

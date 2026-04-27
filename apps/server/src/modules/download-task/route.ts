@@ -57,6 +57,7 @@ export const downloadTaskRouter = {
         instagram: 0,
         tiktok: 0,
         twitter: 0,
+        chrome: 0,
       },
     };
 

@@ -31,9 +31,12 @@ export const linkRouter = {
           like(sql`(${items.metadata} ->> 'path')`, `${basePath}%`),
           isNull(items.deletedAt),
           eq(items.platform, "chrome"),
-          // sql`${items.metadata} ->> 'kind' = 'link'`,
         ),
         orderBy: [desc(items.createdAt), desc(items.id)],
+        with: {
+          collections: { with: { collection: { columns: { id: true, name: true, color: true } } } },
+          tags: { with: { tag: { columns: { id: true, name: true, color: true } } } },
+        },
       });
 
       const foldersMap = new Map<string, string>();
@@ -225,5 +228,30 @@ export const linkRouter = {
     .output(LinkSchemas.fetchPreview.response)
     .handler(async ({ input }) => {
       return fetchLinkPreviewById(input.id);
+    }),
+
+  get: protectedProcedure
+    .input(LinkSchemas.get.request)
+    .output(LinkSchemas.get.response)
+    .errors({ NOT_FOUND: { message: "Link not found" } })
+    .handler(async ({ input: { id }, errors }) => {
+      const item = await db.query.items.findFirst({
+        where: eq(items.id, id),
+        with: {
+          tags: { with: { tag: true } },
+          collections: true,
+        },
+      });
+
+      if (!item) throw errors.NOT_FOUND();
+
+      return {
+        id: item.id,
+        note: item.note ?? undefined,
+        rate: item.rate ?? undefined,
+        favorite: item.favorite ?? undefined,
+        tagIds: item.tags.map((t) => t.tag.id),
+        collectionIds: item.collections.map((c) => c.collectionId),
+      };
     }),
 };

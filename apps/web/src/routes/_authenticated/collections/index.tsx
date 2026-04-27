@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { List, Network } from "lucide-react";
 import z from "zod";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
@@ -29,12 +30,13 @@ function Collections() {
   const collections = query.data;
 
   return (
-    <Main>
+    <Main className="p-0">
       <Tabs
         value={view}
+        className="h-full"
         onValueChange={(v) => navigate({ search: { view: v as "tree" | "table" } })}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-6 pt-6">
           <TabsList>
             <TabsTrigger value="tree">
               <Network className="mr-2 h-4 w-4" />
@@ -49,13 +51,15 @@ function Collections() {
           <CreateCollectionDialog />
         </div>
 
-        <TabsContent value="tree" className="mt-6">
-          <RenderCollectionTree nodes={listToTree(collections ?? [])} />
-        </TabsContent>
+        <ScrollArea className="min-h-0 px-6">
+          <TabsContent value="tree" className="py-6">
+            <RenderCollectionTree nodes={listToTree(collections ?? [])} />
+          </TabsContent>
 
-        <TabsContent value="table" className="mt-6">
-          <CollectionTable collections={collections} />
-        </TabsContent>
+          <TabsContent value="table" className="py-6">
+            <CollectionTable collections={collections} />
+          </TabsContent>
+        </ScrollArea>
       </Tabs>
     </Main>
   );

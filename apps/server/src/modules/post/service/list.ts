@@ -19,12 +19,12 @@ import { db } from "@/core/db";
 import { collectionItems, collections } from "@/modules/collection/schema";
 import { items } from "@/modules/item/schema";
 import { relations } from "@/modules/relation/schema";
+import { itemTags } from "@/modules/tag/schema";
 import { mapItemToPost } from "./mapper";
 
 export async function listPosts(input: ListPost) {
   // Calculate offset based on current page
   const offset = (input.page - 1) * input.perPage;
-  console.log("Calculated offset:", offset);
 
   // 1. Extract the complex EXISTS condition to reuse it in both queries
   const filterExpression = buildItemFilter(input);
@@ -37,6 +37,7 @@ export async function listPosts(input: ListPost) {
       with: {
         outgoing: { with: { toItem: { with: { media: true } } } },
         collections: { with: { collection: true } },
+        tags: { with: { tag: true } },
         media: true,
       },
       // extras: {
@@ -70,8 +71,17 @@ export async function listPosts(input: ListPost) {
 }
 
 function buildItemFilter(filter: PostFilter) {
-  const { platform, username, type, from, to, collectionIds, collectionPath, collectionPaths } =
-    filter;
+  const {
+    platform,
+    username,
+    type,
+    from,
+    to,
+    collectionIds,
+    collectionPath,
+    collectionPaths,
+    tagIds,
+  } = filter;
   const whereClauses: SQL[] = [eq(items.kind, "post")];
 
   if (platform) {
@@ -159,6 +169,17 @@ function buildItemFilter(filter: PostFilter) {
     );
   }
 
+  if (tagIds && tagIds.length > 0) {
+    whereClauses.push(
+      exists(
+        db
+          .select()
+          .from(itemTags)
+          .where(and(eq(itemTags.itemId, items.id), inArray(itemTags.tagId, tagIds))),
+      ),
+    );
+  }
+
   if (type) {
     whereClauses.push(sql`${items.metadata}->>'type' = ${type}`);
   }
@@ -184,6 +205,7 @@ export async function getPost(id: string) {
       outgoing: { with: { toItem: { with: { media: true } } } },
       media: true,
       collections: { with: { collection: true } },
+      tags: { with: { tag: true } },
     },
     // extras: {
     //   // Add the window function as an extra column

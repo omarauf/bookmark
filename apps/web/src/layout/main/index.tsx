@@ -8,7 +8,7 @@ export function Main({ className, children, ...props }: MainProps) {
   return (
     <main
       className={cn(
-        "p-6",
+        "h-full p-6",
         // If layout is fixed, make the main container flex and grow
         // fixed && "flex grow flex-col overflow-hidden",
         // If layout is not fluid, set the max-width

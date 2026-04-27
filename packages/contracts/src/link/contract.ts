@@ -69,6 +69,18 @@ export const LinkSchemas = {
     request: z.object({ id: z.uuidv7() }),
     response: LinkSchema,
   },
+
+  get: {
+    request: z.object({ id: z.string() }),
+    response: z.object({
+      id: z.string(),
+      note: z.string().optional(),
+      rate: z.number().optional(),
+      favorite: z.boolean().optional(),
+      tagIds: z.array(z.string()),
+      collectionIds: z.array(z.string()),
+    }),
+  },
 };
 
 export type Link = z.infer<typeof LinkSchema>;

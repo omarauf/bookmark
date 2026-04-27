@@ -4,6 +4,7 @@ import { createFormHook } from "@tanstack/react-form";
 import { SubmitButton } from "./components/submit-button";
 import { fieldContext, formContext } from "./context";
 import { AutocompleteField } from "./fields/autocomplete";
+import { ButtonGroupField } from "./fields/button-groups";
 import { CheckboxField } from "./fields/checkbox";
 import { CheckboxGroupField } from "./fields/checkbox-group";
 import { ColorField } from "./fields/color";
@@ -22,6 +23,7 @@ import { SwitchField } from "./fields/switch";
 import { TabsField } from "./fields/tab";
 import { TextareaField } from "./fields/textarea";
 import { ToggleGroupField } from "./fields/toggle-group";
+import { TreeSelectorField } from "./fields/tree-selector";
 
 export const { useAppForm, withForm, withFieldGroup } = createFormHook({
   fieldComponents: {
@@ -44,6 +46,8 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
     SliderRange: SliderRangeField,
     ToggleGroup: ToggleGroupField,
     Switch: SwitchField,
+    ButtonGroup: ButtonGroupField,
+    TreeSelector: TreeSelectorField,
   },
   formComponents: {
     SubmitButton,

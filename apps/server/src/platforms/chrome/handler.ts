@@ -1,4 +1,5 @@
-import { type CreateItem, type ItemImport, ItemSchemas } from "@workspace/contracts/item";
+import type { ImportPayload } from "@workspace/contracts/import";
+import { type CreateItem, ItemSchemas } from "@workspace/contracts/item";
 import type { Platform } from "@workspace/contracts/platform";
 import type { PlatformHandler } from "@/core/platform";
 import { jsonParse } from "@/utils/object";
@@ -14,7 +15,7 @@ export class ChromeHandler implements PlatformHandler {
     return { valid: validItems.length, invalid: invalidItems.length };
   }
 
-  handler(rawData: string): ItemImport {
+  handler(rawData: string): ImportPayload {
     const bookmarkTree = jsonParse<chrome.bookmarks.BookmarkTreeNode[]>(rawData) || [];
 
     if (!bookmarkTree) {
@@ -22,24 +23,6 @@ export class ChromeHandler implements PlatformHandler {
     }
 
     const { validItems } = this.processBookmarks(bookmarkTree);
-
-    //  for (const link of input) {
-    //     const existingLink = await db.query.links.findFirst({
-    //       where: and(eq(links.url, link.url), eq(links.path, link.path)),
-    //     });
-
-    //     if (existingLink) continue;
-    //     const domain = new URL(link.url).hostname.replace(/^www\./, "");
-    //     const imageUrl = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(domain)}`;
-    //     const response = await axios.get<ArrayBuffer>(imageUrl, { responseType: "arraybuffer" });
-
-    //     await s3Client.upload(`links/${domain}.png`, Buffer.from(response.data));
-
-    //     await db.insert(links).values({
-    //       ...link,
-    //       createdAt: link.createdAt || new Date(),
-    //     });
-    //   }
 
     return {
       items: validItems,
@@ -79,12 +62,10 @@ export class ChromeHandler implements PlatformHandler {
     if (!nodes) return;
 
     for (const node of nodes) {
-      // Folder case
       if (Array.isArray(node.children)) {
         this.traverseBookmarks(node.children, [...currentPath, node.title], collectedItems);
       }
 
-      // Bookmark case
       if (node.url) {
         let path = currentPath.join("/");
         if (path.startsWith("/")) path = path.slice(1);

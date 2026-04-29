@@ -34,7 +34,9 @@ export const linkRouter = {
         ),
         orderBy: [desc(items.createdAt), desc(items.id)],
         with: {
-          collections: { with: { collection: { columns: { id: true, name: true, color: true } } } },
+          collections: {
+            with: { collection: { columns: { id: true, label: true, color: true } } },
+          },
           tags: { with: { tag: { columns: { id: true, name: true, color: true } } } },
         },
       });

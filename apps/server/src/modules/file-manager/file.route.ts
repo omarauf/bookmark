@@ -9,8 +9,8 @@ import * as service from "./service";
 
 export const fileRouter = {
   list: protectedProcedure
-    .input(FileSchemas.fileList.request)
-    .output(FileSchemas.fileList.response)
+    .input(FileSchemas.list.request)
+    .output(FileSchemas.list.response)
     .handler(async ({ input: { folderId, query, type } }) => {
       const conditions = and(
         folderId ? eq(files.folderId, folderId) : isNull(files.folderId),

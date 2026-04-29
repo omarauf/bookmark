@@ -1,4 +1,5 @@
-import { type CreateItem, type ItemImport, ItemSchemas } from "@workspace/contracts/item";
+import type { ImportPayload } from "@workspace/contracts/import";
+import { type CreateItem, ItemSchemas } from "@workspace/contracts/item";
 import type { Platform } from "@workspace/contracts/platform";
 import type { PlatformHandler } from "@/core/platform";
 import { isImdbId } from "@/modules/imdb/utils";
@@ -20,7 +21,7 @@ export class ImdbHandler implements PlatformHandler {
     return total;
   }
 
-  handler(rawData: string): ItemImport {
+  handler(rawData: string): ImportPayload {
     const imdbIds = jsonParse<string[]>(rawData) || [];
 
     if (!imdbIds.length) {
@@ -39,7 +40,7 @@ export class ImdbHandler implements PlatformHandler {
   private processBookmarks(imdbIds: string[]) {
     const collectedItems: CreateItem[] = [];
 
-    for (const imdbId of imdbIds) {
+    for (const _imdbId of imdbIds) {
       // Process each IMDb ID
     }
 

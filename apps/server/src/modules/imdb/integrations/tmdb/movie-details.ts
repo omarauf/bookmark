@@ -58,7 +58,7 @@ type Response = {
     still_path: string;
   };
   name: string;
-  next_episode_to_air: any;
+  next_episode_to_air: unknown;
   networks: Array<{
     id: number;
     logo_path: string;

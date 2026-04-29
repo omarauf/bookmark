@@ -1,8 +1,8 @@
 import { DownloadStatusValues } from "@workspace/contracts/download-task";
+import { MediaTypeValues } from "@workspace/contracts/media";
 import { PlatformValues } from "@workspace/contracts/platform";
 import type { InferSelectModel } from "drizzle-orm";
 import { doublePrecision, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { MediaTypeValues } from "node_modules/@workspace/contracts/src/media/enum";
 import { IdentifiedEntityModel } from "@/core/db/helper/entity";
 
 export const downloadTasks = pgTable("download_tasks", {

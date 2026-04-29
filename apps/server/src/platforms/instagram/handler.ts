@@ -1,4 +1,4 @@
-import { type ItemImport, ItemSchemas } from "@workspace/contracts/item";
+import { type ImportPayload, ImportPayloadSchema } from "@workspace/contracts/import";
 import type { Platform } from "@workspace/contracts/platform";
 import type { Instagram, Media } from "@workspace/contracts/raw/instagram";
 import type { PlatformHandler } from "@/core/platform";
@@ -29,7 +29,7 @@ export class InstagramHandler implements PlatformHandler {
     return { valid, invalid };
   }
 
-  handler(data: string): ItemImport {
+  handler(data: string): ImportPayload {
     const jsonData = jsonParse<Instagram[]>(data);
 
     if (jsonData === undefined) {
@@ -40,7 +40,7 @@ export class InstagramHandler implements PlatformHandler {
       .flatMap((post) => post.items)
       .flatMap((item) => item.media)
       .map((media) => this._handler(media))
-      .filter(Boolean) as ItemImport[];
+      .filter(Boolean) as ImportPayload[];
 
     return {
       items: results.flatMap((r) => r.items),
@@ -49,7 +49,7 @@ export class InstagramHandler implements PlatformHandler {
     };
   }
 
-  private _handler(post: Media): ItemImport | undefined {
+  private _handler(post: Media): ImportPayload | undefined {
     if (!post) return undefined;
 
     const taggedCreators = taggedCreatorParser(post.usertags);
@@ -73,9 +73,9 @@ export class InstagramHandler implements PlatformHandler {
     const items = [postItem, creator, ...taggedCreators.map((t) => t.creator)];
     const relations = [...taggedRelations, ...createdRelations];
 
-    const itemImport = { items, relations, downloadTasks };
+    const payload = { items, relations, downloadTasks };
 
-    const result = ItemSchemas.import.safeParse(itemImport);
+    const result = ImportPayloadSchema.safeParse(payload);
     if (!result.success) {
       console.warn("Invalid import item:", result.error);
       return undefined;

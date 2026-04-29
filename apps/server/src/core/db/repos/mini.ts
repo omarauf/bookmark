@@ -1,5 +1,6 @@
 // biome-ignore-all lint/suspicious/noExplicitAny: This file needs a lot of any to work with Drizzle ORM
 
+import type { PaginationResult } from "@workspace/contracts/common/pagination-query";
 import {
   asc,
   count,
@@ -15,7 +16,6 @@ import {
 } from "drizzle-orm";
 import type { PgColumn, PgTable, PgTableWithColumns } from "drizzle-orm/pg-core";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type { PaginationResult } from "node_modules/@workspace/contracts/src/common/pagination-query";
 import { type ReplaceNullWithUndefined, replaceNullWithUndefined } from "@/utils/object";
 
 // Generic Repository Interface

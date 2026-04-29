@@ -1,5 +1,6 @@
 import type { CreateDownloadTask } from "@workspace/contracts/download-task";
-import { type CreateItem, type ItemImport, ItemSchemas } from "@workspace/contracts/item";
+import { type ImportPayload, ImportPayloadSchema } from "@workspace/contracts/import";
+import type { CreateItem } from "@workspace/contracts/item";
 import type { Platform } from "@workspace/contracts/platform";
 import type { TweetResults, Twitter } from "@workspace/contracts/raw/twitter";
 import type { CreateRelation } from "@workspace/contracts/relation";
@@ -36,7 +37,7 @@ export class TwitterHandler implements PlatformHandler {
     return { valid, invalid };
   }
 
-  handler(data: string): ItemImport {
+  handler(data: string): ImportPayload {
     const jsonData = jsonParse<Twitter[]>(data);
 
     if (jsonData === undefined) {
@@ -48,7 +49,7 @@ export class TwitterHandler implements PlatformHandler {
       .flatMap((item) => item.entries)
       .map((entry) => entry.content.itemContent?.tweet_results)
       .map((tweet) => this._handler(tweet))
-      .filter(Boolean) as ItemImport[];
+      .filter(Boolean) as ImportPayload[];
 
     return {
       items: results.flatMap((r) => r.items),
@@ -57,7 +58,7 @@ export class TwitterHandler implements PlatformHandler {
     };
   }
 
-  private _handler(data: TweetResults | undefined): ItemImport | undefined {
+  private _handler(data: TweetResults | undefined): ImportPayload | undefined {
     if (!data) return undefined;
 
     const tweet = postParser(getTweet(data));
@@ -79,9 +80,9 @@ export class TwitterHandler implements PlatformHandler {
       downloadTasks.push(...quotedTweet.media, quotedCreator.media);
     }
 
-    const itemImportItemImport = { items, relations, downloadTasks };
+    const payload = { items, relations, downloadTasks };
 
-    const result = ItemSchemas.import.safeParse(itemImportItemImport);
+    const result = ImportPayloadSchema.safeParse(payload);
     if (!result.success) {
       console.warn("Invalid import item:", result.error);
       return undefined;

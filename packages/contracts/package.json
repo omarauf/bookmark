@@ -18,7 +18,8 @@
     "./raw/*": "./src/raw/*.ts",
     "./profile": "./src/profile/index.ts",
     "./post": "./src/post/index.ts",
-    "./file-manager": "./src/file-manager/index.ts"
+    "./file-manager": "./src/file-manager/index.ts",
+    "./imdb": "./src/platform/imdb/index.ts"
   },
   "peerDependencies": {
     "typescript": "^5"

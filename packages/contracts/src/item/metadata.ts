@@ -1,5 +1,7 @@
 import z from "zod";
 import { ChromeLinkMetadataSchema } from "../platform/chrome";
+import { MovieMetadataSchema } from "../platform/imdb/movie";
+import { TvMetadataSchema } from "../platform/imdb/tv";
 import { InstagramMetadataCreatorSchema } from "../platform/instagram/creator";
 import { InstagramMetadataPostSchema } from "../platform/instagram/post";
 import { TiktokMetadataCreatorSchema } from "../platform/tiktok/creator";
@@ -15,4 +17,6 @@ export const ItemMetadataSchema = z.discriminatedUnion("platform", [
   z.discriminatedUnion("kind", [TwitterMetadataCreatorSchema, TwitterMetadataPostSchema]),
 
   z.discriminatedUnion("kind", [ChromeLinkMetadataSchema]),
+
+  z.discriminatedUnion("kind", [MovieMetadataSchema, TvMetadataSchema]),
 ]);

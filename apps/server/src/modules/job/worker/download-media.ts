@@ -7,7 +7,7 @@ import { s3Client } from "@/core/s3";
 import { items } from "@/modules/item/schema";
 import { media } from "@/modules/media/schema";
 import { getFileStreamAndMeta } from "@/utils/download";
-import { log } from "../service";
+import { log, updateJobProgress } from "../service";
 
 export async function processDownloadMedia(job: Job) {
   const parseResult = DownloadMediaPayloadSchema.safeParse(job.payload);
@@ -40,7 +40,10 @@ export async function processDownloadMedia(job: Job) {
   const { stream, size, mime } = await getFileStreamAndMeta(url);
   await log(job.id, "info", "Download started", { size, mime });
 
-  const uploadResult = await s3Client.stream(stream, key);
+  const uploadResult = await s3Client.stream(stream, key, (loaded, total) => {
+    const percentage = Math.round((loaded / total) * 100);
+    void updateJobProgress(job.id, percentage);
+  });
   if (!uploadResult) {
     throw new Error("S3 upload failed");
   }

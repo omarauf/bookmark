@@ -8,7 +8,7 @@ import { importRepo } from "@/modules/import/repo";
 import { itemOrchestrator } from "@/modules/item/orchestrator";
 import { importItems } from "@/modules/item/service/import";
 import { jobGroups, jobs } from "../schema";
-import { log } from "../service";
+import { log, updateJobProgress } from "../service";
 
 export async function processImportProcess(job: Job) {
   const parseResult = ImportProcessPayloadSchema.safeParse(job.payload);
@@ -27,19 +27,32 @@ export async function processImportProcess(job: Job) {
     throw new Error(`Import item not found for id: ${importId}`);
   }
 
+  await updateJobProgress(job.id, 10);
+
   const fileContent = await s3Client.readText(`${importItem.platform}/json/${importItem.filename}`);
   if (!fileContent) {
     throw new Error(`File not found in S3: ${importItem.platform}/json/${importItem.filename}`);
   }
 
+  await updateJobProgress(job.id, 20);
+
   await log(job.id, "info", "Processing import file");
   const entities = itemOrchestrator.process(importItem.platform, fileContent);
-  await importItems(entities.items, entities.relations);
+
+  await updateJobProgress(job.id, 30);
+
+  await importItems(entities.items, entities.relations, (p) => {
+    const overall = 30 + Math.round(p * 0.6);
+    void updateJobProgress(job.id, overall);
+  });
+
   await log(job.id, "info", "Items imported", { count: entities.items.length });
 
   for (const task of entities.invalidItems) {
     await log(job.id, "warn", "Invalid item skipped", task);
   }
+
+  await updateJobProgress(job.id, 92);
 
   const [group] = await db
     .insert(jobGroups)
@@ -50,6 +63,8 @@ export async function processImportProcess(job: Job) {
     await createDownloadMediaJob(group.id, task);
   }
 
+  await updateJobProgress(job.id, 95);
+
   await log(job.id, "info", "Download media jobs created", {
     count: entities.downloadTasks.length,
   });
@@ -57,6 +72,8 @@ export async function processImportProcess(job: Job) {
   if (importItem.importedAt === null) {
     await importRepo.update(importId, { importedAt: new Date() });
   }
+
+  await updateJobProgress(job.id, 100);
 }
 
 export async function createDownloadMediaJob(groupId: string, payload: DownloadMediaPayload) {

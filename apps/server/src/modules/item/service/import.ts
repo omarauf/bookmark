@@ -194,28 +194,38 @@ function filterNewRelations(
  * - Skips unresolved relations and existing relation rows.
  * - Uses a transaction to ensure atomic inserts.
  */
-export async function importItems(createdItems: CreateItem[], createdRelations: CreateRelation[]) {
+export async function importItems(
+  createdItems: CreateItem[],
+  createdRelations: CreateRelation[],
+  onProgress?: (progress: number) => void,
+) {
   // Step 1: Deduplicate input data
   const uniqueItems = deduplicateItems(createdItems);
   const uniqueRelations = deduplicateRelations(createdRelations);
+  onProgress?.(10);
 
   // Step 2: Query existing items and filter new ones
   const existingItems = await getExistingItems(uniqueItems.map((item) => item.externalId));
   const newItems = filterNewItems(uniqueItems, existingItems);
+  onProgress?.(30);
 
   // Step 3: Prepare new items for insertion
   const preparedNewItems = prepareItemsForInsert(newItems);
+  onProgress?.(50);
 
   // Step 4: Build external ID to internal UUID mapping
   const externalIdMap = buildExternalIdMap(existingItems, preparedNewItems);
+  onProgress?.(60);
 
   // Step 5: Map relations to internal IDs and deduplicate
   const mappedRelations = mapRelationsToInternalIds(uniqueRelations, externalIdMap);
   const uniqueMappedRelations = deduplicateMappedRelations(mappedRelations);
+  onProgress?.(70);
 
   // Step 6: Query existing relations and filter new ones
   const existingRelations = await getExistingRelations(uniqueMappedRelations);
   const relationsToInsert = filterNewRelations(uniqueMappedRelations, existingRelations);
+  onProgress?.(85);
 
   // Step 7: Insert in transaction
   await db.transaction(async (tx) => {
@@ -227,4 +237,5 @@ export async function importItems(createdItems: CreateItem[], createdRelations: 
       await tx.insert(relations).values(relationsToInsert);
     }
   });
+  onProgress?.(100);
 }

@@ -118,7 +118,11 @@ async function exists(key: string): Promise<boolean> {
   }
 }
 
-async function stream(stream: Readable, key: string) {
+async function stream(
+  stream: Readable,
+  key: string,
+  onProgress?: (loaded: number, total: number) => void,
+) {
   try {
     // 1. Pipe the stream directly to S3
     const parallelUploads3 = new Upload({
@@ -135,9 +139,13 @@ async function stream(stream: Readable, key: string) {
     });
 
     // Optional: Track progress
-    // parallelUploads3.on("httpUploadProgress", (progress) => {
-    //   console.log(`Uploaded ${progress.loaded} of ${progress.total || "unknown"} bytes`);
-    // });
+    if (onProgress) {
+      parallelUploads3.on("httpUploadProgress", (progress) => {
+        if (progress.loaded !== undefined && progress.total !== undefined) {
+          onProgress(progress.loaded, progress.total);
+        }
+      });
+    }
 
     // 2. Wait for the upload to finish
     await parallelUploads3.done();

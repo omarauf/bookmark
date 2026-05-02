@@ -1,10 +1,10 @@
 import type { Platform } from "@workspace/contracts/platform";
 import type { PlatformHandler } from "@/core/platform";
-import { ChromeHandler } from "@/platforms/chrome/handler";
-import { ImdbHandler } from "@/platforms/imdb/handler";
-import { InstagramHandler } from "@/platforms/instagram/handler";
-import { TiktokHandler } from "@/platforms/tiktok/handler";
-import { TwitterHandler } from "@/platforms/twitter/handler";
+import { ChromeHandler } from "@/modules/item/platforms/chrome/handler";
+import { ImdbHandler } from "@/modules/item/platforms/imdb/handler";
+import { InstagramHandler } from "@/modules/item/platforms/instagram/handler";
+import { TiktokHandler } from "@/modules/item/platforms/tiktok/handler";
+import { TwitterHandler } from "@/modules/item/platforms/twitter/handler";
 
 const handlers: Record<Platform, PlatformHandler> = {
   chrome: new ChromeHandler(),

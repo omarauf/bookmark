@@ -19,7 +19,7 @@ export class TiktokHandler implements PlatformHandler {
 
     for (const post of jsonData) {
       for (const item of post.itemList ?? []) {
-        const parsed = this._handler(item);
+        const parsed = this._parse(item);
         if (parsed) valid++;
         else invalid++;
       }
@@ -28,7 +28,7 @@ export class TiktokHandler implements PlatformHandler {
     return { valid, invalid };
   }
 
-  handler(data: string): ImportPayload {
+  parse(data: string): ImportPayload {
     const jsonData = jsonParse<Tiktok[]>(data);
 
     if (jsonData === undefined) {
@@ -37,7 +37,7 @@ export class TiktokHandler implements PlatformHandler {
 
     const results = jsonData
       .flatMap((post) => post.itemList ?? [])
-      .map((post) => this._handler(post))
+      .map((post) => this._parse(post))
       .filter(Boolean) as ImportPayload[];
 
     return {
@@ -48,7 +48,7 @@ export class TiktokHandler implements PlatformHandler {
     };
   }
 
-  private _handler(post: ItemList): ImportPayload | undefined {
+  private _parse(post: ItemList): ImportPayload | undefined {
     if (!post) return { items: [], invalidItems: [post], relations: [], downloadTasks: [] };
 
     const creator = creatorParser(post.author);

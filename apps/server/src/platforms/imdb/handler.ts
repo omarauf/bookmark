@@ -21,7 +21,7 @@ export class ImdbHandler implements PlatformHandler {
     return total;
   }
 
-  handler(rawData: string): ImportPayload {
+  parse(rawData: string): ImportPayload {
     const imdbIds = jsonParse<string[]>(rawData) || [];
 
     if (!imdbIds.length) {

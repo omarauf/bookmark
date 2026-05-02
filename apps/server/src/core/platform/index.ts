@@ -6,5 +6,5 @@ export interface PlatformHandler {
 
   validate(data: string): { valid: number; invalid: number };
 
-  handler(data: string): ImportPayload;
+  parse(data: string): ImportPayload;
 }

@@ -3,7 +3,7 @@ import { ImportUploadPayloadSchema, type Job } from "@workspace/contracts/job";
 import z from "zod";
 import { s3Client } from "@/core/s3";
 import { importRepo } from "@/modules/import/repo";
-import { itemOrchestrator } from "@/modules/item/orchestrator";
+import { validateImport } from "@/modules/item/platform-registry";
 import { log, updateJobProgress } from "../service";
 
 export async function processImportUpload(job: Job) {
@@ -43,7 +43,7 @@ export async function processImportUpload(job: Job) {
   // 3. Validate content
   const data = buffer.toString("utf-8");
   await log(job.id, "info", "Validating content");
-  const parsedData = itemOrchestrator.validate(platform, data);
+  const parsedData = validateImport(platform, data);
   await log(job.id, "info", "Validation complete", parsedData);
 
   // 4. Create import record

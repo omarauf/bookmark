@@ -20,7 +20,7 @@ export class InstagramHandler implements PlatformHandler {
 
     for (const post of jsonData) {
       for (const item of post.items ?? []) {
-        const parsed = this._handler(item.media);
+        const parsed = this._parse(item.media);
         if (parsed) valid++;
         else invalid++;
       }
@@ -29,7 +29,7 @@ export class InstagramHandler implements PlatformHandler {
     return { valid, invalid };
   }
 
-  handler(data: string): ImportPayload {
+  parse(data: string): ImportPayload {
     const jsonData = jsonParse<Instagram[]>(data);
 
     if (jsonData === undefined) {
@@ -39,7 +39,7 @@ export class InstagramHandler implements PlatformHandler {
     const results = jsonData
       .flatMap((post) => post.items)
       .flatMap((item) => item.media)
-      .map((media) => this._handler(media))
+      .map((media) => this._parse(media))
       .filter(Boolean) as ImportPayload[];
 
     return {
@@ -50,7 +50,7 @@ export class InstagramHandler implements PlatformHandler {
     };
   }
 
-  private _handler(post: Media): ImportPayload | undefined {
+  private _parse(post: Media): ImportPayload | undefined {
     if (!post) return { items: [], invalidItems: [post], relations: [], downloadTasks: [] };
 
     const taggedCreators = taggedCreatorParser(post.usertags);

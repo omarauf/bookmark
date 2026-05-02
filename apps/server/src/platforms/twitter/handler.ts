@@ -27,7 +27,7 @@ export class TwitterHandler implements PlatformHandler {
             invalid++;
             continue;
           }
-          const parsed = this._handler(entry.content.itemContent?.tweet_results);
+          const parsed = this._parse(entry.content.itemContent?.tweet_results);
           if (parsed) valid++;
           else invalid++;
         }
@@ -37,7 +37,7 @@ export class TwitterHandler implements PlatformHandler {
     return { valid, invalid };
   }
 
-  handler(data: string): ImportPayload {
+  parse(data: string): ImportPayload {
     const jsonData = jsonParse<Twitter[]>(data);
 
     if (jsonData === undefined) {
@@ -48,7 +48,7 @@ export class TwitterHandler implements PlatformHandler {
       .flatMap((post) => post.data.bookmark_timeline_v2.timeline.instructions)
       .flatMap((item) => item.entries)
       .map((entry) => entry.content.itemContent?.tweet_results)
-      .map((tweet) => this._handler(tweet))
+      .map((tweet) => this._parse(tweet))
       .filter(Boolean) as ImportPayload[];
 
     return {
@@ -59,7 +59,7 @@ export class TwitterHandler implements PlatformHandler {
     };
   }
 
-  private _handler(data: TweetResults | undefined): ImportPayload | undefined {
+  private _parse(data: TweetResults | undefined): ImportPayload | undefined {
     if (!data) return { items: [], invalidItems: [data], relations: [], downloadTasks: [] };
 
     const tweet = postParser(getTweet(data));

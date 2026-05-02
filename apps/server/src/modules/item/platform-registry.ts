@@ -1,0 +1,29 @@
+import type { Platform } from "@workspace/contracts/platform";
+import type { PlatformHandler } from "@/core/platform";
+import { ChromeHandler } from "@/platforms/chrome/handler";
+import { ImdbHandler } from "@/platforms/imdb/handler";
+import { InstagramHandler } from "@/platforms/instagram/handler";
+import { TiktokHandler } from "@/platforms/tiktok/handler";
+import { TwitterHandler } from "@/platforms/twitter/handler";
+
+const handlers: Record<Platform, PlatformHandler> = {
+  chrome: new ChromeHandler(),
+  imdb: new ImdbHandler(),
+  instagram: new InstagramHandler(),
+  tiktok: new TiktokHandler(),
+  twitter: new TwitterHandler(),
+};
+
+function getHandler(platform: Platform): PlatformHandler {
+  const handler = handlers[platform];
+  if (!handler) throw new Error(`Unsupported platform: ${platform}`);
+  return handler;
+}
+
+export function validateImport(platform: Platform, data: string) {
+  return getHandler(platform).validate(data);
+}
+
+export function parseImport(platform: Platform, data: string) {
+  return getHandler(platform).parse(data);
+}

@@ -15,7 +15,7 @@ export class ChromeHandler implements PlatformHandler {
     return { valid: validItems.length, invalid: invalidItems.length };
   }
 
-  handler(rawData: string): ImportPayload {
+  parse(rawData: string): ImportPayload {
     const bookmarkTree = jsonParse<chrome.bookmarks.BookmarkTreeNode[]>(rawData) || [];
 
     if (!bookmarkTree) {

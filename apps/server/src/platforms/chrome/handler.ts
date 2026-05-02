@@ -19,13 +19,14 @@ export class ChromeHandler implements PlatformHandler {
     const bookmarkTree = jsonParse<chrome.bookmarks.BookmarkTreeNode[]>(rawData) || [];
 
     if (!bookmarkTree) {
-      return { items: [], relations: [], downloadTasks: [] };
+      return { items: [], invalidItems: [], relations: [], downloadTasks: [] };
     }
 
-    const { validItems } = this.processBookmarks(bookmarkTree);
+    const { validItems, invalidItems } = this.processBookmarks(bookmarkTree);
 
     return {
       items: validItems,
+      invalidItems,
       relations: [],
       downloadTasks: [],
     };

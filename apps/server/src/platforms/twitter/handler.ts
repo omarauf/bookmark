@@ -1,6 +1,6 @@
-import type { CreateDownloadTask } from "@workspace/contracts/download-task";
 import { type ImportPayload, ImportPayloadSchema } from "@workspace/contracts/import";
 import type { CreateItem } from "@workspace/contracts/item";
+import type { DownloadMediaPayload } from "@workspace/contracts/job";
 import type { Platform } from "@workspace/contracts/platform";
 import type { TweetResults, Twitter } from "@workspace/contracts/raw/twitter";
 import type { CreateRelation } from "@workspace/contracts/relation";
@@ -41,7 +41,7 @@ export class TwitterHandler implements PlatformHandler {
     const jsonData = jsonParse<Twitter[]>(data);
 
     if (jsonData === undefined) {
-      return { items: [], relations: [], downloadTasks: [] };
+      return { items: [], invalidItems: [], relations: [], downloadTasks: [] };
     }
 
     const results = jsonData
@@ -53,13 +53,14 @@ export class TwitterHandler implements PlatformHandler {
 
     return {
       items: results.flatMap((r) => r.items),
+      invalidItems: results.flatMap((r) => r.invalidItems),
       relations: results.flatMap((r) => r.relations),
       downloadTasks: results.flatMap((r) => r.downloadTasks),
     };
   }
 
   private _handler(data: TweetResults | undefined): ImportPayload | undefined {
-    if (!data) return undefined;
+    if (!data) return { items: [], invalidItems: [data], relations: [], downloadTasks: [] };
 
     const tweet = postParser(getTweet(data));
     const creator = creatorParser(getCreator(data));
@@ -67,7 +68,7 @@ export class TwitterHandler implements PlatformHandler {
 
     const items: CreateItem[] = [tweet.item, creator.item];
     const relations: CreateRelation[] = [...createdRelations];
-    const downloadTasks: CreateDownloadTask[] = [...tweet.media, creator.media];
+    const downloadTasks: DownloadMediaPayload[] = [...tweet.media, creator.media];
 
     const quotedItem = this.getQuotedTweet(data);
     if (quotedItem) {
@@ -80,12 +81,11 @@ export class TwitterHandler implements PlatformHandler {
       downloadTasks.push(...quotedTweet.media, quotedCreator.media);
     }
 
-    const payload = { items, relations, downloadTasks };
+    const payload = { items, invalidItems: [], relations, downloadTasks };
 
     const result = ImportPayloadSchema.safeParse(payload);
     if (!result.success) {
-      console.warn("Invalid import item:", result.error);
-      return undefined;
+      return { items: [], invalidItems: [data], relations: [], downloadTasks: [] };
     }
 
     return result.data;

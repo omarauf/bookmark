@@ -45,7 +45,7 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
       const result = runImportMutation.mutateAsync({ id });
       toast.promise(result, {
         loading: "Importing...",
-        success: ({ valid }) => `Successfully imported ${fNumber(valid)} posts.`,
+        success: ({ jobId }) => `Import started (Job ID: ${jobId})`,
         error: "Error importing posts",
       });
     },

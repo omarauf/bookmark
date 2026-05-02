@@ -1,6 +1,6 @@
 import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { DownloadTaskSchemas } from "@workspace/contracts/download-task";
+import { JobSchemas } from "@workspace/contracts/job";
 import { Loader } from "lucide-react";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
@@ -8,20 +8,22 @@ import { StatsOverview } from "@/modules/download-task/stats-overview";
 import { DownloadTaskItem } from "@/modules/download-task/task-item";
 
 export const Route = createFileRoute("/_authenticated/downloads/")({
-  validateSearch: DownloadTaskSchemas.list.request,
+  validateSearch: JobSchemas.list.request,
   loaderDeps: ({ search }) => search,
   loader: async ({ context, deps }) => {
-    // Prefetch infinite query for tasks list
+    const input = { ...deps, type: "download_media" as const };
+
     await context.queryClient.prefetchInfiniteQuery(
-      orpc.downloadTask.list.infiniteOptions({
+      orpc.job.list.infiniteOptions({
         initialPageParam: 1,
-        input: (searchParams) => ({ ...deps, page: searchParams, limit: 30 }),
+        input: (page) => ({ ...input, page, perPage: 30 }),
         getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
       }),
     );
 
-    // Ensure stats are eagerly cached
-    await context.queryClient.ensureQueryData(orpc.downloadTask.stats.queryOptions());
+    await context.queryClient.ensureQueryData(
+      orpc.job.stats.queryOptions({ input: { type: "download_media" } }),
+    );
   },
   pendingComponent: () => (
     <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
@@ -33,13 +35,16 @@ export const Route = createFileRoute("/_authenticated/downloads/")({
 
 function DownloadsPage() {
   const search = Route.useSearch();
+  const input = { ...search, type: "download_media" as const };
 
-  const { data: stats } = useSuspenseQuery(orpc.downloadTask.stats.queryOptions());
+  const { data: stats } = useSuspenseQuery(
+    orpc.job.stats.queryOptions({ input: { type: "download_media" } }),
+  );
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery(
-    orpc.downloadTask.list.infiniteOptions({
+    orpc.job.list.infiniteOptions({
       initialPageParam: 1,
-      input: (searchParams) => ({ ...search, page: searchParams, limit: 30 }),
+      input: (page) => ({ ...input, page, perPage: 30 }),
       getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
     }),
   );
@@ -48,9 +53,6 @@ function DownloadsPage() {
 
   return (
     <Main>
-      {/* 
-        Custom Minimal Styling Keyframes and Class overrides 
-      */}
       <style>{`
         @keyframes fade-slide-up {
           0% { opacity: 0; transform: translateY(16px); }
@@ -62,7 +64,6 @@ function DownloadsPage() {
         .animate-stagger-4 { animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both; }
       `}</style>
 
-      {/* Header Header */}
       <header className="mb-8 animate-stagger-1">
         <h1 className="mb-4 text-4xl text-foreground md:text-5xl">Download Tasks.</h1>
         <p className="max-w-lg font-mono text-muted-foreground text-sm leading-relaxed">
@@ -70,12 +71,10 @@ function DownloadsPage() {
         </p>
       </header>
 
-      {/* Stats Section */}
       <div className="mb-10 animate-stagger-2">
         <StatsOverview stats={stats} />
       </div>
 
-      {/* Filter/Tabs Minimalist */}
       <div className="mb-6 flex animate-stagger-3 items-center gap-6 border-muted/30 border-b pb-4">
         <Link
           to="/downloads"
@@ -109,7 +108,6 @@ function DownloadsPage() {
         </Link>
       </div>
 
-      {/* Task List */}
       <div className="animate-stagger-4 space-y-4">
         <div className="grid grid-cols-12 gap-4 px-2 font-mono text-muted-foreground/60 text-xs tracking-wider">
           <div className="col-span-5 md:col-span-6">RESOURCE</div>

@@ -1,5 +1,5 @@
-import type { CreateDownloadTask } from "@workspace/contracts/download-task";
 import type { CreateItem } from "@workspace/contracts/item";
+import type { DownloadMediaPayload } from "@workspace/contracts/job";
 import type {
   CunningResult,
   FluffyTweet,
@@ -10,7 +10,7 @@ import { mediaParser } from "./media";
 
 type Result = {
   item: CreateItem;
-  media: CreateDownloadTask[];
+  media: DownloadMediaPayload[];
 };
 
 export function postParser(tweet: TweetResultsResult | FluffyTweet | CunningResult): Result {

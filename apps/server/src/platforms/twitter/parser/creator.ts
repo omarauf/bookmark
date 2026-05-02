@@ -1,5 +1,5 @@
-import type { CreateDownloadTask } from "@workspace/contracts/download-task";
 import type { CreateItem } from "@workspace/contracts/item";
+import type { DownloadMediaPayload } from "@workspace/contracts/job";
 import type {
   FluffyUserResults,
   PurpleUserResults,
@@ -9,7 +9,7 @@ import { getUsername } from "./common";
 
 type Result = {
   item: CreateItem;
-  media: CreateDownloadTask;
+  media: DownloadMediaPayload;
 };
 
 export function creatorParser(

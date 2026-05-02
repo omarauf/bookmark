@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { type Platform, PlatformValues } from "@workspace/contracts/platform";
 import { parseImportFilename } from "@workspace/core/import";
 import { AlertCircle, Check, FileJson, Upload } from "lucide-react";
@@ -34,8 +35,20 @@ export function UploadButton() {
 
   const uploadMutation = useMutation(
     orpc.import.create.mutationOptions({
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: orpc.import.list.key() });
+        if (data?.jobId) {
+          toast.success(
+            <div className="flex flex-col gap-1">
+              <span>Upload queued for processing.</span>
+              <Link to="/jobs" className="text-primary text-xs underline">
+                View job {data.jobId.slice(0, 8)}…
+              </Link>
+            </div>,
+          );
+        } else {
+          toast.success("Import updated.");
+        }
       },
       onError: (error) => {
         toast.error(error.message);
@@ -132,8 +145,8 @@ export function UploadButton() {
       const result = uploadMutation.mutateAsync({ file });
 
       toast.promise(result, {
-        loading: "Loading...",
-        success: () => "File uploaded successfully!",
+        loading: "Uploading...",
+        success: "File uploaded and queued for processing.",
         error: "Error uploading file",
       });
 

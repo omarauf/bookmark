@@ -33,7 +33,7 @@ export class InstagramHandler implements PlatformHandler {
     const jsonData = jsonParse<Instagram[]>(data);
 
     if (jsonData === undefined) {
-      return { items: [], relations: [], downloadTasks: [] };
+      return { items: [], invalidItems: [], relations: [], downloadTasks: [] };
     }
 
     const results = jsonData
@@ -44,13 +44,14 @@ export class InstagramHandler implements PlatformHandler {
 
     return {
       items: results.flatMap((r) => r.items),
+      invalidItems: results.flatMap((r) => r.invalidItems),
       relations: results.flatMap((r) => r.relations),
       downloadTasks: results.flatMap((r) => r.downloadTasks),
     };
   }
 
   private _handler(post: Media): ImportPayload | undefined {
-    if (!post) return undefined;
+    if (!post) return { items: [], invalidItems: [post], relations: [], downloadTasks: [] };
 
     const taggedCreators = taggedCreatorParser(post.usertags);
     const creator = creatorParser(post.owner);
@@ -73,12 +74,11 @@ export class InstagramHandler implements PlatformHandler {
     const items = [postItem, creator, ...taggedCreators.map((t) => t.creator)];
     const relations = [...taggedRelations, ...createdRelations];
 
-    const payload = { items, relations, downloadTasks };
+    const payload = { items, invalidItems: [], relations, downloadTasks };
 
     const result = ImportPayloadSchema.safeParse(payload);
     if (!result.success) {
-      console.warn("Invalid import item:", result.error);
-      return undefined;
+      return { items: [], invalidItems: [post], relations: [], downloadTasks: [] };
     }
 
     return result.data;

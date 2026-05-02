@@ -1,14 +1,14 @@
-import type { CreateDownloadTask } from "@workspace/contracts/download-task";
+import type { DownloadMediaPayload } from "@workspace/contracts/job";
 import type { BitrateInfo, ItemList } from "@workspace/contracts/raw/tiktok";
 
-export function toDownloadTasks(post: ItemList): CreateDownloadTask[] {
+export function toDownloadTasks(post: ItemList): DownloadMediaPayload[] {
   return [...downloadProfile(post), ...downloadMedia(post)];
 }
 
-function downloadProfile(post: ItemList): CreateDownloadTask[] {
+function downloadProfile(post: ItemList): DownloadMediaPayload[] {
   const profilePicture = post.author.avatarLarger;
 
-  const mediaDownloadTasks: CreateDownloadTask[] = [];
+  const mediaDownloadTasks: DownloadMediaPayload[] = [];
 
   mediaDownloadTasks.push({
     externalId: post.author.id,
@@ -21,8 +21,8 @@ function downloadProfile(post: ItemList): CreateDownloadTask[] {
   return mediaDownloadTasks;
 }
 
-function downloadMedia(post: ItemList): CreateDownloadTask[] {
-  const mediaDownloadTasks: CreateDownloadTask[] = [];
+function downloadMedia(post: ItemList): DownloadMediaPayload[] {
+  const mediaDownloadTasks: DownloadMediaPayload[] = [];
 
   const commonProps = {
     platform: "tiktok",

@@ -22,6 +22,7 @@ import { Route as AuthenticatedTwitterIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedTiktokIndexRouteImport } from './routes/_authenticated/tiktok/index'
 import { Route as AuthenticatedTagsIndexRouteImport } from './routes/_authenticated/tags/index'
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
+import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
 import { Route as AuthenticatedInstagramIndexRouteImport } from './routes/_authenticated/instagram/index'
 import { Route as AuthenticatedImportsIndexRouteImport } from './routes/_authenticated/imports/index'
 import { Route as AuthenticatedFileManagerIndexRouteImport } from './routes/_authenticated/file-manager/index'
@@ -97,6 +98,11 @@ const AuthenticatedLinksIndexRoute = AuthenticatedLinksIndexRouteImport.update({
   path: '/links/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedJobsIndexRoute = AuthenticatedJobsIndexRouteImport.update({
+  id: '/jobs/',
+  path: '/jobs/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedInstagramIndexRoute =
   AuthenticatedInstagramIndexRouteImport.update({
     id: '/instagram/',
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/imports/': typeof AuthenticatedImportsIndexRoute
   '/instagram/': typeof AuthenticatedInstagramIndexRoute
+  '/jobs/': typeof AuthenticatedJobsIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
   '/tags/': typeof AuthenticatedTagsIndexRoute
   '/tiktok/': typeof AuthenticatedTiktokIndexRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/file-manager': typeof AuthenticatedFileManagerIndexRoute
   '/imports': typeof AuthenticatedImportsIndexRoute
   '/instagram': typeof AuthenticatedInstagramIndexRoute
+  '/jobs': typeof AuthenticatedJobsIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
   '/tiktok': typeof AuthenticatedTiktokIndexRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/_authenticated/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/_authenticated/imports/': typeof AuthenticatedImportsIndexRoute
   '/_authenticated/instagram/': typeof AuthenticatedInstagramIndexRoute
+  '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
   '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
   '/_authenticated/tiktok/': typeof AuthenticatedTiktokIndexRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/file-manager/'
     | '/imports/'
     | '/instagram/'
+    | '/jobs/'
     | '/links/'
     | '/tags/'
     | '/tiktok/'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/file-manager'
     | '/imports'
     | '/instagram'
+    | '/jobs'
     | '/links'
     | '/tags'
     | '/tiktok'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/_authenticated/file-manager/'
     | '/_authenticated/imports/'
     | '/_authenticated/instagram/'
+    | '/_authenticated/jobs/'
     | '/_authenticated/links/'
     | '/_authenticated/tags/'
     | '/_authenticated/tiktok/'
@@ -387,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLinksIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/jobs/': {
+      id: '/_authenticated/jobs/'
+      path: '/jobs'
+      fullPath: '/jobs/'
+      preLoaderRoute: typeof AuthenticatedJobsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/instagram/': {
       id: '/_authenticated/instagram/'
       path: '/instagram'
@@ -456,6 +475,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFileManagerIndexRoute: typeof AuthenticatedFileManagerIndexRoute
   AuthenticatedImportsIndexRoute: typeof AuthenticatedImportsIndexRoute
   AuthenticatedInstagramIndexRoute: typeof AuthenticatedInstagramIndexRoute
+  AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
   AuthenticatedTagsIndexRoute: typeof AuthenticatedTagsIndexRoute
   AuthenticatedTiktokIndexRoute: typeof AuthenticatedTiktokIndexRoute
@@ -474,6 +494,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFileManagerIndexRoute: AuthenticatedFileManagerIndexRoute,
   AuthenticatedImportsIndexRoute: AuthenticatedImportsIndexRoute,
   AuthenticatedInstagramIndexRoute: AuthenticatedInstagramIndexRoute,
+  AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,
   AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,
   AuthenticatedTiktokIndexRoute: AuthenticatedTiktokIndexRoute,

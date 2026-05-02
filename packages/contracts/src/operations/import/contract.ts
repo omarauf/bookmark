@@ -6,13 +6,14 @@ import {
   PaginationResultSchema,
 } from "../../foundation/pagination-query";
 import { PlatformEnum } from "../../foundation/platform";
-import { CreateDownloadTaskSchema } from "../download-task/entity";
+import { DownloadMediaPayloadSchema } from "../job/payload";
 import { ImportSchema } from "./entity";
 
 export const ImportPayloadSchema = z.object({
   items: CreateItemSchema.array(),
+  invalidItems: z.any().array(),
   relations: CreateRelationSchema.array(),
-  downloadTasks: CreateDownloadTaskSchema.array(),
+  downloadTasks: DownloadMediaPayloadSchema.array(),
 });
 
 export const ImportSchemas = {
@@ -23,12 +24,12 @@ export const ImportSchemas = {
 
   create: {
     request: z.object({ file: z.file() }),
-    response: z.void(),
+    response: z.object({ jobId: z.uuid().optional() }),
   },
 
   import: {
     request: z.object({ id: z.uuid() }),
-    response: z.object({ valid: z.number() }),
+    response: z.object({ jobId: z.uuid() }),
   },
 
   delete: {

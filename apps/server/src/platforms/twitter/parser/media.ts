@@ -1,4 +1,4 @@
-import type { CreateDownloadTask } from "@workspace/contracts/download-task";
+import type { DownloadMediaPayload } from "@workspace/contracts/job";
 import type {
   FluffyMedia,
   PurpleMedia,
@@ -10,8 +10,8 @@ import { MediaType } from "@workspace/contracts/raw/twitter";
 export function mediaParser(
   externalId: string,
   media: (TentacledMedia | PurpleMedia | FluffyMedia)[],
-): CreateDownloadTask[] {
-  const mediaDownloadTasks: CreateDownloadTask[] = [];
+): DownloadMediaPayload[] {
+  const mediaDownloadTasks: DownloadMediaPayload[] = [];
 
   media.forEach((m, i) => {
     switch (m.type) {

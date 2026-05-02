@@ -1,13 +1,12 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import { ImportSchemas } from "@workspace/contracts/import";
 import { parseImportFilename } from "@workspace/core/import";
 import { count, eq } from "drizzle-orm";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
-import { s3Client } from "@/core/s3";
 import { protectedProcedure } from "@/lib/orpc";
-import { addDownloadTask } from "../download-task/service";
-import { itemOrchestrator } from "../item/orchestrator";
-import { importItems } from "../item/service/import";
+import { createSingleJob } from "@/modules/job/service";
 import { importRepo } from "./repo";
 import { imports } from "./schema";
 
@@ -41,7 +40,6 @@ export const importRouter = {
       BAD_REQUEST: {
         message: "Invalid filename format. Expected format: {platform}_YYYY-MM-DD_HH-MM-SS.json",
       },
-      INTERNAL_SERVER_ERROR: { message: "Failed to upload file to S3" },
     })
     .handler(async ({ input: { file }, errors }) => {
       const { scrapedAt, platform } = parseImportFilename(file.name);
@@ -50,51 +48,23 @@ export const importRouter = {
       const filename = `${scrapedAt.toISOString().replace(/[:.]/g, "-")}.json`;
 
       const exist = await importRepo.findOne(eq(imports.filename, filename));
+      if (exist) return { jobId: undefined };
 
-      if (exist) {
-        console.log(`Import with filename ${filename} already exists, updating existing record.`);
-        await importRepo.update(exist.id, { platform, scrapedAt, size: file.size });
-        return;
-      }
+      // Save file to temp directory for async processing
+      await fs.mkdir(path.join(process.cwd(), "tmp"), { recursive: true });
+      const tempFilePath = path.join(process.cwd(), "tmp", `import-${Date.now()}-${filename}`);
+      const arrayBuffer = await file.arrayBuffer();
+      await fs.writeFile(tempFilePath, Buffer.from(arrayBuffer));
 
-      // Run heavy extraction, validation and upload in the background
-      (async () => {
-        try {
-          const s3Key = `${platform}/json/${filename}`;
-          const fileExistsInS3 = await s3Client.exists(s3Key);
+      // Create background job
+      const job = await createSingleJob({
+        type: "import_upload",
+        status: "pending",
+        resourceType: "import",
+        payload: { tempFilePath, filename, platform, scrapedAt, size: file.size },
+      });
 
-          if (fileExistsInS3) {
-            console.log(`File ${s3Key} already exists in S3, skipping upload.`);
-          }
-
-          const arrayBuffer = await file.arrayBuffer();
-          const buffer = Buffer.from(arrayBuffer);
-
-          if (!fileExistsInS3) {
-            console.log(`Uploading file ${s3Key} to S3...`);
-            const [_, s3Error] = await s3Client.upload(s3Key, buffer);
-
-            if (s3Error) {
-              console.error("Failed to upload file to S3:", s3Error);
-              return;
-            }
-          }
-
-          const data = buffer.toString("utf-8");
-          const parsedData = itemOrchestrator.validate(platform, data);
-
-          await importRepo.create({
-            filename: filename,
-            validPost: parsedData.valid,
-            invalidPost: parsedData.invalid,
-            size: file.size,
-            platform,
-            scrapedAt,
-          });
-        } catch (error) {
-          console.error("Background import processing failed:", error);
-        }
-      })();
+      return { jobId: job.id };
     }),
 
   import: protectedProcedure
@@ -105,20 +75,14 @@ export const importRouter = {
       const importItem = await importRepo.findById(id);
       if (!importItem) throw errors.NOT_FOUND();
 
-      const fileContent = await s3Client.readText(
-        `${importItem.platform}/json/${importItem.filename}`,
-      );
-      if (!fileContent) throw errors.NOT_FOUND();
+      const job = await createSingleJob({
+        type: "import_process",
+        status: "pending",
+        resourceType: "import",
+        payload: { importId: importItem.id },
+      });
 
-      const entities = itemOrchestrator.process(importItem.platform, fileContent);
-      await importItems(entities.items, entities.relations);
-      await addDownloadTask(entities.downloadTasks);
-
-      if (importItem.importedAt === null) {
-        await importRepo.update(id, { importedAt: new Date() });
-      }
-
-      return { valid: entities.items.length };
+      return { jobId: job.id };
     }),
 
   delete: protectedProcedure

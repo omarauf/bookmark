@@ -1,5 +1,3 @@
-import type { Platform } from "@workspace/contracts/platform";
-
 type Props = {
   stats: {
     total: number;
@@ -7,14 +5,17 @@ type Props = {
     processing: number;
     completed: number;
     failed: number;
-    exists: number;
-    byPlatform: Record<Platform, number>;
+    cancelled: number;
+    retrying: number;
+    byType: Record<string, number>;
   };
 };
 
 export function StatsOverview({ stats }: Props) {
   const successRate =
     stats.total > 0 ? Math.round((stats.completed / (stats.total || 1)) * 100) : 0;
+
+  const inFlight = stats.pending + stats.processing + stats.retrying;
 
   return (
     <div className="space-y-8">
@@ -48,10 +49,11 @@ export function StatsOverview({ stats }: Props) {
             In Flight
           </span>
           <span className="font-mono text-4xl text-blue-400 tracking-tighter md:text-5xl">
-            {stats.pending + stats.processing}
+            {inFlight}
           </span>
           <span className="font-mono text-[10px] text-blue-400/70 tracking-wider">
             {stats.processing} ACTIVE / {stats.pending} WAIT
+            {stats.retrying > 0 && ` / ${stats.retrying} RETRY`}
           </span>
         </div>
 
@@ -64,24 +66,6 @@ export function StatsOverview({ stats }: Props) {
             {stats.failed}
           </span>
           <span className="font-mono text-[10px] text-rose-500/70 tracking-wider">FAILED JOBS</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-8 border-muted/30 border-t pt-6 md:grid-cols-2 md:gap-12">
-        <div>
-          <span className="mb-4 block font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-            By Platform
-          </span>
-          <div className="flex flex-wrap gap-6">
-            {Object.entries(stats.byPlatform || {}).map(([platform, count]) => (
-              <div key={platform} className="flex flex-col gap-1">
-                <span className="font-mono text-2xl text-foreground tracking-tighter">{count}</span>
-                <span className="font-mono text-[10px] text-muted-foreground uppercase">
-                  {platform}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>

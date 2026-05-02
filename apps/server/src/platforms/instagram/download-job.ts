@@ -1,16 +1,16 @@
-import type { CreateDownloadTask } from "@workspace/contracts/download-task";
+import type { DownloadMediaPayload } from "@workspace/contracts/job";
 import type { Media } from "@workspace/contracts/raw/instagram";
 
-export function toDownloadTasks(post: Media): CreateDownloadTask[] {
+export function toDownloadTasks(post: Media): DownloadMediaPayload[] {
   return [...downloadProfile(post), ...downloadMedia(post)];
 }
 
-function downloadProfile(post: Media): CreateDownloadTask[] {
+function downloadProfile(post: Media): DownloadMediaPayload[] {
   const creator = post.usertags
     ? [...post.usertags.in.map((u) => u.user), post.owner]
     : [post.owner];
 
-  const mediaDownloadTasks: CreateDownloadTask[] = [];
+  const mediaDownloadTasks: DownloadMediaPayload[] = [];
 
   creator.forEach((c) => {
     if (!c) return;
@@ -26,8 +26,8 @@ function downloadProfile(post: Media): CreateDownloadTask[] {
   return mediaDownloadTasks;
 }
 
-function downloadMedia(post: Media): CreateDownloadTask[] {
-  const mediaDownloadTasks: CreateDownloadTask[] = [];
+function downloadMedia(post: Media): DownloadMediaPayload[] {
+  const mediaDownloadTasks: DownloadMediaPayload[] = [];
 
   const commonProps = {
     platform: "instagram",

@@ -32,7 +32,7 @@ export class TiktokHandler implements PlatformHandler {
     const jsonData = jsonParse<Tiktok[]>(data);
 
     if (jsonData === undefined) {
-      return { items: [], relations: [], downloadTasks: [] };
+      return { items: [], invalidItems: [], relations: [], downloadTasks: [] };
     }
 
     const results = jsonData
@@ -42,13 +42,14 @@ export class TiktokHandler implements PlatformHandler {
 
     return {
       items: results.flatMap((r) => r.items),
+      invalidItems: results.flatMap((r) => r.invalidItems),
       relations: results.flatMap((r) => r.relations),
       downloadTasks: results.flatMap((r) => r.downloadTasks),
     };
   }
 
   private _handler(post: ItemList): ImportPayload | undefined {
-    if (!post) return undefined;
+    if (!post) return { items: [], invalidItems: [post], relations: [], downloadTasks: [] };
 
     const creator = creatorParser(post.author);
     const postItem = postParser(post);
@@ -60,12 +61,11 @@ export class TiktokHandler implements PlatformHandler {
     const items = [postItem, creator];
     const relations = createdRelations;
 
-    const payload = { items, relations, downloadTasks };
+    const payload = { items, invalidItems: [], relations, downloadTasks };
 
     const result = ImportPayloadSchema.safeParse(payload);
     if (!result.success) {
-      console.warn("Invalid import item:", result.error);
-      return undefined;
+      return { items: [], invalidItems: [post], relations: [], downloadTasks: [] };
     }
 
     return result.data;

@@ -15,6 +15,7 @@ import {
   Upload,
   Users,
   Video,
+  Workflow,
 } from "lucide-react";
 import { InstagramIcon, TwitterIcon } from "@/assets/icons";
 import type { SidebarData } from "./types";
@@ -59,6 +60,7 @@ export const sidebarData: SidebarData = {
       items: [
         { title: "Imports", url: "/imports", icon: Upload },
         { title: "Downloads", url: "/downloads", icon: Download },
+        { title: "Jobs", url: "/jobs", icon: Workflow },
         { title: "File Manager", url: "/file-manager", icon: Folder },
       ],
     },

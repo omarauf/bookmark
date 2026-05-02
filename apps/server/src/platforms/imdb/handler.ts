@@ -25,13 +25,14 @@ export class ImdbHandler implements PlatformHandler {
     const imdbIds = jsonParse<string[]>(rawData) || [];
 
     if (!imdbIds.length) {
-      return { items: [], relations: [], downloadTasks: [] };
+      return { items: [], invalidItems: [], relations: [], downloadTasks: [] };
     }
 
-    const { validItems } = this.processBookmarks(imdbIds);
+    const { validItems, invalidItems } = this.processBookmarks(imdbIds);
 
     return {
       items: validItems,
+      invalidItems,
       relations: [],
       downloadTasks: [],
     };

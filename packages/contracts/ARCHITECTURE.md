@@ -67,6 +67,70 @@ These have no imports and are used only by platform parsers in `apps/server`.
 
 ---
 
+### `core/` — Layer 2
+
+The knowledge graph. These are your database-level entities.
+
+| Module | Exports | Description |
+|--------|---------|-------------|
+| `item/` | `ItemSchema`, `CreateItemSchema`, `ItemSchemas`, `ItemFilterSchema` | Polymorphic items via `ItemMetadataSchema` |
+| `relation/` | `RelationSchema`, `CreateRelationSchema`, `RelationEnum` | Typed directed edges between items |
+| `media/` | `MediaSchema`, `NormalizedMediaSchema`, `MediaTypeEnum` | Images, videos, GIFs |
+| `collection/` | `CollectionSchema`, `CollectionSchemas` | Hierarchical folders (ltree) |
+| `tag/` | `TagSchema`, `TagSchemas` | Flat labels with colors |
+
+---
+
+### `views/` — Layer 3
+
+Assembled API responses. A "view" is **not** a database table — it resolves an item plus its relations, media, collections, and tags into a single rich object.
+
+| Module | Exports | Description |
+|--------|---------|-------------|
+| `post/` | `PostSchema`, `PostSchemas`, `PostFilterSchema` | Item + creator + tagged + media + collections |
+| `link/` | `LinkSchema`, `LinkSchemas`, `FolderTreeSchema` | Chrome bookmark with path & preview |
+| `profile/` | `ProfileSchema` | Item extended with `name`, `username`, `avatar` |
+
+---
+
+### `operations/` — Layer 4
+
+Systems that operate *on* the graph but are not part of it.
+
+| Module | Exports | Description |
+|--------|---------|-------------|
+| `import/` | `ImportPayloadSchema`, `ImportSchemas`, `ImportSchema` | Batch import payloads & import records |
+| `file-manager/` | `FileSchema`, `FolderSchema`, `FileSchemas`, `BrowseSchemas` | General-purpose file storage |
+| `job/` | `JobSchema`, `JobSchemas`, `JobLogSchema`, `JobTypeEnum`, `JobStatusEnum`, `DownloadMediaPayloadSchema` | Background job orchestration & structured logging (includes media downloads) |
+
+> **Rule of thumb:** if a schema needs to reference `CreateItemSchema`, `CreateRelationSchema`, and `CreateDownloadTaskSchema` together, it belongs in `operations/import` (`ImportPayloadSchema`) rather than in `core/item`.
+
+#### `job/` — Background Job Orchestration
+
+Used to track, retry, and log all background work (import processing, link preview fetching, IMDb sync, etc.).
+
+**Entity schemas:**
+
+| Schema | Key fields |
+|--------|-----------|
+| `JobSchema` | `id`, `type`, `status`, `resourceType`, `resourceId`, `payload`, `progress`, `attemptCount`, `maxAttempts`, `error`, `createdAt`, `startedAt`, `completedAt`, `failedAt`, `cancelledAt` |
+| `JobLogSchema` | `id`, `jobId`, `level`, `message`, `metadata`, `createdAt` |
+
+**API contracts:**
+
+| Operation | Request | Response |
+|-----------|---------|----------|
+| `list` | `BasePaginationQuerySchema + { type?, status?, resourceType?, resourceId? }` | `PaginationResult<JobSchema>` |
+| `get` | `{ id: uuid }` | `JobSchema` |
+| `logs` | `BasePaginationQuerySchema + { jobId: uuid, level? }` | `PaginationResult<JobLogSchema>` |
+| `retry` | `{ id: uuid }` | `JobSchema` |
+| `cancel` | `{ id: uuid }` | `JobSchema` |
+| `stats` | `void` | Aggregations by status + type |
+
+> **Background work unification:** All background work (import uploads, media downloads, link previews, etc.) is orchestrated through `job/`. The `download_tasks` table has been removed — media downloads are now `download_media` jobs with their metadata stored in `job.payload`.
+
+---
+
 ## Import Rules
 
 ```
@@ -99,8 +163,8 @@ Consumers import via subpaths. The `package.json` exports are pinned to the laye
 | `@workspace/contracts/tag` | `src/core/tag/index.ts` |
 | `@workspace/contracts/profile` | `src/views/profile/index.ts` |
 | `@workspace/contracts/import` | `src/operations/import/index.ts` |
-| `@workspace/contracts/download-task` | `src/operations/download-task/index.ts` |
 | `@workspace/contracts/file-manager` | `src/operations/file-manager/index.ts` |
+| `@workspace/contracts/job` | `src/operations/job/index.ts` |
 | `@workspace/contracts/platform` | `src/foundation/platform.ts` |
 | `@workspace/contracts/common/*` | `src/foundation/*.ts` |
 | `@workspace/contracts/instagram` | `src/platforms/instagram/index.ts` |

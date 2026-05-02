@@ -43,6 +43,13 @@
       "when": 1776892199843,
       "tag": "0005_fair_silvermane",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1777754789780,
+      "tag": "0006_even_lady_vermin",
+      "breakpoints": true
     }
   ]
 }

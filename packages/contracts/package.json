@@ -14,11 +14,12 @@
     "./twitter": "./src/platforms/twitter/index.ts",
     "./tiktok": "./src/platforms/tiktok/index.ts",
     "./media": "./src/core/media/index.ts",
-    "./download-task": "./src/operations/download-task/index.ts",
+
     "./raw/*": "./src/platforms/raw/*.ts",
     "./profile": "./src/views/profile/index.ts",
     "./post": "./src/views/post/index.ts",
     "./file-manager": "./src/operations/file-manager/index.ts",
+    "./job": "./src/operations/job/index.ts",
     "./imdb": "./src/platforms/imdb/index.ts",
     "./common/*": "./src/foundation/*.ts"
   },

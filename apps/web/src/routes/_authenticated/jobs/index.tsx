@@ -67,7 +67,7 @@ function JobList() {
   });
 
   return (
-    <Main className="p-2 h-full flex-col flex">
+    <Main className="flex h-full flex-col p-2">
       <ScrollArea className="min-h-0 p-4">
         <DataTable table={table}>
           <DataTableToolbar table={table}>

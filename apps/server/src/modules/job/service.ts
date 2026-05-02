@@ -73,6 +73,10 @@ export async function failClaimedJob(
   return replaceNullWithUndefined(updated);
 }
 
+export async function updateJobProgress(jobId: string, progress: number) {
+  await db.update(jobs).set({ progress }).where(eq(jobs.id, jobId));
+}
+
 export async function log(
   jobId: string,
   level: LogLevel,

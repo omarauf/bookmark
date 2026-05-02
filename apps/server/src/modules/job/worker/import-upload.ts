@@ -4,7 +4,7 @@ import z from "zod";
 import { s3Client } from "@/core/s3";
 import { importRepo } from "@/modules/import/repo";
 import { itemOrchestrator } from "@/modules/item/orchestrator";
-import { log } from "../service";
+import { log, updateJobProgress } from "../service";
 
 export async function processImportUpload(job: Job) {
   const parseResult = ImportUploadPayloadSchema.safeParse(job.payload);
@@ -30,7 +30,10 @@ export async function processImportUpload(job: Job) {
     await log(job.id, "info", "File already exists in S3, skipping upload", { s3Key });
   } else {
     await log(job.id, "info", "Uploading to S3", { s3Key });
-    const [_, s3Error] = await s3Client.upload(s3Key, buffer);
+    const [_, s3Error] = await s3Client.upload(s3Key, buffer, (loaded, total) => {
+      const percentage = Math.round((loaded / total) * 100);
+      void updateJobProgress(job.id, percentage);
+    });
     if (s3Error) {
       throw new Error(`S3 upload failed: ${s3Error}`);
     }

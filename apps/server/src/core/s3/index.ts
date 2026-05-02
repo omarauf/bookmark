@@ -19,15 +19,41 @@ const s3 = new S3Client({
   forcePathStyle: false,
 });
 
-async function upload(key: string, body: Buffer | string) {
-  const command = new PutObjectCommand({
-    Bucket: env.S3_BUCKET_NAME,
-    Key: key,
-    Body: body,
-    ACL: "public-read",
+async function upload(
+  key: string,
+  body: Buffer | string,
+  onProgress?: (loaded: number, total: number) => void,
+) {
+  if (!onProgress) {
+    const command = new PutObjectCommand({
+      Bucket: env.S3_BUCKET_NAME,
+      Key: key,
+      Body: body,
+      ACL: "public-read",
+    });
+
+    return await safe(s3.send(command));
+  }
+
+  const parallelUploads3 = new Upload({
+    client: s3,
+    params: {
+      Bucket: env.S3_BUCKET_NAME,
+      Key: key,
+      Body: body,
+      ACL: "public-read",
+    },
+    queueSize: 4,
+    partSize: 1024 * 1024 * 5, // 5 MB
   });
 
-  return await safe(s3.send(command));
+  parallelUploads3.on("httpUploadProgress", (progress) => {
+    if (progress.loaded !== undefined && progress.total !== undefined) {
+      onProgress(progress.loaded, progress.total);
+    }
+  });
+
+  return await safe(parallelUploads3.done());
 }
 
 async function get(key: string) {

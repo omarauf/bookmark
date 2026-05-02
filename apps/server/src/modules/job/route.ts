@@ -1,5 +1,5 @@
 import { JobSchemas } from "@workspace/contracts/job";
-import { and, asc, count, desc, eq, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
 import { replaceNullWithUndefined } from "@/utils/object";
@@ -133,17 +133,16 @@ export const jobRouter = {
       BAD_REQUEST: { message: "Job cannot be cancelled in its current state" },
     })
     .handler(async ({ input: { id }, errors }) => {
-      const [job] = await db.select().from(jobs).where(eq(jobs.id, id)).limit(1);
+      const job = await jobRepo.findById(id);
       if (!job) throw errors.NOT_FOUND();
 
-      if (job.status !== "pending" && job.status !== "processing" && job.status !== "retrying") {
-        throw errors.BAD_REQUEST();
-      }
+      const [updated] = await db
+        .update(jobs)
+        .set({ status: "cancelled", cancelledAt: new Date() })
+        .where(and(eq(jobs.id, id), inArray(jobs.status, ["pending", "processing", "retrying"])))
+        .returning();
 
-      await jobRepo.update(id, { status: "cancelled", cancelledAt: new Date() });
-
-      const [updated] = await db.select().from(jobs).where(eq(jobs.id, id)).limit(1);
-      if (!updated) throw errors.NOT_FOUND();
+      if (!updated) throw errors.BAD_REQUEST();
 
       return replaceNullWithUndefined(updated);
     }),

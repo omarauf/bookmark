@@ -18,7 +18,7 @@ export function startJobSystem(options?: {
 
   const {
     workerCount = 4,
-    claimCount = 5,
+    claimCount = 1,
     claimInterval = 5000,
     stalledMinutes = 60,
   } = options ?? {};
@@ -31,8 +31,10 @@ export function startJobSystem(options?: {
     workerCount,
     interval: claimInterval,
     onTick: async () => {
-      const jobs = await claimJobs(claimCount);
-      await Promise.all(jobs.map(processJob));
+      const jobBatch = await claimJobs(claimCount);
+      for (const job of jobBatch) {
+        await processJob(job);
+      }
     },
   });
 

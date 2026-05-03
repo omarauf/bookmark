@@ -53,13 +53,15 @@ export async function processImportProcess(job: Job) {
 
   await updateJobProgress(job.id, 92);
 
-  const [group] = await db
-    .insert(jobGroups)
-    .values({ name: `import-${importId}`, createdAt: new Date() })
-    .returning();
+  if (entities.downloadTasks.length !== 0) {
+    const [group] = await db
+      .insert(jobGroups)
+      .values({ name: `import-${importId}`, createdAt: new Date() })
+      .returning();
 
-  for (const task of entities.downloadTasks) {
-    await createDownloadMediaJob(group.id, task);
+    for (const task of entities.downloadTasks) {
+      await createDownloadMediaJob(group.id, task);
+    }
   }
 
   await updateJobProgress(job.id, 95);

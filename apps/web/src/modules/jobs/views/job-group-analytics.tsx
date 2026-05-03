@@ -67,7 +67,7 @@ export function JobGroupAnalytics({ groupId }: Props) {
             </div>
             <div className="h-2 w-full overflow-hidden border border-border/50">
               <div
-                className="h-full bg-foreground transition-all"
+                className="h-full bg-primary transition-all"
                 style={{ width: `${totalProgress}%` }}
               />
             </div>

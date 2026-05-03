@@ -25,3 +25,9 @@ export const ImportUploadPayloadSchema = z.object({
 export const ImportProcessPayloadSchema = z.object({
   importId: z.string(),
 });
+
+export const ImdbDiscoverPayloadSchema = z.object({});
+
+export const ImdbFetchPayloadSchema = z.object({
+  imdbId: z.string(),
+});

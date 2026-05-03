@@ -1,6 +1,12 @@
 import { z } from "zod";
 
-export const JobTypeEnum = z.enum(["import_upload", "import_process", "download_media"]);
+export const JobTypeEnum = z.enum([
+  "import_upload",
+  "import_process",
+  "download_media",
+  "imdb_discover",
+  "imdb_fetch",
+]);
 export type JobType = z.infer<typeof JobTypeEnum>;
 export const JobTypeValues = JobTypeEnum.options as [JobType, ...JobType[]];
 

@@ -2,6 +2,7 @@ import { collectionRouter } from "@/modules/collection/route";
 import { browseRouter } from "@/modules/file-manager/browse.route";
 import { fileRouter } from "@/modules/file-manager/file.route";
 import { folderRouter } from "@/modules/file-manager/folder.route";
+import { imdbRouter } from "@/modules/imdb/route";
 import { importRouter } from "@/modules/import/route";
 import { itemRouter } from "@/modules/item/route";
 import { jobRouter } from "@/modules/job/route";
@@ -20,4 +21,5 @@ export const appRouter = {
   folder: folderRouter,
   browse: browseRouter,
   job: jobRouter,
+  imdb: imdbRouter,
 };

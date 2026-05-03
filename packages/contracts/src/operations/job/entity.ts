@@ -2,6 +2,8 @@ import { z } from "zod";
 import { JobStatusEnum, JobTypeEnum, LogLevelEnum } from "./enum";
 import {
   DownloadMediaPayloadSchema,
+  ImdbDiscoverPayloadSchema,
+  ImdbFetchPayloadSchema,
   ImportProcessPayloadSchema,
   ImportUploadPayloadSchema,
 } from "./payload";
@@ -24,7 +26,13 @@ export const JobSchema = z.object({
   resourceId: z.string().optional(),
 
   payload: z
-    .union([DownloadMediaPayloadSchema, ImportUploadPayloadSchema, ImportProcessPayloadSchema])
+    .union([
+      DownloadMediaPayloadSchema,
+      ImportUploadPayloadSchema,
+      ImportProcessPayloadSchema,
+      ImdbDiscoverPayloadSchema,
+      ImdbFetchPayloadSchema,
+    ])
     .optional(),
 
   progress: z.number().int().min(0).max(100).optional(),
@@ -66,7 +74,13 @@ export const CreateJobSchema = z.object({
   resourceId: z.string().optional(),
 
   payload: z
-    .union([DownloadMediaPayloadSchema, ImportUploadPayloadSchema, ImportProcessPayloadSchema])
+    .union([
+      DownloadMediaPayloadSchema,
+      ImportUploadPayloadSchema,
+      ImportProcessPayloadSchema,
+      ImdbDiscoverPayloadSchema,
+      ImdbFetchPayloadSchema,
+    ])
     .optional(),
 
   progress: z.number().int().min(0).max(100).optional(),

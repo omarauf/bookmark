@@ -194,8 +194,6 @@ export const jobRouter = {
         const dataQuery = db.select().from(jobs);
         const countQuery = db.select({ count: count() }).from(jobs);
 
-        console.log("Group ID:", id, status);
-
         const filters = and(
           eq(jobs.groupId, id),
           type ? eq(jobs.type, type) : undefined,

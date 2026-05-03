@@ -9,7 +9,13 @@ type Props = {
 };
 
 export function JobGroupAnalytics({ groupId }: Props) {
-  const { data: stats } = useQuery(orpc.job.group.stats.queryOptions({ input: { groupId } }));
+  const { data: stats } = useQuery(
+    orpc.job.group.stats.queryOptions({
+      input: { groupId },
+      refetchInterval: 2000,
+      staleTime: 0,
+    }),
+  );
 
   if (!stats) return null;
 

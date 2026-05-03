@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
 import { JobTable } from "@/modules/jobs/components/job-table";
-import { JobGroupAnalytics } from "@/modules/jobs/views/job-group-analyrics";
+import { JobGroupAnalytics } from "@/modules/jobs/views/job-group-analytics";
 
 export const Route = createFileRoute("/_authenticated/job-groups/$id")({
   component: JobGroupDetailPage,

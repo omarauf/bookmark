@@ -76,22 +76,6 @@ export async function processImportProcess(job: Job) {
 }
 
 export async function createDownloadMediaJob(groupId: string, payload: DownloadMediaPayload) {
-  // const existingCompleted = await db
-  //   .select({ id: jobs.id })
-  //   .from(jobs)
-  //   .where(
-  //     and(
-  //       eq(jobs.type, "download_media"),
-  //       eq(jobs.resourceId, payload.key),
-  //       eq(jobs.status, "completed"),
-  //     ),
-  //   )
-  //   .limit(1);
-
-  // if (existingCompleted.length > 0) {
-  //   return null;
-  // }
-
   await db
     .insert(jobs)
     .values({

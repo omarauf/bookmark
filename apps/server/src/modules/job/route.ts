@@ -1,10 +1,12 @@
-import { JobSchemas } from "@workspace/contracts/job";
-import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { JobSchemas, type JobType } from "@workspace/contracts/job";
+import { and, asc, count, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/core/db";
+import { withPagination } from "@/core/db/helper/pagination";
 import { protectedProcedure } from "@/lib/orpc";
 import { replaceNullWithUndefined } from "@/utils/object";
+import { analyticsHandler } from "./handler/analytics";
 import { jobRepo } from "./repo";
-import { jobLogs, jobs } from "./schema";
+import { jobGroups, jobLogs, jobs } from "./schema";
 import { reclaimStaleJobs } from "./worker/reclaimer";
 
 export const jobRouter = {
@@ -12,42 +14,27 @@ export const jobRouter = {
     .input(JobSchemas.list.request)
     .output(JobSchemas.list.response)
     .handler(async ({ input }) => {
-      const { page = 1, perPage = 40, type, status, resourceType, resourceId } = input;
-      const offset = (page - 1) * perPage;
+      const { type, status, resourceType, resourceId, groupId } = input;
 
-      const conditions = [];
-      if (type) conditions.push(eq(jobs.type, type));
-      if (status) conditions.push(eq(jobs.status, status));
-      if (resourceType) conditions.push(eq(jobs.resourceType, resourceType));
-      if (resourceId) conditions.push(eq(jobs.resourceId, resourceId));
+      const filters = and(
+        type ? eq(jobs.type, type) : undefined,
+        status ? eq(jobs.status, status) : undefined,
+        resourceType ? eq(jobs.resourceType, resourceType) : undefined,
+        resourceId ? eq(jobs.resourceId, resourceId) : undefined,
+        groupId ? eq(jobs.groupId, groupId) : undefined,
+      );
 
-      const where = conditions.length > 0 ? and(...conditions) : undefined;
+      const dataQuery = db.select().from(jobs);
+      const countQuery = db.select({ count: count() }).from(jobs);
 
-      const [items, [{ total }]] = await Promise.all([
-        db
-          .select()
-          .from(jobs)
-          .where(where ?? sql`TRUE`)
-          .orderBy(desc(jobs.createdAt))
-          .limit(perPage)
-          .offset(offset),
-        db
-          .select({ total: count() })
-          .from(jobs)
-          .where(where ?? sql`TRUE`),
-      ]);
-
-      const totalPages = Math.ceil(total / perPage);
-
-      return {
-        items: items.map(replaceNullWithUndefined),
-        total,
-        page,
-        perPage,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
-      };
+      return await withPagination({
+        dataQuery,
+        countQuery,
+        filters,
+        page: input.page,
+        perPage: input.perPage,
+        orderByColumn: desc(jobs.createdAt),
+      });
     }),
 
   get: protectedProcedure
@@ -64,36 +51,14 @@ export const jobRouter = {
   logs: protectedProcedure
     .input(JobSchemas.logs.request)
     .output(JobSchemas.logs.response)
-    .handler(async ({ input }) => {
-      const { jobId, level, page = 1, perPage = 40 } = input;
-      const offset = (page - 1) * perPage;
+    .handler(async ({ input: { jobId } }) => {
+      const dataQuery = await db
+        .select()
+        .from(jobLogs)
+        .where(eq(jobLogs.jobId, jobId))
+        .orderBy(asc(jobLogs.createdAt));
 
-      const where = level
-        ? and(eq(jobLogs.jobId, jobId), eq(jobLogs.level, level))
-        : eq(jobLogs.jobId, jobId);
-
-      const [rows, [{ total }]] = await Promise.all([
-        db
-          .select()
-          .from(jobLogs)
-          .where(where)
-          .orderBy(asc(jobLogs.createdAt))
-          .limit(perPage)
-          .offset(offset),
-        db.select({ total: count() }).from(jobLogs).where(where),
-      ]);
-
-      const totalPages = Math.ceil(total / perPage);
-
-      return {
-        items: rows,
-        total,
-        page,
-        perPage,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
-      };
+      return dataQuery;
     }),
 
   retry: protectedProcedure
@@ -165,13 +130,13 @@ export const jobRouter = {
       const statusRows = await db
         .select({ status: jobs.status, count: count() })
         .from(jobs)
-        .where(where ?? sql`TRUE`)
+        .where(where)
         .groupBy(jobs.status);
 
       const typeRows = await db
         .select({ type: jobs.type, count: count() })
         .from(jobs)
-        .where(where ?? sql`TRUE`)
+        .where(where)
         .groupBy(jobs.type);
 
       const result = {
@@ -182,7 +147,7 @@ export const jobRouter = {
         failed: 0,
         cancelled: 0,
         retrying: 0,
-        byType: {} as Record<string, number>,
+        byType: {} as Record<JobType, number>,
       };
 
       for (const row of statusRows) {
@@ -199,4 +164,90 @@ export const jobRouter = {
 
       return result;
     }),
+
+  group: {
+    list: protectedProcedure
+      .input(JobSchemas.group.list.request)
+      .output(JobSchemas.group.list.response)
+      .handler(async ({ input }) => {
+        const dataQuery = db.select().from(jobGroups);
+        const countQuery = db.select({ count: count() }).from(jobGroups);
+
+        return await withPagination({
+          dataQuery,
+          countQuery,
+          page: input.page,
+          perPage: input.perPage,
+          orderByColumn: desc(jobGroups.createdAt),
+        });
+      }),
+
+    get: protectedProcedure
+      .input(JobSchemas.group.get.request)
+      .output(JobSchemas.group.get.response)
+      .errors({ NOT_FOUND: { message: "Job group not found" } })
+      .handler(async ({ input, errors }) => {
+        const { id, status, type } = input;
+        const [group] = await db.select().from(jobGroups).where(eq(jobGroups.id, id)).limit(1);
+        if (!group) throw errors.NOT_FOUND();
+
+        const dataQuery = db.select().from(jobs);
+        const countQuery = db.select({ count: count() }).from(jobs);
+
+        console.log("Group ID:", id, status);
+
+        const filters = and(
+          eq(jobs.groupId, id),
+          type ? eq(jobs.type, type) : undefined,
+          status ? eq(jobs.status, status) : undefined,
+        );
+
+        const jobsResult = await withPagination({
+          dataQuery,
+          countQuery,
+          filters: filters,
+          page: input.page,
+          perPage: input.perPage,
+          orderByColumn: desc(jobs.createdAt),
+        });
+
+        return {
+          group,
+          jobs: jobsResult,
+        };
+      }),
+
+    stats: protectedProcedure
+      .input(JobSchemas.group.stats.request)
+      .output(JobSchemas.group.stats.response)
+      .handler(async ({ input: { groupId } }) => {
+        const statusRows = await db
+          .select({ status: jobs.status, count: count() })
+          .from(jobs)
+          .where(eq(jobs.groupId, groupId))
+          .groupBy(jobs.status);
+
+        const result = {
+          total: 0,
+          pending: 0,
+          processing: 0,
+          completed: 0,
+          failed: 0,
+          cancelled: 0,
+          retrying: 0,
+        };
+
+        for (const row of statusRows) {
+          const value = Number(row.count);
+          result.total += value;
+          if (row.status in result) {
+            result[row.status] = value;
+          }
+        }
+
+        return result;
+      }),
+  },
+
+  analytics: analyticsHandler,
 };

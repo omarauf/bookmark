@@ -1,6 +1,8 @@
 // biome-ignore-all lint/suspicious/noExplicitAny: we want to allow any Drizzle query
+
 import { and, asc, desc, is, SQL } from "drizzle-orm";
 import type { PgColumn } from "drizzle-orm/pg-core";
+import { type ReplaceNullWithUndefined, replaceNullWithUndefined } from "@/utils/object";
 
 // This type represents any Drizzle query builder that can be executed
 type ExecutableQuery = {
@@ -36,7 +38,7 @@ export async function withPagination<TQuery extends ExecutableQuery, TResult = A
   filters = [],
   page = 1,
   perPage = 10,
-}: Props<TQuery>): Promise<PaginatedResult<TResult>> {
+}: Props<TQuery>): Promise<PaginatedResult<ReplaceNullWithUndefined<TResult>>> {
   const offset = (page - 1) * perPage;
   const currentPage = offset / perPage + 1;
   const whereCondition = Array.isArray(filters)
@@ -66,8 +68,10 @@ export async function withPagination<TQuery extends ExecutableQuery, TResult = A
   const totalCount = Number(countResult[0]?.count || 0);
   const totalPages = Math.ceil(totalCount / perPage);
 
+  const mappedItems = replaceNullWithUndefined(items) as ReplaceNullWithUndefined<TResult>;
+
   return {
-    items: items as TResult,
+    items: mappedItems,
     total: totalCount,
     page: currentPage,
     perPage,

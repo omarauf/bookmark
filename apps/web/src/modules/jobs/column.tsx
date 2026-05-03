@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import type { Column, ColumnDef } from "@tanstack/react-table";
 import type { Job } from "@workspace/contracts/job";
 import { JobStatusValues, JobTypeValues } from "@workspace/contracts/job";
@@ -31,7 +32,7 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
         queryClient.invalidateQueries({ queryKey: orpc.job.list.key() });
         toast.success("Job queued for retry");
       },
-      onError: (error) => {
+      onError: (error: { message: string }) => {
         toast.error(error.message);
       },
     }),
@@ -43,7 +44,7 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
         queryClient.invalidateQueries({ queryKey: orpc.job.list.key() });
         toast.success("Job cancelled");
       },
-      onError: (error) => {
+      onError: (error: { message: string }) => {
         toast.error(error.message);
       },
     }),
@@ -51,6 +52,23 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
 
   const columns = useMemo<ColumnDef<Job>[]>(
     () => [
+      {
+        id: "id",
+        accessorKey: "id",
+        header: ({ column }: { column: Column<Job, unknown> }) => (
+          <DataTableColumnHeader column={column} label="ID" />
+        ),
+        cell: ({ row }) => (
+          <Link
+            to="/jobs/$id"
+            params={{ id: row.original.id }}
+            className="font-mono text-primary text-xs underline"
+          >
+            {row.original.id.slice(0, 8)}
+          </Link>
+        ),
+        size: 100,
+      },
       {
         id: "type",
         accessorKey: "type",
@@ -84,6 +102,27 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
         enableColumnFilter: true,
       },
       {
+        id: "group",
+        accessorKey: "groupId",
+        header: ({ column }: { column: Column<Job, unknown> }) => (
+          <DataTableColumnHeader column={column} label="Group" />
+        ),
+        cell: ({ row }) => {
+          const groupId = row.original.groupId;
+          if (!groupId) return <span className="text-muted-foreground text-xs">—</span>;
+          return (
+            <Link
+              to="/job-groups/$id"
+              params={{ id: groupId }}
+              className="font-mono text-[10px] text-primary underline"
+            >
+              {groupId.slice(0, 8)}
+            </Link>
+          );
+        },
+        size: 80,
+      },
+      {
         id: "progress",
         accessorKey: "progress",
         header: ({ column }: { column: Column<Job, unknown> }) => (
@@ -91,9 +130,7 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
         ),
         cell: ({ row }) => {
           const progress = row.original.progress;
-          const processed = row.original.processedItems ?? 0;
-          const total = row.original.totalItems ?? 0;
-          if (progress !== null && progress !== undefined) {
+          if (progress !== undefined) {
             return (
               <div className="flex items-center gap-2">
                 <div className="h-2 w-16 overflow-hidden rounded-full bg-muted">
@@ -104,13 +141,6 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
                 </div>
                 <span className="text-muted-foreground text-xs">{progress}%</span>
               </div>
-            );
-          }
-          if (total > 0) {
-            return (
-              <span className="text-muted-foreground text-xs">
-                {processed} / {total}
-              </span>
             );
           }
           return <span className="text-muted-foreground text-xs">—</span>;

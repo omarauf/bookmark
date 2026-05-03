@@ -23,11 +23,14 @@ import { Route as AuthenticatedTiktokIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedTagsIndexRouteImport } from './routes/_authenticated/tags/index'
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
+import { Route as AuthenticatedJobGroupsIndexRouteImport } from './routes/_authenticated/job-groups/index'
 import { Route as AuthenticatedInstagramIndexRouteImport } from './routes/_authenticated/instagram/index'
 import { Route as AuthenticatedImportsIndexRouteImport } from './routes/_authenticated/imports/index'
 import { Route as AuthenticatedFileManagerIndexRouteImport } from './routes/_authenticated/file-manager/index'
 import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
 import { Route as AuthenticatedCollectionsIndexRouteImport } from './routes/_authenticated/collections/index'
+import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs/$id'
+import { Route as AuthenticatedJobGroupsIdRouteImport } from './routes/_authenticated/job-groups/$id'
 import { Route as AuthenticatedInstagramVirtualWindowRouteImport } from './routes/_authenticated/instagram/virtual-window'
 import { Route as AuthenticatedInstagramVirtualRouteImport } from './routes/_authenticated/instagram/virtual'
 import { Route as AuthenticatedInstagramTempRouteImport } from './routes/_authenticated/instagram/temp'
@@ -103,6 +106,12 @@ const AuthenticatedJobsIndexRoute = AuthenticatedJobsIndexRouteImport.update({
   path: '/jobs/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedJobGroupsIndexRoute =
+  AuthenticatedJobGroupsIndexRouteImport.update({
+    id: '/job-groups/',
+    path: '/job-groups/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedInstagramIndexRoute =
   AuthenticatedInstagramIndexRouteImport.update({
     id: '/instagram/',
@@ -131,6 +140,17 @@ const AuthenticatedCollectionsIndexRoute =
   AuthenticatedCollectionsIndexRouteImport.update({
     id: '/collections/',
     path: '/collections/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedJobsIdRoute = AuthenticatedJobsIdRouteImport.update({
+  id: '/jobs/$id',
+  path: '/jobs/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedJobGroupsIdRoute =
+  AuthenticatedJobGroupsIdRouteImport.update({
+    id: '/job-groups/$id',
+    path: '/job-groups/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedInstagramVirtualWindowRoute =
@@ -163,11 +183,14 @@ export interface FileRoutesByFullPath {
   '/instagram/temp': typeof AuthenticatedInstagramTempRoute
   '/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
   '/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
+  '/job-groups/$id': typeof AuthenticatedJobGroupsIdRoute
+  '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/imports/': typeof AuthenticatedImportsIndexRoute
   '/instagram/': typeof AuthenticatedInstagramIndexRoute
+  '/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs/': typeof AuthenticatedJobsIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
   '/tags/': typeof AuthenticatedTagsIndexRoute
@@ -186,11 +209,14 @@ export interface FileRoutesByTo {
   '/instagram/temp': typeof AuthenticatedInstagramTempRoute
   '/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
   '/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
+  '/job-groups/$id': typeof AuthenticatedJobGroupsIdRoute
+  '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/collections': typeof AuthenticatedCollectionsIndexRoute
   '/downloads': typeof AuthenticatedDownloadsIndexRoute
   '/file-manager': typeof AuthenticatedFileManagerIndexRoute
   '/imports': typeof AuthenticatedImportsIndexRoute
   '/instagram': typeof AuthenticatedInstagramIndexRoute
+  '/job-groups': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
@@ -211,11 +237,14 @@ export interface FileRoutesById {
   '/_authenticated/instagram/temp': typeof AuthenticatedInstagramTempRoute
   '/_authenticated/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
   '/_authenticated/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
+  '/_authenticated/job-groups/$id': typeof AuthenticatedJobGroupsIdRoute
+  '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/_authenticated/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/_authenticated/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/_authenticated/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/_authenticated/imports/': typeof AuthenticatedImportsIndexRoute
   '/_authenticated/instagram/': typeof AuthenticatedInstagramIndexRoute
+  '/_authenticated/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
   '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
@@ -236,11 +265,14 @@ export interface FileRouteTypes {
     | '/instagram/temp'
     | '/instagram/virtual'
     | '/instagram/virtual-window'
+    | '/job-groups/$id'
+    | '/jobs/$id'
     | '/collections/'
     | '/downloads/'
     | '/file-manager/'
     | '/imports/'
     | '/instagram/'
+    | '/job-groups/'
     | '/jobs/'
     | '/links/'
     | '/tags/'
@@ -259,11 +291,14 @@ export interface FileRouteTypes {
     | '/instagram/temp'
     | '/instagram/virtual'
     | '/instagram/virtual-window'
+    | '/job-groups/$id'
+    | '/jobs/$id'
     | '/collections'
     | '/downloads'
     | '/file-manager'
     | '/imports'
     | '/instagram'
+    | '/job-groups'
     | '/jobs'
     | '/links'
     | '/tags'
@@ -283,11 +318,14 @@ export interface FileRouteTypes {
     | '/_authenticated/instagram/temp'
     | '/_authenticated/instagram/virtual'
     | '/_authenticated/instagram/virtual-window'
+    | '/_authenticated/job-groups/$id'
+    | '/_authenticated/jobs/$id'
     | '/_authenticated/collections/'
     | '/_authenticated/downloads/'
     | '/_authenticated/file-manager/'
     | '/_authenticated/imports/'
     | '/_authenticated/instagram/'
+    | '/_authenticated/job-groups/'
     | '/_authenticated/jobs/'
     | '/_authenticated/links/'
     | '/_authenticated/tags/'
@@ -406,6 +444,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/job-groups/': {
+      id: '/_authenticated/job-groups/'
+      path: '/job-groups'
+      fullPath: '/job-groups/'
+      preLoaderRoute: typeof AuthenticatedJobGroupsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/instagram/': {
       id: '/_authenticated/instagram/'
       path: '/instagram'
@@ -441,6 +486,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCollectionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/jobs/$id': {
+      id: '/_authenticated/jobs/$id'
+      path: '/jobs/$id'
+      fullPath: '/jobs/$id'
+      preLoaderRoute: typeof AuthenticatedJobsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/job-groups/$id': {
+      id: '/_authenticated/job-groups/$id'
+      path: '/job-groups/$id'
+      fullPath: '/job-groups/$id'
+      preLoaderRoute: typeof AuthenticatedJobGroupsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/instagram/virtual-window': {
       id: '/_authenticated/instagram/virtual-window'
       path: '/instagram/virtual-window'
@@ -470,11 +529,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInstagramTempRoute: typeof AuthenticatedInstagramTempRoute
   AuthenticatedInstagramVirtualRoute: typeof AuthenticatedInstagramVirtualRoute
   AuthenticatedInstagramVirtualWindowRoute: typeof AuthenticatedInstagramVirtualWindowRoute
+  AuthenticatedJobGroupsIdRoute: typeof AuthenticatedJobGroupsIdRoute
+  AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
   AuthenticatedCollectionsIndexRoute: typeof AuthenticatedCollectionsIndexRoute
   AuthenticatedDownloadsIndexRoute: typeof AuthenticatedDownloadsIndexRoute
   AuthenticatedFileManagerIndexRoute: typeof AuthenticatedFileManagerIndexRoute
   AuthenticatedImportsIndexRoute: typeof AuthenticatedImportsIndexRoute
   AuthenticatedInstagramIndexRoute: typeof AuthenticatedInstagramIndexRoute
+  AuthenticatedJobGroupsIndexRoute: typeof AuthenticatedJobGroupsIndexRoute
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
   AuthenticatedTagsIndexRoute: typeof AuthenticatedTagsIndexRoute
@@ -489,11 +551,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInstagramVirtualRoute: AuthenticatedInstagramVirtualRoute,
   AuthenticatedInstagramVirtualWindowRoute:
     AuthenticatedInstagramVirtualWindowRoute,
+  AuthenticatedJobGroupsIdRoute: AuthenticatedJobGroupsIdRoute,
+  AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
   AuthenticatedCollectionsIndexRoute: AuthenticatedCollectionsIndexRoute,
   AuthenticatedDownloadsIndexRoute: AuthenticatedDownloadsIndexRoute,
   AuthenticatedFileManagerIndexRoute: AuthenticatedFileManagerIndexRoute,
   AuthenticatedImportsIndexRoute: AuthenticatedImportsIndexRoute,
   AuthenticatedInstagramIndexRoute: AuthenticatedInstagramIndexRoute,
+  AuthenticatedJobGroupsIndexRoute: AuthenticatedJobGroupsIndexRoute,
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,
   AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,

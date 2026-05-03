@@ -28,8 +28,6 @@ export const JobSchema = z.object({
     .optional(),
 
   progress: z.number().int().min(0).max(100).optional(),
-  processedItems: z.number().int().min(0).optional(),
-  totalItems: z.number().int().min(0).optional(),
 
   attemptCount: z.number().int().min(0).default(0),
   maxAttempts: z.number().int().min(1).default(3),
@@ -72,8 +70,6 @@ export const CreateJobSchema = z.object({
     .optional(),
 
   progress: z.number().int().min(0).max(100).optional(),
-  processedItems: z.number().int().min(0).optional(),
-  totalItems: z.number().int().min(0).optional(),
 
   maxAttempts: z.number().int().min(1).optional(),
 });

@@ -101,7 +101,7 @@ export const linkRouter = {
 
       const countQuery = db.select({ count: count() }).from(items);
 
-      const data = await withPagination({
+      return await withPagination({
         dataQuery,
         countQuery,
         filters: filter,
@@ -110,11 +110,6 @@ export const linkRouter = {
         orderByColumn: items.createdAt,
         orderDirection: "desc",
       });
-
-      return {
-        ...data,
-        items: data.items.map(mapItemToLink),
-      };
     }),
 
   domains: protectedProcedure.output(LinkSchemas.domains.response).handler(async () => {

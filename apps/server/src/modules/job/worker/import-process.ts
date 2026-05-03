@@ -1,6 +1,5 @@
 import type { DownloadMediaPayload, Job } from "@workspace/contracts/job";
 import { ImportProcessPayloadSchema } from "@workspace/contracts/job";
-import { and, eq } from "drizzle-orm";
 import z from "zod";
 import { db } from "@/core/db";
 import { s3Client } from "@/core/s3";
@@ -77,21 +76,21 @@ export async function processImportProcess(job: Job) {
 }
 
 export async function createDownloadMediaJob(groupId: string, payload: DownloadMediaPayload) {
-  const existingCompleted = await db
-    .select({ id: jobs.id })
-    .from(jobs)
-    .where(
-      and(
-        eq(jobs.type, "download_media"),
-        eq(jobs.resourceId, payload.key),
-        eq(jobs.status, "completed"),
-      ),
-    )
-    .limit(1);
+  // const existingCompleted = await db
+  //   .select({ id: jobs.id })
+  //   .from(jobs)
+  //   .where(
+  //     and(
+  //       eq(jobs.type, "download_media"),
+  //       eq(jobs.resourceId, payload.key),
+  //       eq(jobs.status, "completed"),
+  //     ),
+  //   )
+  //   .limit(1);
 
-  if (existingCompleted.length > 0) {
-    return null;
-  }
+  // if (existingCompleted.length > 0) {
+  //   return null;
+  // }
 
   await db
     .insert(jobs)

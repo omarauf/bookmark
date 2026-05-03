@@ -29,8 +29,6 @@ export const jobs = pgTable(
     payload: jsonb().$type<JobPayload>(),
 
     progress: integer(),
-    processedItems: integer(),
-    totalItems: integer(),
 
     attemptCount: integer().notNull().default(0),
     maxAttempts: integer().notNull().default(3),

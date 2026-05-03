@@ -1,91 +1,76 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import type { Job } from "@workspace/contracts/job";
 import { JobSchemas } from "@workspace/contracts/job";
-import { RefreshCcw } from "lucide-react";
-import React from "react";
-import { toast } from "sonner";
-import type { z } from "zod";
-import { DataTable } from "@/components/data-table/data-table";
-import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
-import { Button } from "@/components/ui/button";
+import { BarChart3, List } from "lucide-react";
+import { z } from "zod";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useDataTable } from "@/hooks/use-data-table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
-import { useGetJobTableColumns } from "@/modules/jobs/column";
-import { JobLogsDialog } from "@/modules/jobs/job-logs-dialog";
+import { ReclaimButton } from "@/modules/jobs/components/buttons/reclaim";
+import { JobTable } from "@/modules/jobs/components/job-table";
+import { JobAnalytics } from "@/modules/jobs/views/analytics";
+
+const searchSchema = JobSchemas.list.request.extend({
+  view: z.enum(["analytics", "table"]).optional().default("analytics"),
+});
 
 export const Route = createFileRoute("/_authenticated/jobs/")({
   component: JobList,
-  validateSearch: JobSchemas.list.request,
-  loaderDeps: ({ search }) => search,
-  loader: async ({ context: { orpc, queryClient }, deps }) => {
-    await queryClient.ensureQueryData(orpc.job.list.queryOptions({ input: deps }));
-    return;
-  },
+  validateSearch: searchSchema,
 });
 
 function JobList() {
-  const queryClient = useQueryClient();
   const search = Route.useSearch();
-  const jobQuery = useSuspenseQuery(
-    orpc.job.list.queryOptions({ input: search as z.infer<typeof JobSchemas.list.request> }),
-  );
+  const navigate = Route.useNavigate();
 
-  const reclaimStaleMutation = useMutation(
-    orpc.job.reclaimStale.mutationOptions({
-      onSuccess: ({ reclaimed }) => {
-        queryClient.invalidateQueries({ queryKey: orpc.job.list.key() });
-        queryClient.invalidateQueries({ queryKey: orpc.job.stats.key() });
-        toast.success(
-          reclaimed > 0 ? `Recovered ${reclaimed} stale job(s)` : "No stale jobs found",
-        );
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    }),
-  );
-
-  const [logJob, setLogJob] = React.useState<Job | null>(null);
-  const [logsOpen, setLogsOpen] = React.useState(false);
-
-  const handleViewLogs = React.useCallback((job: Job) => {
-    setLogJob(job);
-    setLogsOpen(true);
-  }, []);
-
-  const columns = useGetJobTableColumns({ onViewLogs: handleViewLogs });
-
-  const { table } = useDataTable({
-    data: jobQuery.data.items,
-    rowCount: jobQuery.data.total,
-    columns,
-    pageCount: jobQuery.data.totalPages,
-    getRowId: (row) => row.id,
-  });
+  const jobQuery = useQuery(orpc.job.list.queryOptions({ input: search }));
 
   return (
-    <Main className="flex h-full flex-col p-2">
-      <ScrollArea className="min-h-0 p-4">
-        <DataTable table={table}>
-          <DataTableToolbar table={table}>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={reclaimStaleMutation.isPending}
-              onClick={() => reclaimStaleMutation.mutate({ stalledMinutes: 60 })}
+    <Main className="flex h-full flex-col p-0">
+      <Tabs
+        value={search.view}
+        className="flex h-full flex-col"
+        onValueChange={(v) => navigate({ search: { view: v as "analytics" | "table" } })}
+      >
+        <div className="flex items-center justify-between border-border/50 border-b px-6 py-4">
+          <TabsList className="rounded-none border border-border/50 bg-transparent p-0">
+            <TabsTrigger
+              value="analytics"
+              className="rounded-none border-border/50 border-r px-4 py-2 font-mono text-[10px] uppercase tracking-widest data-[state=active]:bg-foreground data-[state=active]:text-background"
             >
-              <RefreshCcw className={reclaimStaleMutation.isPending ? "animate-spin" : undefined} />
-              Recover stale
-            </Button>
-          </DataTableToolbar>
-        </DataTable>
-      </ScrollArea>
+              <BarChart3 className="mr-2 h-3.5 w-3.5" />
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger
+              value="table"
+              className="rounded-none px-4 py-2 font-mono text-[10px] uppercase tracking-widest data-[state=active]:bg-foreground data-[state=active]:text-background"
+            >
+              <List className="mr-2 h-3.5 w-3.5" />
+              Table
+            </TabsTrigger>
+          </TabsList>
 
-      <JobLogsDialog job={logJob} open={logsOpen} onOpenChange={setLogsOpen} />
+          <ReclaimButton />
+        </div>
+
+        <ScrollArea className="min-h-0">
+          <TabsContent value="analytics">
+            <JobAnalytics className="p-6" />
+          </TabsContent>
+
+          <TabsContent value="table">
+            <JobTable
+              className="p-6 pt-2"
+              items={jobQuery.data?.items || []}
+              totalCount={jobQuery.data?.total ?? 0}
+              totalPages={jobQuery.data?.totalPages ?? 0}
+              isLoading={jobQuery.isLoading}
+              perPage={search.perPage}
+            />
+          </TabsContent>
+        </ScrollArea>
+      </Tabs>
     </Main>
   );
 }

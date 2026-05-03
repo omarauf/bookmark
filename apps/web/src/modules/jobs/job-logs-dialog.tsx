@@ -1,21 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import type { Job } from "@workspace/contracts/job";
-import { AlertTriangle, Bug, Info, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { orpc } from "@/integrations/orpc";
+import { levelIcons } from "./badges/log-level";
 
-interface Props {
-  job: Job | null;
+type Props = {
+  job?: Job;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-const levelIcons = {
-  debug: <Bug className="size-3.5 text-muted-foreground" />,
-  info: <Info className="size-3.5 text-blue-500" />,
-  warn: <AlertTriangle className="size-3.5 text-amber-500" />,
-  error: <X className="size-3.5 text-destructive" />,
 };
 
 export function JobLogsDialog({ job, open, onOpenChange }: Props) {
@@ -26,7 +19,7 @@ export function JobLogsDialog({ job, open, onOpenChange }: Props) {
     }),
   );
 
-  const logs = logsQuery.data?.items ?? [];
+  const logs = logsQuery.data || [];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

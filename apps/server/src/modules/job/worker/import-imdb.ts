@@ -62,40 +62,43 @@ export async function processImdbDiscover(job: Job) {
     return;
   }
 
-  // 3. Create a job group for the fetch jobs
-  const [group] = await db
-    .insert(jobGroups)
-    .values({ name: `imdb-sync-${Date.now()}`, createdAt: new Date() })
-    .returning();
+  if (newIds.length > 0) {
+    // 3. Create a job group for the fetch jobs
+    const [group] = await db
+      .insert(jobGroups)
+      .values({ name: `imdb-sync-${Date.now()}`, createdAt: new Date() })
+      .returning();
 
-  await log(job.id, "info", "Created job group", { groupId: group.id, name: group.name });
+    await log(job.id, "info", "Created job group", { groupId: group.id, name: group.name });
 
-  // 4. Spawn one imdb_fetch job per new ID
-  let created = 0;
-  let skipped = 0;
+    // 4. Spawn one imdb_fetch job per new ID
+    let created = 0;
+    let skipped = 0;
 
-  for (const imdbId of newIds) {
-    try {
-      await db
-        .insert(jobs)
-        .values({
-          type: "imdb_fetch",
-          status: "pending",
-          resourceType: "imdb",
-          resourceId: imdbId,
-          payload: { imdbId },
-          groupId: group.id,
-          createdAt: new Date(),
-        })
-        .onConflictDoNothing();
+    for (const imdbId of newIds) {
+      try {
+        await db
+          .insert(jobs)
+          .values({
+            type: "imdb_fetch",
+            status: "pending",
+            resourceType: "imdb",
+            resourceId: imdbId,
+            payload: { imdbId },
+            groupId: group.id,
+            createdAt: new Date(),
+          })
+          .onConflictDoNothing();
 
-      created++;
-    } catch {
-      skipped++;
+        created++;
+      } catch {
+        skipped++;
+      }
     }
+
+    await log(job.id, "info", "Spawned fetch jobs", { created, skipped, groupId: group.id });
   }
 
-  await log(job.id, "info", "Spawned fetch jobs", { created, skipped, groupId: group.id });
   await updateJobProgress(job.id, 100);
 }
 

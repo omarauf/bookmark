@@ -20,7 +20,7 @@ export function SyncButton() {
       size="sm"
       className="rounded-none font-mono text-[10px] uppercase tracking-widest"
       disabled={mutation.isPending}
-      onClick={() => mutation.mutate()}
+      onClick={() => mutation.mutate({})}
     >
       <RotateCcw className="mr-2" />
       <span className="pt-0.5">Sync</span>

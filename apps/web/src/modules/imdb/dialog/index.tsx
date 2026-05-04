@@ -175,7 +175,7 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
             )}
 
             {/* Box Office (Movie only) */}
-            {isMovie && "boxOffice" in metadata && metadata.boxOffice > 0 && (
+            {isMovie && "boxOffice" in metadata && metadata.boxOffice && (
               <MetadataRow
                 icon={<DollarSign className="h-3 w-3" />}
                 label="Box Office"

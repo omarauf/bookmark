@@ -1,11 +1,13 @@
 import {
   AudioWaveform,
+  Clapperboard,
   Command,
   Construction,
   Download,
   FileQuestion,
   Folder,
   GalleryVerticalEnd,
+  Layers,
   Link,
   ServerCrash,
   Settings,
@@ -15,6 +17,7 @@ import {
   Upload,
   Users,
   Video,
+  Workflow,
 } from "lucide-react";
 import { InstagramIcon, TwitterIcon } from "@/assets/icons";
 import type { SidebarData } from "./types";
@@ -55,10 +58,16 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
+      title: "Entertainment",
+      items: [{ title: "IMDb", url: "/imdb", icon: Clapperboard }],
+    },
+    {
       title: "Data & Operations",
       items: [
         { title: "Imports", url: "/imports", icon: Upload },
         { title: "Downloads", url: "/downloads", icon: Download },
+        { title: "Jobs", url: "/jobs", icon: Workflow },
+        { title: "Job Groups", url: "/job-groups", icon: Layers },
         { title: "File Manager", url: "/file-manager", icon: Folder },
       ],
     },

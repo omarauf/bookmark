@@ -1,0 +1,204 @@
+import { JobSchemas, type JobType } from "@workspace/contracts/job";
+import { and, asc, count, desc, eq, gte, isNotNull, sql } from "drizzle-orm";
+import { db } from "@/core/db";
+import { protectedProcedure } from "@/lib/orpc";
+import { jobGroups, jobs } from "../schema";
+
+export const analyticsHandler = protectedProcedure
+  .input(JobSchemas.analytics.request)
+  .output(JobSchemas.analytics.response)
+  .handler(async ({ input }) => {
+    const days = input?.days ?? 30;
+
+    const jobsByDay = await getJobLastNDays(days);
+
+    const durationByType = await getDurationByType();
+
+    const attemptDistribution = await getAttemptDistribution();
+
+    const topErrors = await getTopErrors();
+
+    const statusCounts = await getStatusCounts();
+
+    const typeCounts = await getTypeCounts();
+
+    const groupSizes = await getGroupSizes();
+
+    return {
+      jobsByDay,
+      durationByType,
+      attemptDistribution,
+      topErrors,
+      statusCounts,
+      typeCounts,
+      groupSizes,
+    };
+  });
+
+async function getJobLastNDays(days: number) {
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+
+  // Jobs by day (last N days)
+  const dayRows = await db
+    .select({
+      date: sql<string>`DATE(${jobs.createdAt})`,
+      status: jobs.status,
+      count: count(),
+    })
+    .from(jobs)
+    .where(gte(jobs.createdAt, cutoff))
+    .groupBy(sql`DATE(${jobs.createdAt})`, jobs.status)
+    .orderBy(asc(sql`DATE(${jobs.createdAt})`));
+
+  const dayMap = new Map<string, Map<string, number>>();
+  for (const row of dayRows) {
+    if (!dayMap.has(row.date)) dayMap.set(row.date, new Map());
+    dayMap.get(row.date)?.set(row.status, Number(row.count));
+  }
+
+  const jobsByDay = Array.from(dayMap.entries()).map(([date, statusMap]) => ({
+    date,
+    pending: statusMap.get("pending") ?? 0,
+    processing: statusMap.get("processing") ?? 0,
+    completed: statusMap.get("completed") ?? 0,
+    failed: statusMap.get("failed") ?? 0,
+    cancelled: statusMap.get("cancelled") ?? 0,
+    retrying: statusMap.get("retrying") ?? 0,
+  }));
+
+  return jobsByDay;
+}
+
+async function getDurationByType() {
+  const rows = await db
+    .select({
+      type: jobs.type,
+      startedAt: jobs.startedAt,
+      completedAt: jobs.completedAt,
+    })
+    .from(jobs)
+    .where(and(sql`${jobs.startedAt} IS NOT NULL`, sql`${jobs.completedAt} IS NOT NULL`));
+
+  const stats = new Map<string, { totalMs: number; count: number; min: number; max: number }>();
+
+  for (const { type, startedAt, completedAt } of rows) {
+    if (!startedAt || !completedAt) continue;
+
+    const duration = new Date(completedAt).getTime() - new Date(startedAt).getTime();
+
+    const current = stats.get(type);
+
+    if (!current) {
+      stats.set(type, {
+        totalMs: duration,
+        count: 1,
+        min: duration,
+        max: duration,
+      });
+      continue;
+    }
+
+    current.totalMs += duration;
+    current.count += 1;
+    current.min = Math.min(current.min, duration);
+    current.max = Math.max(current.max, duration);
+  }
+
+  return Array.from(stats.entries()).map(([type, s]) => ({
+    type: type as JobType,
+    avgMs: Math.round(s.totalMs / s.count),
+    minMs: s.min,
+    maxMs: s.max,
+    count: s.count,
+  }));
+}
+
+async function getAttemptDistribution() {
+  const attemptRows = await db
+    .select({
+      attemptCount: jobs.attemptCount,
+      count: count(),
+    })
+    .from(jobs)
+    .groupBy(jobs.attemptCount)
+    .orderBy(jobs.attemptCount);
+
+  const attemptDistribution = attemptRows.map((row) => ({
+    attempts: row.attemptCount,
+    count: Number(row.count),
+  }));
+
+  return attemptDistribution;
+}
+
+async function getTopErrors() {
+  const errorRows = await db
+    .select({
+      error: jobs.error,
+      count: count(),
+    })
+    .from(jobs)
+    .where(sql`${jobs.error} IS NOT NULL`)
+    .groupBy(jobs.error)
+    .orderBy(desc(count()))
+    .limit(10);
+
+  const topErrors = errorRows.map((row) => ({
+    error: row.error ?? "Unknown",
+    count: Number(row.count),
+  }));
+
+  return topErrors;
+}
+
+async function getStatusCounts() {
+  const statusRowsAll = await db
+    .select({ status: jobs.status, count: count() })
+    .from(jobs)
+    .groupBy(jobs.status);
+
+  const statusCounts: Record<string, number> = {};
+  for (const row of statusRowsAll) {
+    statusCounts[row.status] = Number(row.count);
+  }
+
+  return statusCounts;
+}
+
+async function getTypeCounts() {
+  const typeRowsAll = await db
+    .select({ type: jobs.type, count: count() })
+    .from(jobs)
+    .groupBy(jobs.type);
+
+  const typeCounts: Record<string, number> = {};
+  for (const row of typeRowsAll) {
+    typeCounts[row.type] = Number(row.count);
+  }
+
+  return typeCounts;
+}
+
+async function getGroupSizes() {
+  const groupSizeRows = await db
+    .select({
+      groupId: jobs.groupId,
+      name: jobGroups.name,
+      count: count(),
+    })
+    .from(jobs)
+    .leftJoin(jobGroups, eq(jobs.groupId, jobGroups.id))
+    .where(isNotNull(jobs.groupId))
+    .groupBy(jobs.groupId, jobGroups.name)
+    .orderBy(desc(count()))
+    .limit(20);
+
+  const groupSizes = groupSizeRows.map((row) => ({
+    groupId: row.groupId || "<unknown>",
+    name: row.name ?? "Unknown",
+    count: Number(row.count),
+  }));
+
+  return groupSizes;
+}

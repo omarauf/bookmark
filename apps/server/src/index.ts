@@ -3,7 +3,7 @@ import { migrate } from "drizzle-orm/node-postgres/migrator"; // Adjust dependin
 import app from "./app";
 import { seedAdmin } from "./core/auth/seed";
 import { db } from "./core/db";
-import { startWorkers } from "./modules/download-task/worker";
+import { startJobSystem, stopJobSystem } from "./modules/job/worker";
 
 async function bootstrap() {
   console.log("🛠 Running migrations...");
@@ -14,12 +14,27 @@ async function bootstrap() {
   await seedAdmin();
   console.log("✅ Admin user seeded");
 
-  console.log("🚀 Starting download task workers...");
-  startWorkers(4);
-  console.log("✅ Download task workers started");
+  console.log("🚀 Starting job system...");
+  startJobSystem();
+  console.log("✅ Job system started");
 
-  Bun.serve({ port: 3000, fetch: app.fetch, maxRequestBodySize: 1 * 1024 * 1024 * 1024 });
+  const server = Bun.serve({
+    port: 3000,
+    fetch: app.fetch,
+    maxRequestBodySize: 1 * 1024 * 1024 * 1024,
+  });
   console.log("🚀 Server running at http://localhost:3000");
+
+  const shutdown = async (signal: string) => {
+    console.log(`\n${signal} received. Shutting down gracefully...`);
+    stopJobSystem();
+    server.stop(true);
+    console.log("✅ Graceful shutdown complete");
+    process.exit(0);
+  };
+
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 }
 
 bootstrap().catch((err) => {

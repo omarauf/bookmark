@@ -19,15 +19,41 @@ const s3 = new S3Client({
   forcePathStyle: false,
 });
 
-async function upload(key: string, body: Buffer | string) {
-  const command = new PutObjectCommand({
-    Bucket: env.S3_BUCKET_NAME,
-    Key: key,
-    Body: body,
-    ACL: "public-read",
+async function upload(
+  key: string,
+  body: Buffer | string,
+  onProgress?: (loaded: number, total: number) => void,
+) {
+  if (!onProgress) {
+    const command = new PutObjectCommand({
+      Bucket: env.S3_BUCKET_NAME,
+      Key: key,
+      Body: body,
+      ACL: "public-read",
+    });
+
+    return await safe(s3.send(command));
+  }
+
+  const parallelUploads3 = new Upload({
+    client: s3,
+    params: {
+      Bucket: env.S3_BUCKET_NAME,
+      Key: key,
+      Body: body,
+      ACL: "public-read",
+    },
+    queueSize: 4,
+    partSize: 1024 * 1024 * 5, // 5 MB
   });
 
-  return await safe(s3.send(command));
+  parallelUploads3.on("httpUploadProgress", (progress) => {
+    if (progress.loaded !== undefined && progress.total !== undefined) {
+      onProgress(progress.loaded, progress.total);
+    }
+  });
+
+  return await safe(parallelUploads3.done());
 }
 
 async function get(key: string) {
@@ -92,7 +118,11 @@ async function exists(key: string): Promise<boolean> {
   }
 }
 
-async function stream(stream: Readable, key: string) {
+async function stream(
+  stream: Readable,
+  key: string,
+  onProgress?: (loaded: number, total: number) => void,
+) {
   try {
     // 1. Pipe the stream directly to S3
     const parallelUploads3 = new Upload({
@@ -109,9 +139,13 @@ async function stream(stream: Readable, key: string) {
     });
 
     // Optional: Track progress
-    // parallelUploads3.on("httpUploadProgress", (progress) => {
-    //   console.log(`Uploaded ${progress.loaded} of ${progress.total || "unknown"} bytes`);
-    // });
+    if (onProgress) {
+      parallelUploads3.on("httpUploadProgress", (progress) => {
+        if (progress.loaded !== undefined && progress.total !== undefined) {
+          onProgress(progress.loaded, progress.total);
+        }
+      });
+    }
 
     // 2. Wait for the upload to finish
     await parallelUploads3.done();

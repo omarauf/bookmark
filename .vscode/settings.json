@@ -13,7 +13,10 @@
   },
   "cSpell.words": [
     "ilike",
-    "orpc"
+    "Imdb",
+    "OMDB",
+    "orpc",
+    "TMDB"
   ],
   "editor.defaultFormatter": "biomejs.biome",
   // "editor.formatOnSave": true,

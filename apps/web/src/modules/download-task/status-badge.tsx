@@ -1,8 +1,8 @@
-import type { DownloadStatus } from "@workspace/contracts/download-task";
+import type { JobStatus } from "@workspace/contracts/job";
 import { cn } from "@/lib/utils";
 
 interface DownloadStatusBadgeProps {
-  status: DownloadStatus;
+  status: JobStatus;
   className?: string;
 }
 
@@ -15,7 +15,8 @@ export function DownloadStatusBadge({ status, className }: DownloadStatusBadgePr
         status === "processing" && "text-blue-400",
         status === "completed" && "text-emerald-500",
         status === "failed" && "text-rose-500",
-        status === "exists" && "text-amber-500",
+        status === "cancelled" && "text-amber-500",
+        status === "retrying" && "text-blue-400",
         className,
       )}
     >
@@ -26,7 +27,8 @@ export function DownloadStatusBadge({ status, className }: DownloadStatusBadgePr
           status === "processing" && "animate-pulse bg-blue-400",
           status === "completed" && "bg-emerald-500/80",
           status === "failed" && "bg-rose-500/80",
-          status === "exists" && "bg-amber-500/80",
+          status === "cancelled" && "bg-amber-500/80",
+          status === "retrying" && "animate-pulse bg-blue-400",
         )}
       />
       {status}

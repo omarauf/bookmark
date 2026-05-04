@@ -54,7 +54,7 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="flex h-auto max-h-[90vh] w-full flex-col gap-0 overflow-hidden rounded-none border border-border/50 bg-background p-0 shadow-2xl sm:h-[520px] sm:w-[480px]"
+        className="flex h-auto max-h-[90vh] w-full flex-col gap-0 overflow-hidden rounded-none border border-border/50 bg-background p-0 shadow-2xl sm:h-130 sm:w-120"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader className="border-border/50 border-b p-5 text-left">
@@ -126,11 +126,7 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
               Cancel
             </Button>
             <form.AppForm>
-              <form.SubmitButton
-                size="sm"
-                className="rounded-none font-mono text-xs"
-                disabled={updateMutation.isPending}
-              >
+              <form.SubmitButton className="rounded-none font-mono text-xs">
                 {updateMutation.isPending ? "Saving..." : "Save"}
               </form.SubmitButton>
             </form.AppForm>

@@ -26,6 +26,7 @@ import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedJobGroupsIndexRouteImport } from './routes/_authenticated/job-groups/index'
 import { Route as AuthenticatedInstagramIndexRouteImport } from './routes/_authenticated/instagram/index'
 import { Route as AuthenticatedImportsIndexRouteImport } from './routes/_authenticated/imports/index'
+import { Route as AuthenticatedImdbIndexRouteImport } from './routes/_authenticated/imdb/index'
 import { Route as AuthenticatedFileManagerIndexRouteImport } from './routes/_authenticated/file-manager/index'
 import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
 import { Route as AuthenticatedCollectionsIndexRouteImport } from './routes/_authenticated/collections/index'
@@ -124,6 +125,11 @@ const AuthenticatedImportsIndexRoute =
     path: '/imports/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedImdbIndexRoute = AuthenticatedImdbIndexRouteImport.update({
+  id: '/imdb/',
+  path: '/imdb/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFileManagerIndexRoute =
   AuthenticatedFileManagerIndexRouteImport.update({
     id: '/file-manager/',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/file-manager/': typeof AuthenticatedFileManagerIndexRoute
+  '/imdb/': typeof AuthenticatedImdbIndexRoute
   '/imports/': typeof AuthenticatedImportsIndexRoute
   '/instagram/': typeof AuthenticatedInstagramIndexRoute
   '/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/collections': typeof AuthenticatedCollectionsIndexRoute
   '/downloads': typeof AuthenticatedDownloadsIndexRoute
   '/file-manager': typeof AuthenticatedFileManagerIndexRoute
+  '/imdb': typeof AuthenticatedImdbIndexRoute
   '/imports': typeof AuthenticatedImportsIndexRoute
   '/instagram': typeof AuthenticatedInstagramIndexRoute
   '/job-groups': typeof AuthenticatedJobGroupsIndexRoute
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/_authenticated/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/_authenticated/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/_authenticated/file-manager/': typeof AuthenticatedFileManagerIndexRoute
+  '/_authenticated/imdb/': typeof AuthenticatedImdbIndexRoute
   '/_authenticated/imports/': typeof AuthenticatedImportsIndexRoute
   '/_authenticated/instagram/': typeof AuthenticatedInstagramIndexRoute
   '/_authenticated/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/collections/'
     | '/downloads/'
     | '/file-manager/'
+    | '/imdb/'
     | '/imports/'
     | '/instagram/'
     | '/job-groups/'
@@ -296,6 +306,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/downloads'
     | '/file-manager'
+    | '/imdb'
     | '/imports'
     | '/instagram'
     | '/job-groups'
@@ -323,6 +334,7 @@ export interface FileRouteTypes {
     | '/_authenticated/collections/'
     | '/_authenticated/downloads/'
     | '/_authenticated/file-manager/'
+    | '/_authenticated/imdb/'
     | '/_authenticated/imports/'
     | '/_authenticated/instagram/'
     | '/_authenticated/job-groups/'
@@ -465,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImportsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/imdb/': {
+      id: '/_authenticated/imdb/'
+      path: '/imdb'
+      fullPath: '/imdb/'
+      preLoaderRoute: typeof AuthenticatedImdbIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/file-manager/': {
       id: '/_authenticated/file-manager/'
       path: '/file-manager'
@@ -534,6 +553,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCollectionsIndexRoute: typeof AuthenticatedCollectionsIndexRoute
   AuthenticatedDownloadsIndexRoute: typeof AuthenticatedDownloadsIndexRoute
   AuthenticatedFileManagerIndexRoute: typeof AuthenticatedFileManagerIndexRoute
+  AuthenticatedImdbIndexRoute: typeof AuthenticatedImdbIndexRoute
   AuthenticatedImportsIndexRoute: typeof AuthenticatedImportsIndexRoute
   AuthenticatedInstagramIndexRoute: typeof AuthenticatedInstagramIndexRoute
   AuthenticatedJobGroupsIndexRoute: typeof AuthenticatedJobGroupsIndexRoute
@@ -556,6 +576,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCollectionsIndexRoute: AuthenticatedCollectionsIndexRoute,
   AuthenticatedDownloadsIndexRoute: AuthenticatedDownloadsIndexRoute,
   AuthenticatedFileManagerIndexRoute: AuthenticatedFileManagerIndexRoute,
+  AuthenticatedImdbIndexRoute: AuthenticatedImdbIndexRoute,
   AuthenticatedImportsIndexRoute: AuthenticatedImportsIndexRoute,
   AuthenticatedInstagramIndexRoute: AuthenticatedInstagramIndexRoute,
   AuthenticatedJobGroupsIndexRoute: AuthenticatedJobGroupsIndexRoute,

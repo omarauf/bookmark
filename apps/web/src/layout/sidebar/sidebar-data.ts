@@ -1,5 +1,6 @@
 import {
   AudioWaveform,
+  Clapperboard,
   Command,
   Construction,
   Download,
@@ -55,6 +56,10 @@ export const sidebarData: SidebarData = {
         { title: "Twitter", url: "/twitter", icon: TwitterIcon },
         { title: "TikTok", url: "/tiktok", icon: Video },
       ],
+    },
+    {
+      title: "Entertainment",
+      items: [{ title: "IMDb", url: "/imdb", icon: Clapperboard }],
     },
     {
       title: "Data & Operations",

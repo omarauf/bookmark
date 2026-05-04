@@ -24,7 +24,7 @@ export function InfiniteScroll({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const hasInitializedRef = useRef(false);
+  // const hasInitializedRef = useRef(false);
 
   // IntersectionObserver for scroll-based infinite loading
   useEffect(() => {
@@ -53,23 +53,22 @@ export function InfiniteScroll({
   }, [onLoadMore, isFetchingNextPage, hasNextPage, threshold, isLoading]);
 
   // Initial load: only check once after initial data is loaded
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || hasInitializedRef.current || isLoading || isFetchingNextPage) return;
+  // useEffect(() => {
+  //   const container = containerRef.current;
+  //   if (!container || hasInitializedRef.current || isLoading || isFetchingNextPage) return;
 
-    const containerHeight = container.scrollHeight;
-    const containerClientHeight = container.clientHeight;
+  //   const containerHeight = container.scrollHeight;
+  //   const containerClientHeight = container.clientHeight;
 
-    // Only trigger initial load if container is not full and we have a next page
-    if (containerHeight <= containerClientHeight && hasNextPage) {
-      hasInitializedRef.current = true;
-      onLoadMore();
-    } else {
-      // Mark as initialized even if we don't need to load more
-      hasInitializedRef.current = true;
-    }
-  }, [hasNextPage, isFetchingNextPage, isLoading, onLoadMore]);
-  // <ScrollArea className="h-full">
+  //   // Only trigger initial load if container is not full and we have a next page
+  //   if (containerHeight <= containerClientHeight && hasNextPage) {
+  //     hasInitializedRef.current = true;
+  //     onLoadMore();
+  //   } else {
+  //     // Mark as initialized even if we don't need to load more
+  //     hasInitializedRef.current = true;
+  //   }
+  // }, [hasNextPage, isFetchingNextPage, isLoading, onLoadMore]);
 
   return (
     <ScrollArea ref={containerRef} className={cn("relative overflow-auto", className)}>

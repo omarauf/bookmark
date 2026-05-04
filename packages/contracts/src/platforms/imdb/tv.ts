@@ -11,7 +11,7 @@ export const TvMetadataSchema = z.object({
   released: z.string(),
   genre: z.string().array(),
   poster: z.string(),
-  rating: z.number(),
+  rating: z.number().optional(),
   votes: z.number(),
   seasons: z.number(),
   runtime: z.number(),

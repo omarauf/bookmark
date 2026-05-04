@@ -6,6 +6,7 @@ import { db } from "@/core/db";
 import { omdbClient } from "@/modules/imdb/integrations/omdb";
 import { imdbToItem } from "@/modules/imdb/service";
 import { items } from "@/modules/item/schema";
+import { relations } from "@/modules/relation/schema";
 import { delay } from "@/utils/delay";
 import { jobGroups, jobs } from "../schema";
 import { log, updateJobProgress } from "../service";
@@ -24,12 +25,14 @@ export async function processImdbDiscover(job: Job) {
     where: (item, { eq }) => eq(item.platform, "chrome"),
   });
 
-  const imdbIds = linkItems
-    .filter((i) => i.url?.includes("imdb.com/title/"))
-    .map((i) => i.url?.match(/imdb\.com\/title\/(tt\d+)/)?.[1])
-    .filter((id): id is string => !!id);
+  // Build map of imdbId -> source link item id
+  const imdbIdToLinkId = new Map<string, string>();
+  for (const item of linkItems) {
+    const match = item.url?.match(/imdb\.com\/title\/(tt\d+)/);
+    if (match) imdbIdToLinkId.set(match[1], item.id);
+  }
 
-  const uniqueIds = Array.from(new Set(imdbIds));
+  const uniqueIds = Array.from(imdbIdToLinkId.keys());
 
   if (uniqueIds.length === 0) {
     await log(job.id, "info", "No IMDb links found");
@@ -76,6 +79,14 @@ export async function processImdbDiscover(job: Job) {
     let skipped = 0;
 
     for (const imdbId of newIds) {
+      const linkId = imdbIdToLinkId.get(imdbId);
+
+      if (!linkId) {
+        await log(job.id, "warn", "No source link found for IMDb ID, skipping", { imdbId });
+        skipped++;
+        continue;
+      }
+
       try {
         await db
           .insert(jobs)
@@ -84,7 +95,7 @@ export async function processImdbDiscover(job: Job) {
             status: "pending",
             resourceType: "imdb",
             resourceId: imdbId,
-            payload: { imdbId },
+            payload: { imdbId, linkId },
             groupId: group.id,
             createdAt: new Date(),
           })
@@ -109,9 +120,9 @@ export async function processImdbFetch(job: Job) {
     throw new Error(`Invalid job payload: ${error}`);
   }
 
-  const { imdbId } = parseResult.data;
+  const { imdbId, linkId } = parseResult.data;
 
-  await log(job.id, "info", "Fetching IMDb details", { imdbId });
+  await log(job.id, "info", "Fetching IMDb details", { imdbId, linkId });
   await updateJobProgress(job.id, 10);
 
   const [data, error] = await omdbClient.getByImdbId(imdbId);
@@ -136,10 +147,28 @@ export async function processImdbFetch(job: Job) {
   const result = ItemSchemas.create.safeParse(newItem);
 
   if (!result.success) {
+    await log(job.id, "error", `Failed to parse IMDb item for ${imdbId}`, { data });
     throw new Error(`Schema validation failed for ${imdbId}: ${z.prettifyError(result.error)}`);
   }
 
-  await db.insert(items).values(result.data);
+  const [{ id: newItemId }] = await db
+    .insert(items)
+    .values(result.data)
+    .returning({ id: items.id });
+
+  // Create relation: imdb item was created_by source link
+  if (linkId) {
+    await db
+      .insert(relations)
+      .values({
+        fromItemId: newItemId,
+        toItemId: linkId,
+        relationType: "created_by",
+        x: 0,
+        y: 0,
+      })
+      .onConflictDoNothing();
+  }
 
   await log(job.id, "info", "Item imported", { imdbId, title: data.Title, type: data.Type });
   await updateJobProgress(job.id, 100);

@@ -9,9 +9,11 @@ export function imdbToItem(imdbData: ImdbDetails): MovieMetadata | TvMetadata {
 
   const votes = Number.parseInt(imdbData.imdbVotes.replace(/,/g, ""), 10) || 0;
   const rating = Number.parseFloat(imdbData.imdbRating);
-  const boxOffice = imdbData.BoxOffice
-    ? Number.parseInt(imdbData.BoxOffice.replace(/[$,]/g, ""), 10)
-    : 0;
+
+  const boxOffice =
+    imdbData.BoxOffice && imdbData.BoxOffice !== "N/A"
+      ? Number.parseInt(imdbData.BoxOffice.replace(/[$,]/g, ""), 10)
+      : undefined;
 
   const runtime = Number.parseInt(imdbData.Runtime.replace(" min", ""), 10) || 0;
   const year = Number.parseInt(imdbData.Year, 10) || 0;
@@ -30,9 +32,9 @@ export function imdbToItem(imdbData: ImdbDetails): MovieMetadata | TvMetadata {
       released: imdbData.Released,
       genre: genres,
       poster: imdbData.Poster,
-      rating: rating,
+      rating: rating || undefined,
       votes: votes,
-      boxOffice: boxOffice,
+      boxOffice: boxOffice || undefined,
     };
   }
 
@@ -48,7 +50,7 @@ export function imdbToItem(imdbData: ImdbDetails): MovieMetadata | TvMetadata {
       released: imdbData.Released,
       genre: genres,
       poster: imdbData.Poster,
-      rating: rating,
+      rating: rating || undefined,
       votes: votes,
       runtime: runtime,
       seasons: Number.parseInt(imdbData.totalSeasons, 10) || 0,

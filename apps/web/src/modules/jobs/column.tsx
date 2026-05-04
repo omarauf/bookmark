@@ -161,13 +161,20 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
       {
         id: "error",
         accessorKey: "error",
+        maxSize: 20,
         header: ({ column }: { column: Column<Job, unknown> }) => (
           <DataTableColumnHeader column={column} label="Error" />
         ),
         cell: ({ cell }) => {
           const error = cell.getValue<Job["error"]>();
           if (!error) return <span className="text-muted-foreground text-xs">—</span>;
-          return <span className="max-w-50 truncate text-destructive text-xs">{error}</span>;
+          return (
+            <div className="max-w-50">
+              <span className="max-w-50 overflow-hidden truncate text-destructive text-xs">
+                {error}
+              </span>
+            </div>
+          );
         },
       },
       {

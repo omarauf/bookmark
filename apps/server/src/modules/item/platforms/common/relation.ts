@@ -10,6 +10,7 @@ type ToItem = {
   y?: number;
 };
 
+// (from) --[type]--> (to)
 export function relation(from: FromItem, to: ToItem | ToItem[], type: Relation): CreateRelation[] {
   const toArray = Array.isArray(to) ? to : [to];
 

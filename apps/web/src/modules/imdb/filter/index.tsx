@@ -3,6 +3,8 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Clapperboard, Eye, Film, MonitorPlay, Pen, Search, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { orpc } from "@/integrations/orpc";
+import { SyncButton } from "../components/sync";
+import { ImdbTotalNumber } from "../components/total-number";
 
 export function ImdbFilter() {
   const search = useSearch({ from: "/_authenticated/imdb/" });
@@ -109,7 +111,11 @@ export function ImdbFilter() {
         />
       </div>
 
+      <ImdbTotalNumber />
+
       <div className="grow" />
+
+      <SyncButton />
 
       {/* Kind Toggle */}
       <div className="flex items-center gap-1 border border-border/50">

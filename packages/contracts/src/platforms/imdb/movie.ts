@@ -11,9 +11,9 @@ export const MovieMetadataSchema = z.object({
   released: z.string(),
   genre: z.string().array(),
   poster: z.string(),
-  rating: z.number(),
+  rating: z.number().optional(),
   votes: z.number(),
-  boxOffice: z.number(),
+  boxOffice: z.number().optional(),
   runtime: z.number(),
   rated: z.string(),
 });

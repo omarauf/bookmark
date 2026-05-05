@@ -7,7 +7,7 @@ type Props = {
   item: {
     value: string;
     label: string;
-    icon: (props: SVGProps<SVGSVGElement>) => React.ReactElement;
+    icon?: (props: SVGProps<SVGSVGElement>) => React.ReactElement;
   };
   isTheme?: boolean;
 };
@@ -38,13 +38,15 @@ export function RadioGroupItem({ item, isTheme = false }: Props) {
           )}
           aria-hidden="true"
         />
-        <item.icon
-          className={cn(
-            !isTheme &&
-              "fill-primary stroke-primary group-data-[state=unchecked]:fill-muted-foreground group-data-[state=unchecked]:stroke-muted-foreground",
-          )}
-          aria-hidden="true"
-        />
+        {item.icon && (
+          <item.icon
+            className={cn(
+              !isTheme &&
+                "fill-primary stroke-primary group-data-[state=unchecked]:fill-muted-foreground group-data-[state=unchecked]:stroke-muted-foreground",
+            )}
+            aria-hidden="true"
+          />
+        )}
       </div>
       <div className="mt-1 text-xs" id={`${item.value}-description`} aria-live="polite">
         {item.label}

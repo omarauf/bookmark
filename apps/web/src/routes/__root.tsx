@@ -5,6 +5,8 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "@/components/ui/sonner";
 import { authQueries } from "@/integrations/auth";
 import type { orpc } from "@/integrations/orpc";
+import { AppearanceProvider } from "@/settings/context/appearance-provider";
+import { StyleProvider } from "@/settings/context/style-provider";
 import { ThemeProvider } from "@/theme/theme-provider";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
@@ -49,7 +51,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="wrap-anywhere font-sans antialiased selection:bg-[rgba(79,184,178,0.24)]">
-        <ThemeProvider>{children}</ThemeProvider>
+        <StyleProvider>
+          <AppearanceProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </AppearanceProvider>
+        </StyleProvider>
         <TanStackDevtools
           config={{
             position: "bottom-right",

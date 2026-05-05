@@ -21,6 +21,7 @@ import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedTwitterIndexRouteImport } from './routes/_authenticated/twitter/index'
 import { Route as AuthenticatedTiktokIndexRouteImport } from './routes/_authenticated/tiktok/index'
 import { Route as AuthenticatedTagsIndexRouteImport } from './routes/_authenticated/tags/index'
+import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
 import { Route as AuthenticatedJobGroupsIndexRouteImport } from './routes/_authenticated/job-groups/index'
@@ -98,6 +99,12 @@ const AuthenticatedTagsIndexRoute = AuthenticatedTagsIndexRouteImport.update({
   path: '/tags/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSettingsIndexRoute =
+  AuthenticatedSettingsIndexRouteImport.update({
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedLinksIndexRoute = AuthenticatedLinksIndexRouteImport.update({
   id: '/links/',
   path: '/links/',
@@ -207,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs/': typeof AuthenticatedJobsIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
+  '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tags/': typeof AuthenticatedTagsIndexRoute
   '/tiktok/': typeof AuthenticatedTiktokIndexRoute
   '/twitter/': typeof AuthenticatedTwitterIndexRoute
@@ -235,6 +243,7 @@ export interface FileRoutesByTo {
   '/job-groups': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
   '/tiktok': typeof AuthenticatedTiktokIndexRoute
   '/twitter': typeof AuthenticatedTwitterIndexRoute
@@ -265,6 +274,7 @@ export interface FileRoutesById {
   '/_authenticated/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
+  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
   '/_authenticated/tiktok/': typeof AuthenticatedTiktokIndexRoute
   '/_authenticated/twitter/': typeof AuthenticatedTwitterIndexRoute
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/job-groups/'
     | '/jobs/'
     | '/links/'
+    | '/settings/'
     | '/tags/'
     | '/tiktok/'
     | '/twitter/'
@@ -323,6 +334,7 @@ export interface FileRouteTypes {
     | '/job-groups'
     | '/jobs'
     | '/links'
+    | '/settings'
     | '/tags'
     | '/tiktok'
     | '/twitter'
@@ -352,6 +364,7 @@ export interface FileRouteTypes {
     | '/_authenticated/job-groups/'
     | '/_authenticated/jobs/'
     | '/_authenticated/links/'
+    | '/_authenticated/settings/'
     | '/_authenticated/tags/'
     | '/_authenticated/tiktok/'
     | '/_authenticated/twitter/'
@@ -452,6 +465,13 @@ declare module '@tanstack/react-router' {
       path: '/tags'
       fullPath: '/tags/'
       preLoaderRoute: typeof AuthenticatedTagsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/': {
+      id: '/_authenticated/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/links/': {
@@ -579,6 +599,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedJobGroupsIndexRoute: typeof AuthenticatedJobGroupsIndexRoute
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
+  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
   AuthenticatedTagsIndexRoute: typeof AuthenticatedTagsIndexRoute
   AuthenticatedTiktokIndexRoute: typeof AuthenticatedTiktokIndexRoute
   AuthenticatedTwitterIndexRoute: typeof AuthenticatedTwitterIndexRoute
@@ -603,6 +624,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedJobGroupsIndexRoute: AuthenticatedJobGroupsIndexRoute,
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,
+  AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,
   AuthenticatedTiktokIndexRoute: AuthenticatedTiktokIndexRoute,
   AuthenticatedTwitterIndexRoute: AuthenticatedTwitterIndexRoute,

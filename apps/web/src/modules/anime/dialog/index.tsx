@@ -19,7 +19,7 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="flex h-auto w-full flex-col gap-0 overflow-hidden rounded-none border border-border/50 bg-background p-0 shadow-2xl sm:h-[520px] sm:w-[720px] sm:flex-row"
+        className="flex h-auto w-full flex-col gap-0 overflow-hidden rounded-none border border-border/50 bg-background p-0 shadow-2xl sm:h-130 sm:w-180 sm:flex-row"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogTitle className="sr-only">{item.caption ?? item.externalId}</DialogTitle>
@@ -28,7 +28,7 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
         </DialogDescription>
 
         {/* Poster Column */}
-        <div className="relative aspect-[2/3] w-full shrink-0 overflow-hidden bg-muted sm:aspect-auto sm:w-[280px]">
+        <div className="relative aspect-2/3 w-full shrink-0 overflow-hidden bg-muted sm:aspect-auto sm:w-70">
           {metadata.poster ? (
             <img
               src={metadata.poster}

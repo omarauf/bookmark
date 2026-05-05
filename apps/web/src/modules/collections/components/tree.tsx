@@ -1,8 +1,8 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { TreeView } from "@/components/tree";
 import { cn } from "@/lib/utils";
-import { CreateCollectionDialog } from "../collections/dialogs/create";
-import { useCollection } from "../collections/hooks/use-ad-categories";
+import { CreateCollectionDialog } from "../dialogs/create";
+import { useCollection } from "../hooks/use-ad-categories";
 
 type Props = {
   className?: string;

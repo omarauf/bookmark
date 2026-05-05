@@ -5,8 +5,8 @@ import { InfiniteScroll } from "@/components/infinite-scroll";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { orpc } from "@/integrations/orpc";
 import { Header } from "@/layout/header";
-import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";
-import { CollectionTree } from "@/modules/item/collection-tree";
+import { CollectionBreadcrumb } from "@/modules/collections/components/breadcrumb";
+import { CollectionTree } from "@/modules/collections/components/tree";
 // import { PostListVirtual } from "@/modules/post/archive/virtual";
 import { Filter } from "@/modules/post/filter";
 

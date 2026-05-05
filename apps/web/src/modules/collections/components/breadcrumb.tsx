@@ -3,8 +3,8 @@ import { Eye, ListTree } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 import { XBreadcrumb } from "@/components/breadcrumb";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useCollection } from "../collections/hooks/use-ad-categories";
-import { useLayoutStore } from "../post/controls/layout-store";
+import { useLayoutStore } from "../../post/controls/layout-store";
+import { useCollection } from "../hooks/use-ad-categories";
 
 export function CollectionBreadcrumb() {
   const defaultPath = useSearch({ strict: false, select: (s) => s.collectionPath || "" });

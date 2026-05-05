@@ -22,7 +22,7 @@ export function AnimeFilter() {
 
   return (
     <div className="flex flex-wrap items-center gap-3 border-border/50 border-b px-6 py-3">
-      <div className="relative min-w-[200px] max-w-sm flex-1">
+      <div className="relative min-w-50 max-w-sm flex-1">
         <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Search anime..."

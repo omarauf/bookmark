@@ -1,3 +1,4 @@
+import { animeRouter } from "@/modules/anime/route";
 import { collectionRouter } from "@/modules/collection/route";
 import { browseRouter } from "@/modules/file-manager/browse.route";
 import { fileRouter } from "@/modules/file-manager/file.route";
@@ -22,4 +23,5 @@ export const appRouter = {
   browse: browseRouter,
   job: jobRouter,
   imdb: imdbRouter,
+  anime: animeRouter,
 };

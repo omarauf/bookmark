@@ -32,3 +32,10 @@ export const ImdbFetchPayloadSchema = z.object({
   linkId: z.string(),
   imdbId: z.string(),
 });
+
+export const AnimeDiscoverPayloadSchema = z.object({});
+
+export const AnimeFetchPayloadSchema = z.object({
+  linkId: z.string(),
+  animeId: z.string(),
+});

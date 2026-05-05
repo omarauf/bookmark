@@ -6,6 +6,8 @@ export const JobTypeEnum = z.enum([
   "download_media",
   "imdb_discover",
   "imdb_fetch",
+  "anime_discover",
+  "anime_fetch",
 ]);
 export type JobType = z.infer<typeof JobTypeEnum>;
 export const JobTypeValues = JobTypeEnum.options as [JobType, ...JobType[]];

@@ -21,7 +21,9 @@
     "./file-manager": "./src/operations/file-manager/index.ts",
     "./job": "./src/operations/job/index.ts",
     "./imdb": "./src/platforms/imdb/index.ts",
+    "./anime": "./src/platforms/anime/index.ts",
     "./imdb-view": "./src/views/imdb/index.ts",
+    "./anime-view": "./src/views/anime/index.ts",
     "./common/*": "./src/foundation/*.ts"
   },
   "peerDependencies": {

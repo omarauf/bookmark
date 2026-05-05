@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AnimeMetadataSchema } from "../../platforms/anime";
 import { ChromeLinkMetadataSchema } from "../../platforms/chrome";
 import { MovieMetadataSchema } from "../../platforms/imdb/movie";
 import { TvMetadataSchema } from "../../platforms/imdb/tv";
@@ -19,4 +20,6 @@ export const ItemMetadataSchema = z.discriminatedUnion("platform", [
   z.discriminatedUnion("kind", [ChromeLinkMetadataSchema]),
 
   z.discriminatedUnion("kind", [MovieMetadataSchema, TvMetadataSchema]),
+
+  z.discriminatedUnion("kind", [AnimeMetadataSchema]),
 ]);

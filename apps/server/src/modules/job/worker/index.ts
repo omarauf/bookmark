@@ -2,6 +2,7 @@ import type { Job } from "@workspace/contracts/job";
 import { claimJobs, completeJob, failClaimedJob } from "../service";
 import { WorkerScheduler } from "../worker-scheduler";
 import { processDownloadMedia } from "./download-media";
+import { processAnimeDiscover, processAnimeFetch } from "./import-anime";
 import { processImdbDiscover, processImdbFetch } from "./import-imdb";
 import { processImportProcess } from "./import-process";
 import { processImportUpload } from "./import-upload";
@@ -73,6 +74,12 @@ async function processJob(job: Job) {
         break;
       case "imdb_fetch":
         await processImdbFetch(job);
+        break;
+      case "anime_discover":
+        await processAnimeDiscover(job);
+        break;
+      case "anime_fetch":
+        await processAnimeFetch(job);
         break;
       default:
         throw new Error(`Unknown job type: ${job.type}`);

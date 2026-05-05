@@ -14,6 +14,7 @@ import {
   ShieldAlert,
   ShieldBan,
   Tags,
+  Tv,
   Upload,
   Users,
   Video,
@@ -59,7 +60,10 @@ export const sidebarData: SidebarData = {
     },
     {
       title: "Entertainment",
-      items: [{ title: "IMDb", url: "/imdb", icon: Clapperboard }],
+      items: [
+        { title: "IMDb", url: "/imdb", icon: Clapperboard },
+        { title: "Anime", url: "/anime", icon: Tv },
+      ],
     },
     {
       title: "Data & Operations",

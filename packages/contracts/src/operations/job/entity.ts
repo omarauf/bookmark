@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { JobStatusEnum, JobTypeEnum, LogLevelEnum } from "./enum";
 import {
+  AnimeDiscoverPayloadSchema,
+  AnimeFetchPayloadSchema,
   DownloadMediaPayloadSchema,
   ImdbDiscoverPayloadSchema,
   ImdbFetchPayloadSchema,
@@ -32,6 +34,8 @@ export const JobSchema = z.object({
       ImportProcessPayloadSchema,
       ImdbDiscoverPayloadSchema,
       ImdbFetchPayloadSchema,
+      AnimeDiscoverPayloadSchema,
+      AnimeFetchPayloadSchema,
     ])
     .optional(),
 
@@ -80,6 +84,8 @@ export const CreateJobSchema = z.object({
       ImportProcessPayloadSchema,
       ImdbDiscoverPayloadSchema,
       ImdbFetchPayloadSchema,
+      AnimeDiscoverPayloadSchema,
+      AnimeFetchPayloadSchema,
     ])
     .optional(),
 

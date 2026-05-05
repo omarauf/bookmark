@@ -1,33 +1,30 @@
-import { Root as Radio } from "@radix-ui/react-radio-group";
-import { useStyle } from "@/settings/context/style-provider";
-import { RadioGroupItem } from "./common/radio-group";
+import { Options } from "./common/options";
 import { SectionTitle } from "./common/section-title";
+import { getStyleControls, useSettingStore } from "./hooks/use-store";
 
 export function StyleConfig() {
-  const { defaultStyle, style, setStyle } = useStyle();
+  const styleSetting = useSettingStore((s) => s.style);
+  const { reset, setValue, isChanged } = getStyleControls();
+
+  const items = [
+    { value: "default", label: "Default" },
+    { value: "one", label: "Azure" },
+    { value: "two", label: "Lime" },
+    { value: "three", label: "Indigo" },
+  ] as const;
 
   return (
-    <div>
-      <SectionTitle
-        title="Style"
-        showReset={style !== defaultStyle}
-        onReset={() => setStyle(defaultStyle)}
+    <div className="space-y-2">
+      <SectionTitle title="Style" showReset={isChanged()} onReset={reset} />
+
+      <Options
+        items={items}
+        value={styleSetting}
+        onChange={setValue}
+        className="grid-cols-4 max-w-md "
       />
-      <Radio
-        value={style}
-        onValueChange={(v) => setStyle(v as typeof style)}
-        className="grid w-full max-w-md grid-cols-4 gap-4"
-      >
-        {[
-          { value: "default", label: "Default" },
-          { value: "one", label: "Azure" },
-          { value: "two", label: "Lime" },
-          { value: "three", label: "Indigo" },
-        ].map((item) => (
-          <RadioGroupItem key={item.value} item={item} />
-        ))}
-      </Radio>
-      <div>Choose a color palette and typographic style</div>
+
+      <p className="text-sm text-muted-foreground">Choose a color palette and typographic style</p>
     </div>
   );
 }

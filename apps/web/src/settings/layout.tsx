@@ -2,25 +2,27 @@ import { Root as Radio } from "@radix-ui/react-radio-group";
 import { IconLayoutCompact } from "@/assets/custom/icon-layout-compact";
 import { IconLayoutDefault } from "@/assets/custom/icon-layout-default";
 import { IconLayoutFull } from "@/assets/custom/icon-layout-full";
-import { type Collapsible, useLayout } from "@/settings/context/layout-provider";
 import { useSidebar } from "../components/ui/sidebar";
 import { RadioGroupItem } from "./common/radio-group";
 import { SectionTitle } from "./common/section-title";
+import { getCollapsibleControls, useSettingStore } from "./hooks/use-store";
+import type { Collapsible } from "./types";
 
 export function LayoutConfig() {
   const { open, setOpen } = useSidebar();
-  const { defaultCollapsible, collapsible, setCollapsible } = useLayout();
+  const collapsible = useSettingStore((s) => s.collapsible);
+  const { reset, setValue } = getCollapsibleControls();
 
   const radioState = open ? "default" : collapsible;
 
   return (
-    <div className="max-md:hidden">
+    <div className="max-md:hidden space-y-2">
       <SectionTitle
         title="Layout"
         showReset={radioState !== "default"}
         onReset={() => {
           setOpen(true);
-          setCollapsible(defaultCollapsible);
+          reset();
         }}
       />
       <Radio
@@ -31,7 +33,7 @@ export function LayoutConfig() {
             return;
           }
           setOpen(false);
-          setCollapsible(v as Collapsible);
+          setValue(v as Collapsible);
         }}
         className="grid w-full max-w-md grid-cols-3 gap-4"
       >
@@ -55,7 +57,9 @@ export function LayoutConfig() {
           <RadioGroupItem key={item.value} item={item} />
         ))}
       </Radio>
-      <div>Choose between default expanded, compact icon-only, or full layout mode</div>
+      <p className="text-sm text-muted-foreground">
+        Choose between default expanded, compact icon-only, or full layout mode
+      </p>
     </div>
   );
 }

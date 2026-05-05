@@ -1,3 +1,4 @@
+import { DirectionProvider } from "@radix-ui/react-direction";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -5,8 +6,7 @@ import { SearchProvider } from "@/layout/search/search-provider";
 import { AppSidebar } from "@/layout/sidebar";
 import { getCookie } from "@/lib/cookie";
 import { cn } from "@/lib/utils";
-import { DirectionProvider } from "@/settings/context/direction-provider";
-import { LayoutProvider } from "@/settings/context/layout-provider";
+import { useSettingStore } from "@/settings/hooks/use-store";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -24,32 +24,31 @@ type Props = {
 
 function AuthenticatedLayout({ children }: Props) {
   const defaultOpen = getCookie("sidebar_state") !== "false";
+  const dir = useSettingStore((s) => s.direction);
 
   return (
     <NuqsAdapter>
       <SearchProvider>
-        <LayoutProvider>
-          <SidebarProvider defaultOpen={defaultOpen}>
-            <AppSidebar />
+        <SidebarProvider defaultOpen={defaultOpen}>
+          <AppSidebar />
 
-            <SidebarInset
-              className={cn(
-                // Set content container, so we can use container queries
-                "@container/content",
+          <SidebarInset
+            className={cn(
+              // Set content container, so we can use container queries
+              "@container/content",
 
-                // If layout is fixed, set the height
-                // to 100svh to prevent overflow
-                "has-data-[layout=fixed]:h-svh",
+              // If layout is fixed, set the height
+              // to 100svh to prevent overflow
+              "has-data-[layout=fixed]:h-svh",
 
-                // If layout is fixed and sidebar is inset,
-                // set the height to 100svh - spacing (total margins) to prevent overflow
-                "peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-(var(--spacing)*4))]",
-              )}
-            >
-              <DirectionProvider>{children ?? <Outlet />}</DirectionProvider>
-            </SidebarInset>
-          </SidebarProvider>
-        </LayoutProvider>
+              // If layout is fixed and sidebar is inset,
+              // set the height to 100svh - spacing (total margins) to prevent overflow
+              "peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-(var(--spacing)*4))]",
+            )}
+          >
+            <DirectionProvider dir={dir}>{children ?? <Outlet />}</DirectionProvider>
+          </SidebarInset>
+        </SidebarProvider>
       </SearchProvider>
     </NuqsAdapter>
   );

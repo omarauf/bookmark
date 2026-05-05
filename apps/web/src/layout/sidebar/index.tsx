@@ -5,7 +5,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useLayout } from "@/settings/context/layout-provider";
+import { useSettingStore } from "@/settings/hooks/use-store";
 import { NavGroup } from "../nav/nav-group";
 import { NavUser } from "../nav/nav-user";
 // import { AppTitle } from './app-title'
@@ -13,7 +13,9 @@ import { sidebarData } from "./sidebar-data";
 import { TeamSwitcher } from "./team-switcher";
 
 export function AppSidebar() {
-  const { collapsible, variant } = useLayout();
+  const collapsible = useSettingStore((state) => state.collapsible);
+  const variant = useSettingStore((state) => state.variant);
+
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>

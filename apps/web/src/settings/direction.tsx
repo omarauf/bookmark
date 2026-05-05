@@ -1,20 +1,22 @@
 import { Root as Radio } from "@radix-ui/react-radio-group";
 import type { SVGProps } from "react";
 import { IconDir } from "@/assets/custom/icon-dir";
-import { useDirection } from "@/settings/context/direction-provider";
 import { RadioGroupItem } from "./common/radio-group";
 import { SectionTitle } from "./common/section-title";
+import { getDirectionControls, useSettingStore } from "./hooks/use-store";
 
 export function DirConfig() {
-  const { defaultDir, dir, setDir } = useDirection();
+  const direction = useSettingStore((s) => s.direction);
+  const { reset, setValue, isChanged } = getDirectionControls();
+
   return (
-    <div>
-      <SectionTitle
-        title="Direction"
-        showReset={defaultDir !== dir}
-        onReset={() => setDir(defaultDir)}
-      />
-      <Radio value={dir} onValueChange={setDir} className="grid w-full max-w-md grid-cols-3 gap-4">
+    <div className="space-y-2">
+      <SectionTitle title="Direction" showReset={isChanged()} onReset={reset} />
+      <Radio
+        value={direction}
+        onValueChange={setValue}
+        className="grid w-full max-w-md grid-cols-3 gap-4"
+      >
         {[
           {
             value: "ltr",
@@ -30,7 +32,9 @@ export function DirConfig() {
           <RadioGroupItem key={item.value} item={item} />
         ))}
       </Radio>
-      <div>Choose between left-to-right or right-to-left site direction</div>
+      <p className="text-sm text-muted-foreground">
+        Choose between left-to-right or right-to-left site direction
+      </p>
     </div>
   );
 }

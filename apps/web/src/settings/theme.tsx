@@ -10,7 +10,7 @@ export function ThemeConfig() {
   const { defaultTheme, theme, setTheme } = useTheme();
 
   return (
-    <div>
+    <div className="space-y-2">
       <SectionTitle
         title="Theme"
         showReset={theme !== defaultTheme}
@@ -41,7 +41,9 @@ export function ThemeConfig() {
           <RadioGroupItem key={item.value} item={item} isTheme />
         ))}
       </Radio>
-      <div>Choose between system preference, light mode, or dark mode</div>
+      <p className="text-sm text-muted-foreground">
+        Choose between system preference, light mode, or dark mode
+      </p>
     </div>
   );
 }

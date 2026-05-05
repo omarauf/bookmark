@@ -4,7 +4,7 @@ import { Film, MonitorPlay, Star } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ImdbDetailsDialog } from "../dialog";
+import { ImdbDetailsDialog } from "../dialogs/details";
 import { ImdbUpdateDialog } from "../dialogs/update";
 
 type Props = {

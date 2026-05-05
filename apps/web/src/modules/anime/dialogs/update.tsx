@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { AnimeItem } from "@workspace/contracts/anime-view";
 import { ItemSchemas, type UpdateItem } from "@workspace/contracts/item";
+import type { AnimeItem } from "@workspace/contracts/views/anime";
 import { toast } from "sonner";
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";

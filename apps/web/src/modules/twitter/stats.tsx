@@ -1,4 +1,4 @@
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import { fShortenNumber } from "@/utils/format-number";
 import * as icons from "./icons";
 

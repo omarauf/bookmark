@@ -1,4 +1,4 @@
-import type { LinkPreview } from "@workspace/contracts/link";
+import type { LinkPreview } from "@workspace/contracts/views/link";
 
 export function mergeMetadata(primary = defaultMetadata, secondary = defaultMetadata): LinkPreview {
   return {

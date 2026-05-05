@@ -1,4 +1,4 @@
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import { useShallow } from "zustand/react/shallow";
 import { staticFile } from "@/api/static-file";
 import { Card, CardContent } from "@/components/ui/card";

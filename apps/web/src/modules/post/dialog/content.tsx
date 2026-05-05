@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ItemSchemas } from "@workspace/contracts/item";
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useAppForm } from "@/components/form";

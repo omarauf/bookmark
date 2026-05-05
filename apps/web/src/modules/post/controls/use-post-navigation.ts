@@ -1,4 +1,4 @@
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import { useCallback, useEffect } from "react";
 import { usePreviewStore } from "./preview-store";
 

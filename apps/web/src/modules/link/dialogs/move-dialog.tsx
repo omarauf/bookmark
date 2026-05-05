@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { FolderTree } from "@workspace/contracts/link";
+import type { FolderTree } from "@workspace/contracts/views/link";
 import { FolderIcon, Loader } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";

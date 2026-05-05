@@ -124,7 +124,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 
 // 2. Workspace packages
-import { LinkSchema } from "@workspace/contracts/link";
+import { LinkSchema } from "@workspace/contracts/views/link";
 
 // 3. Internal imports (path aliases)
 import { db } from "@/core/db";
@@ -205,7 +205,7 @@ export function Button({ className, variant = "default" }: ButtonProps) {
 
 ```typescript
 // apps/server/src/modules/link/route.ts
-import { LinkSchemas } from "@workspace/contracts/link";
+import { LinkSchemas } from "@workspace/contracts/views/link";
 import { publicProcedure } from "@/lib/orpc";
 
 export const linkRouter = {

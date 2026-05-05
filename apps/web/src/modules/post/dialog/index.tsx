@@ -1,4 +1,4 @@
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Content } from "./content";
 

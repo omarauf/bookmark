@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ImdbSchemas } from "@workspace/contracts/imdb-view";
+import { ImdbSchemas } from "@workspace/contracts/views/imdb";
 import { Film } from "lucide-react";
 import z from "zod";
 import { Header } from "@/layout/header";

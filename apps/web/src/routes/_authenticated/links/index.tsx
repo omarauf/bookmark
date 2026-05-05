@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { LinkSchemas } from "@workspace/contracts/link";
+import { LinkSchemas } from "@workspace/contracts/views/link";
 import z from "zod";
 import { LinkBrowserView } from "@/modules/link/browser";
 import { Toolbar } from "@/modules/link/components/toolbar";

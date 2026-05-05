@@ -1,5 +1,5 @@
 import type { UpdateItem } from "@workspace/contracts/item";
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 
 export function postToUpdate(post: Post): UpdateItem {
   return {

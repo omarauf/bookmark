@@ -1,4 +1,4 @@
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import { staticFile } from "@/api/static-file";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { fDateTime } from "@/utils/format-time";

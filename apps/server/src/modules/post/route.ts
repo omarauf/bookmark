@@ -1,4 +1,4 @@
-import { PostSchemas } from "@workspace/contracts/post";
+import { PostSchemas } from "@workspace/contracts/views/post";
 import { protectedProcedure } from "@/lib/orpc";
 import { listPosts } from "./service/list";
 

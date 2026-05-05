@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PostSchemas } from "@workspace/contracts/post";
+import { PostSchemas } from "@workspace/contracts/views/post";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Header } from "@/layout/header";
 import { CollectionBreadcrumb } from "@/modules/item/collection-breadcrumb";

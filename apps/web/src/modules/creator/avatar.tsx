@@ -1,4 +1,4 @@
-import type { Profile } from "@workspace/contracts/profile";
+import type { Profile } from "@workspace/contracts/views/profile";
 import { staticFile } from "@/api/static-file";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";

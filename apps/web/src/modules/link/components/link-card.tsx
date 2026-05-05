@@ -1,4 +1,4 @@
-import type { Link } from "@workspace/contracts/link";
+import type { Link } from "@workspace/contracts/views/link";
 import { ExternalLink, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 

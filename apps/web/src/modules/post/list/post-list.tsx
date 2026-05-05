@@ -1,4 +1,4 @@
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import { Fragment } from "react";
 import { PostCard } from "../card";
 import { useLayoutStore } from "../controls/layout-store";

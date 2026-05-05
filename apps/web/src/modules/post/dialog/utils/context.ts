@@ -1,4 +1,4 @@
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import { createContext, useContext } from "react";
 
 export type PostContextState = Post;

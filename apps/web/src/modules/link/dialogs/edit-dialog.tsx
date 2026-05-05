@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ItemSchemas, type UpdateItem } from "@workspace/contracts/item";
-import type { Link } from "@workspace/contracts/link";
+import type { Link } from "@workspace/contracts/views/link";
 import { Pencil } from "lucide-react";
 import type React from "react";
 import { useState } from "react";

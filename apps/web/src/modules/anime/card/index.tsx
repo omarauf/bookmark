@@ -1,5 +1,5 @@
 import { useSearch } from "@tanstack/react-router";
-import type { AnimeItem } from "@workspace/contracts/anime-view";
+import type { AnimeItem } from "@workspace/contracts/views/anime";
 import { Star, Tv } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";

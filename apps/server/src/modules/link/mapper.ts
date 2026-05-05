@@ -1,4 +1,4 @@
-import type { Link } from "@workspace/contracts/link";
+import type { Link } from "@workspace/contracts/views/link";
 import type { ItemEntity } from "@/modules/item/schema";
 import { replaceNullWithUndefined } from "@/utils/object";
 

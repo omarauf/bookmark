@@ -1,4 +1,4 @@
-import type { LinkPreview } from "@workspace/contracts/link";
+import type { LinkPreview } from "@workspace/contracts/views/link";
 import axios from "axios";
 import { getPreviewFromContent } from "link-preview-js";
 

@@ -1,5 +1,5 @@
 // import { useVirtualizer } from "@tanstack/react-virtual";
-// import type { Post } from "@workspace/contracts/post";
+// import type { Post } from "@workspace/contracts/views/post";
 // import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 // import { useShallow } from "zustand/react/shallow";
 // import { cn } from "@/lib/utils";

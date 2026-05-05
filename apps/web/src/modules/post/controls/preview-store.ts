@@ -1,4 +1,4 @@
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import type { StateCreator } from "zustand";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";

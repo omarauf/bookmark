@@ -1,4 +1,4 @@
-import { type FolderTree, LinkSchemas } from "@workspace/contracts/link";
+import { type FolderTree, LinkSchemas } from "@workspace/contracts/views/link";
 import {
   and,
   count,

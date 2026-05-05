@@ -1,4 +1,4 @@
-import { ImdbSchemas } from "@workspace/contracts/imdb-view";
+import { ImdbSchemas } from "@workspace/contracts/views/imdb";
 import { and, count, desc, eq, ilike, isNull, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";

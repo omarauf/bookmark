@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { PostSchemas } from "@workspace/contracts/post";
+import { PostSchemas } from "@workspace/contracts/views/post";
 import { useEffect } from "react";
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";

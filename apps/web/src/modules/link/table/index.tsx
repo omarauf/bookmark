@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
-import type { Link, ListLink } from "@workspace/contracts/link";
+import type { Link, ListLink } from "@workspace/contracts/views/link";
 import { Suspense, useState } from "react";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";

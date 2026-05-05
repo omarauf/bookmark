@@ -1,4 +1,4 @@
-import type { AnimeItem } from "@workspace/contracts/anime-view";
+import type { AnimeItem } from "@workspace/contracts/views/anime";
 import { Calendar, Clock, Layers, Star, Tv, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";

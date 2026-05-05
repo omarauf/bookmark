@@ -1,4 +1,4 @@
-import type { Post } from "@workspace/contracts/post";
+import type { Post } from "@workspace/contracts/views/post";
 import type { CollectionEntity, CollectionItemEntity } from "@/modules/collection/schema";
 import type { ItemEntity } from "@/modules/item/schema";
 import type { Media } from "@/modules/media/schema";

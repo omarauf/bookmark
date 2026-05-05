@@ -1,4 +1,4 @@
-import type { AnimeItem } from "@workspace/contracts/anime-view";
+import type { AnimeItem } from "@workspace/contracts/views/anime";
 import type { ItemEntity } from "@/modules/item/schema";
 
 type RawItem = ItemEntity & {

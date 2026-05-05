@@ -1,4 +1,4 @@
-import type { ImdbItem } from "@workspace/contracts/imdb-view";
+import type { ImdbItem } from "@workspace/contracts/views/imdb";
 import {
   Calendar,
   Clapperboard,

@@ -1,6 +1,6 @@
 // import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 // import { useSearch } from "@tanstack/react-router";
-// import type { Post } from "@workspace/contracts/post";
+// import type { Post } from "@workspace/contracts/views/post";
 // import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 // import { List, type RowComponentProps } from "react-window";
 // import { useShallow } from "zustand/react/shallow";

@@ -155,13 +155,13 @@ Consumers import via subpaths. The `package.json` exports are pinned to the laye
 | Consumer import | Maps to |
 |-----------------|---------|
 | `@workspace/contracts/item` | `src/core/item/index.ts` |
-| `@workspace/contracts/post` | `src/views/post/index.ts` |
-| `@workspace/contracts/link` | `src/views/link/index.ts` |
+| `@workspace/contracts/views/post` | `src/views/post/index.ts` |
+| `@workspace/contracts/views/link` | `src/views/link/index.ts` |
 | `@workspace/contracts/relation` | `src/core/relation/index.ts` |
 | `@workspace/contracts/media` | `src/core/media/index.ts` |
 | `@workspace/contracts/collection` | `src/core/collection/index.ts` |
 | `@workspace/contracts/tag` | `src/core/tag/index.ts` |
-| `@workspace/contracts/profile` | `src/views/profile/index.ts` |
+| `@workspace/contracts/views/profile` | `src/views/profile/index.ts` |
 | `@workspace/contracts/import` | `src/operations/import/index.ts` |
 | `@workspace/contracts/file-manager` | `src/operations/file-manager/index.ts` |
 | `@workspace/contracts/job` | `src/operations/job/index.ts` |

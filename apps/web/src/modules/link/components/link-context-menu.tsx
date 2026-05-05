@@ -1,4 +1,4 @@
-import type { Link } from "@workspace/contracts/link";
+import type { Link } from "@workspace/contracts/views/link";
 import { useState } from "react";
 import {
   ContextMenu,

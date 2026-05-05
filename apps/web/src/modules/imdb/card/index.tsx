@@ -1,5 +1,5 @@
 import { useSearch } from "@tanstack/react-router";
-import type { ImdbItem } from "@workspace/contracts/imdb-view";
+import type { ImdbItem } from "@workspace/contracts/views/imdb";
 import { Film, MonitorPlay, Star } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";

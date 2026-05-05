@@ -3,28 +3,31 @@
   "type": "module",
   "devDependencies": {},
   "exports": {
-    "./link": "./src/views/link/index.ts",
+    "./relation": "./src/core/relation/index.ts",
     "./tag": "./src/core/tag/index.ts",
     "./collection": "./src/core/collection/index.ts",
-    "./import": "./src/operations/import/index.ts",
     "./item": "./src/core/item/index.ts",
-    "./relation": "./src/core/relation/index.ts",
+    "./media": "./src/core/media/index.ts",
+
     "./platform": "./src/foundation/platform.ts",
+    "./common/*": "./src/foundation/*.ts",
+
+    "./import": "./src/operations/import/index.ts",
+    "./file-manager": "./src/operations/file-manager/index.ts",
+    "./job": "./src/operations/job/index.ts",
+
     "./instagram": "./src/platforms/instagram/index.ts",
     "./twitter": "./src/platforms/twitter/index.ts",
     "./tiktok": "./src/platforms/tiktok/index.ts",
-    "./media": "./src/core/media/index.ts",
-
     "./raw/*": "./src/platforms/raw/*.ts",
-    "./profile": "./src/views/profile/index.ts",
-    "./post": "./src/views/post/index.ts",
-    "./file-manager": "./src/operations/file-manager/index.ts",
-    "./job": "./src/operations/job/index.ts",
     "./imdb": "./src/platforms/imdb/index.ts",
     "./anime": "./src/platforms/anime/index.ts",
-    "./imdb-view": "./src/views/imdb/index.ts",
-    "./anime-view": "./src/views/anime/index.ts",
-    "./common/*": "./src/foundation/*.ts"
+
+    "./views/link": "./src/views/link/index.ts",
+    "./views/imdb": "./src/views/imdb/index.ts",
+    "./views/anime": "./src/views/anime/index.ts",
+    "./views/profile": "./src/views/profile/index.ts",
+    "./views/post": "./src/views/post/index.ts"
   },
   "peerDependencies": {
     "typescript": "^5"

@@ -1,4 +1,4 @@
-import type { LinkSchemas } from "@workspace/contracts/link";
+import type { LinkSchemas } from "@workspace/contracts/views/link";
 import { and, eq, isNull, sql } from "drizzle-orm";
 import type z from "zod";
 import { db } from "@/core/db";

@@ -1,6 +1,6 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { PostSchemas } from "@workspace/contracts/post";
+import { PostSchemas } from "@workspace/contracts/views/post";
 import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";

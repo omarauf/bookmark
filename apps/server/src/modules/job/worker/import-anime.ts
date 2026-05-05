@@ -77,6 +77,14 @@ export async function processAnimeDiscover(job: Job) {
     let skipped = 0;
 
     for (const animeId of newIds) {
+      const linkId = animeIdToLinkId.get(animeId);
+
+      if (!linkId) {
+        await log(job.id, "warn", "No source link found for MyAnimeList ID, skipping", { animeId });
+        skipped++;
+        continue;
+      }
+
       try {
         await db
           .insert(jobs)
@@ -85,7 +93,7 @@ export async function processAnimeDiscover(job: Job) {
             status: "pending",
             resourceType: "anime",
             resourceId: animeId,
-            payload: { animeId, linkId: animeIdToLinkId.get(animeId) },
+            payload: { animeId, linkId },
             groupId: group.id,
             createdAt: new Date(),
           })

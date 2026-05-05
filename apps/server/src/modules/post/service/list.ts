@@ -1,4 +1,4 @@
-import type { ListPost, PostFilter } from "@workspace/contracts/post";
+import type { ListPost, PostFilter } from "@workspace/contracts/views/post";
 import {
   and,
   arrayContained,

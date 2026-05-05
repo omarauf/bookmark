@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { Column, ColumnDef } from "@tanstack/react-table";
-import type { Link } from "@workspace/contracts/link";
+import type { Link } from "@workspace/contracts/views/link";
 import { ExternalLink, Globe, MoreHorizontal, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";

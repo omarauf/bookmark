@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import type { FolderTree as FolderTreeDto } from "@workspace/contracts/link";
+import type { FolderTree as FolderTreeDto } from "@workspace/contracts/views/link";
 import { FolderIcon, FolderOpenIcon } from "lucide-react";
 import type { ElementType, ReactNode } from "react";
 import { TreeView } from "@/components/tree";

@@ -1,4 +1,4 @@
-import { AnimeSchemas } from "@workspace/contracts/anime-view";
+import { AnimeSchemas } from "@workspace/contracts/views/anime";
 import { and, count, desc, eq, ilike, isNull, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";

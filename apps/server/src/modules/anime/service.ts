@@ -3,7 +3,8 @@ import type { MalAnimeDetails } from "./integrations/mal/type";
 
 export function malToItem(malData: MalAnimeDetails): AnimeMetadata {
   const genres = malData.genres?.map((g) => g.name) ?? [];
-  const studios = malData.studios?.map((s) => s.name).filter(Boolean) ?? [];
+  const studios =
+    malData.studios?.map((s) => s.name).filter((name): name is string => Boolean(name)) ?? [];
 
   return {
     platform: "mal",

@@ -3,23 +3,29 @@ import { Options } from "./common/options";
 import { SectionTitle } from "./common/section-title";
 import { getAppearanceControls, useSettingStore } from "./hooks/use-store";
 
-const FONT_OPTIONS = {
-  sans: [
-    { label: "Inter", value: "sans-inter", className: "font-sans-inter" },
-    { label: "Manrope", value: "sans-manrope", className: "font-sans-manrope" },
-    { label: "DM Sans", value: "sans-dm-sans", className: "font-sans-dm-sans" },
-  ],
-  serif: [
-    { label: "Merriweather", value: "serif-merriweather", className: "font-serif-merriweather" },
-    { label: "Playfair", value: "serif-playfair", className: "font-serif-playfair" },
-    { label: "Source", value: "serif-source", className: "font-serif-source" },
-  ],
-  mono: [
-    { label: "DefaJetBrainsult", value: "mono-jetbrains", className: "font-mono-jetbrains" },
-    { label: "IBM Plex", value: "mono-ibm-plex", className: "font-mono-ibm-plex" },
-    { label: "Source Code", value: "mono-source", className: "font-mono-source" },
-  ],
-};
+const HEADING_FONTS = [
+  { label: "Inter", value: "sans-inter", className: "font-sans-inter" },
+  { label: "Manrope", value: "sans-manrope", className: "font-sans-manrope" },
+  { label: "DM Sans", value: "sans-dm-sans", className: "font-sans-dm-sans" },
+  { label: "Merriweather", value: "serif-merriweather", className: "font-serif-merriweather" },
+  { label: "Playfair", value: "serif-playfair", className: "font-serif-playfair" },
+  { label: "Source Serif", value: "serif-source", className: "font-serif-source" },
+  { label: "JetBrains", value: "mono-jetbrains", className: "font-mono-jetbrains" },
+  { label: "IBM Plex", value: "mono-ibm-plex", className: "font-mono-ibm-plex" },
+  { label: "Source Code", value: "mono-source", className: "font-mono-source" },
+];
+
+const BODY_FONTS = [
+  { label: "Inter", value: "sans-inter", className: "font-sans-inter" },
+  { label: "Manrope", value: "sans-manrope", className: "font-sans-manrope" },
+  { label: "DM Sans", value: "sans-dm-sans", className: "font-sans-dm-sans" },
+  { label: "Merriweather", value: "serif-merriweather", className: "font-serif-merriweather" },
+  { label: "Playfair", value: "serif-playfair", className: "font-serif-playfair" },
+  { label: "Source Serif", value: "serif-source", className: "font-serif-source" },
+  { label: "JetBrains", value: "mono-jetbrains", className: "font-mono-jetbrains" },
+  { label: "IBM Plex", value: "mono-ibm-plex", className: "font-mono-ibm-plex" },
+  { label: "Source Code", value: "mono-source", className: "font-mono-source" },
+];
 
 export function AppearanceConfig() {
   const overrides = useSettingStore((s) => s.overrides);
@@ -49,37 +55,39 @@ export function AppearanceConfig() {
             ]}
             value={radiusValue}
             onChange={appearanceControls.setRadius}
-            className="grid-cols-6 max-w-2xl"
+            className="max-w-2xl grid-cols-6"
+          />
+        </div>
+
+        <div className="grid grid-cols-9">
+          <p className="font-sans-inter">Inter</p>
+          <p className="font-sans-manrope">Manrope</p>
+          <p className="font-sans-dm-sans">DM Sans</p>
+          <p className="font-serif-merriweather">Merriweather</p>
+          <p className="font-serif-playfair">Playfair</p>
+          <p className="font-serif-source">Source Serif</p>
+          <p className="font-mono-jetbrains">JetBrains</p>
+          <p className="font-mono-ibm-plex">IBM Plex</p>
+          <p className="font-mono-source">Source Code</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-muted-foreground text-xs">Heading Font</Label>
+          <Options
+            items={HEADING_FONTS}
+            value={overrides.fontHead}
+            onChange={appearanceControls.setFontHead}
+            className="max-w-2xl grid-cols-3"
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-muted-foreground text-xs">Sans Serif</Label>
+          <Label className="text-muted-foreground text-xs">Body Font</Label>
           <Options
-            items={FONT_OPTIONS.sans}
-            value={overrides.fontHead}
-            onChange={appearanceControls.setFontHead}
-            className="grid-cols-6 max-w-2xl"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label className="text-muted-foreground text-xs">Serif</Label>
-          <Options
-            items={FONT_OPTIONS.serif}
-            value={overrides.fontHead}
-            onChange={appearanceControls.setFontHead}
-            className="grid-cols-6 max-w-2xl"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label className="text-muted-foreground text-xs">Monospace</Label>
-          <Options
-            items={FONT_OPTIONS.mono}
-            value={overrides.fontHead}
-            onChange={appearanceControls.setFontHead}
-            className="grid-cols-6 max-w-2xl"
+            items={BODY_FONTS}
+            value={overrides.fontBody}
+            onChange={appearanceControls.setFontBody}
+            className="max-w-2xl grid-cols-3"
           />
         </div>
       </div>

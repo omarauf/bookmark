@@ -92,13 +92,39 @@ function setSetting<K extends keyof SettingStore>(key: K, value: SettingStore[K]
 
 function applyFont(cssVar: string, value?: string) {
   const root = document.documentElement;
-  root.classList.forEach((cls) => {
-    if (cls.startsWith("font-")) root.classList.remove(cls);
-  });
-  root.classList.add(`font-${value}`);
+  const property = cssVar === "head" ? "--font-head" : "--font-body";
+
+  if (value) {
+    root.style.setProperty(property, `var(--font-${value})`);
+  } else {
+    root.style.removeProperty(property);
+  }
 
   setSetting("overrides", {
     ...useSettingStore.getState().overrides,
     [cssVar === "head" ? "fontHead" : "fontBody"]: value,
   });
+}
+
+export function initializeAppearance() {
+  const root = document.documentElement;
+  const overrides = useSettingStore.getState().overrides;
+
+  if (overrides.radius !== undefined) {
+    root.style.setProperty("--radius", `${overrides.radius}rem`);
+  } else {
+    root.style.removeProperty("--radius");
+  }
+
+  if (overrides.fontHead) {
+    root.style.setProperty("--font-head", `var(--font-${overrides.fontHead})`);
+  } else {
+    root.style.removeProperty("--font-head");
+  }
+
+  if (overrides.fontBody) {
+    root.style.setProperty("--font-body", `var(--font-${overrides.fontBody})`);
+  } else {
+    root.style.removeProperty("--font-body");
+  }
 }

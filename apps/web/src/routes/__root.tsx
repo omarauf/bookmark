@@ -2,9 +2,11 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { authQueries } from "@/integrations/auth";
 import type { orpc } from "@/integrations/orpc";
+import { initializeAppearance } from "@/settings/hooks/use-store";
 import { ThemeProvider } from "@/theme/theme-provider";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
@@ -43,6 +45,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    initializeAppearance();
+  }, []);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

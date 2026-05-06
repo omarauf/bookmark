@@ -2,11 +2,11 @@ import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/views/post";
 import { EmptyContent } from "@/components/empty-content";
-import { InfiniteScroll } from "@/components/infinite-scroll";
+// import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
 import { Filter } from "@/modules/post/filter";
-import { PostList } from "@/modules/post/list";
+// import { PostList } from "@/modules/post/list";
 
 export const Route = createFileRoute("/_authenticated/tiktok/")({
   component: Tiktok,
@@ -45,13 +45,13 @@ function Tiktok() {
     <Main className="py-0">
       <Filter className="sticky z-10 flex w-full bg-background" />
 
-      <InfiniteScroll
+      {/* <InfiniteScroll
         onLoadMore={postQuery.fetchNextPage}
         hasNextPage={postQuery.hasNextPage}
         isFetchingNextPage={postQuery.isFetchingNextPage}
       >
         <PostList posts={flatItems} />
-      </InfiniteScroll>
+      </InfiniteScroll> */}
 
       <EmptyContent show={!flatItems.length} />
     </Main>

@@ -1,3 +1,4 @@
+import { SortAsc, SortDesc } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 import { XToggleGroup } from "@/components/inputs/toggle-group";
 import { Label } from "@/components/ui/label";
@@ -19,8 +20,8 @@ export default function SettingsInstagram() {
             value={virtual ? "virtual" : "non-virtual"}
             onChange={(v) => setVirtual(v === "virtual")}
             options={[
-              { value: "virtual", label: "virtual", icon: "lucide:sort-asc" },
-              { value: "non-virtual", label: "non-virtual", icon: "lucide:sort-desc" },
+              { value: "virtual", label: "virtual", icon: SortAsc },
+              { value: "non-virtual", label: "non-virtual", icon: SortDesc },
             ]}
           />
         </div>

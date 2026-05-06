@@ -46,7 +46,7 @@ function Instagram() {
     }),
   );
 
-  const _flatItems = postQuery.data.pages.flatMap((page) => page.items);
+  // const _flatItems = postQuery.data.pages.flatMap((page) => page.items);
 
   return (
     <div
@@ -81,6 +81,7 @@ function Instagram() {
             className="gap-4 px-4"
           >
             {/* <PostListVirtual posts={flatItems} /> */}
+            <p>Temp</p>
           </InfiniteScroll>
         </ResizablePanel>
 

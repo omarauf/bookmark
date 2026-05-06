@@ -1,6 +1,6 @@
 import type { SVGProps } from "react";
 import { cn } from "@/lib/utils";
-import type { Direction } from "@/settings/context/direction-provider";
+import type { Direction } from "@/settings/types";
 
 type IconDirProps = SVGProps<SVGSVGElement> & {
   dir: Direction;

@@ -26,7 +26,7 @@ export const TagForm = withForm({
         {(field) => (
           <field.Autocomplete
             label="Tags"
-            options={tagsQuery.data?.map((tag) => ({ label: tag.name, value: tag.id })) || []}
+            options={tagsQuery.data || []}
             onAdd={async (v) => {
               console.log("Adding tag:", v);
               // const createdTag = await createMutation.mutateAsync({ name: v });

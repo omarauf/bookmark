@@ -62,7 +62,7 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
           <Link
             to="/jobs/$id"
             params={{ id: row.original.id }}
-            className="font-mono text-primary text-xs underline"
+            className="text-primary text-xs underline"
           >
             {row.original.id.slice(0, 8)}
           </Link>
@@ -114,7 +114,7 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
             <Link
               to="/job-groups/$id"
               params={{ id: groupId }}
-              className="font-mono text-[10px] text-primary underline"
+              className="text-[10px] text-primary underline"
             >
               {groupId.slice(0, 8)}
             </Link>

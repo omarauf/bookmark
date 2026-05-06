@@ -29,7 +29,7 @@ export function ImdbFilter() {
           placeholder="Search titles..."
           value={search.q ?? ""}
           onChange={(e) => setFilter("q", e.target.value || undefined)}
-          className="h-7 w-48 rounded-none border-border/50 pl-8 font-mono text-xs"
+          className="h-7 w-48 border-border/50 pl-8 text-xs"
         />
       </div>
 
@@ -38,7 +38,7 @@ export function ImdbFilter() {
         <button
           type="button"
           onClick={() => setFilter("kind", activeKind === "movie" ? undefined : "movie")}
-          className={`flex h-7 items-center gap-1.5 px-3 font-mono text-[10px] uppercase tracking-widest transition-colors ${
+          className={`flex h-7 items-center gap-1.5 px-3 text-[10px] uppercase tracking-widest transition-colors ${
             activeKind === "movie"
               ? "bg-foreground text-background"
               : "text-muted-foreground hover:text-foreground"
@@ -50,7 +50,7 @@ export function ImdbFilter() {
         <button
           type="button"
           onClick={() => setFilter("kind", activeKind === "tv" ? undefined : "tv")}
-          className={`flex h-7 items-center gap-1.5 px-3 font-mono text-[10px] uppercase tracking-widest transition-colors ${
+          className={`flex h-7 items-center gap-1.5 px-3 text-[10px] uppercase tracking-widest transition-colors ${
             activeKind === "tv"
               ? "bg-foreground text-background"
               : "text-muted-foreground hover:text-foreground"
@@ -67,7 +67,7 @@ export function ImdbFilter() {
         <select
           value={search.sortBy ?? "createdAt"}
           onChange={(e) => setFilter("sortBy", e.target.value)}
-          className="h-7 border border-border/50 bg-transparent px-2 font-mono text-[10px] text-muted-foreground uppercase tracking-widest outline-none"
+          className="h-7 border border-border/50 bg-transparent px-2 text-[10px] text-muted-foreground uppercase tracking-widest outline-none"
         >
           <option value="createdAt">Added</option>
           <option value="rating">Rating</option>
@@ -81,7 +81,7 @@ export function ImdbFilter() {
         <select
           value={search.genre ?? ""}
           onChange={(e) => setFilter("genre", e.target.value)}
-          className="h-7 border border-border/50 bg-transparent px-2 font-mono text-[10px] text-muted-foreground uppercase tracking-widest outline-none"
+          className="h-7 border border-border/50 bg-transparent px-2 text-[10px] text-muted-foreground uppercase tracking-widest outline-none"
         >
           {genres.data?.map((genre) => (
             <option key={genre} value={genre}>
@@ -93,9 +93,7 @@ export function ImdbFilter() {
 
       {/* Min Rating */}
       <div className="flex items-center gap-1.5">
-        <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-          Min
-        </span>
+        <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Min</span>
         <Input
           type="number"
           min={0}
@@ -107,7 +105,7 @@ export function ImdbFilter() {
             const val = Number.parseFloat(e.target.value);
             setFilter("minRating", Number.isNaN(val) ? undefined : val);
           }}
-          className="h-7 w-16 rounded-none border-border/50 font-mono text-xs"
+          className="h-7 w-16 border-border/50 text-xs"
         />
       </div>
 
@@ -122,7 +120,7 @@ export function ImdbFilter() {
         <button
           type="button"
           onClick={() => setFilter("update", false)}
-          className={`flex h-7 items-center gap-1.5 px-3 font-mono text-[10px] uppercase tracking-widest transition-colors ${
+          className={`flex h-7 items-center gap-1.5 px-3 text-[10px] uppercase tracking-widest transition-colors ${
             !search.update
               ? "bg-foreground text-background"
               : "text-muted-foreground hover:text-foreground"
@@ -134,7 +132,7 @@ export function ImdbFilter() {
         <button
           type="button"
           onClick={() => setFilter("update", true)}
-          className={`flex h-7 items-center gap-1.5 px-3 font-mono text-[10px] uppercase tracking-widest transition-colors ${
+          className={`flex h-7 items-center gap-1.5 px-3 text-[10px] uppercase tracking-widest transition-colors ${
             search.update === true
               ? "bg-foreground text-background"
               : "text-muted-foreground hover:text-foreground"

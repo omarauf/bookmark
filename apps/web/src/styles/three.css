@@ -31,9 +31,6 @@ html.style-three {
   --sidebar-accent-foreground: oklch(0.5729 0.2337 264.3664);
   --sidebar-border: oklch(1 0 0);
   --sidebar-ring: oklch(0.5784 0.2303 263.8862);
-  --font-sans: Open Sans, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
   --radius: 1.3rem;
   --shadow-x: -50px;
   --shadow-y: 2px;
@@ -96,9 +93,6 @@ html.dark.style-three {
   --sidebar-accent-foreground: oklch(0.5683 0.2366 264.2478);
   --sidebar-border: oklch(0.3706 0.0642 269.1117);
   --sidebar-ring: oklch(0.5784 0.2303 263.8862);
-  --font-sans: Open Sans, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
   --radius: 1.3rem;
   --shadow-x: -50px;
   --shadow-y: 2px;

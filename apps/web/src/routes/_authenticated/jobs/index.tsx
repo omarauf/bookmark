@@ -34,17 +34,17 @@ function JobList() {
         onValueChange={(v) => navigate({ search: { view: v as "analytics" | "table" } })}
       >
         <div className="flex items-center justify-between border-border/50 border-b px-6 py-4">
-          <TabsList className="rounded-none border border-border/50 bg-transparent p-0">
+          <TabsList className="border border-border/50 bg-transparent p-0">
             <TabsTrigger
               value="analytics"
-              className="rounded-none border-border/50 border-r px-4 py-2 font-mono text-[10px] uppercase tracking-widest data-[state=active]:bg-foreground data-[state=active]:text-background"
+              className="border-border/50 border-r px-4 py-2 text-[10px] uppercase tracking-widest data-[state=active]:bg-foreground data-[state=active]:text-background"
             >
               <BarChart3 className="mr-2 h-3.5 w-3.5" />
               Analytics
             </TabsTrigger>
             <TabsTrigger
               value="table"
-              className="rounded-none px-4 py-2 font-mono text-[10px] uppercase tracking-widest data-[state=active]:bg-foreground data-[state=active]:text-background"
+              className="px-4 py-2 text-[10px] uppercase tracking-widest data-[state=active]:bg-foreground data-[state=active]:text-background"
             >
               <List className="mr-2 h-3.5 w-3.5" />
               Table

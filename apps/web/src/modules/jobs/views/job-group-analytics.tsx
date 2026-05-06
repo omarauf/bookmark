@@ -50,9 +50,9 @@ export function JobGroupAnalytics({ groupId }: Props) {
       </div>
 
       {/* Overall Progress */}
-      <Card className="rounded-none border-border/50 bg-transparent shadow-none">
+      <Card className="border-border/50 bg-transparent shadow-none">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 font-mono font-normal text-[10px] text-muted-foreground uppercase tracking-widest">
+          <CardTitle className="flex items-center gap-2 font-normal text-[10px] text-muted-foreground uppercase tracking-widest">
             <BarChart3 className="h-3.5 w-3.5" />
             Group Progress
           </CardTitle>
@@ -60,10 +60,10 @@ export function JobGroupAnalytics({ groupId }: Props) {
         <CardContent>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-muted-foreground text-xs">
+              <span className="text-muted-foreground text-xs">
                 {stats.completed + stats.failed + stats.cancelled} / {stats.total} resolved
               </span>
-              <span className="font-medium font-mono text-xs">{totalProgress}%</span>
+              <span className="font-medium text-xs">{totalProgress}%</span>
             </div>
             <div className="h-2 w-full overflow-hidden border border-border/50">
               <div

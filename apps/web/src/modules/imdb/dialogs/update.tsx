@@ -54,14 +54,12 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="flex h-auto max-h-[90vh] w-full flex-col gap-0 overflow-hidden rounded-none border border-border/50 bg-background p-0 shadow-2xl sm:h-130 sm:w-120"
+        className="flex h-auto max-h-[90vh] w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:h-130 sm:w-120"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader className="border-border/50 border-b p-5 text-left">
-          <DialogTitle className="font-mono font-semibold text-foreground text-sm">
-            Update
-          </DialogTitle>
-          <DialogDescription className="font-mono text-[10px] text-muted-foreground">
+          <DialogTitle className="font-semibold text-foreground text-sm">Update</DialogTitle>
+          <DialogDescription className="text-[10px] text-muted-foreground">
             {item.caption ?? item.externalId}
           </DialogDescription>
         </DialogHeader>
@@ -76,11 +74,7 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
           <div className="space-y-4 p-5">
             <form.AppField name="note">
               {(field) => (
-                <field.Textarea
-                  label="Notes"
-                  placeholder="Add notes..."
-                  className="font-mono text-xs"
-                />
+                <field.Textarea label="Notes" placeholder="Add notes..." className="text-xs" />
               )}
             </form.AppField>
 
@@ -119,14 +113,14 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-none font-mono text-xs"
+              className="text-xs"
               onClick={() => onOpenChange(false)}
               type="button"
             >
               Cancel
             </Button>
             <form.AppForm>
-              <form.SubmitButton className="rounded-none font-mono text-xs">
+              <form.SubmitButton className="text-xs">
                 {updateMutation.isPending ? "Saving..." : "Save"}
               </form.SubmitButton>
             </form.AppForm>

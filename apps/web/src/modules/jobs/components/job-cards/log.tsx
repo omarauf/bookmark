@@ -17,17 +17,15 @@ export function JobLogsCard({ job }: Props) {
 
   if (isLoading) {
     return (
-      <Card className="rounded-none border-border/50 shadow-none">
+      <Card className="border-border/50 shadow-none">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 font-mono font-normal text-[10px] text-muted-foreground uppercase tracking-widest">
+          <CardTitle className="flex items-center gap-2 font-normal text-[10px] text-muted-foreground uppercase tracking-widest">
             <List className="h-3.5 w-3.5" />
             Logs
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="py-12 text-center font-mono text-muted-foreground text-sm">
-            Loading...
-          </div>
+          <div className="py-12 text-center text-muted-foreground text-sm">Loading...</div>
         </CardContent>
       </Card>
     );
@@ -40,18 +38,16 @@ export function JobLogsCard({ job }: Props) {
   const logs = data || [];
 
   return (
-    <Card className="rounded-none border-border/50 shadow-none">
+    <Card className="border-border/50 shadow-none">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 font-mono font-normal text-[10px] text-muted-foreground uppercase tracking-widest">
+        <CardTitle className="flex items-center gap-2 font-normal text-[10px] text-muted-foreground uppercase tracking-widest">
           <List className="h-3.5 w-3.5" />
           Logs ({logs.length || 0})
         </CardTitle>
       </CardHeader>
       <CardContent>
         {logs.length === 0 ? (
-          <div className="py-12 text-center font-mono text-muted-foreground text-sm">
-            [ NO_LOGS ]
-          </div>
+          <div className="py-12 text-center text-muted-foreground text-sm">[ NO_LOGS ]</div>
         ) : (
           <div className="space-y-1">
             {logs.map((log) => (
@@ -66,7 +62,7 @@ export function JobLogsCard({ job }: Props) {
                   )}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="font-mono text-foreground text-xs">{log.message}</p>
+                  <p className="text-foreground text-xs">{log.message}</p>
                   {typeof log.metadata === "object" && !Array.isArray(log.metadata) && (
                     <div className="group relative mt-1">
                       <button
@@ -74,18 +70,18 @@ export function JobLogsCard({ job }: Props) {
                         onClick={() =>
                           navigator.clipboard.writeText(JSON.stringify(log.metadata, null, 2))
                         }
-                        className="absolute top-1 right-1 rounded bg-muted px-2 py-0.5 font-mono text-[10px] text-muted-foreground opacity-0 transition-opacity hover:bg-muted/80 group-hover:opacity-100"
+                        className="absolute top-1 right-1 rounded bg-muted px-2 py-0.5 text-[10px] text-muted-foreground opacity-0 transition-opacity hover:bg-muted/80 group-hover:opacity-100"
                       >
                         COPY
                       </button>
 
-                      <pre className="overflow-auto text-wrap rounded-none bg-muted/30 p-2 font-mono text-[10px] text-muted-foreground">
+                      <pre className="overflow-auto text-wrap bg-muted/30 p-2 text-[10px] text-muted-foreground">
                         {JSON.stringify(log.metadata, null, 2)}
                       </pre>
                     </div>
                   )}
                 </div>
-                <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
+                <span className="shrink-0 text-[10px] text-muted-foreground">
                   {new Date(log.createdAt).toLocaleTimeString()}
                 </span>
               </div>

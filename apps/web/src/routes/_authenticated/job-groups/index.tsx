@@ -28,7 +28,7 @@ function JobGroupList() {
         <Link
           to="/job-groups/$id"
           params={{ id: row.original.id }}
-          className="font-mono text-primary text-xs underline"
+          className="text-primary text-xs underline"
         >
           {row.original.name}
         </Link>
@@ -38,7 +38,7 @@ function JobGroupList() {
       accessorKey: "createdAt",
       header: "Created",
       cell: ({ row }: { row: { original: { createdAt: Date } } }) => (
-        <span className="font-mono text-muted-foreground text-xs">
+        <span className="text-muted-foreground text-xs">
           {new Date(row.original.createdAt).toLocaleString()}
         </span>
       ),
@@ -47,7 +47,7 @@ function JobGroupList() {
       accessorKey: "updatedAt",
       header: "Updated",
       cell: ({ row }: { row: { original: { updatedAt: Date } } }) => (
-        <span className="font-mono text-muted-foreground text-xs">
+        <span className="text-muted-foreground text-xs">
           {new Date(row.original.updatedAt).toLocaleString()}
         </span>
       ),
@@ -67,9 +67,9 @@ function JobGroupList() {
       <div className="border-border/50 border-b px-6 py-4">
         <div className="flex items-center gap-3">
           <Layers className="h-4 w-4 text-muted-foreground" />
-          <h1 className="font-medium font-mono text-lg tracking-tight">Job Groups</h1>
+          <h1 className="font-medium text-lg tracking-tight">Job Groups</h1>
         </div>
-        <p className="mt-1 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+        <p className="mt-1 text-[10px] text-muted-foreground uppercase tracking-widest">
           {data?.total ?? 0} GROUPS REGISTERED
         </p>
       </div>

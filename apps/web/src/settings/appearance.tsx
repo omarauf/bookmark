@@ -59,25 +59,13 @@ export function AppearanceConfig() {
           />
         </div>
 
-        <div className="grid grid-cols-9">
-          <p className="font-sans-inter">Inter</p>
-          <p className="font-sans-manrope">Manrope</p>
-          <p className="font-sans-dm-sans">DM Sans</p>
-          <p className="font-serif-merriweather">Merriweather</p>
-          <p className="font-serif-playfair">Playfair</p>
-          <p className="font-serif-source">Source Serif</p>
-          <p className="font-mono-jetbrains">JetBrains</p>
-          <p className="font-mono-ibm-plex">IBM Plex</p>
-          <p className="font-mono-source">Source Code</p>
-        </div>
-
         <div className="space-y-2">
           <Label className="text-muted-foreground text-xs">Heading Font</Label>
           <Options
             items={HEADING_FONTS}
             value={overrides.fontHead}
             onChange={appearanceControls.setFontHead}
-            className="max-w-2xl grid-cols-3"
+            className="grid-cols-9"
           />
         </div>
 
@@ -87,7 +75,7 @@ export function AppearanceConfig() {
             items={BODY_FONTS}
             value={overrides.fontBody}
             onChange={appearanceControls.setFontBody}
-            className="max-w-2xl grid-cols-3"
+            className="grid-cols-9"
           />
         </div>
       </div>

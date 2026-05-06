@@ -18,7 +18,7 @@ export function SyncButton() {
     <Button
       variant="outline"
       size="sm"
-      className="rounded-none font-mono text-[10px] uppercase tracking-widest"
+      className="text-[10px] uppercase tracking-widest"
       disabled={mutation.isPending}
       onClick={() => mutation.mutate({})}
     >

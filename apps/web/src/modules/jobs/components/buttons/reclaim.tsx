@@ -28,7 +28,7 @@ export function ReclaimButton() {
       type="button"
       variant="outline"
       size="sm"
-      className="rounded-none font-mono text-[10px] uppercase tracking-widest"
+      className="text-[10px] uppercase tracking-widest"
       disabled={reclaimStaleMutation.isPending}
       onClick={() => reclaimStaleMutation.mutate({ stalledMinutes: 60 })}
     >

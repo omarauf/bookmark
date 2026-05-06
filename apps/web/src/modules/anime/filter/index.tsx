@@ -28,14 +28,14 @@ export function AnimeFilter() {
           placeholder="Search anime..."
           value={search.q ?? ""}
           onChange={(e) => setFilter("q", e.target.value || undefined)}
-          className="h-8 rounded-none border-border/50 pl-8 font-mono text-xs"
+          className="h-8 border-border/50 pl-8 text-xs"
         />
       </div>
 
       <select
         value={search.genre ?? ""}
         onChange={(e) => setFilter("genre", e.target.value || undefined)}
-        className="h-8 border border-border/50 bg-transparent px-2 font-mono text-[10px] text-muted-foreground uppercase tracking-wider outline-none"
+        className="h-8 border border-border/50 bg-transparent px-2 text-[10px] text-muted-foreground uppercase tracking-wider outline-none"
       >
         <option value="">All Genres</option>
         {genresQuery.data?.map((g) => (
@@ -48,7 +48,7 @@ export function AnimeFilter() {
       <select
         value={search.sortBy ?? "createdAt"}
         onChange={(e) => setFilter("sortBy", e.target.value || undefined)}
-        className="h-8 border border-border/50 bg-transparent px-2 font-mono text-[10px] text-muted-foreground uppercase tracking-wider outline-none"
+        className="h-8 border border-border/50 bg-transparent px-2 text-[10px] text-muted-foreground uppercase tracking-wider outline-none"
       >
         <option value="createdAt">Newest</option>
         <option value="rating">Rating</option>
@@ -66,14 +66,14 @@ export function AnimeFilter() {
           onChange={(e) =>
             setFilter("minRating", e.target.value ? Number(e.target.value) : undefined)
           }
-          className="h-8 w-16 rounded-none border-border/50 font-mono text-xs"
+          className="h-8 w-16 border-border/50 text-xs"
         />
       </div>
 
       <Button
         variant="outline"
         size="sm"
-        className="h-8 rounded-none border-border/50 font-mono text-[10px]"
+        className="h-8 border-border/50 text-[10px]"
         onClick={() =>
           navigate({
             search: (prev) => ({ ...prev, update: !prev.update }),
@@ -87,7 +87,7 @@ export function AnimeFilter() {
       <Button
         variant="outline"
         size="sm"
-        className="h-8 rounded-none border-border/50 font-mono text-[10px]"
+        className="h-8 border-border/50 text-[10px]"
         onClick={() => {
           syncMutation.mutate(undefined, {
             onSuccess: () => toast.success("Anime sync queued"),

@@ -20,9 +20,9 @@ export function EmptyImdb({ hasFilter, className }: Props) {
   const navigate = useNavigate();
 
   return (
-    <Empty className={cn("rounded-none border border-dashed", className)}>
+    <Empty className={cn("border border-dashed", className)}>
       <EmptyHeader>
-        <EmptyMedia variant="icon" className="rounded-none">
+        <EmptyMedia variant="icon">
           <CircleAlert />
         </EmptyMedia>
         <EmptyTitle>[ No IMDB Results Found ]</EmptyTitle>

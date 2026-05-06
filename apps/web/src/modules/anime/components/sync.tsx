@@ -11,7 +11,7 @@ export function SyncButton() {
     <Button
       variant="outline"
       size="sm"
-      className="h-8 rounded-none border-border/50 font-mono text-[10px]"
+      className="h-8 border-border/50 text-[10px]"
       onClick={() => {
         syncMutation.mutate(undefined, {
           onSuccess: () => toast.success("Anime sync queued"),

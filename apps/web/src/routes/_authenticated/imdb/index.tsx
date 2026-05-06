@@ -20,8 +20,8 @@ function ImdbPage() {
       <Header className="border-border/50 border-b">
         <div className="flex items-center gap-3 px-6 py-3">
           <Film className="h-4 w-4 text-muted-foreground" />
-          <h1 className="font-medium font-mono text-lg tracking-tight">IMDb</h1>
-          <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+          <h1 className="font-medium text-lg tracking-tight">IMDb</h1>
+          <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
             Entertainment
           </span>
         </div>

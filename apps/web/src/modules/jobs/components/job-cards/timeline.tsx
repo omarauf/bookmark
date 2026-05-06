@@ -12,9 +12,9 @@ export function JobTimelineCard({ job }: Props) {
   const events = buildTimeline(job);
 
   return (
-    <Card className="rounded-none border-border/50 shadow-none">
+    <Card className="border-border/50 shadow-none">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 font-mono font-normal text-[10px] text-muted-foreground uppercase tracking-widest">
+        <CardTitle className="flex items-center gap-2 font-normal text-[10px] text-muted-foreground uppercase tracking-widest">
           <Clock className="h-3.5 w-3.5" />
           Timeline
         </CardTitle>
@@ -44,9 +44,9 @@ export function JobTimelineCard({ job }: Props) {
               </div>
               {/* Label */}
               <div className="pt-0.5 pb-6">
-                <p className="font-mono text-foreground text-xs">{event.label}</p>
+                <p className="text-foreground text-xs">{event.label}</p>
 
-                <p className="font-mono text-[10px] text-muted-foreground">
+                <p className="text-[10px] text-muted-foreground">
                   {fDateTime(event.time, "DD MMM YYYY hh:mm:ss A")}
                 </p>
               </div>

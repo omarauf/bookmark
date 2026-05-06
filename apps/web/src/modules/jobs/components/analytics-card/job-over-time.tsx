@@ -39,7 +39,7 @@ export function JobOverTime({ data }: Props) {
           />
           <Legend
             formatter={(value: string) => (
-              <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
                 {value}
               </span>
             )}

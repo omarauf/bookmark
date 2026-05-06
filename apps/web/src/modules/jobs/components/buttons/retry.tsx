@@ -29,7 +29,7 @@ export function JobRetryButton({ job }: Props) {
     <Button
       variant="outline"
       size="sm"
-      className="rounded-none font-mono text-[10px] uppercase tracking-widest"
+      className="text-[10px] uppercase tracking-widest"
       disabled={retryMutation.isPending || !canRetry}
       onClick={() => retryMutation.mutate({ id: job.id })}
     >

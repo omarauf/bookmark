@@ -10,7 +10,7 @@ export function DownloadStatusBadge({ status, className }: DownloadStatusBadgePr
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest",
+        "inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest",
         status === "pending" && "text-muted-foreground",
         status === "processing" && "text-blue-400",
         status === "completed" && "text-emerald-500",

@@ -15,7 +15,7 @@ export function EmptyAnime({ hasFilter, className }: Props) {
   return (
     <Card
       className={cn(
-        "gap-1 overflow-hidden rounded-none border-border/50 border-dashed bg-transparent p-0 shadow-none",
+        "gap-1 overflow-hidden border-border/50 border-dashed bg-transparent p-0 shadow-none",
         className,
       )}
     >
@@ -23,7 +23,7 @@ export function EmptyAnime({ hasFilter, className }: Props) {
       <div className="relative aspect-2/3 overflow-hidden bg-muted/50">
         <div className="flex h-full w-full flex-col items-center justify-center gap-2">
           <CircleAlert className="h-10 w-10 text-muted-foreground/25" />
-          <span className="font-mono text-[10px] text-muted-foreground/40 uppercase tracking-wider">
+          <span className="text-[10px] text-muted-foreground/40 uppercase tracking-wider">
             Empty
           </span>
         </div>
@@ -31,11 +31,11 @@ export function EmptyAnime({ hasFilter, className }: Props) {
 
       {/* Info */}
       <div className="space-y-1.5 p-2">
-        <h3 className="font-medium font-mono text-foreground text-xs leading-tight">
+        <h3 className="font-medium text-foreground text-xs leading-tight">
           No Anime Results Found
         </h3>
 
-        <p className="font-mono text-[10px] text-muted-foreground leading-snug">
+        <p className="text-[10px] text-muted-foreground leading-snug">
           {hasFilter
             ? "No results match your search. Try a different keyword."
             : "Get started by syncing anime from your MyAnimeList links."}
@@ -45,7 +45,7 @@ export function EmptyAnime({ hasFilter, className }: Props) {
           <Button
             variant="outline"
             size="sm"
-            className="mt-1 h-7 w-full rounded-none font-mono text-[10px]"
+            className="mt-1 h-7 w-full text-[10px]"
             onClick={() => navigate({ to: ".", search: undefined })}
           >
             Clear Search

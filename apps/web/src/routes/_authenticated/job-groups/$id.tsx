@@ -31,10 +31,8 @@ function JobGroupDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="font-medium font-mono text-lg tracking-tight">
-              {jobsQuery.data?.group.name}
-            </h1>
-            <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+            <h1 className="font-medium text-lg tracking-tight">{jobsQuery.data?.group.name}</h1>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
               {jobsQuery.data?.group.id}
             </p>
           </div>

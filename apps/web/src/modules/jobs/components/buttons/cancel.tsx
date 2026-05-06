@@ -30,7 +30,7 @@ export function JobCancelButton({ job }: Props) {
     <Button
       variant="outline"
       size="sm"
-      className="rounded-none font-mono text-[10px] text-destructive uppercase tracking-widest hover:text-destructive"
+      className="text-[10px] text-destructive uppercase tracking-widest hover:text-destructive"
       disabled={cancelMutation.isPending || !canCancel}
       onClick={() => cancelMutation.mutate({ id: job.id })}
     >

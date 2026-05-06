@@ -28,15 +28,13 @@ function JobDetailPage() {
       <div className="flex items-center justify-between border-border/50 border-b px-6 py-4">
         <div className="flex items-center gap-4">
           <Link to="/jobs">
-            <Button variant="ghost" size="sm" className="rounded-none px-2">
+            <Button variant="ghost" size="sm" className="px-2">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
           <div>
-            <h1 className="font-medium font-mono text-lg tracking-tight">Job Detail</h1>
-            <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-              {job.id}
-            </p>
+            <h1 className="font-medium text-lg tracking-tight">Job Detail</h1>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{job.id}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">

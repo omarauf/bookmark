@@ -66,7 +66,7 @@ function DownloadsPage() {
 
       <header className="mb-8 animate-stagger-1">
         <h1 className="mb-4 text-4xl text-foreground md:text-5xl">Download Tasks.</h1>
-        <p className="max-w-lg font-mono text-muted-foreground text-sm leading-relaxed">
+        <p className="max-w-lg text-muted-foreground text-sm leading-relaxed">
           SYSTEM_STATUS / TRACKING {stats.total} JOBS OVER {stats.completed} COMPLETED.
         </p>
       </header>
@@ -109,14 +109,14 @@ function DownloadsPage() {
       </div>
 
       <div className="animate-stagger-4 space-y-4">
-        <div className="grid grid-cols-12 gap-4 px-2 font-mono text-muted-foreground/60 text-xs tracking-wider">
+        <div className="grid grid-cols-12 gap-4 px-2 text-muted-foreground/60 text-xs tracking-wider">
           <div className="col-span-5 md:col-span-6">RESOURCE</div>
           <div className="col-span-3 text-right">METRICS</div>
           <div className="col-span-4 text-right md:col-span-3">STATUS</div>
         </div>
 
         {flatItems.length === 0 ? (
-          <div className="py-24 text-center font-mono text-muted-foreground text-sm">
+          <div className="py-24 text-center text-muted-foreground text-sm">
             [ NO_TASKS_FOUND_FOR_CURRENT_FILTER ]
           </div>
         ) : (
@@ -129,7 +129,7 @@ function DownloadsPage() {
               type="button"
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
-              className="font-mono text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground disabled:opacity-50"
+              className="text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground disabled:opacity-50"
             >
               {isFetchingNextPage ? "LOADING_MORE..." : "[ LOAD_MORE_RECORDS ]"}
             </button>

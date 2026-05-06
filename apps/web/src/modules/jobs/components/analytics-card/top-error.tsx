@@ -11,7 +11,7 @@ export function TopError({ data }: Props) {
   return (
     <ChartCard title="Top Errors">
       {data.length === 0 ? (
-        <div className="flex h-60 items-center justify-center font-mono text-muted-foreground text-sm">
+        <div className="flex h-60 items-center justify-center text-muted-foreground text-sm">
           [ NO_ERRORS_RECORDED ]
         </div>
       ) : (
@@ -21,13 +21,13 @@ export function TopError({ data }: Props) {
               key={err.error}
               className="flex items-start gap-3 border-border/50 border-b pb-2 last:border-0"
             >
-              <span className="mt-0.5 font-mono text-[10px] text-muted-foreground">
+              <span className="mt-0.5 text-[10px] text-muted-foreground">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-mono text-foreground text-xs">{err.error}</p>
+                <p className="truncate text-foreground text-xs">{err.error}</p>
               </div>
-              <span className="shrink-0 font-mono text-rose-500 text-xs">{err.count}</span>
+              <span className="shrink-0 text-rose-500 text-xs">{err.count}</span>
             </div>
           ))}
         </div>

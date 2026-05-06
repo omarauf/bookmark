@@ -46,7 +46,7 @@ export function StatusDistributionCard({ data }: Props) {
             height={36}
             iconType="circle"
             formatter={(value: string) => (
-              <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
                 {value}
               </span>
             )}

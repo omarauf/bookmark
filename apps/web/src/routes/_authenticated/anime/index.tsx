@@ -24,13 +24,11 @@ function AnimePage() {
       <Header className="border-border/50 border-b">
         <div className="flex items-center gap-3 px-6 py-3">
           <Tv className="h-4 w-4 text-muted-foreground" />
-          <h1 className="font-medium font-mono text-lg tracking-tight">Anime</h1>
-          <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+          <h1 className="font-medium text-lg tracking-tight">Anime</h1>
+          <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
             MyAnimeList
           </span>
-          <span className="font-mono text-[10px] text-muted-foreground/60">
-            {total.toLocaleString()}
-          </span>
+          <span className="text-[10px] text-muted-foreground/60">{total.toLocaleString()}</span>
         </div>
       </Header>
 

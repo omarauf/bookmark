@@ -6,8 +6,8 @@ export const ImportSchema = z.object({
   filename: z.string(),
   platform: PlatformEnum,
   size: z.number(),
-  validItem: z.number(),
-  invalidItem: z.number(),
+  validPost: z.number(),
+  invalidPost: z.number(),
 
   importedAt: z.date().optional(),
   deletedAt: z.date().optional(),

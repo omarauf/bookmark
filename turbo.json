@@ -19,7 +19,7 @@
       "dependsOn": ["^lint"]
     },
     "check-types": {
-      "dependsOn": ["build:types", "^check-types"]
+      "dependsOn": ["^check-types"]
     },
     "dev": {
       "cache": false,

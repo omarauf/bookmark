@@ -59,8 +59,8 @@ export function ConfigDrawer() {
           </SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="min-h-0 ">
-          <div className="px-4 space-y-4">
+        <ScrollArea className="min-h-0">
+          <div className="space-y-4 px-4">
             <StyleConfig />
             <ThemeConfig />
             <SidebarConfig />

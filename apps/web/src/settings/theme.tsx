@@ -41,7 +41,7 @@ export function ThemeConfig() {
           <RadioGroupItem key={item.value} item={item} isTheme />
         ))}
       </Radio>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Choose between system preference, light mode, or dark mode
       </p>
     </div>

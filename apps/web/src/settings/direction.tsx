@@ -32,7 +32,7 @@ export function DirConfig() {
           <RadioGroupItem key={item.value} item={item} />
         ))}
       </Radio>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Choose between left-to-right or right-to-left site direction
       </p>
     </div>

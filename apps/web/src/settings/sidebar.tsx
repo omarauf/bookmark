@@ -11,7 +11,7 @@ export function SidebarConfig() {
   const variant = useSettingStore((s) => s.variant);
 
   return (
-    <div className="max-md:hidden space-y-2">
+    <div className="space-y-2 max-md:hidden">
       <SectionTitle title="Sidebar" showReset={isChanged()} onReset={reset} />
       <Radio
         value={variant}
@@ -38,7 +38,7 @@ export function SidebarConfig() {
           <RadioGroupItem key={item.value} item={item} />
         ))}
       </Radio>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Choose between inset, floating, or standard sidebar layout
       </p>
     </div>

@@ -21,10 +21,10 @@ export function StyleConfig() {
         items={items}
         value={styleSetting}
         onChange={setValue}
-        className="grid-cols-4 max-w-md "
+        className="max-w-md grid-cols-4"
       />
 
-      <p className="text-sm text-muted-foreground">Choose a color palette and typographic style</p>
+      <p className="text-muted-foreground text-sm">Choose a color palette and typographic style</p>
     </div>
   );
 }

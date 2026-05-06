@@ -16,7 +16,7 @@ export function LayoutConfig() {
   const radioState = open ? "default" : collapsible;
 
   return (
-    <div className="max-md:hidden space-y-2">
+    <div className="space-y-2 max-md:hidden">
       <SectionTitle
         title="Layout"
         showReset={radioState !== "default"}
@@ -57,7 +57,7 @@ export function LayoutConfig() {
           <RadioGroupItem key={item.value} item={item} />
         ))}
       </Radio>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Choose between default expanded, compact icon-only, or full layout mode
       </p>
     </div>

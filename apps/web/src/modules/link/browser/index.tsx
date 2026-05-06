@@ -1,6 +1,6 @@
 import { useSearch } from "@tanstack/react-router";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FolderTree } from "../components/folder-tree";
+import { FolderNavigator } from "../components/folder-navigator";
 import { LinkBreadcrumb } from "../components/link-breadcrumb";
 import { Content } from "./content";
 import { SearchResults } from "./search-results";
@@ -15,7 +15,7 @@ export function LinkBrowserView() {
 
   return (
     <div className="flex min-h-0">
-      <FolderTree className="flex min-h-0 w-64 flex-col border-r" />
+      <FolderNavigator className="flex min-h-0 w-64 flex-col border-r" />
 
       <div className="flex flex-1 flex-col overflow-auto">
         <LinkBreadcrumb className="border-b px-4 py-3" />

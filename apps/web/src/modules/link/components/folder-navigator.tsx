@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import type { FolderTree as FolderTreeDto } from "@workspace/contracts/views/link";
+import type { FolderTree, FolderTree as FolderTreeDto } from "@workspace/contracts/views/link";
 import { FolderIcon, FolderOpenIcon } from "lucide-react";
 import type { ElementType, ReactNode } from "react";
 import { TreeView } from "@/components/tree";
@@ -31,7 +31,7 @@ function mapPathNodesToTree(nodes: FolderTreeDto[]): TreeNodeData[] {
   }));
 }
 
-export function FolderTree({ className }: Props) {
+export function FolderNavigator({ className }: Props) {
   const foldersQuery = useQuery(orpc.link.folderTree.queryOptions());
 
   const currentPath = useSearch({ from: "/_authenticated/links/", select: (s) => s.path });
@@ -42,7 +42,7 @@ export function FolderTree({ className }: Props) {
     navigate({ to: ".", search: (s) => ({ ...s, path: lastValue }) });
   };
 
-  const treeData = foldersQuery.data ? mapPathNodesToTree(foldersQuery.data) : [];
+  const treeData = foldersQuery.data ? mapPathNodesToTree(foldersQuery.data as FolderTree[]) : [];
 
   return (
     <div className={className}>

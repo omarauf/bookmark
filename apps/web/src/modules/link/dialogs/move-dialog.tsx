@@ -54,7 +54,7 @@ export function MoveLinksDialog({
   const foldersQuery = useQuery(orpc.link.folderTree.queryOptions());
   const moveMutation = useMoveLinks();
 
-  const folderList = foldersQuery.data ? flattenPathNodes(foldersQuery.data) : [];
+  const folderList = foldersQuery.data ? flattenPathNodes(foldersQuery.data as FolderTree[]) : [];
 
   const onMove = () => {
     moveMutation.mutate(

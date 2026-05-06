@@ -120,7 +120,7 @@ type MetricCardProps = {
 
 export function MetricCard({ label, value, icon, accent }: MetricCardProps) {
   return (
-    <Card className="flex flex-col gap-2 border border-border/50 p-4 bg-transparent">
+    <Card className="flex flex-col gap-2 border border-border/50 bg-transparent p-4">
       <div className="flex items-center gap-2 text-muted-foreground">
         {icon}
         <span className="text-[10px] uppercase tracking-widest">{label}</span>

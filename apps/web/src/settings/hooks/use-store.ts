@@ -64,17 +64,12 @@ export function getAppearanceControls() {
       }
       setSetting("overrides", { ...useSettingStore.getState().overrides, radius });
     },
-    // setFontSans: (fontSans?: string) => applyFont("--font-sans", fontSans, "fontSans"),
-    // setFontSerif: (fontSerif?: string) => applyFont("--font-serif", fontSerif, "fontSerif"),
-    // setFontMono: (fontMono?: string) => applyFont("--font-mono", fontMono, "fontMono"),
-    setFontSans: (fontSans?: string) => applyFont("--font-sans", fontSans, "fontSans"),
-    setFontSerif: (fontSerif?: string) => applyFont("--font-serif", fontSerif, "fontSerif"),
-    setFontMono: (fontMono?: string) => applyFont("--font-mono", fontMono, "fontMono"),
+    setFontHead: (fontHead?: string) => applyFont("head", fontHead),
+    setFontBody: (fontBody?: string) => applyFont("body", fontBody),
     reset: () => {
       html.style.removeProperty("--radius");
-      html.style.removeProperty("--font-sans");
-      html.style.removeProperty("--font-serif");
-      html.style.removeProperty("--font-mono");
+      html.style.removeProperty("--font-head");
+      html.style.removeProperty("--font-body");
       setSetting("overrides", DEFAULT_SETTINGS.overrides);
     },
     isChanged: () => {
@@ -82,9 +77,8 @@ export function getAppearanceControls() {
       const defaultOverrides = DEFAULT_SETTINGS.overrides;
       return (
         overrides.radius !== defaultOverrides.radius ||
-        overrides.fontSans !== defaultOverrides.fontSans ||
-        overrides.fontSerif !== defaultOverrides.fontSerif ||
-        overrides.fontMono !== defaultOverrides.fontMono
+        overrides.fontHead !== defaultOverrides.fontHead ||
+        overrides.fontBody !== defaultOverrides.fontBody
       );
     },
   };
@@ -96,16 +90,15 @@ function setSetting<K extends keyof SettingStore>(key: K, value: SettingStore[K]
   useSettingStore.setState({ [key]: value } as Pick<SettingStore, K>);
 }
 
-function applyFont(cssVar: string, value?: string, key?: "fontSans" | "fontSerif" | "fontMono") {
-  if (!key) return;
-  if (value && value.trim() !== "") {
-    document.documentElement.style.setProperty(cssVar, value);
-  } else {
-    document.documentElement.style.removeProperty(cssVar);
-  }
+function applyFont(cssVar: string, value?: string) {
+  const root = document.documentElement;
+  root.classList.forEach((cls) => {
+    if (cls.startsWith("font-")) root.classList.remove(cls);
+  });
+  root.classList.add(`font-${value}`);
 
   setSetting("overrides", {
     ...useSettingStore.getState().overrides,
-    [key]: value,
+    [cssVar === "head" ? "fontHead" : "fontBody"]: value,
   });
 }

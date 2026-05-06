@@ -7,8 +7,7 @@ export const DEFAULT_SETTINGS: SettingStore = {
   style: "default",
   overrides: {
     radius: undefined,
-    fontSans: "sans",
-    fontSerif: "serif",
-    fontMono: "mono",
+    fontHead: "sans",
+    fontBody: "serif",
   },
 };

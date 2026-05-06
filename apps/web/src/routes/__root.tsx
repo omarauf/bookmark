@@ -48,7 +48,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="wrap-anywhere font-sans antialiased selection:bg-[rgba(79,184,178,0.24)]">
+      <body className="wrap-anywhere antialiased selection:bg-[rgba(79,184,178,0.24)]">
         <ThemeProvider>{children}</ThemeProvider>
         <TanStackDevtools
           config={{

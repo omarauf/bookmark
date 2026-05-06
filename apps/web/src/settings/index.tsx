@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/sheet";
 import { useTheme } from "@/theme/theme-provider";
 import { useSidebar } from "../components/ui/sidebar";
-import { AppearanceConfig } from "./appearance";
 import { DirConfig } from "./direction";
 import {
   getAppearanceControls,
@@ -63,7 +62,6 @@ export function ConfigDrawer() {
         <ScrollArea className="min-h-0 ">
           <div className="px-4 space-y-4">
             <StyleConfig />
-            <AppearanceConfig />
             <ThemeConfig />
             <SidebarConfig />
             <LayoutConfig />

@@ -5,25 +5,19 @@ import { getAppearanceControls, useSettingStore } from "./hooks/use-store";
 
 const FONT_OPTIONS = {
   sans: [
-    { label: "Default", value: "sans" },
-    { label: "Outfit", value: "outfit" },
-    { label: "Inter", value: "inter" },
-    { label: "Open Sans", value: "open-sans" },
-    { label: "Manrope", value: "manrope" },
-    { label: "System UI", value: "system" },
+    { label: "Inter", value: "sans-inter", className: "font-sans-inter" },
+    { label: "Manrope", value: "sans-manrope", className: "font-sans-manrope" },
+    { label: "DM Sans", value: "sans-dm-sans", className: "font-sans-dm-sans" },
   ],
   serif: [
-    { label: "Default", value: "serif" },
-    { label: "Georgia", value: "georgia" },
-    { label: "Merriweather", value: "merriweather" },
-    { label: "Playfair Display", value: "playfair" },
+    { label: "Merriweather", value: "serif-merriweather", className: "font-serif-merriweather" },
+    { label: "Playfair", value: "serif-playfair", className: "font-serif-playfair" },
+    { label: "Source", value: "serif-source", className: "font-serif-source" },
   ],
   mono: [
-    { label: "Default", value: "mono" },
-    { label: "JetBrains Mono", value: "jetbrains" },
-    { label: "Fira Code", value: "fira" },
-    { label: "Menlo", value: "menlo" },
-    { label: "Courier New", value: "courier" },
+    { label: "DefaJetBrainsult", value: "mono-jetbrains", className: "font-mono-jetbrains" },
+    { label: "IBM Plex", value: "mono-ibm-plex", className: "font-mono-ibm-plex" },
+    { label: "Source Code", value: "mono-source", className: "font-mono-source" },
   ],
 };
 
@@ -41,7 +35,7 @@ export function AppearanceConfig() {
         onReset={appearanceControls.reset}
       />
 
-      <div className="grid-cols-2 grid gap-4">
+      <div className="space-y-4">
         <div className="space-y-2">
           <Label className="text-muted-foreground text-xs">Radius</Label>
           <Options
@@ -63,8 +57,8 @@ export function AppearanceConfig() {
           <Label className="text-muted-foreground text-xs">Sans Serif</Label>
           <Options
             items={FONT_OPTIONS.sans}
-            value={overrides.fontSans}
-            onChange={appearanceControls.setFontSans}
+            value={overrides.fontHead}
+            onChange={appearanceControls.setFontHead}
             className="grid-cols-6 max-w-2xl"
           />
         </div>
@@ -73,8 +67,8 @@ export function AppearanceConfig() {
           <Label className="text-muted-foreground text-xs">Serif</Label>
           <Options
             items={FONT_OPTIONS.serif}
-            value={overrides.fontSerif}
-            onChange={appearanceControls.setFontSerif}
+            value={overrides.fontHead}
+            onChange={appearanceControls.setFontHead}
             className="grid-cols-6 max-w-2xl"
           />
         </div>
@@ -83,8 +77,8 @@ export function AppearanceConfig() {
           <Label className="text-muted-foreground text-xs">Monospace</Label>
           <Options
             items={FONT_OPTIONS.mono}
-            value={overrides.fontMono}
-            onChange={appearanceControls.setFontMono}
+            value={overrides.fontHead}
+            onChange={appearanceControls.setFontHead}
             className="grid-cols-6 max-w-2xl"
           />
         </div>

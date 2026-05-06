@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 type Option<T extends string | number> = {
   value: T;
   label: string;
+  className?: string;
 };
 
 type OptionsProps<T extends string | number> = {
@@ -30,6 +31,7 @@ export function Options<T extends string | number>({
             "hover:bg-muted hover:border-primary/50 hover:scale-[1.02]",
             "active:scale-[0.98]",
             value === item.value && "ring-2 ring-primary bg-muted",
+            item.className,
           )}
           onClick={() => onChange(item.value)}
         >

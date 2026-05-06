@@ -109,6 +109,13 @@ function applyFont(cssVar: string, value?: string) {
 export function initializeAppearance() {
   const root = document.documentElement;
   const overrides = useSettingStore.getState().overrides;
+  const style = useSettingStore.getState().style;
+
+  const html = document.documentElement;
+  html.classList.remove("style-one", "style-two", "style-three");
+  if (style !== "default") {
+    html.classList.add(`style-${style}`);
+  }
 
   if (overrides.radius !== undefined) {
     root.style.setProperty("--radius", `${overrides.radius}rem`);

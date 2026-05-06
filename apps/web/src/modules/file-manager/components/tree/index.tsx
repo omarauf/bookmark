@@ -15,7 +15,7 @@ export function FileTree() {
     navigate({ to: ".", search: (s) => ({ ...s, folderId: lastValue }) });
   };
 
-  const mapped: MappedFolderTree[] = tree.data?.map(mapFolderTree) ?? [];
+  const mapped = tree.data?.map(mapFolderTree) ?? [];
 
   // TODO: add this to each item in node tree
   // const { setNodeRef, isOver } = useDroppable({

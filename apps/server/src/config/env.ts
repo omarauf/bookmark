@@ -21,6 +21,7 @@ const envSchema = z.object({
   OMDB_API_KEY: z.string().min(1, "OMDB_API_KEY is required"),
   TMDB_API_KEY: z.string().min(1, "TMDB_API_KEY is required"),
   MAL_CLIENT_ID: z.string().min(1, "MAL_CLIENT_ID is required"),
+  YOUTUBE_API_KEY: z.string().min(1, "YOUTUBE_API_KEY is required"),
 });
 
 export const env = envSchema.parse(process.env);

@@ -8,6 +8,8 @@ import {
   ImdbFetchPayloadSchema,
   ImportProcessPayloadSchema,
   ImportUploadPayloadSchema,
+  YoutubeDiscoverPayloadSchema,
+  YoutubeFetchPayloadSchema,
 } from "./payload";
 
 export const JobGroupSchema = z.object({
@@ -36,6 +38,8 @@ export const JobSchema = z.object({
       ImdbFetchPayloadSchema,
       AnimeDiscoverPayloadSchema,
       AnimeFetchPayloadSchema,
+      YoutubeDiscoverPayloadSchema,
+      YoutubeFetchPayloadSchema,
     ])
     .optional(),
 

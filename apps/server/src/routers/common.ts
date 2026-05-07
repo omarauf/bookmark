@@ -10,6 +10,7 @@ import { jobRouter } from "@/modules/job/route";
 import { linkRouter } from "@/modules/link/route";
 import { postRouter } from "@/modules/post/route";
 import { tagRouter } from "@/modules/tag/route";
+import { youtubeRouter } from "@/modules/youtube/route";
 
 export const appRouter = {
   import: importRouter,
@@ -24,4 +25,5 @@ export const appRouter = {
   job: jobRouter,
   imdb: imdbRouter,
   anime: animeRouter,
+  youtube: youtubeRouter,
 };

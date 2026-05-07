@@ -6,6 +6,7 @@ import { processAnimeDiscover, processAnimeFetch } from "./import-anime";
 import { processImdbDiscover, processImdbFetch } from "./import-imdb";
 import { processImportProcess } from "./import-process";
 import { processImportUpload } from "./import-upload";
+import { processYoutubeDiscover, processYoutubeFetch } from "./import-youtube";
 import { reclaimStaleJobs } from "./reclaimer";
 
 let scheduler: WorkerScheduler | null = null;
@@ -80,6 +81,12 @@ async function processJob(job: Job) {
         break;
       case "anime_fetch":
         await processAnimeFetch(job);
+        break;
+      case "youtube_discover":
+        await processYoutubeDiscover(job);
+        break;
+      case "youtube_fetch":
+        await processYoutubeFetch(job);
         break;
       default:
         throw new Error(`Unknown job type: ${job.type}`);

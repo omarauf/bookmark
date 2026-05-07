@@ -10,6 +10,7 @@ const handlers: Record<Platform, PlatformHandler> = {
   chrome: new ChromeHandler(),
   imdb: new ImdbHandler(), // TODO: Replace with placeholder handler
   mal: new ImdbHandler(), // TODO: Replace with placeholder handler
+  youtube: new ImdbHandler(), // TODO: Replace with placeholder handler
   instagram: new InstagramHandler(),
   tiktok: new TiktokHandler(),
   twitter: new TwitterHandler(),

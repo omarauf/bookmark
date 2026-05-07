@@ -63,6 +63,7 @@ export const sidebarData: SidebarData = {
       items: [
         { title: "IMDb", url: "/imdb", icon: Clapperboard },
         { title: "Anime", url: "/anime", icon: Tv },
+        { title: "Youtube", url: "/youtube", icon: Tv },
       ],
     },
     {

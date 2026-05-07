@@ -39,3 +39,10 @@ export const AnimeFetchPayloadSchema = z.object({
   linkId: z.string(),
   animeId: z.string(),
 });
+
+export const YoutubeDiscoverPayloadSchema = z.object({});
+
+export const YoutubeFetchPayloadSchema = z.object({
+  linkId: z.string(),
+  videoId: z.string(),
+});

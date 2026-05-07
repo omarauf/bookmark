@@ -17,6 +17,7 @@ import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
+import { Route as AuthenticatedYoutubeIndexRouteImport } from './routes/_authenticated/youtube/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTwitterIndexRouteImport } from './routes/_authenticated/twitter/index'
 import { Route as AuthenticatedTiktokIndexRouteImport } from './routes/_authenticated/tiktok/index'
@@ -77,6 +78,12 @@ const errors401Route = errors401RouteImport.update({
   path: '/401',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedYoutubeIndexRoute =
+  AuthenticatedYoutubeIndexRouteImport.update({
+    id: '/youtube/',
+    path: '/youtube/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -219,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/tiktok/': typeof AuthenticatedTiktokIndexRoute
   '/twitter/': typeof AuthenticatedTwitterIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
+  '/youtube/': typeof AuthenticatedYoutubeIndexRoute
 }
 export interface FileRoutesByTo {
   '/401': typeof errors401Route
@@ -248,6 +256,7 @@ export interface FileRoutesByTo {
   '/tiktok': typeof AuthenticatedTiktokIndexRoute
   '/twitter': typeof AuthenticatedTwitterIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/youtube': typeof AuthenticatedYoutubeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -279,6 +288,7 @@ export interface FileRoutesById {
   '/_authenticated/tiktok/': typeof AuthenticatedTiktokIndexRoute
   '/_authenticated/twitter/': typeof AuthenticatedTwitterIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/youtube/': typeof AuthenticatedYoutubeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/tiktok/'
     | '/twitter/'
     | '/users/'
+    | '/youtube/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/401'
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/tiktok'
     | '/twitter'
     | '/users'
+    | '/youtube'
   id:
     | '__root__'
     | '/_authenticated'
@@ -369,6 +381,7 @@ export interface FileRouteTypes {
     | '/_authenticated/tiktok/'
     | '/_authenticated/twitter/'
     | '/_authenticated/users/'
+    | '/_authenticated/youtube/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -438,6 +451,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/401'
       preLoaderRoute: typeof errors401RouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/youtube/': {
+      id: '/_authenticated/youtube/'
+      path: '/youtube'
+      fullPath: '/youtube/'
+      preLoaderRoute: typeof AuthenticatedYoutubeIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
@@ -604,6 +624,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTiktokIndexRoute: typeof AuthenticatedTiktokIndexRoute
   AuthenticatedTwitterIndexRoute: typeof AuthenticatedTwitterIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedYoutubeIndexRoute: typeof AuthenticatedYoutubeIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -629,6 +650,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTiktokIndexRoute: AuthenticatedTiktokIndexRoute,
   AuthenticatedTwitterIndexRoute: AuthenticatedTwitterIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedYoutubeIndexRoute: AuthenticatedYoutubeIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -9,6 +9,7 @@ import { TiktokMetadataCreatorSchema } from "../../platforms/tiktok/creator";
 import { TiktokMetadataPostSchema } from "../../platforms/tiktok/post";
 import { TwitterMetadataCreatorSchema } from "../../platforms/twitter/creator";
 import { TwitterMetadataPostSchema } from "../../platforms/twitter/post";
+import { YoutubeMetadataSchema } from "../../platforms/youtube";
 
 export const ItemMetadataSchema = z.discriminatedUnion("platform", [
   z.discriminatedUnion("kind", [InstagramMetadataCreatorSchema, InstagramMetadataPostSchema]),
@@ -22,4 +23,6 @@ export const ItemMetadataSchema = z.discriminatedUnion("platform", [
   z.discriminatedUnion("kind", [MovieMetadataSchema, TvMetadataSchema]),
 
   z.discriminatedUnion("kind", [AnimeMetadataSchema]),
+
+  z.discriminatedUnion("kind", [YoutubeMetadataSchema]),
 ]);

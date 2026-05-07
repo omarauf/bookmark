@@ -1,18 +1,12 @@
-import { ItemSchemas } from "@workspace/contracts/item";
 import type { Job } from "@workspace/contracts/job";
-import { ImdbDiscoverPayloadSchema, ImdbFetchPayloadSchema } from "@workspace/contracts/job";
+import { JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { db } from "@/core/db";
-import { omdbClient } from "@/modules/imdb/integrations/omdb";
-import { imdbToItem } from "@/modules/imdb/service";
-import { items } from "@/modules/item/schema";
-import { relations } from "@/modules/relation/schema";
-import { delay } from "@/utils/delay";
-import { jobGroups, jobs } from "../schema";
-import { log, updateJobProgress } from "../service";
+import { jobGroups, jobs } from "../../schema";
+import { log, updateJobProgress } from "../../service";
 
 export async function processImdbDiscover(job: Job) {
-  const parseResult = ImdbDiscoverPayloadSchema.safeParse(job.payload);
+  const parseResult = JobPayloadSchemas.imdbDiscover.safeParse(job.payload);
   if (!parseResult.success) {
     const error = z.prettifyError(parseResult.error);
     throw new Error(`Invalid job payload: ${error}`);
@@ -111,68 +105,4 @@ export async function processImdbDiscover(job: Job) {
   }
 
   await updateJobProgress(job.id, 100);
-}
-
-export async function processImdbFetch(job: Job) {
-  const parseResult = ImdbFetchPayloadSchema.safeParse(job.payload);
-  if (!parseResult.success) {
-    const error = z.prettifyError(parseResult.error);
-    throw new Error(`Invalid job payload: ${error}`);
-  }
-
-  const { imdbId, linkId } = parseResult.data;
-
-  await log(job.id, "info", "Fetching IMDb details", { imdbId, linkId });
-  await updateJobProgress(job.id, 10);
-
-  const [data, error] = await omdbClient.getByImdbId(imdbId);
-
-  if (error || !data) {
-    throw new Error(`OMDB fetch failed for ${imdbId}: ${error ?? "No data"}`);
-  }
-
-  await updateJobProgress(job.id, 50);
-
-  const metadata = imdbToItem(data);
-
-  const newItem = {
-    platform: "imdb",
-    externalId: imdbId,
-    url: `https://www.imdb.com/title/${imdbId}/`,
-    caption: data.Title,
-    kind: metadata.kind,
-    metadata,
-  };
-
-  const result = ItemSchemas.create.safeParse(newItem);
-
-  if (!result.success) {
-    await log(job.id, "error", `Failed to parse IMDb item for ${imdbId}`, { data });
-    throw new Error(`Schema validation failed for ${imdbId}: ${z.prettifyError(result.error)}`);
-  }
-
-  const [{ id: newItemId }] = await db
-    .insert(items)
-    .values(result.data)
-    .returning({ id: items.id });
-
-  // Create relation: imdb item was created_by source link
-  if (linkId) {
-    await db
-      .insert(relations)
-      .values({
-        fromItemId: newItemId,
-        toItemId: linkId,
-        relationType: "created_by",
-        x: 0,
-        y: 0,
-      })
-      .onConflictDoNothing();
-  }
-
-  await log(job.id, "info", "Item imported", { imdbId, title: data.Title, type: data.Type });
-  await updateJobProgress(job.id, 100);
-
-  // Small delay to avoid OMDB rate limits when multiple workers run concurrently
-  await delay(500);
 }

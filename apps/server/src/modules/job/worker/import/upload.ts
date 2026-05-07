@@ -1,13 +1,13 @@
 import fs from "node:fs/promises";
-import { ImportUploadPayloadSchema, type Job } from "@workspace/contracts/job";
+import { type Job, JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { s3Client } from "@/core/s3";
 import { importRepo } from "@/modules/import/repo";
 import { validateImport } from "@/modules/item/platform-registry";
-import { log, updateJobProgress } from "../service";
+import { log, updateJobProgress } from "../../service";
 
 export async function processImportUpload(job: Job) {
-  const parseResult = ImportUploadPayloadSchema.safeParse(job.payload);
+  const parseResult = JobPayloadSchemas.importUpload.safeParse(job.payload);
   if (!parseResult.success) {
     const error = z.prettifyError(parseResult.error);
     throw new Error(`Invalid job payload: ${error}`);

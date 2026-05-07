@@ -1,13 +1,16 @@
 import type { Job } from "@workspace/contracts/job";
 import { claimJobs, completeJob, failClaimedJob } from "../service";
 import { WorkerScheduler } from "../worker-scheduler";
-import { processDownloadMedia } from "./download-media";
-import { processAnimeDiscover, processAnimeFetch } from "./import-anime";
-import { processImdbDiscover, processImdbFetch } from "./import-imdb";
-import { processImportProcess } from "./import-process";
-import { processImportUpload } from "./import-upload";
-import { processYoutubeDiscover, processYoutubeFetch } from "./import-youtube";
+import { processAnimeDiscover } from "./anime/discover";
+import { processAnimeFetch } from "./anime/fetch";
+import { processImdbDiscover } from "./imdb/discover";
+import { processImdbFetch } from "./imdb/fetch";
+import { processImportUpload } from "./import/upload";
+import { processDownloadMedia } from "./media/download";
+import { processImportProcess } from "./post/process";
 import { reclaimStaleJobs } from "./reclaimer";
+import { processYoutubeDiscover } from "./youtube/discover";
+import { processYoutubeFetch } from "./youtube/fetch";
 
 let scheduler: WorkerScheduler | null = null;
 

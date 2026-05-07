@@ -1,16 +1,6 @@
 import { z } from "zod";
 import { JobStatusEnum, JobTypeEnum, LogLevelEnum } from "./enum";
-import {
-  AnimeDiscoverPayloadSchema,
-  AnimeFetchPayloadSchema,
-  DownloadMediaPayloadSchema,
-  ImdbDiscoverPayloadSchema,
-  ImdbFetchPayloadSchema,
-  ImportProcessPayloadSchema,
-  ImportUploadPayloadSchema,
-  YoutubeDiscoverPayloadSchema,
-  YoutubeFetchPayloadSchema,
-} from "./payload";
+import { JobPayloadSchema } from "./payload";
 
 export const JobGroupSchema = z.object({
   id: z.uuid(),
@@ -29,19 +19,7 @@ export const JobSchema = z.object({
   resourceType: z.string().optional(),
   resourceId: z.string().optional(),
 
-  payload: z
-    .union([
-      DownloadMediaPayloadSchema,
-      ImportUploadPayloadSchema,
-      ImportProcessPayloadSchema,
-      ImdbDiscoverPayloadSchema,
-      ImdbFetchPayloadSchema,
-      AnimeDiscoverPayloadSchema,
-      AnimeFetchPayloadSchema,
-      YoutubeDiscoverPayloadSchema,
-      YoutubeFetchPayloadSchema,
-    ])
-    .optional(),
+  payload: JobPayloadSchema.optional(),
 
   progress: z.number().int().min(0).max(100).optional(),
 
@@ -81,17 +59,7 @@ export const CreateJobSchema = z.object({
   resourceType: z.string().optional(),
   resourceId: z.string().optional(),
 
-  payload: z
-    .union([
-      DownloadMediaPayloadSchema,
-      ImportUploadPayloadSchema,
-      ImportProcessPayloadSchema,
-      ImdbDiscoverPayloadSchema,
-      ImdbFetchPayloadSchema,
-      AnimeDiscoverPayloadSchema,
-      AnimeFetchPayloadSchema,
-    ])
-    .optional(),
+  payload: JobPayloadSchema.optional(),
 
   progress: z.number().int().min(0).max(100).optional(),
 

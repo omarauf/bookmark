@@ -1,5 +1,5 @@
 import type { DownloadMediaPayload, Job } from "@workspace/contracts/job";
-import { DownloadMediaPayloadSchema } from "@workspace/contracts/job";
+import { JobPayloadSchemas } from "@workspace/contracts/job";
 import { eq } from "drizzle-orm";
 import z from "zod";
 import { db } from "@/core/db";
@@ -7,10 +7,10 @@ import { s3Client } from "@/core/s3";
 import { items } from "@/modules/item/schema";
 import { media } from "@/modules/media/schema";
 import { getFileStreamAndMeta } from "@/utils/download";
-import { log, updateJobProgress } from "../service";
+import { log, updateJobProgress } from "../../service";
 
 export async function processDownloadMedia(job: Job) {
-  const parseResult = DownloadMediaPayloadSchema.safeParse(job.payload);
+  const parseResult = JobPayloadSchemas.downloadMedia.safeParse(job.payload);
   if (!parseResult.success) {
     const error = z.prettifyError(parseResult.error);
     throw new Error(`Invalid job payload: ${error}`);

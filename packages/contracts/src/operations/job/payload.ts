@@ -2,7 +2,7 @@ import { z } from "zod";
 import { MediaTypeEnum } from "../../core/media/enum";
 import { PlatformEnum } from "../../foundation/platform";
 
-export const DownloadMediaPayloadSchema = z.object({
+const DownloadMediaPayloadSchema = z.object({
   url: z.string(),
   type: MediaTypeEnum,
   platform: PlatformEnum,
@@ -14,7 +14,7 @@ export const DownloadMediaPayloadSchema = z.object({
   duration: z.number().optional(),
 });
 
-export const ImportUploadPayloadSchema = z.object({
+const ImportUploadPayloadSchema = z.object({
   tempFilePath: z.string(),
   filename: z.string(),
   platform: PlatformEnum,
@@ -22,27 +22,51 @@ export const ImportUploadPayloadSchema = z.object({
   size: z.number(),
 });
 
-export const ImportProcessPayloadSchema = z.object({
+const ImportProcessPayloadSchema = z.object({
   importId: z.string(),
 });
 
-export const ImdbDiscoverPayloadSchema = z.object({});
+const ImdbDiscoverPayloadSchema = z.object({});
 
-export const ImdbFetchPayloadSchema = z.object({
+const ImdbFetchPayloadSchema = z.object({
   linkId: z.string(),
   imdbId: z.string(),
 });
 
-export const AnimeDiscoverPayloadSchema = z.object({});
+const AnimeDiscoverPayloadSchema = z.object({});
 
-export const AnimeFetchPayloadSchema = z.object({
+const AnimeFetchPayloadSchema = z.object({
   linkId: z.string(),
   animeId: z.string(),
 });
 
-export const YoutubeDiscoverPayloadSchema = z.object({});
+const YoutubeDiscoverPayloadSchema = z.object({});
 
-export const YoutubeFetchPayloadSchema = z.object({
+const YoutubeFetchPayloadSchema = z.object({
   linkId: z.string(),
   videoId: z.string(),
 });
+
+export const JobPayloadSchemas = {
+  downloadMedia: DownloadMediaPayloadSchema,
+  importUpload: ImportUploadPayloadSchema,
+  importProcess: ImportProcessPayloadSchema,
+  imdbDiscover: ImdbDiscoverPayloadSchema,
+  imdbFetch: ImdbFetchPayloadSchema,
+  animeDiscover: AnimeDiscoverPayloadSchema,
+  animeFetch: AnimeFetchPayloadSchema,
+  youtubeDiscover: YoutubeDiscoverPayloadSchema,
+  youtubeFetch: YoutubeFetchPayloadSchema,
+};
+
+export const JobPayloadSchema = z.union([
+  DownloadMediaPayloadSchema,
+  ImportUploadPayloadSchema,
+  ImportProcessPayloadSchema,
+  ImdbDiscoverPayloadSchema,
+  ImdbFetchPayloadSchema,
+  AnimeDiscoverPayloadSchema,
+  AnimeFetchPayloadSchema,
+  YoutubeDiscoverPayloadSchema,
+  YoutubeFetchPayloadSchema,
+]);

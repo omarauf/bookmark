@@ -6,14 +6,14 @@ import {
   PaginationResultSchema,
 } from "../../foundation/pagination-query";
 import { PlatformEnum } from "../../foundation/platform";
-import { DownloadMediaPayloadSchema } from "../job/payload";
+import { JobPayloadSchemas } from "../job/payload";
 import { ImportSchema } from "./entity";
 
 export const ImportPayloadSchema = z.object({
   items: CreateItemSchema.array(),
   invalidItems: z.any().array(),
   relations: CreateRelationSchema.array(),
-  downloadTasks: DownloadMediaPayloadSchema.array(),
+  downloadTasks: JobPayloadSchemas.downloadMedia.array(),
 });
 
 export const ImportSchemas = {

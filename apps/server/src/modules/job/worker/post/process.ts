@@ -1,16 +1,16 @@
 import type { DownloadMediaPayload, Job } from "@workspace/contracts/job";
-import { ImportProcessPayloadSchema } from "@workspace/contracts/job";
+import { JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { db } from "@/core/db";
 import { s3Client } from "@/core/s3";
 import { importRepo } from "@/modules/import/repo";
 import { parseImport } from "@/modules/item/platform-registry";
 import { importItems } from "@/modules/item/service/import";
-import { jobGroups, jobs } from "../schema";
-import { log, updateJobProgress } from "../service";
+import { jobGroups, jobs } from "../../schema";
+import { log, updateJobProgress } from "../../service";
 
 export async function processImportProcess(job: Job) {
-  const parseResult = ImportProcessPayloadSchema.safeParse(job.payload);
+  const parseResult = JobPayloadSchemas.importProcess.safeParse(job.payload);
   if (!parseResult.success) {
     const error = z.prettifyError(parseResult.error);
     throw new Error(`Invalid job payload: ${error}`);
@@ -77,7 +77,7 @@ export async function processImportProcess(job: Job) {
   await updateJobProgress(job.id, 100);
 }
 
-export async function createDownloadMediaJob(groupId: string, payload: DownloadMediaPayload) {
+async function createDownloadMediaJob(groupId: string, payload: DownloadMediaPayload) {
   await db
     .insert(jobs)
     .values({

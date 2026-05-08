@@ -12,6 +12,7 @@ export function FileUploadField(props: FormControlProps) {
       <Input
         id={id}
         type="file"
+        className="cursor-pointer"
         onChange={(e) => {
           if (e.target.files?.[0]) {
             field.handleChange(e.target.files[0]);

@@ -7,6 +7,9 @@ import { useFieldContext } from "../context";
 type Props = FormControlProps & {
   disabled?: boolean;
   className?: string;
+  classNames?: {
+    slider?: string;
+  };
   step?: number;
 };
 
@@ -24,8 +27,7 @@ export function SliderRangeField({ disabled, className, classNames, ...props }: 
       id={id}
       classNames={{
         ...classNames,
-        wrapper: cn("group", classNames?.wrapper),
-        label: cn("group-focus-within:text-secondary", classNames?.label),
+        label: cn("cursor-auto", classNames?.label),
       }}
       {...props}
     >
@@ -35,7 +37,7 @@ export function SliderRangeField({ disabled, className, classNames, ...props }: 
         value={field.state.value}
         onBlur={field.handleBlur}
         onValueChange={(e) => handleChange(e)}
-        className={cn(className, "transition-none")}
+        className={cn("mt-2", className, classNames?.slider)}
         aria-invalid={isInvalid}
         disabled={disabled}
       />

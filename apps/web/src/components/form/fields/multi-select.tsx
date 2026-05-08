@@ -20,6 +20,7 @@ type Props<T extends string | number> = FormControlProps & {
   options: { value: T; label: string }[] | undefined;
   className?: string;
   classNames?: {
+    select?: string;
     content?: string;
   };
   clearable?: boolean;
@@ -61,7 +62,7 @@ export function MultiSelectField<T extends string | number = string>({
         aria-invalid={isInvalid}
         id={id}
         onBlur={field.handleBlur}
-        className={className}
+        className={cn(className, classNames?.select)}
       >
         {isLoading ? (
           <div className="flex items-center gap-2 text-muted-foreground">
@@ -73,7 +74,7 @@ export function MultiSelectField<T extends string | number = string>({
         )}
       </MultiSelectTrigger>
       <MultiSelectContent
-        className={cn("max-h-96", classNames?.content)}
+        className={cn("h-fit max-h-96", classNames?.content)}
         // search={{ emptyMessage: t.notFound, placeholder: t.search }}
         search={false}
       >
@@ -124,15 +125,7 @@ export function MultiSelectField<T extends string | number = string>({
   }
 
   return (
-    <FormBase
-      id={id}
-      classNames={{
-        ...classNames,
-        wrapper: cn("group", classNames?.wrapper),
-        label: cn("group-has-data-[state=open]:text-secondary", classNames?.label),
-      }}
-      {...props}
-    >
+    <FormBase id={id} classNames={classNames} {...props}>
       {comp}
     </FormBase>
   );

@@ -14,22 +14,9 @@ export function CheckboxField({ legend, titleDescription, ...props }: Props) {
   const field = useFieldContext<boolean>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
-  // return (
-  //   <FormBase {...props} id={id} controlFirst horizontal>
-  //     <Checkbox
-  //       id={id}
-  //       name={field.name}
-  //       checked={field.state.value}
-  //       onBlur={field.handleBlur}
-  //       onCheckedChange={(e) => field.handleChange(e === true)}
-  //       aria-invalid={isInvalid}
-  //     />
-  //   </FormBase>
-  // );
-
   return (
     <FieldSet>
-      {legend && <FieldLegend className="mb-5 text-sm!">{legend}</FieldLegend>}
+      {legend && <FieldLegend className="mb-3 text-sm!">{legend}</FieldLegend>}
       {titleDescription && <FieldDescription>{titleDescription}</FieldDescription>}
 
       <FormBase {...props} id={id} controlFirst horizontal>

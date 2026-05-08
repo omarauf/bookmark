@@ -10,6 +10,9 @@ type Props = FormControlProps & {
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   className?: string;
+  classNames?: {
+    input?: string;
+  };
   min?: number;
   max?: number;
   step?: number;
@@ -43,7 +46,7 @@ export function NumberField({
       placeholder={variant === "default" ? placeholder : ""}
       type="number"
       onChange={(e) => field.handleChange(e.target.valueAsNumber)}
-      className={cn(className, "transition-none")}
+      className={cn(className, classNames?.input)}
       aria-invalid={isInvalid}
       dir={dir}
       disabled={disabled}
@@ -63,15 +66,7 @@ export function NumberField({
   }
 
   return (
-    <FormBase
-      id={id}
-      classNames={{
-        ...classNames,
-        wrapper: cn("group", classNames?.wrapper),
-        label: cn("group-focus-within:text-secondary", classNames?.label),
-      }}
-      {...props}
-    >
+    <FormBase id={id} classNames={classNames} {...props}>
       {comp}
     </FormBase>
   );

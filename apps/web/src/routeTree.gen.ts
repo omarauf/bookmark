@@ -38,6 +38,7 @@ import { Route as AuthenticatedJobGroupsIdRouteImport } from './routes/_authenti
 import { Route as AuthenticatedInstagramVirtualWindowRouteImport } from './routes/_authenticated/instagram/virtual-window'
 import { Route as AuthenticatedInstagramVirtualRouteImport } from './routes/_authenticated/instagram/virtual'
 import { Route as AuthenticatedInstagramTempRouteImport } from './routes/_authenticated/instagram/temp'
+import { Route as AuthenticatedAssetsFormRouteImport } from './routes/_authenticated/assets/form'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -197,6 +198,11 @@ const AuthenticatedInstagramTempRoute =
     path: '/instagram/temp',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAssetsFormRoute = AuthenticatedAssetsFormRouteImport.update({
+  id: '/assets/form',
+  path: '/assets/form',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/sign-in': typeof AuthSignInRoute
+  '/assets/form': typeof AuthenticatedAssetsFormRoute
   '/instagram/temp': typeof AuthenticatedInstagramTempRoute
   '/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
   '/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/sign-in': typeof AuthSignInRoute
   '/': typeof AuthenticatedIndexRoute
+  '/assets/form': typeof AuthenticatedAssetsFormRoute
   '/instagram/temp': typeof AuthenticatedInstagramTempRoute
   '/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
   '/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/assets/form': typeof AuthenticatedAssetsFormRoute
   '/_authenticated/instagram/temp': typeof AuthenticatedInstagramTempRoute
   '/_authenticated/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
   '/_authenticated/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/sign-in'
+    | '/assets/form'
     | '/instagram/temp'
     | '/instagram/virtual'
     | '/instagram/virtual-window'
@@ -330,6 +340,7 @@ export interface FileRouteTypes {
     | '/503'
     | '/sign-in'
     | '/'
+    | '/assets/form'
     | '/instagram/temp'
     | '/instagram/virtual'
     | '/instagram/virtual-window'
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_auth/sign-in'
     | '/_authenticated/'
+    | '/_authenticated/assets/form'
     | '/_authenticated/instagram/temp'
     | '/_authenticated/instagram/virtual'
     | '/_authenticated/instagram/virtual-window'
@@ -599,11 +611,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInstagramTempRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/assets/form': {
+      id: '/_authenticated/assets/form'
+      path: '/assets/form'
+      fullPath: '/assets/form'
+      preLoaderRoute: typeof AuthenticatedAssetsFormRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedAssetsFormRoute: typeof AuthenticatedAssetsFormRoute
   AuthenticatedInstagramTempRoute: typeof AuthenticatedInstagramTempRoute
   AuthenticatedInstagramVirtualRoute: typeof AuthenticatedInstagramVirtualRoute
   AuthenticatedInstagramVirtualWindowRoute: typeof AuthenticatedInstagramVirtualWindowRoute
@@ -629,6 +649,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedAssetsFormRoute: AuthenticatedAssetsFormRoute,
   AuthenticatedInstagramTempRoute: AuthenticatedInstagramTempRoute,
   AuthenticatedInstagramVirtualRoute: AuthenticatedInstagramVirtualRoute,
   AuthenticatedInstagramVirtualWindowRoute:

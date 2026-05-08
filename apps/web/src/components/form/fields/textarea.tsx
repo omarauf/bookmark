@@ -9,6 +9,9 @@ type Props = FormControlProps & {
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   className?: string;
+  classNames?: {
+    input?: string;
+  };
 };
 
 export function TextareaField({
@@ -24,15 +27,7 @@ export function TextareaField({
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
-    <FormBase
-      id={id}
-      classNames={{
-        ...classNames,
-        wrapper: cn("group", classNames?.wrapper),
-        label: cn("group-focus-within:text-secondary", classNames?.label),
-      }}
-      {...props}
-    >
+    <FormBase id={id} classNames={classNames} {...props}>
       <Textarea
         id={id}
         name={field.name}
@@ -40,7 +35,7 @@ export function TextareaField({
         onBlur={field.handleBlur}
         placeholder={placeholder}
         onChange={(e) => field.handleChange(e.target.value)}
-        className={cn(className, "transition-none")}
+        className={cn(className, classNames?.input)}
         aria-invalid={isInvalid}
         dir={dir}
         disabled={disabled}

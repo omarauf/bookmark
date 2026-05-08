@@ -9,10 +9,13 @@ import { useFieldContext } from "../context";
 type Props = FormControlProps & {
   disabled?: boolean;
   className?: string;
+  classNames?: {
+    viewport?: string;
+  };
   options: { label: string; value: string; parentId: string | null; color?: string }[] | undefined;
 };
 
-export function TreeSelectorField({ disabled, options, className, ...props }: Props) {
+export function TreeSelectorField({ disabled, options, className, classNames, ...props }: Props) {
   const id = useId();
   const field = useFieldContext<string[] | undefined>();
 
@@ -21,8 +24,18 @@ export function TreeSelectorField({ disabled, options, className, ...props }: Pr
   );
 
   return (
-    <FormBase id={id} {...props}>
-      <ScrollArea className={cn("pr-3")} viewportProps={{ className: cn("max-h-120", className) }}>
+    <FormBase
+      id={id}
+      classNames={{
+        ...classNames,
+        label: cn("cursor-auto", classNames?.label),
+      }}
+      {...props}
+    >
+      <ScrollArea
+        className="pr-3"
+        viewportProps={{ className: cn("max-h-120", className, classNames?.viewport) }}
+      >
         <TreeSelector
           data={tree}
           value={field.state.value || []}

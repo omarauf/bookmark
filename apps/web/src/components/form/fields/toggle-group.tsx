@@ -1,20 +1,21 @@
-import { type ComponentType, type SVGProps, useId } from "react";
+import { useId } from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
+import type { Option } from "@/types/options";
 import { FormBase, type FormControlProps } from "../common/form-base";
 import { useFieldContext } from "../context";
 
 type Props = FormControlProps & {
   disabled?: boolean;
   className?: string;
-  options: {
-    value: string;
-    label?: string;
-    icon?: ComponentType<SVGProps<SVGSVGElement>>;
-  }[];
+  classNames?: {
+    group?: string;
+  };
+  options: Option<string>[];
+  horizontal?: boolean;
 };
 
-export function ToggleGroupField({ disabled, className, classNames, ...props }: Props) {
+export function ToggleGroupField({ disabled, className, classNames, horizontal, ...props }: Props) {
   const id = useId();
   const field = useFieldContext<string>();
   const value = field.state.value;
@@ -28,13 +29,13 @@ export function ToggleGroupField({ disabled, className, classNames, ...props }: 
         ...classNames,
         label: cn("cursor-auto", classNames?.label),
       }}
-      horizontal
+      horizontal={horizontal}
     >
       <ToggleGroup
         type="single"
         value={value}
         onValueChange={(val) => val && field.handleChange(val)}
-        className="h-9 rounded-md bg-muted p-1"
+        className={cn("h-9 w-fit! rounded-md bg-muted p-1", className, classNames?.group)}
         data-invalid={isInvalid}
       >
         {props.options.map((option) => (

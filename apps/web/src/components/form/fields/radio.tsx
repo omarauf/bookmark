@@ -25,7 +25,7 @@ export function RadioField<T extends string = string>({
 
   return (
     <FieldSet>
-      <FieldLabel>{label}</FieldLabel>
+      <FieldLabel className={isInvalid ? "text-destructive" : ""}>{label}</FieldLabel>
       {description && <FieldDescription>{description}</FieldDescription>}
 
       <RadioGroup
@@ -35,7 +35,6 @@ export function RadioField<T extends string = string>({
         orientation={orientation}
         className={cn(
           orientation === "horizontal" ? "grid-flow-col justify-start" : "",
-          "",
           classNames?.group,
         )}
       >

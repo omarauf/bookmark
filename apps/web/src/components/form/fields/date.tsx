@@ -21,11 +21,7 @@ export function DateField({ placeholder, ...props }: Props) {
     <FormBase id={id} {...props}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            id={id}
-            className="h-11 w-48 justify-between rounded-xl font-normal"
-          >
+          <Button variant="outline" id={id} className="justify-between">
             {date ? date.toLocaleDateString() : placeholder}
             <ChevronDownIcon />
           </Button>

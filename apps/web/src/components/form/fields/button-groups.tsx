@@ -35,6 +35,7 @@ export function ButtonGroupField({ disabled, className, classNames, options, ...
                 type="button"
                 variant={isSelected ? "default" : "outline"}
                 size="sm"
+                className="border"
                 onClick={() => toggleChange(option.value)}
               >
                 {option.color && (

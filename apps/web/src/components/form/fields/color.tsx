@@ -1,14 +1,19 @@
 import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { FormBase, type FormControlProps } from "../common/form-base";
 import { useFieldContext } from "../context";
 
 type Props = FormControlProps & {
   hideRandom?: boolean;
+  className?: string;
+  classNames?: {
+    inputs?: string;
+  };
 };
 
-export function ColorField({ hideRandom, ...props }: Props) {
+export function ColorField({ hideRandom, className, classNames, ...props }: Props) {
   const id = useId();
   const field = useFieldContext<string>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
@@ -22,8 +27,11 @@ export function ColorField({ hideRandom, ...props }: Props) {
   };
 
   return (
-    <FormBase id={id} {...props}>
-      <div className="flex items-center gap-2">
+    <FormBase id={id} classNames={classNames} {...props}>
+      <div
+        className={cn("flex items-center gap-2", className, classNames?.inputs)}
+        data-invalid={isInvalid}
+      >
         {/* Color picker input */}
         <Input
           type="color"

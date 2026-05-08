@@ -20,6 +20,7 @@ type Props<T extends string | number> = FormControlProps & {
   className?: string;
   horizontal?: boolean;
   classNames?: {
+    select?: string;
     content?: string;
   };
   variant?: "default" | "floating";
@@ -71,7 +72,7 @@ export function SelectField<T extends string | number = string>({
         aria-invalid={isInvalid}
         id={id}
         onBlur={field.handleBlur}
-        className={cn(icon && "relative ps-9", className)}
+        className={cn(icon && "relative ps-9", className, classNames?.select)}
       >
         {icon && (
           <div className="pointer-events-none absolute inset-s-0 inset-y-0 flex items-center justify-center ps-3 text-muted-foreground/80 group-has-[select[disabled]]:opacity-50">
@@ -130,15 +131,7 @@ export function SelectField<T extends string | number = string>({
   }
 
   return (
-    <FormBase
-      id={id}
-      classNames={{
-        ...classNames,
-        wrapper: cn("group", classNames?.wrapper),
-        label: cn("group-has-data-[state=open]:text-secondary", classNames?.label),
-      }}
-      {...props}
-    >
+    <FormBase id={id} classNames={classNames} {...props}>
       {comp}
     </FormBase>
   );

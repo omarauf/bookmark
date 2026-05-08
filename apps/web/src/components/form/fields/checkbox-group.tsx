@@ -26,7 +26,7 @@ export function CheckboxGroupField<T extends string[] = string[]>({
 
   return (
     <FieldSet>
-      <FieldLabel>{label}</FieldLabel>
+      <FieldLabel className={isInvalid ? "text-destructive" : ""}>{label}</FieldLabel>
       {description && <FieldDescription>{description}</FieldDescription>}
 
       <FieldGroup

@@ -9,10 +9,13 @@ type Props = FormControlProps & {
   placeholder?: string;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
-  className?: string;
   type?: "text" | "email" | "password";
   variant?: "default" | "floating";
   clearOnEmpty?: boolean;
+  className?: string;
+  classNames?: {
+    input?: string;
+  };
 };
 
 export function InputField({
@@ -47,7 +50,7 @@ export function InputField({
       placeholder={variant === "default" ? placeholder : ""}
       type={type}
       onChange={(e) => handleChange(e.target.value)}
-      className={cn(className, "transition-none")}
+      className={cn(className, classNames?.input)}
       aria-invalid={isInvalid}
       dir={dir}
       disabled={disabled}
@@ -63,15 +66,7 @@ export function InputField({
   }
 
   return (
-    <FormBase
-      id={id}
-      classNames={{
-        ...classNames,
-        wrapper: cn("group", classNames?.wrapper),
-        label: cn("group-focus-within:text-secondary", classNames?.label),
-      }}
-      {...props}
-    >
+    <FormBase id={id} classNames={classNames} {...props}>
       {comp}
     </FormBase>
   );

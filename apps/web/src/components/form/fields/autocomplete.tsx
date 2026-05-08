@@ -4,6 +4,7 @@ import { type KeyboardEvent, useCallback, useId, useMemo, useRef, useState } fro
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Command, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 import type { Option } from "@/types/options";
 import { FormBase, type FormControlProps } from "../common/form-base";
 import { useFieldContext } from "../context";
@@ -24,15 +25,14 @@ export function AutocompleteField<T extends Value>({
   ...props
 }: Props<T>) {
   const id = useId();
+  const field = useFieldContext<T[]>();
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const _options = convertOptions(options);
-
-  // 🔗 Connect to react-form
-  const field = useFieldContext<T[]>();
 
   const handleUnselect = useCallback(
     (v: string) => {
@@ -84,7 +84,14 @@ export function AutocompleteField<T extends Value>({
         className="overflow-visible bg-transparent"
         shouldFilter={false}
       >
-        <div className="group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+        <div
+          aria-invalid={isInvalid}
+          className={cn(
+            "group rounded-md border border-input px-3 py-2 text-sm transition-[color,box-shadow] dark:bg-input/30",
+            "ring-offset-background focus-within:ring-[3px] focus-within:ring-ring/50",
+            "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
+          )}
+        >
           <div className="flex flex-wrap gap-1">
             {field.state.value.map((v) => {
               const option = _options.find((o) => o.value === v);
@@ -113,7 +120,7 @@ export function AutocompleteField<T extends Value>({
             })}
             <CommandPrimitive.Input
               ref={inputRef}
-              id={field.name}
+              id={id}
               value={search}
               onValueChange={setSearch}
               onBlur={() => {
@@ -126,10 +133,16 @@ export function AutocompleteField<T extends Value>({
             />
           </div>
         </div>
-        <div className="relative mt-2">
-          <CommandList>
-            {open && (
-              <div className="absolute top-0 z-10 w-full animate-in rounded-md border bg-popover text-popover-foreground shadow-md outline-none">
+        {open && (
+          <div className="relative mt-2">
+            <CommandList>
+              <div
+                data-state={open ? "open" : "closed"}
+                className={cn(
+                  "absolute top-0 z-10 w-full animate-in rounded-md border bg-popover text-popover-foreground shadow-md outline-none",
+                  "data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=open]:animate-in",
+                )}
+              >
                 <CommandGroup className="max-h-60 overflow-auto">
                   {filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
@@ -192,9 +205,9 @@ export function AutocompleteField<T extends Value>({
                   )}
                 </CommandGroup>
               </div>
-            )}
-          </CommandList>
-        </div>
+            </CommandList>
+          </div>
+        )}
       </Command>
     </FormBase>
   );

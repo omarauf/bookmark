@@ -14,7 +14,7 @@ export function AnimeList() {
       hasNextPage={query.hasNextPage}
       isFetchingNextPage={query.isFetchingNextPage}
       isLoading={query.isLoading}
-      className="gap-4 px-6 py-6"
+      className="px-6 py-4"
     >
       {isEmpty ? (
         <EmptyAnime />

@@ -4,7 +4,7 @@ import { Star, Tv } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { AnimeDetailsDialog } from "../dialog";
+import { AnimeDetailsDialog } from "../dialogs/details";
 import { AnimeUpdateDialog } from "../dialogs/update";
 
 type Props = {
@@ -22,7 +22,7 @@ export function AnimeCard({ item }: Props) {
 
   const updateMode = useSearch({
     from: "/_authenticated/anime/",
-    select: (s) => s.update === true,
+    select: (s) => s.mode === "update",
   });
 
   const handleClick = () => {

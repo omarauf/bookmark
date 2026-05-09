@@ -23,10 +23,16 @@ const badgeVariants = cva(
         square: "rounded-none",
         pill: "rounded-full",
       },
+      size: {
+        sm: "text-[9px] leading-2.5",
+        md: "h-6 px-2",
+        lg: "h-7 px-3",
+      },
     },
     defaultVariants: {
       variant: "default",
-      shape: "pill",
+      shape: "rounded",
+      size: "md",
     },
   },
 );
@@ -34,6 +40,8 @@ const badgeVariants = cva(
 function Badge({
   className,
   variant = "default",
+  size = "md",
+  shape = "rounded",
   asChild = false,
   ...props
 }: React.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
@@ -43,7 +51,9 @@ function Badge({
     <Comp
       data-slot="badge"
       data-variant={variant}
-      className={cn(badgeVariants({ variant }), className)}
+      data-size={size}
+      data-shape={shape}
+      className={cn(badgeVariants({ variant, size, shape }), className)}
       {...props}
     />
   );

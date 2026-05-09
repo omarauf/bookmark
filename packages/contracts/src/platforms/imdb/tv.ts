@@ -9,7 +9,7 @@ export const TvMetadataSchema = z.object({
   actors: z.string().array(),
   year: z.number(),
   released: z.string(),
-  genre: z.string().array(),
+  genres: z.string().array(),
   poster: z.string(),
   rating: z.number().optional(),
   votes: z.number(),

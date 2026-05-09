@@ -59,6 +59,7 @@ export function TabsField({
               onClick={() => field.handleChange(option.value)}
               className={cn(value === option.value && "font-semibold")}
             >
+              {option.icon && <option.icon className="h-4 w-4" />}
               <span className={cn(isInvalid && "text-destructive")}>{option.label}</span>
             </TabsTrigger>
           ))}

@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import { useId, useState } from "react";
+import { type ComponentType, type SVGProps, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -25,8 +25,9 @@ type Props<T extends string | number> = FormControlProps & {
   };
   variant?: "default" | "floating";
   clearable?: boolean;
-  icon?: React.ReactNode;
+  icon?: ComponentType<SVGProps<SVGSVGElement>>;
   position?: "popper" | "item-aligned";
+  size?: "default" | "sm";
 };
 
 export function SelectField<T extends string | number = string>({
@@ -37,8 +38,9 @@ export function SelectField<T extends string | number = string>({
   classNames,
   variant = "default",
   clearable,
-  icon,
+  icon: Icon,
   position,
+  size,
   ...props
 }: Props<T>) {
   const id = useId();
@@ -72,11 +74,12 @@ export function SelectField<T extends string | number = string>({
         aria-invalid={isInvalid}
         id={id}
         onBlur={field.handleBlur}
-        className={cn(icon && "relative ps-9", className, classNames?.select)}
+        className={cn(Icon && "relative ps-9", className, classNames?.select)}
+        size={size}
       >
-        {icon && (
+        {Icon && (
           <div className="pointer-events-none absolute inset-s-0 inset-y-0 flex items-center justify-center ps-3 text-muted-foreground/80 group-has-[select[disabled]]:opacity-50">
-            {icon}
+            <Icon className="size-4" />
           </div>
         )}
         {isLoading ? (

@@ -7,6 +7,8 @@ import { AnimeItemSchema } from "./entity";
 import { AnimeFilterSchema } from "./filter";
 
 export const AnimeSchemas = {
+  filter: AnimeFilterSchema,
+
   list: {
     request: BasePaginationQuerySchema.extend({
       ...AnimeFilterSchema.shape,

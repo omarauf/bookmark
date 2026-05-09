@@ -1,10 +1,15 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { RotateCcw, Search, SlidersHorizontal, Star } from "lucide-react";
-import { toast } from "sonner";
+import { AnimeSchemas } from "@workspace/contracts/views/anime";
+import { Clapperboard, Eye, Pen, Search, Star } from "lucide-react";
+import { useEffect } from "react";
+import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { orpc } from "@/integrations/orpc";
+import { cn } from "@/lib/utils";
+import { containsData } from "@/utils/object";
+import { SyncButton } from "../components/sync";
+import { AnimeTotalNumber } from "../components/total-number";
 
 export function AnimeFilter() {
   const search = useSearch({ from: "/_authenticated/anime/" });
@@ -12,92 +17,105 @@ export function AnimeFilter() {
 
   const genresQuery = useQuery(orpc.anime.genres.queryOptions());
 
-  const syncMutation = useMutation(orpc.anime.sync.mutationOptions());
+  const filterData = AnimeSchemas.filter.safeParse(search);
 
-  const setFilter = (key: string, value: string | undefined | number | boolean) => {
-    void navigate({
-      search: (prev) => ({ ...prev, [key]: value, page: 1 }),
-    });
+  const form = useAppForm({
+    defaultValues: search,
+    listeners: {
+      onChange({ formApi }) {
+        const { ...rest } = formApi.state.values;
+        navigate({ to: "/imdb", search: (prev) => ({ ...prev, ...rest, page: 1 }) });
+      },
+      onChangeDebounceMs: 500,
+    },
+  });
+
+  const clearFilter = () => {
+    navigate({ to: ".", search: undefined });
+    form.reset(undefined);
   };
+
+  useEffect(() => form.reset(search), [search, form.reset]);
+
+  const hasData = containsData(filterData.data);
 
   return (
     <div className="flex flex-wrap items-center gap-3 border-border/50 border-b px-6 py-3">
-      <div className="relative min-w-50 max-w-sm flex-1">
-        <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search anime..."
-          value={search.q ?? ""}
-          onChange={(e) => setFilter("q", e.target.value || undefined)}
-          className="h-8 border-border/50 pl-8 text-xs"
-        />
-      </div>
+      <form.AppField name="q">
+        {(field) => (
+          <field.Input
+            placeholder="Search anime..."
+            size="sm"
+            classNames={{ wrapper: "w-64" }}
+            icon={Search}
+          />
+        )}
+      </form.AppField>
 
-      <select
-        value={search.genre ?? ""}
-        onChange={(e) => setFilter("genre", e.target.value || undefined)}
-        className="h-8 border border-border/50 bg-transparent px-2 text-[10px] text-muted-foreground uppercase tracking-wider outline-none"
-      >
-        <option value="">All Genres</option>
-        {genresQuery.data?.map((g) => (
-          <option key={g} value={g}>
-            {g}
-          </option>
-        ))}
-      </select>
+      <form.AppField name="genre">
+        {(field) => (
+          <field.Select
+            icon={Clapperboard}
+            placeholder="Genre"
+            size="sm"
+            classNames={{ wrapper: "w-36" }}
+            options={genresQuery.data?.map((genre) => ({ label: genre, value: genre }))}
+          />
+        )}
+      </form.AppField>
 
-      <select
-        value={search.sortBy ?? "createdAt"}
-        onChange={(e) => setFilter("sortBy", e.target.value || undefined)}
-        className="h-8 border border-border/50 bg-transparent px-2 text-[10px] text-muted-foreground uppercase tracking-wider outline-none"
-      >
-        <option value="createdAt">Newest</option>
-        <option value="rating">Rating</option>
-        <option value="year">Year</option>
-      </select>
+      <form.AppField name="sortBy">
+        {(field) => (
+          <field.Select
+            icon={Star}
+            size="sm"
+            placeholder="Sort By"
+            classNames={{ wrapper: "w-36" }}
+            options={[
+              { label: "Added", value: "createdAt" },
+              { label: "Rating", value: "rating" },
+              { label: "Year", value: "year" },
+            ]}
+          />
+        )}
+      </form.AppField>
 
-      <div className="flex items-center gap-1">
-        <Star className="h-3 w-3 text-muted-foreground" />
-        <Input
-          type="number"
-          placeholder="Min"
-          min={0}
-          max={10}
-          value={search.minRating ?? ""}
-          onChange={(e) =>
-            setFilter("minRating", e.target.value ? Number(e.target.value) : undefined)
-          }
-          className="h-8 w-16 border-border/50 text-xs"
-        />
-      </div>
+      <form.AppField name="minRating">
+        {(field) => (
+          <field.Number placeholder="Min Rating" size="sm" classNames={{ wrapper: "w-36" }} />
+        )}
+      </form.AppField>
+
+      <AnimeTotalNumber />
+
+      <div className="grow" />
+
+      <SyncButton />
+
+      <form.AppField name="mode">
+        {(field) => (
+          <field.ToggleGroup
+            variant="outline"
+            size="sm"
+            options={[
+              { label: "View", value: "view", icon: Eye },
+              { label: "Update", value: "update", icon: Pen },
+            ]}
+          />
+        )}
+      </form.AppField>
 
       <Button
-        variant="outline"
+        variant={hasData ? "secondary" : "ghost"}
         size="sm"
-        className="h-8 border-border/50 text-[10px]"
-        onClick={() =>
-          navigate({
-            search: (prev) => ({ ...prev, update: !prev.update }),
-          })
-        }
+        disabled={!hasData}
+        onClick={clearFilter}
+        className={cn(
+          "transition-all",
+          hasData ? "text-foreground" : "text-muted-foreground opacity-50",
+        )}
       >
-        <SlidersHorizontal className="mr-1.5 h-3 w-3" />
-        {search.update ? "Done" : "Edit"}
-      </Button>
-
-      <Button
-        variant="outline"
-        size="sm"
-        className="h-8 border-border/50 text-[10px]"
-        onClick={() => {
-          syncMutation.mutate(undefined, {
-            onSuccess: () => toast.success("Anime sync queued"),
-            onError: () => toast.error("Failed to queue sync"),
-          });
-        }}
-        disabled={syncMutation.isPending}
-      >
-        <RotateCcw className="mr-1.5 h-3 w-3" />
-        Sync
+        Reset
       </Button>
     </div>
   );

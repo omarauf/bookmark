@@ -1,6 +1,10 @@
+import { Link } from "@tanstack/react-router";
 import type { AnimeItem } from "@workspace/contracts/views/anime";
-import { Calendar, Clock, Layers, Star, Tv, Users } from "lucide-react";
+import { Calendar, Clock, ExternalLink, Layers, Star, Tv, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { KeyValue } from "@/components/ui/key-value";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +23,7 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="flex h-auto w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:h-130 sm:w-180 sm:flex-row"
+        className="flex h-auto w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:max-w-6xl sm:flex-row"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogTitle className="sr-only">{item.caption ?? item.externalId}</DialogTitle>
@@ -28,7 +32,7 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
         </DialogDescription>
 
         {/* Poster Column */}
-        <div className="relative aspect-2/3 w-full shrink-0 overflow-hidden bg-muted sm:aspect-auto sm:w-70">
+        <div className="relative aspect-2/3 h-fit w-3/5 shrink-0 overflow-hidden bg-muted">
           {metadata.poster ? (
             <img
               src={metadata.poster}
@@ -66,10 +70,19 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
         {/* Details Column */}
         <div className="flex flex-1 flex-col overflow-y-auto">
           {/* Header */}
-          <div className="space-y-2 border-border/50 border-b p-5">
-            <h2 className="font-semibold text-base text-foreground leading-snug">
-              {item.caption ?? item.externalId}
-            </h2>
+          <div className="space-y-2 border-border/50 border-b p-5 pr-10">
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="font-semibold text-base text-foreground leading-snug">
+                {item.caption ?? item.externalId}
+              </h2>
+
+              <Button asChild variant="outline" size="xs" className="text-[10px]">
+                <a href={item.url} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-3 w-3" />
+                  MAL
+                </a>
+              </Button>
+            </div>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="text-[10px] text-muted-foreground">
@@ -103,12 +116,17 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
             {metadata.genres && metadata.genres.length > 0 && (
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {metadata.genres.map((g) => (
-                  <span
+                  <Badge
                     key={g}
-                    className="bg-muted px-2 py-0.5 text-[9px] text-muted-foreground uppercase tracking-wider"
+                    size="sm"
+                    variant="secondary"
+                    className="text-muted-foreground uppercase"
+                    asChild
                   >
-                    {g}
-                  </span>
+                    <Link to="/anime" search={{ genre: g }} onClick={() => onOpenChange(false)}>
+                      {g}
+                    </Link>
+                  </Badge>
                 ))}
               </div>
             )}
@@ -127,7 +145,8 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
           <div className="grid grid-cols-1 gap-0 sm:grid-cols-2">
             {/* Studios */}
             {metadata.studios && metadata.studios.length > 0 && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Tv className="h-3 w-3" />}
                 label="Studios"
                 values={metadata.studios}
@@ -136,7 +155,8 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Source */}
             {metadata.source && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Layers className="h-3 w-3" />}
                 label="Source"
                 value={metadata.source}
@@ -145,7 +165,8 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Status */}
             {metadata.status && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Calendar className="h-3 w-3" />}
                 label="Status"
                 value={metadata.status}
@@ -154,7 +175,8 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Start Date */}
             {metadata.startDate && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Calendar className="h-3 w-3" />}
                 label="Aired"
                 value={`${metadata.startDate}${metadata.endDate ? ` — ${metadata.endDate}` : ""}`}
@@ -163,7 +185,8 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Broadcast */}
             {metadata.broadcastDay && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Clock className="h-3 w-3" />}
                 label="Broadcast"
                 value={`${metadata.broadcastDay}${metadata.broadcastTime ? ` at ${metadata.broadcastTime}` : ""}`}
@@ -172,7 +195,8 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Season */}
             {metadata.startSeason && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Calendar className="h-3 w-3" />}
                 label="Season"
                 value={`${metadata.startSeason} ${metadata.startSeasonYear ?? ""}`}
@@ -181,7 +205,8 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Rank */}
             {metadata.rank && metadata.rank > 0 && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Star className="h-3 w-3" />}
                 label="Rank"
                 value={`#${metadata.rank}`}
@@ -190,7 +215,8 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Popularity */}
             {metadata.popularity && metadata.popularity > 0 && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Users className="h-3 w-3" />}
                 label="Popularity"
                 value={`#${metadata.popularity}`}
@@ -200,40 +226,5 @@ export function AnimeDetailsDialog({ item, open, onOpenChange }: Props) {
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-
-function MetadataRow({
-  icon,
-  label,
-  value,
-  values,
-  className,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value?: string;
-  values?: string[];
-  className?: string;
-}) {
-  const displayValues = values ?? (value ? [value] : []);
-  if (displayValues.length === 0) return null;
-
-  return (
-    <div className={cn("border-border/30 border-b p-4 last:border-b-0", className)}>
-      <div className="mb-1.5 flex items-center gap-1.5 text-muted-foreground/60">
-        {icon}
-        <span className="text-[9px] uppercase tracking-widest">{label}</span>
-      </div>
-      <div className="flex flex-wrap gap-x-3 gap-y-1">
-        {displayValues.map((v) => (
-          <span key={v} className="text-[11px] text-foreground/80">
-            {v}
-          </span>
-        ))}
-      </div>
-    </div>
   );
 }

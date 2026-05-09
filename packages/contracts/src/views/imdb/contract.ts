@@ -7,6 +7,8 @@ import { ImdbItemSchema } from "./entity";
 import { ImdbFilterSchema } from "./filter";
 
 export const ImdbSchemas = {
+  filter: ImdbFilterSchema,
+
   list: {
     request: BasePaginationQuerySchema.extend({
       ...ImdbFilterSchema.shape,

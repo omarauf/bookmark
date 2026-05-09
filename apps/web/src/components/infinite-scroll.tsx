@@ -71,7 +71,11 @@ export function InfiniteScroll({
   // }, [hasNextPage, isFetchingNextPage, isLoading, onLoadMore]);
 
   return (
-    <ScrollArea ref={containerRef} className={cn("relative overflow-auto", className)}>
+    <ScrollArea
+      ref={containerRef}
+      className={cn("relative overflow-auto")}
+      viewportProps={{ className }}
+    >
       {children}
 
       <div

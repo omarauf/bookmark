@@ -16,7 +16,10 @@ export function ImdbCard({ item }: Props) {
   const [updateOpen, setUpdateOpen] = useState(false);
   const metadata = item.metadata;
 
-  const updateMode = useSearch({ from: "/_authenticated/imdb/", select: (s) => s.update === true });
+  const updateMode = useSearch({
+    from: "/_authenticated/imdb/",
+    select: (s) => s.mode === "update",
+  });
 
   const rating = metadata.rating ?? 0;
   const ratingColor =
@@ -77,9 +80,9 @@ export function ImdbCard({ item }: Props) {
 
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-muted-foreground">{metadata.year ?? "—"}</span>
-            {metadata.genre && metadata.genre.length > 0 && (
+            {metadata.genres && metadata.genres.length > 0 && (
               <span className="truncate text-[9px] text-muted-foreground/60 uppercase tracking-wider">
-                {metadata.genre[0]}
+                {metadata.genres[0]}
               </span>
             )}
           </div>

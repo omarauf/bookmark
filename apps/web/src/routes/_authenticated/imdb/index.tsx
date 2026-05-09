@@ -10,7 +10,7 @@ import { ImdbList } from "@/modules/imdb/list";
 export const Route = createFileRoute("/_authenticated/imdb/")({
   component: ImdbPage,
   validateSearch: ImdbSchemas.list.request.extend({
-    update: z.boolean().optional(),
+    mode: z.enum(["view", "update"]).optional().catch(undefined),
   }),
 });
 

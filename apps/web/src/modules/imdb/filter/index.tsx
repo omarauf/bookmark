@@ -1,8 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { ImdbSchemas } from "@workspace/contracts/views/imdb";
 import { Clapperboard, Eye, Film, MonitorPlay, Pen, Search, Star } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useEffect } from "react";
+import { useAppForm } from "@/components/form";
+import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
+import { cn } from "@/lib/utils";
+import { containsData } from "@/utils/object";
 import { SyncButton } from "../components/sync";
 import { ImdbTotalNumber } from "../components/total-number";
 
@@ -12,102 +17,87 @@ export function ImdbFilter() {
 
   const genres = useQuery(orpc.imdb.genres.queryOptions());
 
-  const setFilter = (key: string, value: string | undefined | number | boolean) => {
-    void navigate({
-      search: (prev) => ({ ...prev, [key]: value, page: 1 }),
-    });
+  const filterData = ImdbSchemas.filter.safeParse(search);
+
+  const form = useAppForm({
+    defaultValues: search,
+    listeners: {
+      onChange({ formApi }) {
+        const { ...rest } = formApi.state.values;
+        navigate({ to: "/imdb", search: (prev) => ({ ...prev, ...rest, page: 1 }) });
+      },
+      onChangeDebounceMs: 500,
+    },
+  });
+
+  const clearFilter = () => {
+    navigate({ to: ".", search: undefined });
+    form.reset(undefined);
   };
 
-  const activeKind = search.kind;
+  useEffect(() => form.reset(search), [search, form.reset]);
+
+  const hasData = containsData(filterData.data);
 
   return (
     <div className="flex flex-wrap items-center gap-3 border-border/50 border-b px-6 py-3">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search titles..."
-          value={search.q ?? ""}
-          onChange={(e) => setFilter("q", e.target.value || undefined)}
-          className="h-7 w-48 border-border/50 pl-8 text-xs"
-        />
-      </div>
+      <form.AppField name="q">
+        {(field) => (
+          <field.Input
+            placeholder="Search titles..."
+            size="sm"
+            classNames={{ wrapper: "w-64" }}
+            icon={Search}
+          />
+        )}
+      </form.AppField>
 
-      {/* Kind Toggle */}
-      <div className="flex items-center gap-1 border border-border/50">
-        <button
-          type="button"
-          onClick={() => setFilter("kind", activeKind === "movie" ? undefined : "movie")}
-          className={`flex h-7 items-center gap-1.5 px-3 text-[10px] uppercase tracking-widest transition-colors ${
-            activeKind === "movie"
-              ? "bg-foreground text-background"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Film className="h-3 w-3" />
-          Movie
-        </button>
-        <button
-          type="button"
-          onClick={() => setFilter("kind", activeKind === "tv" ? undefined : "tv")}
-          className={`flex h-7 items-center gap-1.5 px-3 text-[10px] uppercase tracking-widest transition-colors ${
-            activeKind === "tv"
-              ? "bg-foreground text-background"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <MonitorPlay className="h-3 w-3" />
-          TV
-        </button>
-      </div>
+      <form.AppField name="kind">
+        {(field) => (
+          <field.ToggleGroup
+            variant="outline"
+            size="sm"
+            options={[
+              { label: "movie", value: "movie", icon: Film },
+              { label: "tv", value: "tv", icon: MonitorPlay },
+            ]}
+          />
+        )}
+      </form.AppField>
 
-      {/* Sort */}
-      <div className="flex items-center gap-1.5">
-        <Star className="h-3 w-3 text-muted-foreground" />
-        <select
-          value={search.sortBy ?? "createdAt"}
-          onChange={(e) => setFilter("sortBy", e.target.value)}
-          className="h-7 border border-border/50 bg-transparent px-2 text-[10px] text-muted-foreground uppercase tracking-widest outline-none"
-        >
-          <option value="createdAt">Added</option>
-          <option value="rating">Rating</option>
-          <option value="year">Year</option>
-        </select>
-      </div>
+      <form.AppField name="sortBy">
+        {(field) => (
+          <field.Select
+            icon={Star}
+            size="sm"
+            placeholder="Sort By"
+            classNames={{ wrapper: "w-36" }}
+            options={[
+              { label: "Added", value: "createdAt" },
+              { label: "Rating", value: "rating" },
+              { label: "Year", value: "year" },
+            ]}
+          />
+        )}
+      </form.AppField>
 
-      {/* Genre */}
-      <div className="flex items-center gap-1.5">
-        <Clapperboard className="h-3 w-3 text-muted-foreground" />
-        <select
-          value={search.genre ?? ""}
-          onChange={(e) => setFilter("genre", e.target.value)}
-          className="h-7 border border-border/50 bg-transparent px-2 text-[10px] text-muted-foreground uppercase tracking-widest outline-none"
-        >
-          {genres.data?.map((genre) => (
-            <option key={genre} value={genre}>
-              {genre}
-            </option>
-          ))}
-        </select>
-      </div>
+      <form.AppField name="genre">
+        {(field) => (
+          <field.Select
+            icon={Clapperboard}
+            placeholder="Genre"
+            size="sm"
+            classNames={{ wrapper: "w-36" }}
+            options={genres.data?.map((genre) => ({ label: genre, value: genre }))}
+          />
+        )}
+      </form.AppField>
 
-      {/* Min Rating */}
-      <div className="flex items-center gap-1.5">
-        <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Min</span>
-        <Input
-          type="number"
-          min={0}
-          max={10}
-          step={0.1}
-          placeholder="0"
-          value={search.minRating ?? ""}
-          onChange={(e) => {
-            const val = Number.parseFloat(e.target.value);
-            setFilter("minRating", Number.isNaN(val) ? undefined : val);
-          }}
-          className="h-7 w-16 border-border/50 text-xs"
-        />
-      </div>
+      <form.AppField name="minRating">
+        {(field) => (
+          <field.Number placeholder="Min Rating" size="sm" classNames={{ wrapper: "w-36" }} />
+        )}
+      </form.AppField>
 
       <ImdbTotalNumber />
 
@@ -115,33 +105,31 @@ export function ImdbFilter() {
 
       <SyncButton />
 
-      {/* Kind Toggle */}
-      <div className="flex items-center gap-1 border border-border/50">
-        <button
-          type="button"
-          onClick={() => setFilter("update", false)}
-          className={`flex h-7 items-center gap-1.5 px-3 text-[10px] uppercase tracking-widest transition-colors ${
-            !search.update
-              ? "bg-foreground text-background"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Eye className="h-3 w-3" />
-          View
-        </button>
-        <button
-          type="button"
-          onClick={() => setFilter("update", true)}
-          className={`flex h-7 items-center gap-1.5 px-3 text-[10px] uppercase tracking-widest transition-colors ${
-            search.update === true
-              ? "bg-foreground text-background"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Pen className="h-3 w-3" />
-          Update
-        </button>
-      </div>
+      <form.AppField name="mode">
+        {(field) => (
+          <field.ToggleGroup
+            variant="outline"
+            size="sm"
+            options={[
+              { label: "View", value: "view", icon: Eye },
+              { label: "Update", value: "update", icon: Pen },
+            ]}
+          />
+        )}
+      </form.AppField>
+
+      <Button
+        variant={hasData ? "secondary" : "ghost"}
+        size="sm"
+        disabled={!hasData}
+        onClick={clearFilter}
+        className={cn(
+          "transition-all",
+          hasData ? "text-foreground" : "text-muted-foreground opacity-50",
+        )}
+      >
+        Reset
+      </Button>
     </div>
   );
 }

@@ -5,22 +5,22 @@ import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
 
 export function SyncButton() {
-  const syncMutation = useMutation(orpc.anime.sync.mutationOptions());
+  const mutation = useMutation(
+    orpc.anime.sync.mutationOptions({
+      onSuccess: () => toast.success("Anime sync queued"),
+      onError: (error) => toast.error(error.message),
+    }),
+  );
 
   return (
     <Button
       variant="outline"
       size="sm"
-      className="h-8 border-border/50 text-[10px]"
-      onClick={() => {
-        syncMutation.mutate(undefined, {
-          onSuccess: () => toast.success("Anime sync queued"),
-          onError: () => toast.error("Failed to queue sync"),
-        });
-      }}
-      disabled={syncMutation.isPending}
+      className="text-[10px] uppercase tracking-widest"
+      disabled={mutation.isPending}
+      onClick={() => mutation.mutate({})}
     >
-      <RotateCcw className="mr-1.5 h-3 w-3" />
+      <RotateCcw />
       Sync
     </Button>
   );

@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { type ComponentType, type SVGProps, useId } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { FormBase, type FormControlProps } from "../common/form-base";
@@ -16,6 +16,8 @@ type Props = FormControlProps & {
   classNames?: {
     input?: string;
   };
+  icon?: ComponentType<SVGProps<SVGSVGElement>>;
+  size?: "sm" | "default";
 };
 
 export function InputField({
@@ -27,6 +29,8 @@ export function InputField({
   type,
   variant = "default",
   clearOnEmpty = false,
+  icon: Icon,
+  size,
   ...props
 }: Props) {
   const id = useId();
@@ -50,10 +54,11 @@ export function InputField({
       placeholder={variant === "default" ? placeholder : ""}
       type={type}
       onChange={(e) => handleChange(e.target.value)}
-      className={cn(className, classNames?.input)}
+      className={cn(Icon && "ps-9", classNames?.input)}
       aria-invalid={isInvalid}
       dir={dir}
       disabled={disabled}
+      size={size}
     />
   );
 
@@ -66,8 +71,20 @@ export function InputField({
   }
 
   return (
-    <FormBase id={id} classNames={classNames} {...props}>
+    <FormBase
+      id={id}
+      classNames={{
+        ...classNames,
+        wrapper: cn(Icon && "relative", classNames?.wrapper),
+      }}
+      {...props}
+    >
       {comp}
+      {Icon && (
+        <div className="pointer-events-none absolute inset-s-0 inset-y-0 flex items-center ps-3 text-muted-foreground/80 group-has-[select[disabled]]:opacity-50">
+          <Icon className="size-4" />
+        </div>
+      )}
     </FormBase>
   );
 }

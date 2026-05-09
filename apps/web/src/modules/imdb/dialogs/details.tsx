@@ -1,16 +1,21 @@
+import { Link } from "@tanstack/react-router";
 import type { ImdbItem } from "@workspace/contracts/views/imdb";
 import {
   Calendar,
   Clapperboard,
   Clock,
   DollarSign,
+  ExternalLink,
   Film,
   Layers,
   MonitorPlay,
   Star,
   Users,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { KeyValue } from "@/components/ui/key-value";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
@@ -82,10 +87,19 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
         {/* Details Column */}
         <div className="flex flex-1 flex-col overflow-y-auto">
           {/* Header */}
-          <div className="space-y-2 border-border/50 border-b p-5">
-            <h2 className="font-semibold text-base text-foreground leading-snug">
-              {item.caption ?? item.externalId}
-            </h2>
+          <div className="space-y-2 border-border/50 border-b p-5 pr-10">
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="font-semibold text-base text-foreground leading-snug">
+                {item.caption ?? item.externalId}
+              </h2>
+
+              <Button asChild variant="outline" size="xs" className="text-[10px]">
+                <a href={item.url} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-3 w-3" />
+                  IMDb
+                </a>
+              </Button>
+            </div>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="text-[10px] text-muted-foreground">{metadata.year ?? "—"}</span>
@@ -108,15 +122,20 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
               )}
             </div>
 
-            {metadata.genre && metadata.genre.length > 0 && (
+            {metadata.genres && metadata.genres.length > 0 && (
               <div className="flex flex-wrap gap-1.5 pt-1">
-                {metadata.genre.map((g) => (
-                  <span
+                {metadata.genres.map((g) => (
+                  <Badge
                     key={g}
-                    className="bg-muted px-2 py-0.5 text-[9px] text-muted-foreground uppercase tracking-wider"
+                    size="sm"
+                    variant="secondary"
+                    className="text-muted-foreground uppercase"
+                    asChild
                   >
-                    {g}
-                  </span>
+                    <Link to="/imdb" search={{ genre: g }} onClick={() => onOpenChange(false)}>
+                      {g}
+                    </Link>
+                  </Badge>
                 ))}
               </div>
             )}
@@ -135,7 +154,8 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
           <div className="grid grid-cols-1 gap-0 sm:grid-cols-2">
             {/* Directors */}
             {metadata.directors && metadata.directors.length > 0 && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Clapperboard className="h-3 w-3" />}
                 label="Directors"
                 values={metadata.directors}
@@ -144,7 +164,8 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Writers */}
             {metadata.writers && metadata.writers.length > 0 && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Layers className="h-3 w-3" />}
                 label="Writers"
                 values={metadata.writers}
@@ -153,17 +174,18 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Actors */}
             {metadata.actors && metadata.actors.length > 0 && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b sm:col-span-2"
                 icon={<Users className="h-3 w-3" />}
                 label="Cast"
                 values={metadata.actors}
-                className="sm:col-span-2"
               />
             )}
 
             {/* Released */}
             {metadata.released && metadata.released !== "N/A" && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Calendar className="h-3 w-3" />}
                 label="Released"
                 value={metadata.released}
@@ -172,7 +194,8 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Box Office (Movie only) */}
             {isMovie && "boxOffice" in metadata && metadata.boxOffice && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<DollarSign className="h-3 w-3" />}
                 label="Box Office"
                 value={`$${metadata.boxOffice.toLocaleString()}`}
@@ -181,7 +204,8 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
 
             {/* Seasons (TV only) */}
             {!isMovie && "seasons" in metadata && metadata.seasons > 0 && (
-              <MetadataRow
+              <KeyValue
+                className="border-border/30 border-b"
                 icon={<Layers className="h-3 w-3" />}
                 label="Seasons"
                 value={String(metadata.seasons)}
@@ -191,40 +215,5 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-
-function MetadataRow({
-  icon,
-  label,
-  value,
-  values,
-  className,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value?: string;
-  values?: string[];
-  className?: string;
-}) {
-  const displayValues = values ?? (value ? [value] : []);
-  if (displayValues.length === 0) return null;
-
-  return (
-    <div className={cn("border-border/30 border-b p-4 last:border-b-0", className)}>
-      <div className="mb-1.5 flex items-center gap-1.5 text-muted-foreground/60">
-        {icon}
-        <span className="text-[9px] uppercase tracking-widest">{label}</span>
-      </div>
-      <div className="flex flex-wrap gap-x-3 gap-y-1">
-        {displayValues.map((v) => (
-          <span key={v} className="text-[11px] text-foreground/80">
-            {v}
-          </span>
-        ))}
-      </div>
-    </div>
   );
 }

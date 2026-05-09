@@ -5,20 +5,16 @@ import z from "zod";
 import { Header } from "@/layout/header";
 import { Main } from "@/layout/main";
 import { AnimeFilter } from "@/modules/anime/filter";
-import { useAnimeQuery } from "@/modules/anime/hooks/use-anime-query";
 import { AnimeList } from "@/modules/anime/list";
 
 export const Route = createFileRoute("/_authenticated/anime/")({
   component: AnimePage,
   validateSearch: AnimeSchemas.list.request.extend({
-    update: z.boolean().optional(),
+    mode: z.enum(["view", "update"]).optional().catch(undefined),
   }),
 });
 
 function AnimePage() {
-  const query = useAnimeQuery();
-  const total = query.data?.pages[0]?.total ?? 0;
-
   return (
     <Main className="flex h-full flex-col p-0">
       <Header className="border-border/50 border-b">
@@ -26,9 +22,8 @@ function AnimePage() {
           <Tv className="h-4 w-4 text-muted-foreground" />
           <h1 className="font-medium text-lg tracking-tight">Anime</h1>
           <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
-            MyAnimeList
+            Entertainment
           </span>
-          <span className="text-[10px] text-muted-foreground/60">{total.toLocaleString()}</span>
         </div>
       </Header>
 

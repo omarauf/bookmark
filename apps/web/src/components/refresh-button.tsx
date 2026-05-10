@@ -1,12 +1,13 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { motion, useAnimation } from "framer-motion";
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { orpc } from "@/integrations/orpc";
 
-export function RefreshButton() {
-  const queryClient = useQueryClient();
+type Props = {
+  onRefresh: () => Promise<void>;
+};
+
+export function RefreshButton({ onRefresh }: Props) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const controls = useAnimation();
 
@@ -25,10 +26,7 @@ export function RefreshButton() {
     });
 
     try {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: orpc.browse.list.key() }),
-        queryClient.invalidateQueries({ queryKey: orpc.folder.tree.key() }),
-      ]);
+      await onRefresh();
     } finally {
       // Ensure minimum visible spin time
       await new Promise((resolve) => setTimeout(resolve, 1000));

@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import type { JobType } from "@workspace/contracts/job";
 import { Activity } from "lucide-react";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";
 import { AnalyticsCard } from "../components/analytics-card";
@@ -9,7 +11,9 @@ type Props = {
 };
 
 export function JobAnalytics({ className }: Props) {
-  const { data } = useQuery(orpc.job.analytics.queryOptions());
+  const [types] = useLocalStorage<JobType[] | undefined>("analytics_types", undefined);
+
+  const { data } = useQuery(orpc.job.analytics.queryOptions({ input: { types } }));
 
   if (data === undefined) {
     return (

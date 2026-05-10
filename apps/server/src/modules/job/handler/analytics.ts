@@ -1,5 +1,5 @@
 import { JobSchemas, type JobType } from "@workspace/contracts/job";
-import { and, asc, count, desc, eq, gte, isNotNull, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNotNull, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
 import { jobGroups, jobs } from "../schema";
@@ -9,20 +9,21 @@ export const analyticsHandler = protectedProcedure
   .output(JobSchemas.analytics.response)
   .handler(async ({ input }) => {
     const days = input?.days ?? 30;
+    const types = input?.types;
 
-    const jobsByDay = await getJobLastNDays(days);
+    const jobsByDay = await getJobLastNDays(days, types);
 
-    const durationByType = await getDurationByType();
+    const durationByType = await getDurationByType(types);
 
-    const attemptDistribution = await getAttemptDistribution();
+    const attemptDistribution = await getAttemptDistribution(types);
 
-    const topErrors = await getTopErrors();
+    const topErrors = await getTopErrors(types);
 
-    const statusCounts = await getStatusCounts();
+    const statusCounts = await getStatusCounts(types);
 
-    const typeCounts = await getTypeCounts();
+    const typeCounts = await getTypeCounts(types);
 
-    const groupSizes = await getGroupSizes();
+    const groupSizes = await getGroupSizes(types);
 
     return {
       jobsByDay,
@@ -35,7 +36,7 @@ export const analyticsHandler = protectedProcedure
     };
   });
 
-async function getJobLastNDays(days: number) {
+async function getJobLastNDays(days: number, types: JobType[] | undefined) {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
 
@@ -47,7 +48,7 @@ async function getJobLastNDays(days: number) {
       count: count(),
     })
     .from(jobs)
-    .where(gte(jobs.createdAt, cutoff))
+    .where(and(gte(jobs.createdAt, cutoff), types ? inArray(jobs.type, types) : undefined))
     .groupBy(sql`DATE(${jobs.createdAt})`, jobs.status)
     .orderBy(asc(sql`DATE(${jobs.createdAt})`));
 
@@ -70,7 +71,7 @@ async function getJobLastNDays(days: number) {
   return jobsByDay;
 }
 
-async function getDurationByType() {
+async function getDurationByType(types: JobType[] | undefined) {
   const rows = await db
     .select({
       type: jobs.type,
@@ -78,7 +79,13 @@ async function getDurationByType() {
       completedAt: jobs.completedAt,
     })
     .from(jobs)
-    .where(and(sql`${jobs.startedAt} IS NOT NULL`, sql`${jobs.completedAt} IS NOT NULL`));
+    .where(
+      and(
+        sql`${jobs.startedAt} IS NOT NULL`,
+        sql`${jobs.completedAt} IS NOT NULL`,
+        types ? inArray(jobs.type, types) : undefined,
+      ),
+    );
 
   const stats = new Map<string, { totalMs: number; count: number; min: number; max: number }>();
 
@@ -114,7 +121,7 @@ async function getDurationByType() {
   }));
 }
 
-async function getAttemptDistribution() {
+async function getAttemptDistribution(types: JobType[] | undefined) {
   const attemptRows = await db
     .select({
       attemptCount: jobs.attemptCount,
@@ -122,7 +129,8 @@ async function getAttemptDistribution() {
     })
     .from(jobs)
     .groupBy(jobs.attemptCount)
-    .orderBy(jobs.attemptCount);
+    .orderBy(jobs.attemptCount)
+    .where(types ? inArray(jobs.type, types) : undefined);
 
   const attemptDistribution = attemptRows.map((row) => ({
     attempts: row.attemptCount,
@@ -132,14 +140,14 @@ async function getAttemptDistribution() {
   return attemptDistribution;
 }
 
-async function getTopErrors() {
+async function getTopErrors(types: JobType[] | undefined) {
   const errorRows = await db
     .select({
       error: jobs.error,
       count: count(),
     })
     .from(jobs)
-    .where(sql`${jobs.error} IS NOT NULL`)
+    .where(and(sql`${jobs.error} IS NOT NULL`, types ? inArray(jobs.type, types) : undefined))
     .groupBy(jobs.error)
     .orderBy(desc(count()))
     .limit(10);
@@ -152,11 +160,12 @@ async function getTopErrors() {
   return topErrors;
 }
 
-async function getStatusCounts() {
+async function getStatusCounts(types: JobType[] | undefined) {
   const statusRowsAll = await db
     .select({ status: jobs.status, count: count() })
     .from(jobs)
-    .groupBy(jobs.status);
+    .groupBy(jobs.status)
+    .where(types ? inArray(jobs.type, types) : undefined);
 
   const statusCounts: Record<string, number> = {};
   for (const row of statusRowsAll) {
@@ -166,11 +175,12 @@ async function getStatusCounts() {
   return statusCounts;
 }
 
-async function getTypeCounts() {
+async function getTypeCounts(types: JobType[] | undefined) {
   const typeRowsAll = await db
     .select({ type: jobs.type, count: count() })
     .from(jobs)
-    .groupBy(jobs.type);
+    .groupBy(jobs.type)
+    .where(types ? inArray(jobs.type, types) : undefined);
 
   const typeCounts: Record<string, number> = {};
   for (const row of typeRowsAll) {
@@ -180,7 +190,7 @@ async function getTypeCounts() {
   return typeCounts;
 }
 
-async function getGroupSizes() {
+async function getGroupSizes(types: JobType[] | undefined) {
   const groupSizeRows = await db
     .select({
       groupId: jobs.groupId,
@@ -189,7 +199,7 @@ async function getGroupSizes() {
     })
     .from(jobs)
     .leftJoin(jobGroups, eq(jobs.groupId, jobGroups.id))
-    .where(isNotNull(jobs.groupId))
+    .where(and(isNotNull(jobs.groupId), types ? inArray(jobs.type, types) : undefined))
     .groupBy(jobs.groupId, jobGroups.name)
     .orderBy(desc(count()))
     .limit(20);

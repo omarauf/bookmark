@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
 import { ReclaimButton } from "@/modules/jobs/components/buttons/reclaim";
+import { JobRefreshButton } from "@/modules/jobs/components/buttons/refresh";
 import { JobTable } from "@/modules/jobs/components/job-table";
 import { JobAnalytics } from "@/modules/jobs/views/analytics";
 
@@ -51,7 +52,11 @@ function JobList() {
             </TabsTrigger>
           </TabsList>
 
-          <ReclaimButton />
+          <div className="flex items-center space-x-2">
+            <ReclaimButton />
+
+            <JobRefreshButton />
+          </div>
         </div>
 
         <ScrollArea className="min-h-0">

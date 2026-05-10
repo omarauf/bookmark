@@ -91,6 +91,7 @@ export const JobSchemas = {
     request: z
       .object({
         days: z.number().int().min(1).max(90).optional().default(30),
+        types: JobTypeEnum.array().optional().catch(undefined),
       })
       .optional(),
     response: z.object({

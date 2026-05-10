@@ -2,6 +2,7 @@ import type { Job } from "@workspace/contracts/job";
 import { JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { db } from "@/core/db";
+import { getQueryParam } from "@/utils/url";
 import { jobGroups, jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
@@ -22,8 +23,8 @@ export async function processYoutubeDiscover(job: Job) {
   // Build map of videoId -> source link item id
   const videoIdToLinkId = new Map<string, string>();
   for (const item of linkItems) {
-    const match = item.url?.match(/youtube\.com\/watch\?v=(.*)/);
-    if (match) videoIdToLinkId.set(match[1], item.id);
+    const id = getQueryParam(item.url, "v");
+    if (id) videoIdToLinkId.set(id, item.id);
   }
 
   const uniqueIds = Array.from(videoIdToLinkId.keys());

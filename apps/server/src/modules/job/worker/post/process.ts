@@ -46,6 +46,7 @@ export async function processImportProcess(job: Job) {
   });
 
   await log(job.id, "info", "Items imported", { count: entities.items.length });
+  await log(job.id, "info", "Invalid items skipped", { count: entities.invalidItems.length });
 
   for (const task of entities.invalidItems) {
     await log(job.id, "warn", "Invalid item skipped", task);

@@ -73,10 +73,15 @@ export const sidebarData: SidebarData = {
       title: "Data & Operations",
       items: [
         { title: "Imports", url: "/imports", icon: Upload },
+        { title: "File Manager", url: "/file-manager", icon: Folder },
+      ],
+    },
+    {
+      title: "Background Tasks",
+      items: [
         { title: "Downloads", url: "/downloads", icon: Download },
         { title: "Jobs", url: "/jobs", icon: Workflow },
         { title: "Job Groups", url: "/job-groups", icon: Layers },
-        { title: "File Manager", url: "/file-manager", icon: Folder },
       ],
     },
     {

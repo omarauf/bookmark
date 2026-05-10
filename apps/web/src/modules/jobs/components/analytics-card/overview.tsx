@@ -1,6 +1,6 @@
 import type { JobStatus } from "@workspace/contracts/job";
 import { Activity, AlertTriangle, BarChart3, CheckCircle2, RotateCcw, Timer } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { MetricCard } from "../metric-card";
 
 type Props = {
   statusCounts: Record<JobStatus, number>;
@@ -107,25 +107,5 @@ export function Overview({ statusCounts }: Props) {
         accent="text-gray-500"
       />
     </div>
-  );
-}
-// ---------------------------------------------------------------------------
-
-type MetricCardProps = {
-  label: string;
-  value: string | number;
-  icon: React.ReactNode;
-  accent?: string;
-};
-
-export function MetricCard({ label, value, icon, accent }: MetricCardProps) {
-  return (
-    <Card className="flex flex-col gap-2 border border-border/50 bg-transparent p-4">
-      <div className="flex items-center gap-2 text-muted-foreground">
-        {icon}
-        <span className="text-[10px] uppercase tracking-widest">{label}</span>
-      </div>
-      <span className={`text-3xl tracking-tighter ${accent ?? "text-foreground"}`}>{value}</span>
-    </Card>
   );
 }

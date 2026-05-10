@@ -22,11 +22,12 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import type { NavCollapsible, NavGroup as NavGroupProps, NavItem, NavLink } from "./types";
+import type { NavGroup as NavGroupProps, NavItem } from "./types";
 
 export function NavGroup({ title, items }: NavGroupProps) {
   const { state, isMobile } = useSidebar();
   const href = useLocation({ select: (location) => location.href });
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>{title}</SidebarGroupLabel>
@@ -50,7 +51,7 @@ function NavBadge({ children }: { children: ReactNode }) {
   return <Badge className="rounded-full px-1 py-0 text-xs">{children}</Badge>;
 }
 
-function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
+function SidebarMenuLink({ item, href }: { item: NavItem; href: string }) {
   const { setOpenMobile } = useSidebar();
   return (
     <SidebarMenuItem>
@@ -65,8 +66,22 @@ function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
   );
 }
 
-function SidebarMenuCollapsible({ item, href }: { item: NavCollapsible; href: string }) {
+function SidebarMenuCollapsible({ item, href }: { item: NavItem; href: string }) {
   const { setOpenMobile } = useSidebar();
+
+  if (!item.items) return null;
+
+  const child = (
+    <>
+      {item.icon && <item.icon />}
+      <span>{item.title}</span>
+      {item.badge && <NavBadge>{item.badge}</NavBadge>}
+      <ChevronRight className="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+    </>
+  );
+
+  console.log(item.url);
+
   return (
     <Collapsible
       asChild
@@ -75,11 +90,14 @@ function SidebarMenuCollapsible({ item, href }: { item: NavCollapsible; href: st
     >
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip={item.title}>
-            {item.icon && <item.icon />}
-            <span>{item.title}</span>
-            {item.badge && <NavBadge>{item.badge}</NavBadge>}
-            <ChevronRight className="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+          <SidebarMenuButton tooltip={item.title} asChild={!!item.url}>
+            {item.url ? (
+              <Link to={item.url} className="w-full">
+                {child}
+              </Link>
+            ) : (
+              child
+            )}
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent className="CollapsibleContent">
@@ -102,7 +120,11 @@ function SidebarMenuCollapsible({ item, href }: { item: NavCollapsible; href: st
   );
 }
 
-function SidebarMenuCollapsedDropdown({ item, href }: { item: NavCollapsible; href: string }) {
+function SidebarMenuCollapsedDropdown({ item, href }: { item: NavItem; href: string }) {
+  if (!item.items) return null;
+
+  console.log("Rendering collapsed dropdown for", item);
+
   return (
     <SidebarMenuItem>
       <DropdownMenu>

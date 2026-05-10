@@ -169,10 +169,8 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
           const error = cell.getValue<Job["error"]>();
           if (!error) return <span className="text-muted-foreground text-xs">—</span>;
           return (
-            <div className="max-w-50">
-              <span className="max-w-50 overflow-hidden truncate text-destructive text-xs">
-                {error}
-              </span>
+            <div className="max-w-50 overflow-hidden ">
+              <span className="max-w-50 truncate text-destructive text-xs">{error}</span>
             </div>
           );
         },

@@ -1,22 +1,12 @@
 import type { LinkProps } from "@tanstack/react-router";
 
-type BaseNavItem = {
+export type NavItem = {
   title: string;
   badge?: string;
   icon?: React.ElementType;
+  url?: LinkProps["to"] | (string & {});
+  items?: NavItem[];
 };
-
-export type NavLink = BaseNavItem & {
-  url: LinkProps["to"] | (string & {});
-  items?: never;
-};
-
-export type NavCollapsible = BaseNavItem & {
-  items: (BaseNavItem & { url: LinkProps["to"] | (string & {}) })[];
-  url?: never;
-};
-
-export type NavItem = NavCollapsible | NavLink;
 
 export type NavGroup = {
   title: string;

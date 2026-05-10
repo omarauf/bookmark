@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, Layers, List } from "lucide-react";
+import { BarChart3, CircleDashed, CircleX, Layers, List, RotateCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { orpc } from "@/integrations/orpc";
-import { MetricCard } from "../components/analytics-card/overview";
+import { MetricCard } from "../components/metric-card";
 
 type Props = {
   groupId: string;
@@ -27,8 +27,35 @@ export function JobGroupAnalytics({ groupId }: Props) {
   return (
     <>
       {/* Stats Row */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4">
         <MetricCard label="Total" value={String(stats.total)} icon={<List className="h-4 w-4" />} />
+        <MetricCard
+          label="Active"
+          value={String(stats.processing + stats.pending + stats.retrying)}
+          icon={<List className="h-4 w-4" />}
+          accent="text-blue-400"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
+        <MetricCard
+          label="Pending"
+          value={String(stats.pending)}
+          icon={<CircleDashed className="h-4 w-4" />}
+          accent="text-amber-400"
+        />
+        <MetricCard
+          label="Processing"
+          value={String(stats.processing)}
+          icon={<List className="h-4 w-4" />}
+          accent="text-blue-400"
+        />
+        <MetricCard
+          label="Retrying"
+          value={String(stats.retrying)}
+          icon={<RotateCcw className="h-4 w-4" />}
+          accent="text-orange-400"
+        />
         <MetricCard
           label="Completed"
           value={String(stats.completed)}
@@ -42,10 +69,10 @@ export function JobGroupAnalytics({ groupId }: Props) {
           accent="text-rose-500"
         />
         <MetricCard
-          label="Active"
-          value={String(stats.processing + stats.pending + stats.retrying)}
-          icon={<List className="h-4 w-4" />}
-          accent="text-blue-400"
+          label="Cancelled"
+          value={String(stats.cancelled)}
+          icon={<CircleX className="h-4 w-4" />}
+          accent="text-purple-500"
         />
       </div>
 

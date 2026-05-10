@@ -1,6 +1,6 @@
-import { ItemSchema } from "../../core/item/entity";
+import { ItemBaseViewSchema } from "../../core/item/entity";
 import { YoutubeMetadataSchema } from "../../platforms/youtube";
 
-export const YoutubeItemSchema = ItemSchema.extend({
-  metadata: YoutubeMetadataSchema,
+export const YoutubeSchema = ItemBaseViewSchema.extend({
+  ...YoutubeMetadataSchema.shape,
 });

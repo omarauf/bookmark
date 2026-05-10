@@ -8,20 +8,19 @@ import { ImdbDetailsDialog } from "../dialogs/details";
 import { ImdbUpdateDialog } from "../dialogs/update";
 
 type Props = {
-  item: ImdbItem;
+  imdb: ImdbItem;
 };
 
-export function ImdbCard({ item }: Props) {
+export function ImdbCard({ imdb }: Props) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
-  const metadata = item.metadata;
 
   const updateMode = useSearch({
     from: "/_authenticated/imdb/",
     select: (s) => s.mode === "update",
   });
 
-  const rating = metadata.rating ?? 0;
+  const rating = imdb.rating ?? 0;
   const ratingColor =
     rating >= 7 ? "text-emerald-500" : rating >= 5 ? "text-amber-500" : "text-rose-500";
 
@@ -41,16 +40,16 @@ export function ImdbCard({ item }: Props) {
       >
         {/* Poster */}
         <div className="relative aspect-2/3 overflow-hidden bg-muted">
-          {metadata.poster && metadata.poster !== "N/A" ? (
+          {imdb.poster && imdb.poster !== "N/A" ? (
             <img
-              src={metadata.poster}
-              alt={item.caption ?? item.externalId}
+              src={imdb.poster}
+              alt={imdb.caption ?? imdb.externalId}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              {metadata.kind === "movie" ? (
+              {imdb.kind === "movie" ? (
                 <Film className="h-8 w-8 text-muted-foreground/30" />
               ) : (
                 <MonitorPlay className="h-8 w-8 text-muted-foreground/30" />
@@ -60,7 +59,7 @@ export function ImdbCard({ item }: Props) {
 
           {/* Kind Badge */}
           <div className="absolute top-2 left-2 flex items-center gap-0.5 bg-background/90 px-1.5 py-0.5 text-muted-foreground backdrop-blur-sm">
-            <span className={cn("text-[9px]")}> {metadata.kind}</span>
+            <span className={cn("text-[9px]")}> {imdb.kind}</span>
           </div>
 
           {/* Rating Badge */}
@@ -75,22 +74,22 @@ export function ImdbCard({ item }: Props) {
         {/* Info */}
         <div className="space-y-1 p-2">
           <h3 className="line-clamp-2 text-nowrap font-medium text-foreground text-xs leading-tight">
-            {item.caption ?? item.externalId}
+            {imdb.caption ?? imdb.externalId}
           </h3>
 
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground">{metadata.year ?? "—"}</span>
-            {metadata.genres && metadata.genres.length > 0 && (
+            <span className="text-[10px] text-muted-foreground">{imdb.year ?? "—"}</span>
+            {imdb.genres && imdb.genres.length > 0 && (
               <span className="truncate text-[9px] text-muted-foreground/60 uppercase tracking-wider">
-                {metadata.genres[0]}
+                {imdb.genres[0]}
               </span>
             )}
           </div>
         </div>
       </Card>
 
-      <ImdbDetailsDialog item={item} open={detailsOpen} onOpenChange={setDetailsOpen} />
-      <ImdbUpdateDialog item={item} open={updateOpen} onOpenChange={setUpdateOpen} />
+      <ImdbDetailsDialog imdb={imdb} open={detailsOpen} onOpenChange={setDetailsOpen} />
+      <ImdbUpdateDialog item={imdb} open={updateOpen} onOpenChange={setUpdateOpen} />
     </>
   );
 }

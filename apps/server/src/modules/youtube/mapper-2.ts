@@ -1,4 +1,4 @@
-import type { YoutubeItem } from "@workspace/contracts/views/youtube";
+import type { Youtube } from "@workspace/contracts/views/youtube";
 import type { ItemEntity } from "../item/schema";
 
 type RawItem = ItemEntity & {
@@ -23,8 +23,8 @@ type RawItem = ItemEntity & {
   }[];
 };
 
-export function mapItemToYoutube(items: RawItem[]): YoutubeItem[] {
-  const youtubeArr: YoutubeItem[] = [];
+export function mapItemToYoutube(items: RawItem[]): Youtube[] {
+  const youtubeArr: Youtube[] = [];
 
   for (const item of items) {
     if (item.platform !== "youtube" || item.metadata?.platform !== "youtube") {
@@ -35,6 +35,7 @@ export function mapItemToYoutube(items: RawItem[]): YoutubeItem[] {
     const tagIds = item.tags?.map((t) => t.tag.id);
 
     youtubeArr.push({
+      ...item.metadata,
       id: item.id,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
@@ -42,12 +43,9 @@ export function mapItemToYoutube(items: RawItem[]): YoutubeItem[] {
       caption: item.caption ?? undefined,
       deletedAt: item.deletedAt ?? undefined,
       externalId: item.externalId,
-      kind: item.metadata?.kind,
-      platform: item.platform,
       favorite: item.favorite ?? undefined,
       note: item.note ?? undefined,
       rate: item.rate ?? undefined,
-      metadata: item.metadata ?? undefined,
       collectionIds: collectionIds || [],
       tagIds: tagIds || [],
     });

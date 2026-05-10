@@ -3,10 +3,7 @@ import { fShortenNumber } from "@/utils/format-number";
 import * as icons from "./icons";
 
 export function Stats({ post }: { post: Post }) {
-  const metadata =
-    post.metadata.platform === "twitter" && post.metadata.kind === "post"
-      ? post.metadata
-      : undefined;
+  const metadata = post.platform === "twitter" && post.kind === "post" ? post : undefined;
 
   if (!metadata) return null;
 

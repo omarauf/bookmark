@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ItemSchemas, type UpdateItem } from "@workspace/contracts/item";
-import type { YoutubeItem } from "@workspace/contracts/views/youtube";
+import type { Youtube } from "@workspace/contracts/views/youtube";
 import { toast } from "sonner";
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,12 @@ import { orpc } from "@/integrations/orpc";
 import { getError } from "@/utils/error";
 
 type Props = {
-  item: YoutubeItem;
+  youtube: Youtube;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export function YoutubeUpdateDialog({ item, open, onOpenChange }: Props) {
+export function YoutubeUpdateDialog({ youtube, open, onOpenChange }: Props) {
   const queryClient = useQueryClient();
 
   const tagsQuery = useQuery(orpc.tag.options.queryOptions());
@@ -30,12 +30,12 @@ export function YoutubeUpdateDialog({ item, open, onOpenChange }: Props) {
 
   const form = useAppForm({
     defaultValues: {
-      id: item.id,
-      note: item.note ?? "",
-      rate: item.rate ?? 0,
-      favorite: item.favorite ?? false,
-      tagIds: item.tagIds ?? [],
-      collectionIds: item.collectionIds ?? [],
+      id: youtube.id,
+      note: youtube.note ?? "",
+      rate: youtube.rate ?? 0,
+      favorite: youtube.favorite ?? false,
+      tagIds: youtube.tagIds ?? [],
+      collectionIds: youtube.collectionIds ?? [],
     } as UpdateItem,
     validators: { onSubmit: ItemSchemas.update.request },
     onSubmit: async ({ value }) => {
@@ -60,7 +60,7 @@ export function YoutubeUpdateDialog({ item, open, onOpenChange }: Props) {
         <DialogHeader className="border-border/50 border-b p-5 text-left">
           <DialogTitle className="font-semibold text-foreground text-sm">Update</DialogTitle>
           <DialogDescription className="text-[10px] text-muted-foreground">
-            {item.caption ?? item.externalId}
+            {youtube.caption ?? youtube.externalId}
           </DialogDescription>
         </DialogHeader>
 

@@ -1,4 +1,4 @@
-import type { YoutubeItem } from "@workspace/contracts/views/youtube";
+import type { Youtube } from "@workspace/contracts/views/youtube";
 import { Calendar, Clock, ExternalLink, Eye, Heart, MessageSquare, Tv, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { formatDuration } from "@/utils/format-number";
 import { fDate } from "@/utils/format-time";
 
 type Props = {
-  item: YoutubeItem;
+  youtube: Youtube;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -21,26 +21,24 @@ function formatCount(n: number): string {
   return n.toLocaleString();
 }
 
-export function YoutubeDetailsDialog({ item, open, onOpenChange }: Props) {
-  const metadata = item.metadata;
-
+export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="flex aspect-1152/1037 h-auto w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:max-w-6xl sm:flex-row"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <DialogTitle className="sr-only">{item.caption ?? item.externalId}</DialogTitle>
+        <DialogTitle className="sr-only">{youtube.caption ?? youtube.externalId}</DialogTitle>
         <DialogDescription className="sr-only">
-          Detailed information about {item.caption ?? item.externalId}
+          Detailed information about {youtube.caption ?? youtube.externalId}
         </DialogDescription>
 
         {/* Thumbnail Column */}
         <div className="relative flex aspect-2/3 h-fit w-3/5 shrink-0 items-center overflow-hidden bg-muted">
-          {metadata.thumbnail ? (
+          {youtube.thumbnail ? (
             <img
-              src={metadata.thumbnail}
-              alt={item.caption ?? item.externalId}
+              src={youtube.thumbnail}
+              alt={youtube.caption ?? youtube.externalId}
               className="w-full object-contain"
               loading="lazy"
             />
@@ -55,7 +53,7 @@ export function YoutubeDetailsDialog({ item, open, onOpenChange }: Props) {
 
           {/* Duration Badge */}
           <div className="absolute right-3 bottom-3 bg-black/80 px-2 py-1 font-medium text-[10px] text-white">
-            {formatDuration(metadata.duration)}
+            {formatDuration(youtube.duration)}
           </div>
         </div>
 
@@ -65,11 +63,11 @@ export function YoutubeDetailsDialog({ item, open, onOpenChange }: Props) {
           <div className="shrink-0 space-y-2 border-border/50 border-b p-5 pr-10">
             <div className="flex items-start justify-between gap-3">
               <h2 className="font-semibold text-base text-foreground leading-snug">
-                {item.caption ?? item.externalId}
+                {youtube.caption ?? youtube.externalId}
               </h2>
 
               <Button asChild variant="outline" size="xs" className="text-[10px]">
-                <a href={item.url} target="_blank" rel="noopener noreferrer">
+                <a href={youtube.url} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="h-3 w-3" />
                   YouTube
                 </a>
@@ -79,11 +77,11 @@ export function YoutubeDetailsDialog({ item, open, onOpenChange }: Props) {
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                 <User className="h-3 w-3" />
-                {metadata.channelTitle}
+                {youtube.channelTitle}
               </span>
               <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                 <Calendar className="h-3 w-3" />
-                {fDate(metadata.publishedAt)}
+                {fDate(youtube.publishedAt)}
               </span>
             </div>
 
@@ -91,25 +89,25 @@ export function YoutubeDetailsDialog({ item, open, onOpenChange }: Props) {
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
               <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                 <Eye className="h-3 w-3" />
-                {formatCount(metadata.views)} views
+                {formatCount(youtube.views)} views
               </span>
               <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                 <Heart className="h-3 w-3" />
-                {formatCount(metadata.likes)} likes
+                {formatCount(youtube.likes)} likes
               </span>
               <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                 <MessageSquare className="h-3 w-3" />
-                {formatCount(metadata.comments)} comments
+                {formatCount(youtube.comments)} comments
               </span>
               <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                 <Clock className="h-3 w-3" />
-                {formatDuration(metadata.duration)}
+                {formatDuration(youtube.duration)}
               </span>
             </div>
 
-            {metadata.tags && metadata.tags.length > 0 && (
+            {youtube.tags && youtube.tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5 pt-1">
-                {metadata.tags.map((t) => (
+                {youtube.tags.map((t) => (
                   <Badge
                     key={t}
                     size="sm"
@@ -124,11 +122,11 @@ export function YoutubeDetailsDialog({ item, open, onOpenChange }: Props) {
           </div>
 
           {/* Description */}
-          {metadata.description && (
+          {youtube.description && (
             <ScrollArea className="min-h-0 grow">
               <div className="p-5">
                 <p className="whitespace-pre-wrap text-[11px] text-foreground/80 leading-relaxed">
-                  {metadata.description}
+                  {youtube.description}
                 </p>
               </div>
             </ScrollArea>
@@ -136,25 +134,25 @@ export function YoutubeDetailsDialog({ item, open, onOpenChange }: Props) {
 
           <Separator className="shrink-0 bg-border/50" />
 
-          {/* Metadata Grid */}
+          {/* Youtube Grid */}
           <div className="grid shrink-0 grid-cols-1 gap-0 sm:grid-cols-2">
             {/* Category */}
-            {metadata.categoryId && (
+            {youtube.categoryId && (
               <KeyValue
                 className="border-border/30 border-b"
                 icon={<Tv className="h-3 w-3" />}
                 label="Category ID"
-                value={metadata.categoryId}
+                value={youtube.categoryId}
               />
             )}
 
             {/* Channel ID */}
-            {metadata.channelId && (
+            {youtube.channelId && (
               <KeyValue
                 className="border-border/30 border-b"
                 icon={<User className="h-3 w-3" />}
                 label="Channel ID"
-                value={metadata.channelId}
+                value={youtube.channelId}
               />
             )}
           </div>

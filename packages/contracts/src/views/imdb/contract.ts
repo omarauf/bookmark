@@ -3,7 +3,7 @@ import {
   BasePaginationQuerySchema,
   PaginationResultSchema,
 } from "../../foundation/pagination-query";
-import { ImdbItemSchema } from "./entity";
+import { ImdbSchema } from "./entity";
 import { ImdbFilterSchema } from "./filter";
 
 export const ImdbSchemas = {
@@ -13,7 +13,7 @@ export const ImdbSchemas = {
     request: BasePaginationQuerySchema.extend({
       ...ImdbFilterSchema.shape,
     }),
-    response: PaginationResultSchema(ImdbItemSchema),
+    response: PaginationResultSchema(ImdbSchema),
   },
 
   genres: {
@@ -22,9 +22,9 @@ export const ImdbSchemas = {
 
   get: {
     request: z.object({ id: z.uuid() }),
-    response: ImdbItemSchema,
+    response: ImdbSchema,
   },
 };
 
-export type ImdbItem = z.infer<typeof ImdbItemSchema>;
+export type ImdbItem = z.infer<typeof ImdbSchema>;
 export type ListImdb = z.infer<typeof ImdbSchemas.list.request>;

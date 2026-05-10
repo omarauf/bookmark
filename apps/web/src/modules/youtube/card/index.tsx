@@ -1,5 +1,5 @@
 import { useSearch } from "@tanstack/react-router";
-import type { YoutubeItem } from "@workspace/contracts/views/youtube";
+import type { Youtube } from "@workspace/contracts/views/youtube";
 import { Eye, Play, Tv } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { YoutubeDetailsDialog } from "../dialogs/details";
 import { YoutubeUpdateDialog } from "../dialogs/update";
 
 type Props = {
-  item: YoutubeItem;
+  youtube: Youtube;
 };
 
 function formatDuration(seconds: number): string {
@@ -26,10 +26,9 @@ function formatCount(n: number): string {
   return n.toLocaleString();
 }
 
-export function YoutubeCard({ item }: Props) {
+export function YoutubeCard({ youtube }: Props) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
-  const metadata = item.metadata;
 
   const updateMode = useSearch({
     from: "/_authenticated/youtube/",
@@ -52,10 +51,10 @@ export function YoutubeCard({ item }: Props) {
       >
         {/* Thumbnail */}
         <div className="relative aspect-video overflow-hidden bg-muted">
-          {metadata.thumbnail ? (
+          {youtube.thumbnail ? (
             <img
-              src={metadata.thumbnail}
-              alt={item.caption ?? item.externalId}
+              src={youtube.thumbnail}
+              alt={youtube.caption ?? youtube.externalId}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
@@ -74,30 +73,30 @@ export function YoutubeCard({ item }: Props) {
 
           {/* Duration Badge */}
           <div className="absolute right-2 bottom-2 bg-black/80 px-1.5 py-0.5 font-medium text-[10px] text-white">
-            {formatDuration(metadata.duration)}
+            {formatDuration(youtube.duration)}
           </div>
         </div>
 
         {/* Info */}
         <div className="flex flex-1 flex-col gap-1 p-2">
           <h3 className="line-clamp-2 min-h-[2.5em] font-medium text-foreground text-xs leading-tight">
-            {item.caption ?? item.externalId}
+            {youtube.caption ?? youtube.externalId}
           </h3>
 
           <div className="mt-auto flex items-center justify-between">
             <span className="truncate text-[10px] text-muted-foreground">
-              {metadata.channelTitle}
+              {youtube.channelTitle}
             </span>
             <span className="flex shrink-0 items-center gap-0.5 text-[10px] text-muted-foreground/60">
               <Eye className="h-2.5 w-2.5" />
-              {formatCount(metadata.views)}
+              {formatCount(youtube.views)}
             </span>
           </div>
         </div>
       </Card>
 
-      <YoutubeDetailsDialog item={item} open={detailsOpen} onOpenChange={setDetailsOpen} />
-      <YoutubeUpdateDialog item={item} open={updateOpen} onOpenChange={setUpdateOpen} />
+      <YoutubeDetailsDialog youtube={youtube} open={detailsOpen} onOpenChange={setDetailsOpen} />
+      <YoutubeUpdateDialog youtube={youtube} open={updateOpen} onOpenChange={setUpdateOpen} />
     </>
   );
 }

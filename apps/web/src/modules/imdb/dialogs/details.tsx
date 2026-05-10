@@ -20,18 +20,17 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  item: ImdbItem;
+  imdb: ImdbItem;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
-  const metadata = item.metadata;
-  const rating = metadata.rating ?? 0;
+export function ImdbDetailsDialog({ imdb, open, onOpenChange }: Props) {
+  const rating = imdb.rating ?? 0;
   const ratingColor =
     rating >= 7 ? "text-emerald-500" : rating >= 5 ? "text-amber-500" : "text-rose-500";
 
-  const isMovie = metadata.kind === "movie";
+  const isMovie = imdb.kind === "movie";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -39,17 +38,17 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
         className="flex h-auto w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:max-w-6xl sm:flex-row"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <DialogTitle className="sr-only">{item.caption ?? item.externalId}</DialogTitle>
+        <DialogTitle className="sr-only">{imdb.caption ?? imdb.externalId}</DialogTitle>
         <DialogDescription className="sr-only">
-          Detailed information about {item.caption ?? item.externalId}
+          Detailed information about {imdb.caption ?? imdb.externalId}
         </DialogDescription>
 
         {/* Poster Column */}
         <div className="relative aspect-2/3 h-fit w-3/5 shrink-0 overflow-hidden bg-muted">
-          {metadata.poster && metadata.poster !== "N/A" ? (
+          {imdb.poster && imdb.poster !== "N/A" ? (
             <img
-              src={metadata.poster}
-              alt={item.caption ?? item.externalId}
+              src={imdb.poster}
+              alt={imdb.caption ?? imdb.externalId}
               className="h-full w-full object-cover"
               loading="lazy"
             />
@@ -69,7 +68,7 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
           {/* Kind Badge */}
           <div className="absolute top-3 left-3 bg-background/90 px-2 py-1 backdrop-blur-sm">
             <span className="text-[9px] text-muted-foreground uppercase tracking-wider">
-              {metadata.kind}
+              {imdb.kind}
             </span>
           </div>
 
@@ -90,11 +89,11 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
           <div className="space-y-2 border-border/50 border-b p-5 pr-10">
             <div className="flex items-start justify-between gap-3">
               <h2 className="font-semibold text-base text-foreground leading-snug">
-                {item.caption ?? item.externalId}
+                {imdb.caption ?? imdb.externalId}
               </h2>
 
               <Button asChild variant="outline" size="xs" className="text-[10px]">
-                <a href={item.url} target="_blank" rel="noopener noreferrer">
+                <a href={imdb.url} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="h-3 w-3" />
                   IMDb
                 </a>
@@ -102,29 +101,29 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
             </div>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="text-[10px] text-muted-foreground">{metadata.year ?? "—"}</span>
-              {isMovie && "rated" in metadata && metadata.rated && metadata.rated !== "N/A" && (
+              <span className="text-[10px] text-muted-foreground">{imdb.year ?? "—"}</span>
+              {isMovie && "rated" in imdb && imdb.rated && imdb.rated !== "N/A" && (
                 <span className="border border-border/50 px-1.5 py-0.5 text-[9px] text-muted-foreground uppercase">
-                  {metadata.rated}
+                  {imdb.rated}
                 </span>
               )}
-              {metadata.runtime > 0 && (
+              {imdb.runtime > 0 && (
                 <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                   <Clock className="h-3 w-3" />
-                  {metadata.runtime} min
+                  {imdb.runtime} min
                 </span>
               )}
-              {metadata.votes > 0 && (
+              {imdb.votes > 0 && (
                 <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                   <Users className="h-3 w-3" />
-                  {metadata.votes.toLocaleString()} votes
+                  {imdb.votes.toLocaleString()} votes
                 </span>
               )}
             </div>
 
-            {metadata.genres && metadata.genres.length > 0 && (
+            {imdb.genres && imdb.genres.length > 0 && (
               <div className="flex flex-wrap gap-1.5 pt-1">
-                {metadata.genres.map((g) => (
+                {imdb.genres.map((g) => (
                   <Badge
                     key={g}
                     size="sm"
@@ -142,73 +141,73 @@ export function ImdbDetailsDialog({ item, open, onOpenChange }: Props) {
           </div>
 
           {/* Plot */}
-          {metadata.plot && metadata.plot !== "N/A" && (
+          {imdb.plot && imdb.plot !== "N/A" && (
             <div className="p-5">
-              <p className="text-[11px] text-foreground/80 leading-relaxed">{metadata.plot}</p>
+              <p className="text-[11px] text-foreground/80 leading-relaxed">{imdb.plot}</p>
             </div>
           )}
 
           <Separator className="bg-border/50" />
 
-          {/* Metadata Grid */}
+          {/* Imdb Grid */}
           <div className="grid grid-cols-1 gap-0 sm:grid-cols-2">
             {/* Directors */}
-            {metadata.directors && metadata.directors.length > 0 && (
+            {imdb.directors && imdb.directors.length > 0 && (
               <KeyValue
                 className="border-border/30 border-b"
                 icon={<Clapperboard className="h-3 w-3" />}
                 label="Directors"
-                values={metadata.directors}
+                values={imdb.directors}
               />
             )}
 
             {/* Writers */}
-            {metadata.writers && metadata.writers.length > 0 && (
+            {imdb.writers && imdb.writers.length > 0 && (
               <KeyValue
                 className="border-border/30 border-b"
                 icon={<Layers className="h-3 w-3" />}
                 label="Writers"
-                values={metadata.writers}
+                values={imdb.writers}
               />
             )}
 
             {/* Actors */}
-            {metadata.actors && metadata.actors.length > 0 && (
+            {imdb.actors && imdb.actors.length > 0 && (
               <KeyValue
                 className="border-border/30 border-b sm:col-span-2"
                 icon={<Users className="h-3 w-3" />}
                 label="Cast"
-                values={metadata.actors}
+                values={imdb.actors}
               />
             )}
 
             {/* Released */}
-            {metadata.released && metadata.released !== "N/A" && (
+            {imdb.released && imdb.released !== "N/A" && (
               <KeyValue
                 className="border-border/30 border-b"
                 icon={<Calendar className="h-3 w-3" />}
                 label="Released"
-                value={metadata.released}
+                value={imdb.released}
               />
             )}
 
             {/* Box Office (Movie only) */}
-            {isMovie && "boxOffice" in metadata && metadata.boxOffice && (
+            {isMovie && "boxOffice" in imdb && imdb.boxOffice && (
               <KeyValue
                 className="border-border/30 border-b"
                 icon={<DollarSign className="h-3 w-3" />}
                 label="Box Office"
-                value={`$${metadata.boxOffice.toLocaleString()}`}
+                value={`$${imdb.boxOffice.toLocaleString()}`}
               />
             )}
 
             {/* Seasons (TV only) */}
-            {!isMovie && "seasons" in metadata && metadata.seasons > 0 && (
+            {!isMovie && "seasons" in imdb && imdb.seasons > 0 && (
               <KeyValue
                 className="border-border/30 border-b"
                 icon={<Layers className="h-3 w-3" />}
                 label="Seasons"
-                value={String(metadata.seasons)}
+                value={String(imdb.seasons)}
               />
             )}
           </div>

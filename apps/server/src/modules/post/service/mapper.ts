@@ -4,6 +4,7 @@ import type { ItemEntity } from "@/modules/item/schema";
 import type { Media } from "@/modules/media/schema";
 import { normalizeMedia } from "@/modules/media/service";
 import type { RelationEntity } from "@/modules/relation/schema";
+import { replaceNullWithUndefined } from "@/utils/object";
 
 type RawItem = ItemEntity & {
   media: Media[];
@@ -27,8 +28,15 @@ export function mapItemToPost(item: RawItem): Post {
     .filter((r) => r.relationType === "tagged")
     .map((r) => ({ ...mapProfile(r.toItem), x: r.x, y: r.y }));
 
+  const normalizedItem = replaceNullWithUndefined(item);
+
+  if (item.kind !== "post" || item.metadata?.kind !== "post") {
+    throw new Error(`Item ${item.id} is not an Instagram post`);
+  }
+
   return {
-    ...mapItem(item),
+    ...normalizedItem,
+    ...item.metadata,
     creator: mapProfile(creator),
     media: normalizeMedia(item.media),
     taggedItems: taggedItem,
@@ -39,35 +47,25 @@ export function mapItemToPost(item: RawItem): Post {
   };
 }
 
-function mapItem(item: ItemEntity & { media: Media[]; tags?: { tag: { id: string } }[] }) {
-  return {
-    ...item,
-    media: normalizeMedia(item.media),
-    collectionIds: [],
-    tagIds: item.tags?.map((t) => t.tag.id) ?? [],
-    note: item.note ?? undefined,
-    rate: item.rate ?? undefined,
-    caption: item.caption ?? undefined,
-    deletedAt: item.deletedAt ?? undefined,
-    createdAt: item.createdAt,
-    favorite: item.favorite ?? undefined,
-    metadata: item.metadata ?? undefined,
-    updatedAt: item.updatedAt,
-    externalId: item.externalId,
-    kind: item.kind,
-    platform: item.platform,
-    url: item.url,
-  };
-}
-
 function mapProfile(item: ItemEntity & { media: Media[] }) {
-  return {
-    ...mapItem(item),
+  const normalizedItem = replaceNullWithUndefined(item);
+
+  const profile: Post["creator"] = {
+    ...normalizedItem,
     name: "",
     username: "",
-    // media: normalizeMedia(item.media)[0],
     avatar: `${item.platform}/avatar/${item.externalId}.jpg`,
+    collectionIds: [],
+    tagIds: [],
+    kind: "profile",
   };
+
+  if (normalizedItem.metadata.kind === "profile") {
+    profile.name = normalizedItem.metadata.name || "";
+    profile.username = normalizedItem.metadata.username || "";
+  }
+
+  return profile;
 }
 
 function mapCollection(collections: RawItem["collections"]) {

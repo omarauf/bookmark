@@ -26,7 +26,7 @@ export function YoutubeList() {
           }}
         >
           {flatItems.map((item) => (
-            <YoutubeCard key={item.id} item={item} />
+            <YoutubeCard key={item.id} youtube={item} />
           ))}
         </div>
       )}

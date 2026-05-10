@@ -3,7 +3,7 @@ import {
   BasePaginationQuerySchema,
   PaginationResultSchema,
 } from "../../foundation/pagination-query";
-import { AnimeItemSchema } from "./entity";
+import { AnimeSchema } from "./entity";
 import { AnimeFilterSchema } from "./filter";
 
 export const AnimeSchemas = {
@@ -13,7 +13,7 @@ export const AnimeSchemas = {
     request: BasePaginationQuerySchema.extend({
       ...AnimeFilterSchema.shape,
     }),
-    response: PaginationResultSchema(AnimeItemSchema),
+    response: PaginationResultSchema(AnimeSchema),
   },
 
   genres: {
@@ -22,7 +22,7 @@ export const AnimeSchemas = {
 
   get: {
     request: z.object({ id: z.uuid() }),
-    response: AnimeItemSchema,
+    response: AnimeSchema,
   },
 
   sync: {
@@ -31,5 +31,5 @@ export const AnimeSchemas = {
   },
 };
 
-export type AnimeItem = z.infer<typeof AnimeItemSchema>;
+export type Anime = z.infer<typeof AnimeSchema>;
 export type ListAnime = z.infer<typeof AnimeSchemas.list.request>;

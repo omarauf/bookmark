@@ -28,6 +28,7 @@
     "./views/imdb": "./src/views/imdb/index.ts",
     "./views/anime": "./src/views/anime/index.ts",
     "./views/profile": "./src/views/profile/index.ts",
+    "./views/item": "./src/views/item/index.ts",
     "./views/post": "./src/views/post/index.ts",
     "./views/youtube": "./src/views/youtube/index.ts"
   },

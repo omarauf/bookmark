@@ -73,11 +73,11 @@ function StarRating({
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="h-px flex-1 bg-gradient-to-r from-amber-500/20 to-transparent" />
+      <div className="h-px flex-1 bg-linear-to-r from-amber-500/20 to-transparent" />
       <span className="text-[9px] text-muted-foreground/60 uppercase tracking-[0.2em]">
         {children}
       </span>
-      <div className="h-px flex-1 bg-gradient-to-l from-amber-500/20 to-transparent" />
+      <div className="h-px flex-1 bg-linear-to-l from-amber-500/20 to-transparent" />
     </div>
   );
 }
@@ -88,8 +88,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
   const queryClient = useQueryClient();
-  const metadata = item.metadata;
-  const isMovie = metadata.kind === "movie";
+  const isMovie = item.kind === "movie";
 
   const tagsQuery = useQuery(orpc.tag.options.queryOptions());
   const collectionsQuery = useQuery(orpc.collection.options.queryOptions());
@@ -122,7 +121,7 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="flex h-auto w-full flex-col gap-0 overflow-hidden border-amber-500/15 bg-background p-0 shadow-2xl sm:h-[680px] sm:w-[440px]"
+        className="flex h-auto w-full flex-col gap-0 overflow-hidden border-amber-500/15 bg-background p-0 shadow-2xl sm:h-170 sm:w-110"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogTitle className="sr-only">Update {item.caption ?? item.externalId}</DialogTitle>
@@ -131,16 +130,16 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
         </DialogDescription>
 
         {/* ── Cinematic Header Strip ── */}
-        <div className="relative shrink-0 overflow-hidden bg-gradient-to-br from-background to-amber-500/[0.04]">
+        <div className="relative shrink-0 overflow-hidden bg-linear-to-br from-background to-amber-500/4">
           {/* Amber top hairline */}
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-amber-500/30 to-transparent" />
 
           <div className="flex items-start gap-4 p-5 pr-12">
             {/* Poster */}
             <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-sm bg-muted shadow-lg ring-1 ring-amber-500/10">
-              {metadata.poster && metadata.poster !== "N/A" ? (
+              {item.poster && item.poster !== "N/A" ? (
                 <img
-                  src={metadata.poster}
+                  src={item.poster}
                   alt={item.caption ?? item.externalId}
                   className="h-full w-full object-cover"
                   loading="lazy"
@@ -156,7 +155,7 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
               )}
               <div className="absolute top-1 left-1 bg-background/90 px-1 py-0.5 backdrop-blur-sm">
                 <span className="text-[8px] text-muted-foreground uppercase tracking-wider">
-                  {metadata.kind}
+                  {item.kind}
                 </span>
               </div>
             </div>
@@ -167,16 +166,16 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
                 {item.caption ?? item.externalId}
               </h2>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-muted-foreground">{metadata.year ?? "—"}</span>
-                {isMovie && "rated" in metadata && metadata.rated && metadata.rated !== "N/A" && (
+                <span className="text-[10px] text-muted-foreground">{item.year ?? "—"}</span>
+                {isMovie && "rated" in item && item.rated && item.rated !== "N/A" && (
                   <span className="border border-border/50 px-1 py-0.5 text-[9px] text-muted-foreground uppercase">
-                    {metadata.rated}
+                    {item.rated}
                   </span>
                 )}
               </div>
-              {metadata.genres && metadata.genres.length > 0 && (
+              {item.genres && item.genres.length > 0 && (
                 <span className="truncate text-[9px] text-muted-foreground/50 uppercase tracking-wider">
-                  {metadata.genres.slice(0, 3).join(" · ")}
+                  {item.genres.slice(0, 3).join(" · ")}
                 </span>
               )}
             </div>
@@ -275,7 +274,7 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
                 </form.AppField>
               </div>
 
-              <Separator className="bg-gradient-to-r from-transparent via-border/50 to-transparent" />
+              <Separator className="bg-linear-to-r from-transparent via-border/50 to-transparent" />
 
               {/* ── Organization ── */}
               <div className="space-y-4">
@@ -313,7 +312,7 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
           </ScrollArea>
 
           {/* ── Footer ── */}
-          <div className="flex shrink-0 items-center justify-between gap-3 border-amber-500/10 border-t bg-gradient-to-b from-transparent to-amber-500/[0.02] p-5">
+          <div className="flex shrink-0 items-center justify-between gap-3 border-amber-500/10 border-t bg-linear-to-b from-transparent to-amber-500/2 p-5">
             <Button
               variant="ghost"
               size="sm"

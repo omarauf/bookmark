@@ -3,11 +3,11 @@ import { MusicIcon } from "lucide-react";
 import { usePostContext } from "../utils/context";
 
 export function Music() {
-  const { metadata } = usePostContext();
+  const post = usePostContext();
 
-  if (metadata.platform === "tiktok") return <TiktokMusic metadata={metadata} />;
+  if (post.platform === "tiktok") return <TiktokMusic metadata={post} />;
 
-  if (metadata.platform === "instagram") return <InstagramMusic metadata={metadata} />;
+  if (post.platform === "instagram") return <InstagramMusic metadata={post} />;
 
   return null;
 }

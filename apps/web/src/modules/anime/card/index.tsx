@@ -1,5 +1,5 @@
 import { useSearch } from "@tanstack/react-router";
-import type { AnimeItem } from "@workspace/contracts/views/anime";
+import type { Anime } from "@workspace/contracts/views/anime";
 import { Star, Tv } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -8,15 +8,14 @@ import { AnimeDetailsDialog } from "../dialogs/details";
 import { AnimeUpdateDialog } from "../dialogs/update";
 
 type Props = {
-  item: AnimeItem;
+  anime: Anime;
 };
 
-export function AnimeCard({ item }: Props) {
+export function AnimeCard({ anime }: Props) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
-  const metadata = item.metadata;
 
-  const rating = metadata.rating ?? 0;
+  const rating = anime.rating ?? 0;
   const ratingColor =
     rating >= 7 ? "text-emerald-500" : rating >= 5 ? "text-amber-500" : "text-rose-500";
 
@@ -41,10 +40,10 @@ export function AnimeCard({ item }: Props) {
       >
         {/* Poster */}
         <div className="relative aspect-2/3 overflow-hidden bg-muted">
-          {metadata.poster ? (
+          {anime.poster ? (
             <img
-              src={metadata.poster}
-              alt={item.caption ?? item.externalId}
+              src={anime.poster}
+              alt={anime.caption ?? anime.externalId}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
@@ -56,7 +55,7 @@ export function AnimeCard({ item }: Props) {
 
           {/* Kind Badge */}
           <div className="absolute top-2 left-2 flex items-center gap-0.5 bg-background/90 px-1.5 py-0.5 text-muted-foreground backdrop-blur-sm">
-            <span className={cn("text-[9px]")}>{metadata.mediaType ?? "anime"}</span>
+            <span className={cn("text-[9px]")}>{anime.mediaType ?? "anime"}</span>
           </div>
 
           {/* Rating Badge */}
@@ -71,24 +70,24 @@ export function AnimeCard({ item }: Props) {
         {/* Info */}
         <div className="space-y-1 p-2">
           <h3 className="line-clamp-2 text-nowrap font-medium text-foreground text-xs leading-tight">
-            {item.caption ?? item.externalId}
+            {anime.caption ?? anime.externalId}
           </h3>
 
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-muted-foreground">
-              {metadata.startSeasonYear ?? metadata.startDate?.slice(0, 4) ?? "—"}
+              {anime.startSeasonYear ?? anime.startDate?.slice(0, 4) ?? "—"}
             </span>
-            {metadata.genres && metadata.genres.length > 0 && (
+            {anime.genres && anime.genres.length > 0 && (
               <span className="truncate text-[9px] text-muted-foreground/60 uppercase tracking-wider">
-                {metadata.genres[0]}
+                {anime.genres[0]}
               </span>
             )}
           </div>
         </div>
       </Card>
 
-      <AnimeDetailsDialog item={item} open={detailsOpen} onOpenChange={setDetailsOpen} />
-      <AnimeUpdateDialog item={item} open={updateOpen} onOpenChange={setUpdateOpen} />
+      <AnimeDetailsDialog anime={anime} open={detailsOpen} onOpenChange={setDetailsOpen} />
+      <AnimeUpdateDialog item={anime} open={updateOpen} onOpenChange={setUpdateOpen} />
     </>
   );
 }

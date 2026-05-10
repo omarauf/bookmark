@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { ItemSchema } from "../../core/item/entity";
-import { PreviewSchema } from "../../platforms/chrome";
+import { ItemBaseViewSchema } from "../../core/item/entity";
+import { ChromeLinkMetadataSchema } from "../../platforms/chrome";
 
-export const LinkSchema = ItemSchema.extend({
-  path: z.string(),
-  preview: PreviewSchema.optional(),
+export const LinkSchema = ItemBaseViewSchema.extend({
+  ...ChromeLinkMetadataSchema.shape,
 });
 
 export const FolderTreeSchema = z.object({

@@ -2,10 +2,10 @@ import { Pin } from "lucide-react";
 import { usePostContext } from "../utils/context";
 
 export function Location() {
-  const { metadata } = usePostContext();
+  const post = usePostContext();
 
   const location =
-    metadata.platform === "instagram" && metadata.kind === "post" ? metadata.location : undefined;
+    post.platform === "instagram" && post.kind === "post" ? post.location : undefined;
   if (!location) return null;
 
   return (

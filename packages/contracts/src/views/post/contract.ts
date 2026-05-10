@@ -23,5 +23,4 @@ export const PostSchemas = {
 };
 
 export type Post = z.infer<typeof PostSchema>;
-export type PostMetadata = Post["metadata"];
 export type ListPost = z.infer<typeof PostSchemas.list.request>;

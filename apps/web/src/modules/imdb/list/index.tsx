@@ -26,7 +26,7 @@ export function ImdbList() {
           }}
         >
           {flatItems.map((item) => (
-            <ImdbCard key={item.id} item={item} />
+            <ImdbCard key={item.id} imdb={item} />
           ))}
         </div>
       )}

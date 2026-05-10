@@ -25,3 +25,5 @@ export const ItemSchema = CreateItemSchema.extend({
   createdAt: z.date(),
   updatedAt: z.date(),
 });
+
+export const ItemBaseViewSchema = ItemSchema.omit({ metadata: true });

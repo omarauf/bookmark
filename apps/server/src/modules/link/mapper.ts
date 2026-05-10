@@ -45,9 +45,8 @@ export function mapItemToLink(item: RawItem): Link {
     rate: normalizedItem.rate,
     favorite: normalizedItem.favorite,
     externalId: normalizedItem.externalId,
-    kind: normalizedItem.metadata?.kind,
-    metadata: normalizedItem.metadata,
-    platform: normalizedItem.platform,
+    kind: "link",
+    platform: "chrome",
   };
 
   if (item.metadata.kind === "link") {

@@ -1,4 +1,4 @@
-import type { AnimeItem } from "@workspace/contracts/views/anime";
+import type { Anime } from "@workspace/contracts/views/anime";
 import type { ItemEntity } from "@/modules/item/schema";
 
 type RawItem = ItemEntity & {
@@ -23,8 +23,8 @@ type RawItem = ItemEntity & {
   }[];
 };
 
-export function mapItemToAnime(items: RawItem[]): AnimeItem[] {
-  const animeArr: AnimeItem[] = [];
+export function mapItemToAnime(items: RawItem[]): Anime[] {
+  const animeArr: Anime[] = [];
 
   for (const item of items) {
     if (item.platform !== "mal" || item.metadata?.platform !== "mal") {
@@ -35,6 +35,7 @@ export function mapItemToAnime(items: RawItem[]): AnimeItem[] {
     const tagIds = item.tags?.map((t) => t.tag.id);
 
     animeArr.push({
+      ...item.metadata,
       id: item.id,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
@@ -47,7 +48,6 @@ export function mapItemToAnime(items: RawItem[]): AnimeItem[] {
       favorite: item.favorite ?? undefined,
       note: item.note ?? undefined,
       rate: item.rate ?? undefined,
-      metadata: item.metadata ?? undefined,
       collectionIds: collectionIds || [],
       tagIds: tagIds || [],
     });

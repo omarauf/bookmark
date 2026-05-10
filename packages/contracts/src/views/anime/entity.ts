@@ -1,6 +1,6 @@
-import { ItemSchema } from "../../core/item/entity";
+import { ItemBaseViewSchema } from "../../core/item/entity";
 import { AnimeMetadataSchema } from "../../platforms/anime";
 
-export const AnimeItemSchema = ItemSchema.extend({
-  metadata: AnimeMetadataSchema,
+export const AnimeSchema = ItemBaseViewSchema.extend({
+  ...AnimeMetadataSchema.shape,
 });

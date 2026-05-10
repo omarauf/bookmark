@@ -26,7 +26,7 @@ export function AnimeList() {
           }}
         >
           {flatItems.map((item) => (
-            <AnimeCard key={item.id} item={item} />
+            <AnimeCard key={item.id} anime={item} />
           ))}
         </div>
       )}

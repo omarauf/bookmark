@@ -4,11 +4,11 @@ import { fShortenNumber } from "@/utils/format-number";
 import { usePostContext } from "../utils/context";
 
 export function Statistics() {
-  const { metadata } = usePostContext();
+  const post = usePostContext();
 
-  if (metadata.platform === "tiktok") return <TiktokStatistics metadata={metadata} />;
+  if (post.platform === "tiktok") return <TiktokStatistics metadata={post} />;
 
-  if (metadata.platform === "instagram") return <InstagramStatistics metadata={metadata} />;
+  if (post.platform === "instagram") return <InstagramStatistics metadata={post} />;
 
   return null;
 }

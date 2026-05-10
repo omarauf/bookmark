@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { ItemSchema } from "../../core/item/entity";
+import { ItemBaseViewSchema } from "../../core/item/entity";
 
-export const ProfileSchema = ItemSchema.extend({
+export const ProfileSchema = ItemBaseViewSchema.extend({
+  kind: z.literal("profile"),
   name: z.string(),
   username: z.string(),
   avatar: z.string(),

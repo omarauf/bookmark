@@ -3,7 +3,7 @@ import {
   BasePaginationQuerySchema,
   PaginationResultSchema,
 } from "../../foundation/pagination-query";
-import { YoutubeItemSchema } from "./entity";
+import { YoutubeSchema } from "./entity";
 import { YoutubeFilterSchema } from "./filter";
 
 export const YoutubeSchemas = {
@@ -11,7 +11,7 @@ export const YoutubeSchemas = {
     request: BasePaginationQuerySchema.extend({
       ...YoutubeFilterSchema.shape,
     }),
-    response: PaginationResultSchema(YoutubeItemSchema),
+    response: PaginationResultSchema(YoutubeSchema),
   },
 
   genres: {
@@ -20,7 +20,7 @@ export const YoutubeSchemas = {
 
   get: {
     request: z.object({ id: z.uuid() }),
-    response: YoutubeItemSchema,
+    response: YoutubeSchema,
   },
 
   sync: {
@@ -29,5 +29,5 @@ export const YoutubeSchemas = {
   },
 };
 
-export type YoutubeItem = z.infer<typeof YoutubeItemSchema>;
+export type Youtube = z.infer<typeof YoutubeSchema>;
 export type ListYoutube = z.infer<typeof YoutubeSchemas.list.request>;

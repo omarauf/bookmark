@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ItemSchemas, type UpdateItem } from "@workspace/contracts/item";
-import type { AnimeItem } from "@workspace/contracts/views/anime";
+import type { Anime } from "@workspace/contracts/views/anime";
 import { toast } from "sonner";
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ import { orpc } from "@/integrations/orpc";
 import { getError } from "@/utils/error";
 
 type Props = {
-  item: AnimeItem;
+  item: Anime;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };

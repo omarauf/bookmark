@@ -35,6 +35,7 @@ export function mapItemToImdb(items: RawItem[]): ImdbItem[] {
     const tagIds = item.tags?.map((t) => t.tag.id);
 
     imdbArr.push({
+      ...item.metadata,
       id: item.id,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
@@ -42,12 +43,10 @@ export function mapItemToImdb(items: RawItem[]): ImdbItem[] {
       caption: item.caption ?? undefined,
       deletedAt: item.deletedAt ?? undefined,
       externalId: item.externalId,
-      kind: item.metadata?.kind,
       platform: item.platform,
       favorite: item.favorite ?? undefined,
       note: item.note ?? undefined,
       rate: item.rate ?? undefined,
-      metadata: item.metadata ?? undefined,
       collectionIds: collectionIds || [],
       tagIds: tagIds || [],
     });

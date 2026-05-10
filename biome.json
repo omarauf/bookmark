@@ -58,7 +58,7 @@
         }
       }
     },
-    "includes": ["**", "!**/src/components/data-table/*.tsx", "!**/src/components/ui/*.tsx"]
+    "includes": ["**", "!**/src/components/ui/*.tsx"]
   },
   "javascript": {
     "formatter": {

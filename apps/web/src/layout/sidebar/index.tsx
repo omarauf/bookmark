@@ -1,3 +1,4 @@
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sidebar,
   SidebarContent,
@@ -25,11 +26,13 @@ export function AppSidebar() {
          /* if you want to use the normal app title instead of TeamSwitch dropdown */}
         {/* <AppTitle /> */}
       </SidebarHeader>
-      <SidebarContent>
-        {sidebarData.navGroups.map((props) => (
-          <NavGroup key={props.title} {...props} />
-        ))}
-      </SidebarContent>
+      <ScrollArea className="h-full min-h-0">
+        <SidebarContent>
+          {sidebarData.navGroups.map((props) => (
+            <NavGroup key={props.title} {...props} />
+          ))}
+        </SidebarContent>
+      </ScrollArea>
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>

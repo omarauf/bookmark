@@ -1,11 +1,13 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { LayoutGrid, LayoutList, Search, X } from "lucide-react";
 import { useAppForm } from "@/components/form";
 import { XToggleGroup } from "@/components/inputs/toggle-group";
+import { RefreshButton } from "@/components/refresh-button";
 import { Button } from "@/components/ui/button";
+import { orpc } from "@/integrations/orpc";
 import { Header } from "@/layout/header";
 import { FetchPreviewsDialog } from "../dialogs/fetch-previews-dialog";
-import { RefreshButton } from "./refresh-button";
 
 type Props = {
   className?: string;
@@ -14,6 +16,7 @@ type Props = {
 export function Toolbar({ className }: Props) {
   const { view, q } = useSearch({ from: "/_authenticated/links/" });
   const navigate = useNavigate({ from: "/links/" });
+  const queryClient = useQueryClient();
 
   const form = useAppForm({
     defaultValues: {
@@ -30,6 +33,13 @@ export function Toolbar({ className }: Props) {
 
   const handleViewChange = (newView: "tree" | "table") => {
     navigate({ search: (s) => ({ ...s, view: newView }) });
+  };
+
+  const onRefresh = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: orpc.link.list.key() }),
+      queryClient.invalidateQueries({ queryKey: orpc.link.tree.key() }),
+    ]);
   };
 
   return (
@@ -64,7 +74,7 @@ export function Toolbar({ className }: Props) {
         onChange={(v) => v && handleViewChange(v)}
       />
 
-      <RefreshButton />
+      <RefreshButton onRefresh={onRefresh} />
 
       <FetchPreviewsDialog />
     </Header>

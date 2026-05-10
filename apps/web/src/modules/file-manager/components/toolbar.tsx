@@ -1,14 +1,24 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Grid3X3, List, Plus, Upload } from "lucide-react";
 import { useShallow } from "zustand/shallow";
+import { RefreshButton } from "@/components/refresh-button";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { orpc } from "@/integrations/orpc";
 import { ThemeSwitch } from "@/theme/theme-switch";
 import { useStore } from "../store";
 import { FilesDropMenu } from "./drop-menu";
-import { RefreshButton } from "./refresh-button";
 
 export function Toolbar() {
   const [viewMode, openDialog] = useStore(useShallow((s) => [s.viewMode, s.openDialog]));
+  const queryClient = useQueryClient();
+
+  const onRefresh = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: orpc.browse.list.key() }),
+      queryClient.invalidateQueries({ queryKey: orpc.folder.tree.key() }),
+    ]);
+  };
 
   return (
     <div className="flex items-center gap-2 border-border border-b bg-card p-3">
@@ -32,7 +42,8 @@ export function Toolbar() {
           <Upload className="mr-1 h-4 w-4" />
           Upload
         </Button>
-        <RefreshButton />
+
+        <RefreshButton onRefresh={onRefresh} />
       </div>
 
       <Separator orientation="vertical" className="h-6" />

@@ -39,6 +39,8 @@ function JobGroupDetailPage() {
         </div>
       </div>
 
+      <pre>{JSON.stringify(search, null, 2)}</pre>
+
       <ScrollArea className="min-h-0 flex-1">
         <div className="space-y-6 p-6">
           <JobGroupAnalytics groupId={id} />

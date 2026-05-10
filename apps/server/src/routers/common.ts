@@ -9,6 +9,7 @@ import { itemRouter } from "@/modules/item/route";
 import { jobRouter } from "@/modules/job/route";
 import { linkRouter } from "@/modules/link/route";
 import { postRouter } from "@/modules/post/route";
+import { profileRouter } from "@/modules/profile/route";
 import { tagRouter } from "@/modules/tag/route";
 import { youtubeRouter } from "@/modules/youtube/route";
 
@@ -16,6 +17,7 @@ export const appRouter = {
   import: importRouter,
   tag: tagRouter,
   post: postRouter,
+  profile: profileRouter,
   collection: collectionRouter,
   item: itemRouter,
   link: linkRouter,

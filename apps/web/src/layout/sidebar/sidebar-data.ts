@@ -17,6 +17,7 @@ import {
   Tags,
   Tv,
   Upload,
+  UserCircle,
   Users,
   Video,
   Workflow,
@@ -57,6 +58,7 @@ export const sidebarData: SidebarData = {
         { title: "Instagram", url: "/instagram", icon: InstagramIcon },
         { title: "Twitter", url: "/twitter", icon: TwitterIcon },
         { title: "TikTok", url: "/tiktok", icon: Video },
+        { title: "Profiles", url: "/profiles", icon: UserCircle },
       ],
     },
     {

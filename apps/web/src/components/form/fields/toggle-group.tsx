@@ -16,6 +16,7 @@ type Props = FormControlProps & {
   clearable?: boolean;
   variant?: "default" | "outline" | "falcon";
   size?: "default" | "sm" | "lg";
+  defaultValue?: string;
 };
 
 export function ToggleGroupField({
@@ -26,6 +27,7 @@ export function ToggleGroupField({
   clearable,
   variant,
   size,
+  defaultValue,
   ...props
 }: Props) {
   const id = useId();
@@ -54,7 +56,7 @@ export function ToggleGroupField({
     >
       <ToggleGroup
         type="single"
-        value={value || ""}
+        value={value || defaultValue || ""}
         onValueChange={onChangeHandler}
         variant={variant}
         size={size}

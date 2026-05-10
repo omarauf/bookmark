@@ -24,7 +24,6 @@ export class TwitterHandler implements PlatformHandler {
       for (const item of post.data.bookmark_timeline_v2.timeline.instructions) {
         for (const entry of item.entries) {
           if (entry.content.itemContent?.tweet_results === undefined) {
-            invalid++;
             continue;
           }
           const parsed = this._parse(entry.content.itemContent?.tweet_results);
@@ -44,12 +43,20 @@ export class TwitterHandler implements PlatformHandler {
       return { items: [], invalidItems: [], relations: [], downloadTasks: [] };
     }
 
-    const results = jsonData
+    const entries = jsonData
       .flatMap((post) => post.data.bookmark_timeline_v2.timeline.instructions)
-      .flatMap((item) => item.entries)
-      .map((entry) => entry.content.itemContent?.tweet_results)
-      .map((tweet) => this._parse(tweet))
-      .filter(Boolean) as ImportPayload[];
+      .flatMap((item) => item.entries);
+
+    const results: ImportPayload[] = [];
+
+    for (const entry of entries) {
+      if (entry.content.itemContent?.tweet_results === undefined) {
+        results.push({ items: [], invalidItems: [entry], relations: [], downloadTasks: [] });
+        continue;
+      }
+      const parsed = this._parse(entry.content.itemContent?.tweet_results);
+      results.push(parsed);
+    }
 
     return {
       items: results.flatMap((r) => r.items),
@@ -59,9 +66,7 @@ export class TwitterHandler implements PlatformHandler {
     };
   }
 
-  private _parse(data: TweetResults | undefined): ImportPayload | undefined {
-    if (!data) return { items: [], invalidItems: [data], relations: [], downloadTasks: [] };
-
+  private _parse(data: TweetResults): ImportPayload {
     const tweet = postParser(getTweet(data));
     const creator = creatorParser(getCreator(data));
     const createdRelations = relation(tweet.item, creator.item, "created_by");

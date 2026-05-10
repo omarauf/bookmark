@@ -10,17 +10,6 @@ import { TwitterCard } from "@/modules/twitter/card";
 export const Route = createFileRoute("/_authenticated/twitter/")({
   component: Twitter,
   validateSearch: PostSchemas.list.request,
-  loaderDeps: ({ search }) => search,
-  loader: async ({ context: { orpc, queryClient }, deps }) => {
-    await queryClient.prefetchInfiniteQuery(
-      orpc.post.list.infiniteOptions({
-        initialPageParam: 1,
-        input: (searchParams) => ({ ...deps, page: searchParams, limit: 30 }),
-        getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
-      }),
-    );
-    return;
-  },
 });
 
 function Twitter() {
@@ -28,7 +17,7 @@ function Twitter() {
   const postQuery = useSuspenseInfiniteQuery(
     orpc.post.list.infiniteOptions({
       initialPageParam: 1,
-      input: (searchParams) => ({ ...search, page: searchParams, limit: 30 }),
+      input: (searchParams) => ({ ...search, page: searchParams, limit: 30, platform: "twitter" }),
       getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
     }),
   );
@@ -44,7 +33,7 @@ function Twitter() {
   // );
 
   return (
-    <Main className="py-0">
+    <Main className="flex h-full">
       <InfiniteScroll
         onLoadMore={postQuery.fetchNextPage}
         hasNextPage={postQuery.hasNextPage}

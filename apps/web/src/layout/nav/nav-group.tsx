@@ -80,8 +80,6 @@ function SidebarMenuCollapsible({ item, href }: { item: NavItem; href: string })
     </>
   );
 
-  console.log(item.url);
-
   return (
     <Collapsible
       asChild
@@ -122,8 +120,6 @@ function SidebarMenuCollapsible({ item, href }: { item: NavItem; href: string })
 
 function SidebarMenuCollapsedDropdown({ item, href }: { item: NavItem; href: string }) {
   if (!item.items) return null;
-
-  console.log("Rendering collapsed dropdown for", item);
 
   return (
     <SidebarMenuItem>

@@ -35,7 +35,18 @@ export async function listPosts(input: ListPost) {
     db.query.items.findMany({
       where: filterExpression,
       with: {
-        outgoing: { with: { toItem: { with: { media: true } } } },
+        // here wa are fetching the related items for 2 levels
+        outgoing: {
+          with: {
+            toItem: {
+              with: {
+                media: true,
+                // second level of outgoing relation to fetch the quote item
+                outgoing: { with: { toItem: { with: { media: true } } } },
+              },
+            },
+          },
+        },
         collections: { with: { collection: true } },
         tags: { with: { tag: true } },
         media: true,
@@ -196,24 +207,4 @@ function buildItemFilter(filter: PostFilter) {
   }
 
   return and(...whereClauses);
-}
-
-export async function getPost(id: string) {
-  const post = await db.query.items.findFirst({
-    where: (items, { eq }) => eq(items.id, id),
-    with: {
-      outgoing: { with: { toItem: { with: { media: true } } } },
-      media: true,
-      collections: { with: { collection: true } },
-      tags: { with: { tag: true } },
-    },
-    // extras: {
-    //   // Add the window function as an extra column
-    //   totalCount: sql<number>`count(*) over()`.as("total_count"),
-    // },
-  });
-
-  if (!post) return null;
-
-  return mapItemToPost(post);
 }

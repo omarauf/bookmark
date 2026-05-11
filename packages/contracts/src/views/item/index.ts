@@ -6,20 +6,20 @@ import { InstagramSchema, TiktokSchema, TwitterSchema } from "../post/entity";
 import { ProfileSchema } from "../profile";
 import { YoutubeSchema } from "../youtube";
 
-export const ItemViewSchema = z.discriminatedUnion("platform", [
-  z.discriminatedUnion("kind", [ProfileSchema, InstagramSchema]),
+export const ItemViewSchema = z.discriminatedUnion("kind", [
+  z.discriminatedUnion("platform", [InstagramSchema, TiktokSchema, TwitterSchema]),
 
-  z.discriminatedUnion("kind", [ProfileSchema, TiktokSchema]),
+  ProfileSchema,
 
-  z.discriminatedUnion("kind", [ProfileSchema, TwitterSchema]),
+  LinkSchema,
 
-  z.discriminatedUnion("kind", [LinkSchema]),
+  MovieSchema,
 
-  z.discriminatedUnion("kind", [MovieSchema, TvSchema]),
+  TvSchema,
 
-  z.discriminatedUnion("kind", [AnimeSchema]),
+  AnimeSchema,
 
-  z.discriminatedUnion("kind", [YoutubeSchema]),
+  YoutubeSchema,
 ]);
 
 export type ItemView = z.infer<typeof ItemViewSchema>;

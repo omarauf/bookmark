@@ -42,36 +42,36 @@ export function TwitterCard({ post }: Props) {
 
       <TwitterMediaCard media={post.media} />
 
-      {/* {post.quotedPostId && (
+      {post.quoteItem && (
         <div className="overflow-hidden rounded-2xl border border-[#EDF2F720]">
           <div dir="ltr" className="flex items-center gap-1 p-3 text-xs">
             <Avatar className="h-6 w-6">
               <AvatarImage
-                src={staticFile(post.quoted.creator.profilePicture || "")}
-                alt={post.quoted.creator.username}
+                src={staticFile(post.quoteItem.creator.avatar)}
+                alt={post.quoteItem.creator.username}
               />
               <AvatarFallback>
-                {post.quoted.creator.username.substring(0, 1).toUpperCase()}
+                {post.quoteItem.creator.username.substring(0, 1).toUpperCase()}
               </AvatarFallback>
             </Avatar>
 
-            <p>{post.quoted.creator.name}</p>
-            {post.quoted.creator.verified && <icons.Verified />}
-            <p className="opacity-60">@{post.quoted.creator.username}</p>
-            <p> {fDateTime(post.quoted.createdAt, "MMM DD, YYYY")}</p>
+            <p>{post.quoteItem.creator.name}</p>
+            {post.quoteItem.creator.verified && <icons.Verified />}
+            <p className="opacity-60">@{post.quoteItem.creator.username}</p>
+            <p> {fDateTime(post.quoteItem.createdAt, "MMM DD, YYYY")}</p>
           </div>
           <div className="px-4 text-sm">
-            {post.quoted.caption
+            {post.quoteItem.caption
               ?.split("\n")
               .map((line, i) => (line === "" ? <br key={i} /> : <p key={i}>{line}</p>))}
           </div>
 
           <TwitterMediaCard
-            media={post.quoted.media}
+            media={post.quoteItem.media}
             className="mt-3 aspect-video w-full rounded-t-none"
           />
         </div>
-      )} */}
+      )}
 
       <p dir="ltr" className="text-xs opacity-60">
         {fDateTime(post.createdAt, "hh:mm A · MMM DD, YYYY")}

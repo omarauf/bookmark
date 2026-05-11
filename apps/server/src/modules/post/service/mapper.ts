@@ -11,6 +11,11 @@ type RawItem = ItemEntity & {
   outgoing: (RelationEntity & {
     toItem: ItemEntity & {
       media: Media[];
+      outgoing: (RelationEntity & {
+        toItem: ItemEntity & {
+          media: Media[];
+        };
+      })[];
     };
   })[];
   collections: (CollectionItemEntity & { collection: CollectionEntity })[];
@@ -24,22 +29,25 @@ export function mapItemToPost(item: RawItem): Post {
     throw new Error(`Creator not found for item ${item.id}`);
   }
 
-  const taggedItem = item.outgoing
+  const taggedItems = item.outgoing
     .filter((r) => r.relationType === "tagged")
     .map((r) => ({ ...mapProfile(r.toItem), x: r.x, y: r.y }));
 
   const normalizedItem = replaceNullWithUndefined(item);
 
-  if (item.kind !== "post" || item.metadata?.kind !== "post") {
+  if (normalizedItem.metadata?.kind !== "post") {
     throw new Error(`Item ${item.id} is not an Instagram post`);
   }
 
+  const quotedItem = mapQuotedItem(item);
+
   return {
     ...normalizedItem,
-    ...item.metadata,
+    ...normalizedItem.metadata,
     creator: mapProfile(creator),
     media: normalizeMedia(item.media),
-    taggedItems: taggedItem,
+    taggedItems: taggedItems,
+    quoteItem: quotedItem,
     collections: mapCollection(item.collections),
     collectionIds: item.collections.map((c) => c.collection.id),
     tags: item.tags.map((t) => t.tag),
@@ -50,22 +58,45 @@ export function mapItemToPost(item: RawItem): Post {
 function mapProfile(item: ItemEntity & { media: Media[] }) {
   const normalizedItem = replaceNullWithUndefined(item);
 
-  const profile: Post["creator"] = {
+  if (normalizedItem.metadata.kind !== "profile") {
+    throw new Error(`Item ${item.id} is not a profile`);
+  }
+
+  return {
     ...normalizedItem,
-    name: "",
-    username: "",
+    ...normalizedItem.metadata,
+    name: normalizedItem.metadata.name || "",
+    username: normalizedItem.metadata.username || "",
     avatar: `${item.platform}/avatar/${item.externalId}.jpg`,
     collectionIds: [],
     tagIds: [],
-    kind: "profile",
-  };
+  } satisfies Post["creator"];
+}
 
-  if (normalizedItem.metadata.kind === "profile") {
-    profile.name = normalizedItem.metadata.name || "";
-    profile.username = normalizedItem.metadata.username || "";
+function mapQuotedItem(item: RawItem) {
+  const quotedItem = item.outgoing.find((r) => r.relationType === "quoted")?.toItem;
+  if (!quotedItem) return undefined;
+
+  const normalizedItem = replaceNullWithUndefined(quotedItem);
+
+  if (normalizedItem.metadata?.kind !== "post") {
+    throw new Error(`Item ${item.id} is not an Instagram post`);
   }
 
-  return profile;
+  const creator = quotedItem.outgoing.find((r) => r.relationType === "created_by")?.toItem;
+
+  if (!creator) {
+    throw new Error(`Creator not found for item ${item.id}`);
+  }
+
+  return {
+    ...normalizedItem,
+    ...normalizedItem.metadata,
+    media: normalizeMedia(quotedItem.media),
+    creator: mapProfile(creator),
+    collectionIds: [],
+    tagIds: [],
+  } satisfies Post["quoteItem"];
 }
 
 function mapCollection(collections: RawItem["collections"]) {

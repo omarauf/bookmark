@@ -8,4 +8,6 @@ export const ProfileSchema = ItemBaseViewSchema.extend({
   avatar: z.string(),
   postCount: z.number().optional(),
   tagCount: z.number().optional(),
+  location: z.string().optional(),
+  verified: z.boolean().optional(),
 });

@@ -10,6 +10,7 @@ export const JobSchemas = {
   list: {
     request: BasePaginationQuerySchema.extend({
       type: JobTypeEnum.optional().catch(undefined),
+      types: JobTypeEnum.array().optional().catch(undefined),
       status: JobStatusEnum.optional().catch(undefined),
       resourceType: z.string().optional().catch(undefined),
       resourceId: z.string().optional().catch(undefined),
@@ -74,7 +75,7 @@ export const JobSchemas = {
   },
 
   stats: {
-    request: z.object({ type: JobTypeEnum.optional().catch(undefined) }).optional(),
+    request: z.object({ types: JobTypeEnum.array().optional().catch(undefined) }).optional(),
     response: z.object({
       total: z.number().int(),
       pending: z.number().int(),

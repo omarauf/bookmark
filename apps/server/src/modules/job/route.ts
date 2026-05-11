@@ -14,9 +14,10 @@ export const jobRouter = {
     .input(JobSchemas.list.request)
     .output(JobSchemas.list.response)
     .handler(async ({ input }) => {
-      const { type, status, resourceType, resourceId, groupId } = input;
+      const { type, types, status, resourceType, resourceId, groupId } = input;
 
       const filters = and(
+        types ? inArray(jobs.type, types) : undefined,
         type ? eq(jobs.type, type) : undefined,
         status ? eq(jobs.status, status) : undefined,
         resourceType ? eq(jobs.resourceType, resourceType) : undefined,
@@ -120,51 +121,6 @@ export const jobRouter = {
       return { reclaimed };
     }),
 
-  stats: protectedProcedure
-    .input(JobSchemas.stats.request)
-    .output(JobSchemas.stats.response)
-    .handler(async ({ input }) => {
-      const type = input?.type;
-      const where = type ? eq(jobs.type, type) : undefined;
-
-      const statusRows = await db
-        .select({ status: jobs.status, count: count() })
-        .from(jobs)
-        .where(where)
-        .groupBy(jobs.status);
-
-      const typeRows = await db
-        .select({ type: jobs.type, count: count() })
-        .from(jobs)
-        .where(where)
-        .groupBy(jobs.type);
-
-      const result = {
-        total: 0,
-        pending: 0,
-        processing: 0,
-        completed: 0,
-        failed: 0,
-        cancelled: 0,
-        retrying: 0,
-        byType: {} as Record<JobType, number>,
-      };
-
-      for (const row of statusRows) {
-        const value = Number(row.count);
-        result.total += value;
-        if (row.status in result) {
-          result[row.status as keyof typeof result] = value as never;
-        }
-      }
-
-      for (const row of typeRows) {
-        result.byType[row.type] = Number(row.count);
-      }
-
-      return result;
-    }),
-
   group: {
     list: protectedProcedure
       .input(JobSchemas.group.list.request)
@@ -246,6 +202,50 @@ export const jobRouter = {
         return result;
       }),
   },
+
+  stats: protectedProcedure
+    .input(JobSchemas.stats.request)
+    .output(JobSchemas.stats.response)
+    .handler(async ({ input }) => {
+      const where = input?.types ? inArray(jobs.type, input.types) : undefined;
+
+      const statusRows = await db
+        .select({ status: jobs.status, count: count() })
+        .from(jobs)
+        .where(where)
+        .groupBy(jobs.status);
+
+      const typeRows = await db
+        .select({ type: jobs.type, count: count() })
+        .from(jobs)
+        .where(where)
+        .groupBy(jobs.type);
+
+      const result = {
+        total: 0,
+        pending: 0,
+        processing: 0,
+        completed: 0,
+        failed: 0,
+        cancelled: 0,
+        retrying: 0,
+        byType: {} as Record<JobType, number>,
+      };
+
+      for (const row of statusRows) {
+        const value = Number(row.count);
+        result.total += value;
+        if (row.status in result) {
+          result[row.status as keyof typeof result] = value as never;
+        }
+      }
+
+      for (const row of typeRows) {
+        result.byType[row.type] = Number(row.count);
+      }
+
+      return result;
+    }),
 
   analytics: analyticsHandler,
 };

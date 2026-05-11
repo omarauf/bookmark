@@ -1,7 +1,8 @@
 import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { JobSchemas } from "@workspace/contracts/job";
-import { Loader } from "lucide-react";
+import { InfiniteScroll } from "@/components/infinite-scroll";
+import Loader from "@/components/loader";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
 import { StatsOverview } from "@/modules/download-task/stats-overview";
@@ -9,50 +10,35 @@ import { DownloadTaskItem } from "@/modules/download-task/task-item";
 
 export const Route = createFileRoute("/_authenticated/downloads/")({
   validateSearch: JobSchemas.list.request,
-  loaderDeps: ({ search }) => search,
-  loader: async ({ context, deps }) => {
-    const input = { ...deps, type: "download_media" as const };
-
-    await context.queryClient.prefetchInfiniteQuery(
-      orpc.job.list.infiniteOptions({
-        initialPageParam: 1,
-        input: (page) => ({ ...input, page, perPage: 30 }),
-        getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
-      }),
-    );
-
-    await context.queryClient.ensureQueryData(
-      orpc.job.stats.queryOptions({ input: { type: "download_media" } }),
-    );
-  },
-  pendingComponent: () => (
-    <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
-      <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
-    </div>
-  ),
+  pendingComponent: () => <Loader className="h-screen w-screen" />,
   component: DownloadsPage,
 });
 
 function DownloadsPage() {
   const search = Route.useSearch();
-  const input = { ...search, type: "download_media" as const };
+  const input = { ...search };
 
   const { data: stats } = useSuspenseQuery(
-    orpc.job.stats.queryOptions({ input: { type: "download_media" } }),
+    orpc.job.stats.queryOptions({ input: { types: ["download_media", "youtube_download"] } }),
   );
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery(
+  const query = useSuspenseInfiniteQuery(
     orpc.job.list.infiniteOptions({
       initialPageParam: 1,
-      input: (page) => ({ ...input, page, perPage: 30 }),
+      input: (page) => ({
+        ...input,
+        types: ["download_media", "youtube_download"],
+        page,
+        perPage: 30,
+      }),
       getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
     }),
   );
 
-  const flatItems = data.pages.flatMap((page) => page.items);
+  const flatItems = query.data?.pages.flatMap((page) => page.items) ?? [];
 
   return (
-    <Main>
+    <Main className="flex h-full flex-col pb-0">
       <style>{`
         @keyframes fade-slide-up {
           0% { opacity: 0; transform: translateY(16px); }
@@ -62,6 +48,7 @@ function DownloadsPage() {
         .animate-stagger-2 { animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
         .animate-stagger-3 { animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
         .animate-stagger-4 { animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both; }
+        .animate-stagger-5 { animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both; }
       `}</style>
 
       <header className="mb-8 animate-stagger-1">
@@ -108,33 +95,26 @@ function DownloadsPage() {
         </Link>
       </div>
 
-      <div className="animate-stagger-4 space-y-4">
+      <div className="animate-stagger-4 space-y-4 pb-4">
         <div className="grid grid-cols-12 gap-4 px-2 text-muted-foreground/60 text-xs tracking-wider">
           <div className="col-span-5 md:col-span-6">RESOURCE</div>
           <div className="col-span-3 text-right">METRICS</div>
           <div className="col-span-4 text-right md:col-span-3">STATUS</div>
         </div>
+      </div>
 
-        {flatItems.length === 0 ? (
-          <div className="py-24 text-center text-muted-foreground text-sm">
-            [ NO_TASKS_FOUND_FOR_CURRENT_FILTER ]
-          </div>
-        ) : (
-          flatItems.map((task) => <DownloadTaskItem key={task.id} task={task} />)
-        )}
-
-        {hasNextPage && (
-          <div className="py-4 text-center">
-            <button
-              type="button"
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-              className="text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground disabled:opacity-50"
-            >
-              {isFetchingNextPage ? "LOADING_MORE..." : "[ LOAD_MORE_RECORDS ]"}
-            </button>
-          </div>
-        )}
+      <div className="animate-stagger-5 flex min-h-0 h-full">
+        <InfiniteScroll
+          onLoadMore={query.fetchNextPage}
+          hasNextPage={query.hasNextPage}
+          isFetchingNextPage={query.isFetchingNextPage}
+          isLoading={query.isLoading}
+          className="pb-4 "
+        >
+          {flatItems.map((task) => (
+            <DownloadTaskItem key={task.id} task={task} />
+          ))}
+        </InfiniteScroll>
       </div>
     </Main>
   );

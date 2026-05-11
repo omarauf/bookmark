@@ -55,6 +55,7 @@
     "progress": "^2.0.3",
     "sharp": "^0.34.3",
     "uuid": "^13.0.0",
+    "youtube-dl-exec": "^3.0.20",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -3,7 +3,8 @@ import type { Media } from "./schema";
 
 const getBaseKey = (key: string) => key.replace(/\.[^/.]+$/, "");
 
-export function normalizeMedia(media: Media | Media[]) {
+export function normalizeMedia(media?: Media | Media[]) {
+  if (!media) return [];
   const m = Array.isArray(media) ? media : [media];
 
   const imageMap = new Map<string, Media>();

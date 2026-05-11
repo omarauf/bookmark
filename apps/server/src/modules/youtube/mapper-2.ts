@@ -1,5 +1,7 @@
 import type { Youtube } from "@workspace/contracts/views/youtube";
 import type { ItemEntity } from "../item/schema";
+import type { Media } from "../media/schema";
+import { normalizeMedia } from "../media/service";
 
 type RawItem = ItemEntity & {
   collections?: {
@@ -21,6 +23,7 @@ type RawItem = ItemEntity & {
       color: string;
     };
   }[];
+  media?: Media[];
 };
 
 export function mapItemToYoutube(items: RawItem[]): Youtube[] {
@@ -48,6 +51,7 @@ export function mapItemToYoutube(items: RawItem[]): Youtube[] {
       rate: item.rate ?? undefined,
       collectionIds: collectionIds || [],
       tagIds: tagIds || [],
+      media: normalizeMedia(item.media) ?? [],
     });
   }
 

@@ -10,6 +10,7 @@ import { processDownloadMedia } from "./media/download";
 import { processImportProcess } from "./post/process";
 import { reclaimStaleJobs } from "./reclaimer";
 import { processYoutubeDiscover } from "./youtube/discover";
+import { processYoutubeDownload } from "./youtube/download";
 import { processYoutubeFetch } from "./youtube/fetch";
 
 let scheduler: WorkerScheduler | null = null;
@@ -90,6 +91,9 @@ async function processJob(job: Job) {
         break;
       case "youtube_fetch":
         await processYoutubeFetch(job);
+        break;
+      case "youtube_download":
+        await processYoutubeDownload(job);
         break;
       default:
         throw new Error(`Unknown job type: ${job.type}`);

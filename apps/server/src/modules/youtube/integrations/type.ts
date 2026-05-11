@@ -69,3 +69,16 @@ export type YoutubeVideo = {
     resultsPerPage: number;
   };
 };
+
+export type YtDlpFormat = {
+  formatId: string;
+  ext: string;
+  resolution: string;
+  filesize?: number;
+  vcodec: string;
+  acodec: string;
+  fps?: number;
+  qualityLabel?: string;
+  hasVideo: boolean;
+  hasAudio: boolean;
+};

@@ -47,6 +47,14 @@ const YoutubeFetchPayloadSchema = z.object({
   videoId: z.string(),
 });
 
+const YoutubeDownloadPayloadSchema = z.object({
+  itemId: z.string(),
+  formatId: z.string(),
+  url: z.string(),
+  ext: z.string(),
+  needsMerge: z.boolean().optional(),
+});
+
 export const JobPayloadSchemas = {
   downloadMedia: DownloadMediaPayloadSchema,
   importUpload: ImportUploadPayloadSchema,
@@ -57,6 +65,7 @@ export const JobPayloadSchemas = {
   animeFetch: AnimeFetchPayloadSchema,
   youtubeDiscover: YoutubeDiscoverPayloadSchema,
   youtubeFetch: YoutubeFetchPayloadSchema,
+  youtubeDownload: YoutubeDownloadPayloadSchema,
 };
 
 export const JobPayloadSchema = z.union([
@@ -69,4 +78,5 @@ export const JobPayloadSchema = z.union([
   AnimeFetchPayloadSchema,
   YoutubeDiscoverPayloadSchema,
   YoutubeFetchPayloadSchema,
+  YoutubeDownloadPayloadSchema,
 ]);

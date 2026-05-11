@@ -103,7 +103,7 @@ export const jobRouter = {
 
       const [updated] = await db
         .update(jobs)
-        .set({ status: "cancelled", cancelledAt: new Date() })
+        .set({ status: "cancelled", cancelledAt: new Date(), retryAt: null })
         .where(and(eq(jobs.id, id), inArray(jobs.status, ["pending", "processing", "retrying"])))
         .returning();
 

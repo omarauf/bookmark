@@ -27,6 +27,31 @@ export const YoutubeSchemas = {
     request: z.object({}),
     response: z.object({}),
   },
+
+  listFormats: {
+    request: z.object({ id: z.uuid() }),
+    response: z.object({
+      formats: z
+        .object({
+          formatId: z.string(),
+          ext: z.string(),
+          resolution: z.string(),
+          filesize: z.number().optional(),
+          vcodec: z.string(),
+          acodec: z.string(),
+          fps: z.number().optional(),
+          qualityLabel: z.string().optional(),
+          hasVideo: z.boolean(),
+          hasAudio: z.boolean(),
+        })
+        .array(),
+    }),
+  },
+
+  download: {
+    request: z.object({ id: z.uuid(), formatId: z.string() }),
+    response: z.object({ jobId: z.string() }),
+  },
 };
 
 export type Youtube = z.infer<typeof YoutubeSchema>;

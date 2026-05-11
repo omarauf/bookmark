@@ -20,7 +20,9 @@ export const Route = createFileRoute("/_authenticated/jobs/$id")({
 function JobDetailPage() {
   const { id } = useParams({ from: "/_authenticated/jobs/$id" });
 
-  const { data: job } = useSuspenseQuery(orpc.job.get.queryOptions({ input: { id } }));
+  const { data: job } = useSuspenseQuery(
+    orpc.job.get.queryOptions({ input: { id }, refetchInterval: 2000, staleTime: 0 }),
+  );
 
   return (
     <Main className="flex h-full flex-col p-0">

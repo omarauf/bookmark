@@ -1,6 +1,6 @@
 import { useSearch } from "@tanstack/react-router";
 import type { Youtube } from "@workspace/contracts/views/youtube";
-import { Eye, Play, Tv } from "lucide-react";
+import { Eye, HardDrive, Play, Tv } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { YoutubeDetailsDialog } from "../dialogs/details";
@@ -43,6 +43,8 @@ export function YoutubeCard({ youtube }: Props) {
     }
   };
 
+  const downloadedVideos = youtube.media.filter((m) => m.type === "video").length;
+
   return (
     <>
       <Card
@@ -75,6 +77,14 @@ export function YoutubeCard({ youtube }: Props) {
           <div className="absolute right-2 bottom-2 bg-black/80 px-1.5 py-0.5 font-medium text-[10px] text-white">
             {formatDuration(youtube.duration)}
           </div>
+
+          {/* Downloaded Indicator */}
+          {downloadedVideos > 0 && (
+            <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/80 px-1.5 py-0.5 text-[10px] text-white">
+              <HardDrive className="h-3 w-3" />
+              <span>{downloadedVideos}</span>
+            </div>
+          )}
         </div>
 
         {/* Info */}

@@ -1,9 +1,9 @@
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import ffprobeInstaller from "@ffprobe-installer/ffprobe";
 import type { FileMetadata, FileType, MimeType } from "@workspace/contracts/file-manager";
 import { PDFDocument } from "pdf-lib";
 import sharp from "sharp";
+import { getMediaMetadata } from "@/core/media/ffprobe";
 
 export async function extractRichMetadata(
   buffer: Buffer,
@@ -98,50 +98,12 @@ async function extractPdfMetadata(buffer: Buffer): Promise<FileMetadata | null> 
   }
 }
 
-interface FfprobeStream {
-  codec_type?: string;
-  codec_name?: string;
-  width?: number;
-  height?: number;
-  r_frame_rate?: string;
-}
-
-interface FfprobeFormat {
-  duration?: string;
-  bit_rate?: string;
-}
-
-interface FfprobeOutput {
-  streams?: FfprobeStream[];
-  format?: FfprobeFormat;
-}
-
-async function probeMediaMetadata(buffer: Buffer): Promise<FfprobeOutput | null> {
+async function probeMediaMetadata(buffer: Buffer) {
   const tmpPath = join(tmpdir(), `upload-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
   try {
     await Bun.write(tmpPath, buffer);
-
-    const proc = Bun.spawn({
-      cmd: [
-        ffprobeInstaller.path,
-        "-v",
-        "quiet",
-        "-print_format",
-        "json",
-        "-show_format",
-        "-show_streams",
-        tmpPath,
-      ],
-      stdout: "pipe",
-      stderr: "pipe",
-    });
-
-    const exitCode = await proc.exited;
-    if (exitCode !== 0) return null;
-
-    const stdout = await new Response(proc.stdout).text();
-    return JSON.parse(stdout) as FfprobeOutput;
+    return await getMediaMetadata(tmpPath);
   } catch {
     return null;
   } finally {

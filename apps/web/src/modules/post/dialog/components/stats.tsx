@@ -1,4 +1,4 @@
-import type { ItemMetadata } from "@workspace/contracts/item";
+import type { Post } from "@workspace/contracts/views/post";
 import { BarChart3, Bookmark, Eye, Heart, MessageCircle, Play, Repeat2 } from "lucide-react";
 import { fShortenNumber } from "@/utils/format-number";
 import { usePostContext } from "../utils/context";
@@ -6,48 +6,48 @@ import { usePostContext } from "../utils/context";
 export function Statistics() {
   const post = usePostContext();
 
-  if (post.platform === "tiktok") return <TiktokStatistics metadata={post} />;
+  if (post.platform === "tiktok") return <TiktokStatistics post={post} />;
 
-  if (post.platform === "instagram") return <InstagramStatistics metadata={post} />;
+  if (post.platform === "instagram") return <InstagramStatistics post={post} />;
 
-  if (post.platform === "twitter") return <TwitterStatistics metadata={post} />;
+  if (post.platform === "twitter") return <TwitterStatistics post={post} />;
 
   return null;
 }
 
-function InstagramStatistics({ metadata }: { metadata: ItemMetadata }) {
-  if (metadata.platform !== "instagram" || metadata.kind !== "post") return null;
+function InstagramStatistics({ post }: { post: Post }) {
+  if (post.platform !== "instagram") return null;
 
   return (
     <div className="flex justify-between">
-      <IconNumber icon={Heart} number={metadata.likes} />
+      <IconNumber icon={Heart} number={post.likes} />
 
-      {metadata.play && <IconNumber icon={Play} number={metadata.play} />}
-      {metadata.view && <IconNumber icon={Eye} number={metadata.view} />}
+      {post.play && <IconNumber icon={Play} number={post.play} />}
+      {post.view && <IconNumber icon={Eye} number={post.view} />}
     </div>
   );
 }
 
-function TiktokStatistics({ metadata }: { metadata: ItemMetadata }) {
-  if (metadata.platform !== "tiktok" || metadata.kind !== "post") return null;
+function TiktokStatistics({ post }: { post: Post }) {
+  if (post.platform !== "tiktok") return null;
 
   return (
     <div className="flex justify-between">
-      <IconNumber icon={Heart} number={metadata.likes} />
+      <IconNumber icon={Heart} number={post.likes} />
     </div>
   );
 }
 
-function TwitterStatistics({ metadata }: { metadata: ItemMetadata }) {
-  if (metadata.platform !== "twitter" || metadata.kind !== "post") return null;
+function TwitterStatistics({ post }: { post: Post }) {
+  if (post.platform !== "twitter") return null;
 
   return (
     <div className="flex justify-between text-muted-foreground text-sm">
-      <IconNumber icon={MessageCircle} number={metadata.replies} />
-      <IconNumber icon={Repeat2} number={metadata.retweets} />
-      <IconNumber icon={Heart} number={metadata.likes} />
-      <IconNumber icon={Bookmark} number={metadata.bookmarks} />
-      <IconNumber icon={BarChart3} number={metadata.views} />
+      <IconNumber icon={MessageCircle} number={post.replies} />
+      <IconNumber icon={Repeat2} number={post.retweets} />
+      <IconNumber icon={Heart} number={post.likes} />
+      <IconNumber icon={Bookmark} number={post.bookmarks} />
+      <IconNumber icon={BarChart3} number={post.views} />
     </div>
   );
 }

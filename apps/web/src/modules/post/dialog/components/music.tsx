@@ -1,21 +1,21 @@
-import type { ItemMetadata } from "@workspace/contracts/item";
+import type { Post } from "@workspace/contracts/views/post";
 import { MusicIcon } from "lucide-react";
 import { usePostContext } from "../utils/context";
 
 export function Music() {
   const post = usePostContext();
 
-  if (post.platform === "tiktok") return <TiktokMusic metadata={post} />;
+  if (post.platform === "tiktok") return <TiktokMusic post={post} />;
 
-  if (post.platform === "instagram") return <InstagramMusic metadata={post} />;
+  if (post.platform === "instagram") return <InstagramMusic post={post} />;
 
   return null;
 }
 
-function InstagramMusic({ metadata }: { metadata: ItemMetadata }) {
-  if (metadata.platform !== "instagram" || metadata.kind !== "post") return null;
+function InstagramMusic({ post }: { post: Post }) {
+  if (post.platform !== "instagram") return null;
 
-  const { music } = metadata;
+  const { music } = post;
   if (!music) return null;
 
   return (
@@ -35,10 +35,10 @@ function InstagramMusic({ metadata }: { metadata: ItemMetadata }) {
   );
 }
 
-function TiktokMusic({ metadata }: { metadata: ItemMetadata }) {
-  if (metadata.platform !== "tiktok" || metadata.kind !== "post") return null;
+function TiktokMusic({ post }: { post: Post }) {
+  if (post.platform !== "tiktok") return null;
 
-  const { music } = metadata;
+  const { music } = post;
   if (!music) return null;
 
   return (

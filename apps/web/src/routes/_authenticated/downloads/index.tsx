@@ -103,13 +103,13 @@ function DownloadsPage() {
         </div>
       </div>
 
-      <div className="animate-stagger-5 flex min-h-0 h-full">
+      <div className="flex h-full min-h-0 animate-stagger-5">
         <InfiniteScroll
           onLoadMore={query.fetchNextPage}
           hasNextPage={query.hasNextPage}
           isFetchingNextPage={query.isFetchingNextPage}
           isLoading={query.isLoading}
-          className="pb-4 "
+          className="pb-4"
         >
           {flatItems.map((task) => (
             <DownloadTaskItem key={task.id} task={task} />

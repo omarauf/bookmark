@@ -1,14 +1,20 @@
 import type { Post } from "@workspace/contracts/views/post";
+import { cn } from "@/lib/utils";
 import { fShortenNumber } from "@/utils/format-number";
 import * as icons from "./icons";
 
-export function Stats({ post }: { post: Post }) {
+type Props = {
+  post: Post;
+  className?: string;
+};
+
+export function Stats({ post, className }: Props) {
   const metadata = post.platform === "twitter" && post.kind === "post" ? post : undefined;
 
   if (!metadata) return null;
 
   return (
-    <div dir="ltr" className="flex justify-between">
+    <div className={cn("flex justify-between", className)}>
       <div className="flex items-center gap-2 text-sm opacity-60">
         <icons.Comment />
         <p>{fShortenNumber(metadata.replies)}</p>

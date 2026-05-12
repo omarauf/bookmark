@@ -1,9 +1,11 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/views/post";
+import { TwitterIcon } from "@/assets/icons";
 import { EmptyContent } from "@/components/empty-content";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { orpc } from "@/integrations/orpc";
+import { Header } from "@/layout/header";
 import { Main } from "@/layout/main";
 import { TwitterCard } from "@/modules/twitter/card";
 
@@ -23,31 +25,38 @@ function Twitter() {
   );
 
   const flatItems = postQuery.data.pages.flatMap((page) => page.items);
-
-  // return (
-  //   <div className="mt-10 flex w-full flex-col items-center gap-8">
-  //     {aaa.data.map((t) => (
-  //       <TwitterCard key={t.postId} post={t} />
-  //     ))}
-  //   </div>
-  // );
+  const total = postQuery.data.pages[0]?.total ?? 0;
 
   return (
-    <Main className="flex h-full">
+    <Main className="flex h-full flex-col p-0">
+      <Header className="border-border/50 border-b">
+        <div className="flex items-center gap-3">
+          <TwitterIcon className="h-4 w-4 text-muted-foreground" />
+          <h1 className="font-medium text-lg tracking-tight">Twitter</h1>
+          <span className="text-[10px] text-muted-foreground/60">{total.toLocaleString()}</span>
+        </div>
+      </Header>
+
       <InfiniteScroll
         onLoadMore={postQuery.fetchNextPage}
         hasNextPage={postQuery.hasNextPage}
         isFetchingNextPage={postQuery.isFetchingNextPage}
+        isLoading={postQuery.isLoading}
+        className="flex flex-1 justify-center overflow-y-auto px-4 pt-4"
       >
-        {/* <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"> */}
-        <div className="mt-10 flex w-full flex-col items-center gap-8">
-          {flatItems.map((t) => (
-            <TwitterCard key={t.id} post={t} />
+        <div
+          className="grid gap-4"
+          style={{
+            gridTemplateColumns: `repeat(auto-fill, minmax(500px, 1fr))`,
+          }}
+        >
+          {flatItems.map((post) => (
+            <TwitterCard key={post.id} post={post} />
           ))}
         </div>
-      </InfiniteScroll>
 
-      <EmptyContent show={!flatItems.length} />
+        <EmptyContent show={!flatItems.length && !postQuery.isLoading} />
+      </InfiniteScroll>
     </Main>
   );
 }

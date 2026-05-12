@@ -15,7 +15,7 @@ export function TwitterMediaCard({ media, className }: Props) {
     return (
       <img
         className={cn(
-          "max-h-105 rounded-2xl border bg-black object-cover",
+          "max-h-105 rounded-xl border bg-black object-cover",
           m.width / m.height > 1 ? "w-full" : "h-full",
           m.type === "image" && "mx-auto",
           className,
@@ -30,7 +30,7 @@ export function TwitterMediaCard({ media, className }: Props) {
     return (
       <div
         className={cn(
-          "grid h-full max-h-105 min-h-72.5 grid-cols-2 gap-0.5 overflow-hidden rounded-2xl",
+          "grid h-full max-h-105 min-h-72.5 grid-cols-2 gap-0.5 overflow-hidden rounded-xl",
           className,
         )}
       >
@@ -50,7 +50,7 @@ export function TwitterMediaCard({ media, className }: Props) {
     return (
       <div
         className={cn(
-          "grid max-h-105 grid-cols-2 grid-rows-2 gap-0.5 overflow-hidden rounded-2xl",
+          "grid max-h-105 grid-cols-2 grid-rows-2 gap-0.5 overflow-hidden rounded-xl",
           className,
         )}
       >
@@ -69,7 +69,7 @@ export function TwitterMediaCard({ media, className }: Props) {
   return (
     <div
       className={cn(
-        "grid max-h-105 grid-cols-2 grid-rows-2 gap-0.5 overflow-hidden rounded-2xl",
+        "grid max-h-105 grid-cols-2 grid-rows-2 gap-0.5 overflow-hidden rounded-xl",
         className,
       )}
     >

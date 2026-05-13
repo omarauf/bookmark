@@ -4,13 +4,13 @@ import { useCallback, useEffect } from "react";
 import { orpc } from "@/integrations/orpc";
 
 export function usePostQuery() {
-  const search = useSearch({ from: "/_authenticated/instagram/" });
+  const search = useSearch({ from: "/_authenticated/posts" });
   const queryClient = useQueryClient();
 
   const postQuery = useInfiniteQuery(
     orpc.post.list.infiniteOptions({
       initialPageParam: 1,
-      input: (searchParams) => ({ ...search, page: searchParams, platform: "instagram" }),
+      input: (searchParams) => ({ ...search, page: searchParams, perPage: 40 }),
       getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -20,7 +20,7 @@ export function usePostQuery() {
   const resetInfiniteQueryPagination = useCallback(() => {
     const keys = orpc.post.list.infiniteKey({
       initialPageParam: 1,
-      input: (searchParams) => ({ ...search, page: searchParams, platform: "instagram" }),
+      input: (searchParams) => ({ ...search, page: searchParams, perPage: 40 }),
     });
 
     queryClient.setQueryData(keys, (oldData) => {

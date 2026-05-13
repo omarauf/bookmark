@@ -38,9 +38,12 @@ export function DisplaySettingsMenu() {
           {(field) => (
             <field.ToggleGroup
               label="Layout"
+              horizontal
+              variant="falcon"
+              classNames={{ wrapper: "w-full" }}
               options={[
-                { value: "grid", label: "Grid", icon: Grid },
-                { value: "list", label: "List", icon: List },
+                { value: "grid", icon: Grid },
+                { value: "list", icon: List },
               ]}
             />
           )}
@@ -50,6 +53,9 @@ export function DisplaySettingsMenu() {
           {(field) => (
             <field.ToggleGroup
               label="Card Size"
+              horizontal
+              variant="falcon"
+              classNames={{ wrapper: "w-full" }}
               options={[
                 { value: "S", label: "S" },
                 { value: "M", label: "M" },
@@ -63,6 +69,9 @@ export function DisplaySettingsMenu() {
           {(field) => (
             <field.ToggleGroup
               label="Aspect Ratio"
+              horizontal
+              variant="falcon"
+              classNames={{ wrapper: "w-full" }}
               options={[
                 { value: "landscape", icon: RectangleHorizontal },
                 { value: "square", icon: Square },
@@ -76,6 +85,9 @@ export function DisplaySettingsMenu() {
           {(field) => (
             <field.ToggleGroup
               label="Thumbnail Scale"
+              horizontal
+              variant="falcon"
+              classNames={{ wrapper: "w-full" }}
               options={[
                 { value: "fit", label: "Fit" },
                 { value: "fill", label: "Fill" },

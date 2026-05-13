@@ -32,20 +32,30 @@ export function PostCard({ post, onClick, className }: Props) {
       )}
       onClick={() => onClick(post.id)}
     >
-      <LazyImage
-        src={staticFile(thumbnail)}
-        className={cn(
-          {
-            landscape: "aspect-video",
-            square: "aspect-square",
-            portrait: "aspect-3/4",
-          }[aspectRatio],
-          {
-            fit: "object-contain",
-            fill: "object-cover",
-          }[thumbnailScale],
-        )}
-      />
+      {thumbnail && (
+        <LazyImage
+          src={staticFile(thumbnail)}
+          className={cn(
+            {
+              landscape: "aspect-video",
+              square: "aspect-square",
+              portrait: "aspect-3/4",
+            }[aspectRatio],
+            {
+              fit: "object-contain",
+              fill: "object-cover",
+            }[thumbnailScale],
+          )}
+        />
+      )}
+
+      {!thumbnail && (
+        <div className="flex h-full items-center justify-center bg-muted">
+          <p className="line-clamp-6 px-1 text-center font-light text-sm opacity-60">
+            {post.caption}
+          </p>
+        </div>
+      )}
 
       {showCardInfo && (
         <CardContent className="flex flex-row items-center justify-between px-1 py-2">

@@ -1,0 +1,57 @@
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { EmptyContent } from "@/components/empty-content";
+// import { InfiniteScroll } from "@/components/infinite-scroll";
+import { orpc } from "@/integrations/orpc";
+import { Main } from "@/layout/main";
+import { Filter } from "@/modules/post/filter";
+// import { PostList } from "@/modules/post/list";
+
+export const Route = createFileRoute("/_authenticated/posts/tiktok")({
+  component: Tiktok,
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context: { orpc, queryClient }, deps }) => {
+    await queryClient.prefetchInfiniteQuery(
+      orpc.post.list.infiniteOptions({
+        initialPageParam: 1,
+        input: (searchParams) => ({ ...deps, page: searchParams, limit: 30, platform: "tiktok" }),
+        getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
+      }),
+    );
+    return;
+  },
+});
+
+function Tiktok() {
+  const search = Route.useSearch();
+  const postQuery = useSuspenseInfiniteQuery(
+    orpc.post.list.infiniteOptions({
+      initialPageParam: 1,
+      input: (searchParams) => ({
+        ...search,
+        page: searchParams,
+        limit: 30,
+        platform: "tiktok",
+      }),
+      getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
+    }),
+  );
+
+  const flatItems = postQuery.data.pages.flatMap((page) => page.items);
+
+  return (
+    <Main className="py-0">
+      <Filter className="sticky z-10 flex w-full bg-background" />
+
+      {/* <InfiniteScroll
+        onLoadMore={postQuery.fetchNextPage}
+        hasNextPage={postQuery.hasNextPage}
+        isFetchingNextPage={postQuery.isFetchingNextPage}
+      >
+        <PostList posts={flatItems} />
+      </InfiniteScroll> */}
+
+      <EmptyContent show={!flatItems.length} />
+    </Main>
+  );
+}

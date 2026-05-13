@@ -55,10 +55,10 @@ export const sidebarData: SidebarData = {
     {
       title: "Social",
       items: [
-        { title: "Instagram", url: "/instagram", icon: InstagramIcon },
-        { title: "Twitter", url: "/twitter", icon: TwitterIcon },
-        { title: "TikTok", url: "/tiktok", icon: Video },
-        { title: "Profiles", url: "/profiles", icon: UserCircle },
+        { title: "Instagram", url: "/posts/instagram", icon: InstagramIcon },
+        { title: "Twitter", url: "/posts/twitter", icon: TwitterIcon },
+        { title: "TikTok", url: "/posts/tiktok", icon: Video },
+        { title: "Profiles", url: "profiles", icon: UserCircle },
       ],
     },
     {

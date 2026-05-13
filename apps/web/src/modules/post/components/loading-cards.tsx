@@ -9,9 +9,28 @@ type Props = {
 };
 
 export function LoadingCards({ count }: Props) {
-  const [aspectRatio, showCardInfo, cardSize] = useDisplaySettingsStore(
-    useShallow((s) => [s.aspectRatio, s.showCardInfo, s.cardSize]),
+  const [aspectRatio, showCardInfo, cardSize, layout] = useDisplaySettingsStore(
+    useShallow((s) => [s.aspectRatio, s.showCardInfo, s.cardSize, s.layout]),
   );
+
+  if (layout === "list") {
+    return (
+      <div className="mx-auto grid max-w-2xl grid-cols-1 gap-4">
+        {Array.from({ length: count }).map((_, i) => (
+          <div
+            key={i}
+            className="flex h-200 animate-pulse items-center gap-4 rounded-lg bg-muted p-4"
+          >
+            <Skeleton className="h-12 w-12 rounded-full bg-muted" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-3/4 rounded bg-muted" />
+              <Skeleton className="h-4 w-1/2 rounded bg-muted" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   const cardMinWidth = CARD_MIN_WIDTH[cardSize];
 

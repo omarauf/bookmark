@@ -17,17 +17,15 @@ import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
+import { Route as AuthenticatedPostsRouteRouteImport } from './routes/_authenticated/posts/route'
 import { Route as AuthenticatedYoutubeIndexRouteImport } from './routes/_authenticated/youtube/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
-import { Route as AuthenticatedTwitterIndexRouteImport } from './routes/_authenticated/twitter/index'
-import { Route as AuthenticatedTiktokIndexRouteImport } from './routes/_authenticated/tiktok/index'
 import { Route as AuthenticatedTagsIndexRouteImport } from './routes/_authenticated/tags/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProfilesIndexRouteImport } from './routes/_authenticated/profiles/index'
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
 import { Route as AuthenticatedJobGroupsIndexRouteImport } from './routes/_authenticated/job-groups/index'
-import { Route as AuthenticatedInstagramIndexRouteImport } from './routes/_authenticated/instagram/index'
 import { Route as AuthenticatedImportsIndexRouteImport } from './routes/_authenticated/imports/index'
 import { Route as AuthenticatedImdbIndexRouteImport } from './routes/_authenticated/imdb/index'
 import { Route as AuthenticatedFileManagerIndexRouteImport } from './routes/_authenticated/file-manager/index'
@@ -35,12 +33,15 @@ import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedCollectionsIndexRouteImport } from './routes/_authenticated/collections/index'
 import { Route as AuthenticatedAnimeIndexRouteImport } from './routes/_authenticated/anime/index'
 import { Route as AuthenticatedProfilesIdRouteImport } from './routes/_authenticated/profiles/$id'
+import { Route as AuthenticatedPostsTwitterRouteImport } from './routes/_authenticated/posts/twitter'
+import { Route as AuthenticatedPostsTiktokRouteImport } from './routes/_authenticated/posts/tiktok'
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs/$id'
 import { Route as AuthenticatedJobGroupsIdRouteImport } from './routes/_authenticated/job-groups/$id'
-import { Route as AuthenticatedInstagramVirtualWindowRouteImport } from './routes/_authenticated/instagram/virtual-window'
-import { Route as AuthenticatedInstagramVirtualRouteImport } from './routes/_authenticated/instagram/virtual'
-import { Route as AuthenticatedInstagramTempRouteImport } from './routes/_authenticated/instagram/temp'
 import { Route as AuthenticatedAssetsFormRouteImport } from './routes/_authenticated/assets/form'
+import { Route as AuthenticatedPostsInstagramIndexRouteImport } from './routes/_authenticated/posts/instagram/index'
+import { Route as AuthenticatedPostsInstagramVirtualWindowRouteImport } from './routes/_authenticated/posts/instagram/virtual-window'
+import { Route as AuthenticatedPostsInstagramVirtualRouteImport } from './routes/_authenticated/posts/instagram/virtual'
+import { Route as AuthenticatedPostsInstagramTempRouteImport } from './routes/_authenticated/posts/instagram/temp'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -81,6 +82,11 @@ const errors401Route = errors401RouteImport.update({
   path: '/401',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedPostsRouteRoute = AuthenticatedPostsRouteRouteImport.update({
+  id: '/posts',
+  path: '/posts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedYoutubeIndexRoute =
   AuthenticatedYoutubeIndexRouteImport.update({
     id: '/youtube/',
@@ -92,18 +98,6 @@ const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedTwitterIndexRoute =
-  AuthenticatedTwitterIndexRouteImport.update({
-    id: '/twitter/',
-    path: '/twitter/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedTiktokIndexRoute =
-  AuthenticatedTiktokIndexRouteImport.update({
-    id: '/tiktok/',
-    path: '/tiktok/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedTagsIndexRoute = AuthenticatedTagsIndexRouteImport.update({
   id: '/tags/',
   path: '/tags/',
@@ -135,12 +129,6 @@ const AuthenticatedJobGroupsIndexRoute =
   AuthenticatedJobGroupsIndexRouteImport.update({
     id: '/job-groups/',
     path: '/job-groups/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedInstagramIndexRoute =
-  AuthenticatedInstagramIndexRouteImport.update({
-    id: '/instagram/',
-    path: '/instagram/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedImportsIndexRoute =
@@ -182,6 +170,18 @@ const AuthenticatedProfilesIdRoute = AuthenticatedProfilesIdRouteImport.update({
   path: '/profiles/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPostsTwitterRoute =
+  AuthenticatedPostsTwitterRouteImport.update({
+    id: '/twitter',
+    path: '/twitter',
+    getParentRoute: () => AuthenticatedPostsRouteRoute,
+  } as any)
+const AuthenticatedPostsTiktokRoute =
+  AuthenticatedPostsTiktokRouteImport.update({
+    id: '/tiktok',
+    path: '/tiktok',
+    getParentRoute: () => AuthenticatedPostsRouteRoute,
+  } as any)
 const AuthenticatedJobsIdRoute = AuthenticatedJobsIdRouteImport.update({
   id: '/jobs/$id',
   path: '/jobs/$id',
@@ -193,32 +193,39 @@ const AuthenticatedJobGroupsIdRoute =
     path: '/job-groups/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedInstagramVirtualWindowRoute =
-  AuthenticatedInstagramVirtualWindowRouteImport.update({
-    id: '/instagram/virtual-window',
-    path: '/instagram/virtual-window',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedInstagramVirtualRoute =
-  AuthenticatedInstagramVirtualRouteImport.update({
-    id: '/instagram/virtual',
-    path: '/instagram/virtual',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedInstagramTempRoute =
-  AuthenticatedInstagramTempRouteImport.update({
-    id: '/instagram/temp',
-    path: '/instagram/temp',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedAssetsFormRoute = AuthenticatedAssetsFormRouteImport.update({
   id: '/assets/form',
   path: '/assets/form',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPostsInstagramIndexRoute =
+  AuthenticatedPostsInstagramIndexRouteImport.update({
+    id: '/instagram/',
+    path: '/instagram/',
+    getParentRoute: () => AuthenticatedPostsRouteRoute,
+  } as any)
+const AuthenticatedPostsInstagramVirtualWindowRoute =
+  AuthenticatedPostsInstagramVirtualWindowRouteImport.update({
+    id: '/instagram/virtual-window',
+    path: '/instagram/virtual-window',
+    getParentRoute: () => AuthenticatedPostsRouteRoute,
+  } as any)
+const AuthenticatedPostsInstagramVirtualRoute =
+  AuthenticatedPostsInstagramVirtualRouteImport.update({
+    id: '/instagram/virtual',
+    path: '/instagram/virtual',
+    getParentRoute: () => AuthenticatedPostsRouteRoute,
+  } as any)
+const AuthenticatedPostsInstagramTempRoute =
+  AuthenticatedPostsInstagramTempRouteImport.update({
+    id: '/instagram/temp',
+    path: '/instagram/temp',
+    getParentRoute: () => AuthenticatedPostsRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+  '/posts': typeof AuthenticatedPostsRouteRouteWithChildren
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
@@ -226,11 +233,10 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/sign-in': typeof AuthSignInRoute
   '/assets/form': typeof AuthenticatedAssetsFormRoute
-  '/instagram/temp': typeof AuthenticatedInstagramTempRoute
-  '/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
-  '/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
   '/job-groups/$id': typeof AuthenticatedJobGroupsIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
+  '/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
+  '/posts/twitter': typeof AuthenticatedPostsTwitterRoute
   '/profiles/$id': typeof AuthenticatedProfilesIdRoute
   '/anime/': typeof AuthenticatedAnimeIndexRoute
   '/collections/': typeof AuthenticatedCollectionsIndexRoute
@@ -238,19 +244,21 @@ export interface FileRoutesByFullPath {
   '/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/imdb/': typeof AuthenticatedImdbIndexRoute
   '/imports/': typeof AuthenticatedImportsIndexRoute
-  '/instagram/': typeof AuthenticatedInstagramIndexRoute
   '/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs/': typeof AuthenticatedJobsIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
   '/profiles/': typeof AuthenticatedProfilesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tags/': typeof AuthenticatedTagsIndexRoute
-  '/tiktok/': typeof AuthenticatedTiktokIndexRoute
-  '/twitter/': typeof AuthenticatedTwitterIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
   '/youtube/': typeof AuthenticatedYoutubeIndexRoute
+  '/posts/instagram/temp': typeof AuthenticatedPostsInstagramTempRoute
+  '/posts/instagram/virtual': typeof AuthenticatedPostsInstagramVirtualRoute
+  '/posts/instagram/virtual-window': typeof AuthenticatedPostsInstagramVirtualWindowRoute
+  '/posts/instagram/': typeof AuthenticatedPostsInstagramIndexRoute
 }
 export interface FileRoutesByTo {
+  '/posts': typeof AuthenticatedPostsRouteRouteWithChildren
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
@@ -259,11 +267,10 @@ export interface FileRoutesByTo {
   '/sign-in': typeof AuthSignInRoute
   '/': typeof AuthenticatedIndexRoute
   '/assets/form': typeof AuthenticatedAssetsFormRoute
-  '/instagram/temp': typeof AuthenticatedInstagramTempRoute
-  '/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
-  '/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
   '/job-groups/$id': typeof AuthenticatedJobGroupsIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
+  '/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
+  '/posts/twitter': typeof AuthenticatedPostsTwitterRoute
   '/profiles/$id': typeof AuthenticatedProfilesIdRoute
   '/anime': typeof AuthenticatedAnimeIndexRoute
   '/collections': typeof AuthenticatedCollectionsIndexRoute
@@ -271,21 +278,23 @@ export interface FileRoutesByTo {
   '/file-manager': typeof AuthenticatedFileManagerIndexRoute
   '/imdb': typeof AuthenticatedImdbIndexRoute
   '/imports': typeof AuthenticatedImportsIndexRoute
-  '/instagram': typeof AuthenticatedInstagramIndexRoute
   '/job-groups': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
   '/profiles': typeof AuthenticatedProfilesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
-  '/tiktok': typeof AuthenticatedTiktokIndexRoute
-  '/twitter': typeof AuthenticatedTwitterIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/youtube': typeof AuthenticatedYoutubeIndexRoute
+  '/posts/instagram/temp': typeof AuthenticatedPostsInstagramTempRoute
+  '/posts/instagram/virtual': typeof AuthenticatedPostsInstagramVirtualRoute
+  '/posts/instagram/virtual-window': typeof AuthenticatedPostsInstagramVirtualWindowRoute
+  '/posts/instagram': typeof AuthenticatedPostsInstagramIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_authenticated/posts': typeof AuthenticatedPostsRouteRouteWithChildren
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/404': typeof errors404Route
@@ -294,11 +303,10 @@ export interface FileRoutesById {
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/assets/form': typeof AuthenticatedAssetsFormRoute
-  '/_authenticated/instagram/temp': typeof AuthenticatedInstagramTempRoute
-  '/_authenticated/instagram/virtual': typeof AuthenticatedInstagramVirtualRoute
-  '/_authenticated/instagram/virtual-window': typeof AuthenticatedInstagramVirtualWindowRoute
   '/_authenticated/job-groups/$id': typeof AuthenticatedJobGroupsIdRoute
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
+  '/_authenticated/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
+  '/_authenticated/posts/twitter': typeof AuthenticatedPostsTwitterRoute
   '/_authenticated/profiles/$id': typeof AuthenticatedProfilesIdRoute
   '/_authenticated/anime/': typeof AuthenticatedAnimeIndexRoute
   '/_authenticated/collections/': typeof AuthenticatedCollectionsIndexRoute
@@ -306,22 +314,24 @@ export interface FileRoutesById {
   '/_authenticated/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/_authenticated/imdb/': typeof AuthenticatedImdbIndexRoute
   '/_authenticated/imports/': typeof AuthenticatedImportsIndexRoute
-  '/_authenticated/instagram/': typeof AuthenticatedInstagramIndexRoute
   '/_authenticated/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
   '/_authenticated/profiles/': typeof AuthenticatedProfilesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
-  '/_authenticated/tiktok/': typeof AuthenticatedTiktokIndexRoute
-  '/_authenticated/twitter/': typeof AuthenticatedTwitterIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/youtube/': typeof AuthenticatedYoutubeIndexRoute
+  '/_authenticated/posts/instagram/temp': typeof AuthenticatedPostsInstagramTempRoute
+  '/_authenticated/posts/instagram/virtual': typeof AuthenticatedPostsInstagramVirtualRoute
+  '/_authenticated/posts/instagram/virtual-window': typeof AuthenticatedPostsInstagramVirtualWindowRoute
+  '/_authenticated/posts/instagram/': typeof AuthenticatedPostsInstagramIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/posts'
     | '/401'
     | '/403'
     | '/404'
@@ -329,11 +339,10 @@ export interface FileRouteTypes {
     | '/503'
     | '/sign-in'
     | '/assets/form'
-    | '/instagram/temp'
-    | '/instagram/virtual'
-    | '/instagram/virtual-window'
     | '/job-groups/$id'
     | '/jobs/$id'
+    | '/posts/tiktok'
+    | '/posts/twitter'
     | '/profiles/$id'
     | '/anime/'
     | '/collections/'
@@ -341,19 +350,21 @@ export interface FileRouteTypes {
     | '/file-manager/'
     | '/imdb/'
     | '/imports/'
-    | '/instagram/'
     | '/job-groups/'
     | '/jobs/'
     | '/links/'
     | '/profiles/'
     | '/settings/'
     | '/tags/'
-    | '/tiktok/'
-    | '/twitter/'
     | '/users/'
     | '/youtube/'
+    | '/posts/instagram/temp'
+    | '/posts/instagram/virtual'
+    | '/posts/instagram/virtual-window'
+    | '/posts/instagram/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/posts'
     | '/401'
     | '/403'
     | '/404'
@@ -362,11 +373,10 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/'
     | '/assets/form'
-    | '/instagram/temp'
-    | '/instagram/virtual'
-    | '/instagram/virtual-window'
     | '/job-groups/$id'
     | '/jobs/$id'
+    | '/posts/tiktok'
+    | '/posts/twitter'
     | '/profiles/$id'
     | '/anime'
     | '/collections'
@@ -374,20 +384,22 @@ export interface FileRouteTypes {
     | '/file-manager'
     | '/imdb'
     | '/imports'
-    | '/instagram'
     | '/job-groups'
     | '/jobs'
     | '/links'
     | '/profiles'
     | '/settings'
     | '/tags'
-    | '/tiktok'
-    | '/twitter'
     | '/users'
     | '/youtube'
+    | '/posts/instagram/temp'
+    | '/posts/instagram/virtual'
+    | '/posts/instagram/virtual-window'
+    | '/posts/instagram'
   id:
     | '__root__'
     | '/_authenticated'
+    | '/_authenticated/posts'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/404'
@@ -396,11 +408,10 @@ export interface FileRouteTypes {
     | '/_auth/sign-in'
     | '/_authenticated/'
     | '/_authenticated/assets/form'
-    | '/_authenticated/instagram/temp'
-    | '/_authenticated/instagram/virtual'
-    | '/_authenticated/instagram/virtual-window'
     | '/_authenticated/job-groups/$id'
     | '/_authenticated/jobs/$id'
+    | '/_authenticated/posts/tiktok'
+    | '/_authenticated/posts/twitter'
     | '/_authenticated/profiles/$id'
     | '/_authenticated/anime/'
     | '/_authenticated/collections/'
@@ -408,17 +419,18 @@ export interface FileRouteTypes {
     | '/_authenticated/file-manager/'
     | '/_authenticated/imdb/'
     | '/_authenticated/imports/'
-    | '/_authenticated/instagram/'
     | '/_authenticated/job-groups/'
     | '/_authenticated/jobs/'
     | '/_authenticated/links/'
     | '/_authenticated/profiles/'
     | '/_authenticated/settings/'
     | '/_authenticated/tags/'
-    | '/_authenticated/tiktok/'
-    | '/_authenticated/twitter/'
     | '/_authenticated/users/'
     | '/_authenticated/youtube/'
+    | '/_authenticated/posts/instagram/temp'
+    | '/_authenticated/posts/instagram/virtual'
+    | '/_authenticated/posts/instagram/virtual-window'
+    | '/_authenticated/posts/instagram/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -489,6 +501,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof errors401RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/posts': {
+      id: '/_authenticated/posts'
+      path: '/posts'
+      fullPath: '/posts'
+      preLoaderRoute: typeof AuthenticatedPostsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/youtube/': {
       id: '/_authenticated/youtube/'
       path: '/youtube'
@@ -501,20 +520,6 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users/'
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/twitter/': {
-      id: '/_authenticated/twitter/'
-      path: '/twitter'
-      fullPath: '/twitter/'
-      preLoaderRoute: typeof AuthenticatedTwitterIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/tiktok/': {
-      id: '/_authenticated/tiktok/'
-      path: '/tiktok'
-      fullPath: '/tiktok/'
-      preLoaderRoute: typeof AuthenticatedTiktokIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/tags/': {
@@ -557,13 +562,6 @@ declare module '@tanstack/react-router' {
       path: '/job-groups'
       fullPath: '/job-groups/'
       preLoaderRoute: typeof AuthenticatedJobGroupsIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/instagram/': {
-      id: '/_authenticated/instagram/'
-      path: '/instagram'
-      fullPath: '/instagram/'
-      preLoaderRoute: typeof AuthenticatedInstagramIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/imports/': {
@@ -615,6 +613,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfilesIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/posts/twitter': {
+      id: '/_authenticated/posts/twitter'
+      path: '/twitter'
+      fullPath: '/posts/twitter'
+      preLoaderRoute: typeof AuthenticatedPostsTwitterRouteImport
+      parentRoute: typeof AuthenticatedPostsRouteRoute
+    }
+    '/_authenticated/posts/tiktok': {
+      id: '/_authenticated/posts/tiktok'
+      path: '/tiktok'
+      fullPath: '/posts/tiktok'
+      preLoaderRoute: typeof AuthenticatedPostsTiktokRouteImport
+      parentRoute: typeof AuthenticatedPostsRouteRoute
+    }
     '/_authenticated/jobs/$id': {
       id: '/_authenticated/jobs/$id'
       path: '/jobs/$id'
@@ -629,27 +641,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobGroupsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/instagram/virtual-window': {
-      id: '/_authenticated/instagram/virtual-window'
-      path: '/instagram/virtual-window'
-      fullPath: '/instagram/virtual-window'
-      preLoaderRoute: typeof AuthenticatedInstagramVirtualWindowRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/instagram/virtual': {
-      id: '/_authenticated/instagram/virtual'
-      path: '/instagram/virtual'
-      fullPath: '/instagram/virtual'
-      preLoaderRoute: typeof AuthenticatedInstagramVirtualRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/instagram/temp': {
-      id: '/_authenticated/instagram/temp'
-      path: '/instagram/temp'
-      fullPath: '/instagram/temp'
-      preLoaderRoute: typeof AuthenticatedInstagramTempRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/assets/form': {
       id: '/_authenticated/assets/form'
       path: '/assets/form'
@@ -657,15 +648,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAssetsFormRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/posts/instagram/': {
+      id: '/_authenticated/posts/instagram/'
+      path: '/instagram'
+      fullPath: '/posts/instagram/'
+      preLoaderRoute: typeof AuthenticatedPostsInstagramIndexRouteImport
+      parentRoute: typeof AuthenticatedPostsRouteRoute
+    }
+    '/_authenticated/posts/instagram/virtual-window': {
+      id: '/_authenticated/posts/instagram/virtual-window'
+      path: '/instagram/virtual-window'
+      fullPath: '/posts/instagram/virtual-window'
+      preLoaderRoute: typeof AuthenticatedPostsInstagramVirtualWindowRouteImport
+      parentRoute: typeof AuthenticatedPostsRouteRoute
+    }
+    '/_authenticated/posts/instagram/virtual': {
+      id: '/_authenticated/posts/instagram/virtual'
+      path: '/instagram/virtual'
+      fullPath: '/posts/instagram/virtual'
+      preLoaderRoute: typeof AuthenticatedPostsInstagramVirtualRouteImport
+      parentRoute: typeof AuthenticatedPostsRouteRoute
+    }
+    '/_authenticated/posts/instagram/temp': {
+      id: '/_authenticated/posts/instagram/temp'
+      path: '/instagram/temp'
+      fullPath: '/posts/instagram/temp'
+      preLoaderRoute: typeof AuthenticatedPostsInstagramTempRouteImport
+      parentRoute: typeof AuthenticatedPostsRouteRoute
+    }
   }
 }
 
+interface AuthenticatedPostsRouteRouteChildren {
+  AuthenticatedPostsTiktokRoute: typeof AuthenticatedPostsTiktokRoute
+  AuthenticatedPostsTwitterRoute: typeof AuthenticatedPostsTwitterRoute
+  AuthenticatedPostsInstagramTempRoute: typeof AuthenticatedPostsInstagramTempRoute
+  AuthenticatedPostsInstagramVirtualRoute: typeof AuthenticatedPostsInstagramVirtualRoute
+  AuthenticatedPostsInstagramVirtualWindowRoute: typeof AuthenticatedPostsInstagramVirtualWindowRoute
+  AuthenticatedPostsInstagramIndexRoute: typeof AuthenticatedPostsInstagramIndexRoute
+}
+
+const AuthenticatedPostsRouteRouteChildren: AuthenticatedPostsRouteRouteChildren =
+  {
+    AuthenticatedPostsTiktokRoute: AuthenticatedPostsTiktokRoute,
+    AuthenticatedPostsTwitterRoute: AuthenticatedPostsTwitterRoute,
+    AuthenticatedPostsInstagramTempRoute: AuthenticatedPostsInstagramTempRoute,
+    AuthenticatedPostsInstagramVirtualRoute:
+      AuthenticatedPostsInstagramVirtualRoute,
+    AuthenticatedPostsInstagramVirtualWindowRoute:
+      AuthenticatedPostsInstagramVirtualWindowRoute,
+    AuthenticatedPostsInstagramIndexRoute:
+      AuthenticatedPostsInstagramIndexRoute,
+  }
+
+const AuthenticatedPostsRouteRouteWithChildren =
+  AuthenticatedPostsRouteRoute._addFileChildren(
+    AuthenticatedPostsRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPostsRouteRoute: typeof AuthenticatedPostsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAssetsFormRoute: typeof AuthenticatedAssetsFormRoute
-  AuthenticatedInstagramTempRoute: typeof AuthenticatedInstagramTempRoute
-  AuthenticatedInstagramVirtualRoute: typeof AuthenticatedInstagramVirtualRoute
-  AuthenticatedInstagramVirtualWindowRoute: typeof AuthenticatedInstagramVirtualWindowRoute
   AuthenticatedJobGroupsIdRoute: typeof AuthenticatedJobGroupsIdRoute
   AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
   AuthenticatedProfilesIdRoute: typeof AuthenticatedProfilesIdRoute
@@ -675,26 +719,20 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFileManagerIndexRoute: typeof AuthenticatedFileManagerIndexRoute
   AuthenticatedImdbIndexRoute: typeof AuthenticatedImdbIndexRoute
   AuthenticatedImportsIndexRoute: typeof AuthenticatedImportsIndexRoute
-  AuthenticatedInstagramIndexRoute: typeof AuthenticatedInstagramIndexRoute
   AuthenticatedJobGroupsIndexRoute: typeof AuthenticatedJobGroupsIndexRoute
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
   AuthenticatedProfilesIndexRoute: typeof AuthenticatedProfilesIndexRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
   AuthenticatedTagsIndexRoute: typeof AuthenticatedTagsIndexRoute
-  AuthenticatedTiktokIndexRoute: typeof AuthenticatedTiktokIndexRoute
-  AuthenticatedTwitterIndexRoute: typeof AuthenticatedTwitterIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedYoutubeIndexRoute: typeof AuthenticatedYoutubeIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPostsRouteRoute: AuthenticatedPostsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAssetsFormRoute: AuthenticatedAssetsFormRoute,
-  AuthenticatedInstagramTempRoute: AuthenticatedInstagramTempRoute,
-  AuthenticatedInstagramVirtualRoute: AuthenticatedInstagramVirtualRoute,
-  AuthenticatedInstagramVirtualWindowRoute:
-    AuthenticatedInstagramVirtualWindowRoute,
   AuthenticatedJobGroupsIdRoute: AuthenticatedJobGroupsIdRoute,
   AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
   AuthenticatedProfilesIdRoute: AuthenticatedProfilesIdRoute,
@@ -704,15 +742,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFileManagerIndexRoute: AuthenticatedFileManagerIndexRoute,
   AuthenticatedImdbIndexRoute: AuthenticatedImdbIndexRoute,
   AuthenticatedImportsIndexRoute: AuthenticatedImportsIndexRoute,
-  AuthenticatedInstagramIndexRoute: AuthenticatedInstagramIndexRoute,
   AuthenticatedJobGroupsIndexRoute: AuthenticatedJobGroupsIndexRoute,
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,
   AuthenticatedProfilesIndexRoute: AuthenticatedProfilesIndexRoute,
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,
-  AuthenticatedTiktokIndexRoute: AuthenticatedTiktokIndexRoute,
-  AuthenticatedTwitterIndexRoute: AuthenticatedTwitterIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedYoutubeIndexRoute: AuthenticatedYoutubeIndexRoute,
 }

@@ -60,11 +60,19 @@ export function ToggleGroupField({
         onValueChange={onChangeHandler}
         variant={variant}
         size={size}
-        className={cn("w-fit!", className, classNames?.group)}
+        className={cn("w-fit!", variant === "falcon" && "h-9", className, classNames?.group)}
         data-invalid={isInvalid}
       >
         {props.options.map((option) => (
-          <ToggleGroupItem key={option.value} value={option.value} aria-label={option.label}>
+          <ToggleGroupItem
+            key={option.value}
+            value={option.value}
+            aria-label={option.label}
+            className={cn(
+              variant === "falcon" &&
+                "mt-0! h-7 px-3 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground",
+            )}
+          >
             {option.icon && <option.icon className="h-4 w-4" />}
             {option.label}
           </ToggleGroupItem>

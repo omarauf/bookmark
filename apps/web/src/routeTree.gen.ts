@@ -23,6 +23,7 @@ import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedTagsIndexRouteImport } from './routes/_authenticated/tags/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProfilesIndexRouteImport } from './routes/_authenticated/profiles/index'
+import { Route as AuthenticatedPostsIndexRouteImport } from './routes/_authenticated/posts/index'
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
 import { Route as AuthenticatedJobGroupsIndexRouteImport } from './routes/_authenticated/job-groups/index'
@@ -115,6 +116,11 @@ const AuthenticatedProfilesIndexRoute =
     path: '/profiles/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPostsIndexRoute = AuthenticatedPostsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedPostsRouteRoute,
+} as any)
 const AuthenticatedLinksIndexRoute = AuthenticatedLinksIndexRouteImport.update({
   id: '/links/',
   path: '/links/',
@@ -247,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs/': typeof AuthenticatedJobsIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
+  '/posts/': typeof AuthenticatedPostsIndexRoute
   '/profiles/': typeof AuthenticatedProfilesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tags/': typeof AuthenticatedTagsIndexRoute
@@ -258,7 +265,6 @@ export interface FileRoutesByFullPath {
   '/posts/instagram/': typeof AuthenticatedPostsInstagramIndexRoute
 }
 export interface FileRoutesByTo {
-  '/posts': typeof AuthenticatedPostsRouteRouteWithChildren
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
@@ -281,6 +287,7 @@ export interface FileRoutesByTo {
   '/job-groups': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
+  '/posts': typeof AuthenticatedPostsIndexRoute
   '/profiles': typeof AuthenticatedProfilesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
@@ -317,6 +324,7 @@ export interface FileRoutesById {
   '/_authenticated/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
+  '/_authenticated/posts/': typeof AuthenticatedPostsIndexRoute
   '/_authenticated/profiles/': typeof AuthenticatedProfilesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
@@ -353,6 +361,7 @@ export interface FileRouteTypes {
     | '/job-groups/'
     | '/jobs/'
     | '/links/'
+    | '/posts/'
     | '/profiles/'
     | '/settings/'
     | '/tags/'
@@ -364,7 +373,6 @@ export interface FileRouteTypes {
     | '/posts/instagram/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/posts'
     | '/401'
     | '/403'
     | '/404'
@@ -387,6 +395,7 @@ export interface FileRouteTypes {
     | '/job-groups'
     | '/jobs'
     | '/links'
+    | '/posts'
     | '/profiles'
     | '/settings'
     | '/tags'
@@ -422,6 +431,7 @@ export interface FileRouteTypes {
     | '/_authenticated/job-groups/'
     | '/_authenticated/jobs/'
     | '/_authenticated/links/'
+    | '/_authenticated/posts/'
     | '/_authenticated/profiles/'
     | '/_authenticated/settings/'
     | '/_authenticated/tags/'
@@ -542,6 +552,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/profiles/'
       preLoaderRoute: typeof AuthenticatedProfilesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/posts/': {
+      id: '/_authenticated/posts/'
+      path: '/'
+      fullPath: '/posts/'
+      preLoaderRoute: typeof AuthenticatedPostsIndexRouteImport
+      parentRoute: typeof AuthenticatedPostsRouteRoute
     }
     '/_authenticated/links/': {
       id: '/_authenticated/links/'
@@ -682,6 +699,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedPostsRouteRouteChildren {
   AuthenticatedPostsTiktokRoute: typeof AuthenticatedPostsTiktokRoute
   AuthenticatedPostsTwitterRoute: typeof AuthenticatedPostsTwitterRoute
+  AuthenticatedPostsIndexRoute: typeof AuthenticatedPostsIndexRoute
   AuthenticatedPostsInstagramTempRoute: typeof AuthenticatedPostsInstagramTempRoute
   AuthenticatedPostsInstagramVirtualRoute: typeof AuthenticatedPostsInstagramVirtualRoute
   AuthenticatedPostsInstagramVirtualWindowRoute: typeof AuthenticatedPostsInstagramVirtualWindowRoute
@@ -692,6 +710,7 @@ const AuthenticatedPostsRouteRouteChildren: AuthenticatedPostsRouteRouteChildren
   {
     AuthenticatedPostsTiktokRoute: AuthenticatedPostsTiktokRoute,
     AuthenticatedPostsTwitterRoute: AuthenticatedPostsTwitterRoute,
+    AuthenticatedPostsIndexRoute: AuthenticatedPostsIndexRoute,
     AuthenticatedPostsInstagramTempRoute: AuthenticatedPostsInstagramTempRoute,
     AuthenticatedPostsInstagramVirtualRoute:
       AuthenticatedPostsInstagramVirtualRoute,

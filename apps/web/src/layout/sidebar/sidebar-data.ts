@@ -10,6 +10,7 @@ import {
   GalleryVerticalEnd,
   Layers,
   Link,
+  Rss,
   ServerCrash,
   Settings,
   ShieldAlert,
@@ -55,10 +56,11 @@ export const sidebarData: SidebarData = {
     {
       title: "Social",
       items: [
+        { title: "All", url: "/posts", icon: Rss },
         { title: "Instagram", url: "/posts/instagram", icon: InstagramIcon },
         { title: "Twitter", url: "/posts/twitter", icon: TwitterIcon },
         { title: "TikTok", url: "/posts/tiktok", icon: Video },
-        { title: "Profiles", url: "profiles", icon: UserCircle },
+        { title: "Profiles", url: "/profiles", icon: UserCircle },
       ],
     },
     {

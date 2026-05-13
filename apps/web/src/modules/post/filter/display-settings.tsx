@@ -17,6 +17,7 @@ export function DisplaySettingsMenu() {
       showCardInfo: store.showCardInfo,
       titleLines: store.titleLines,
       flattenFolders: store.flattenFolders,
+      autoPlay: store.autoPlay,
     },
     listeners: {
       onChange: ({ formApi }) => {
@@ -123,6 +124,10 @@ export function DisplaySettingsMenu() {
 
         <form.AppField name="flattenFolders">
           {(field) => <field.Switch label="Flatten Folders" />}
+        </form.AppField>
+
+        <form.AppField name="autoPlay">
+          {(field) => <field.Switch label="Auto Play" />}
         </form.AppField>
       </PopoverContent>
     </Popover>

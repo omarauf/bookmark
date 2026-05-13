@@ -1,13 +1,13 @@
 import type { Post } from "@workspace/contracts/views/post";
 import { Fragment } from "react";
 import { cn } from "@/lib/utils";
-import { PostCard } from "../card";
 import { CARD_MIN_WIDTH } from "../card/constant";
 import { useDisplaySettingsStore } from "../controls/display-setting-store";
 import { useLayoutStore } from "../controls/layout-store";
 import { usePreviewStore } from "../controls/preview-store";
 import { usePostNavigation } from "../controls/use-post-navigation";
-import { PostDialog } from "../dialog";
+import { PostCard } from "../views/card";
+import { PostDialog } from "../views/dialog";
 
 type Props = {
   posts?: Post[];

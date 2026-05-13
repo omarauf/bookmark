@@ -15,6 +15,7 @@ type DisplaySettingsState = {
   showCardInfo: boolean;
   titleLines: number; // Assuming the dropdown is for number of lines (e.g., 1, 2, 3)
   flattenFolders: boolean;
+  autoPlay: boolean;
 };
 
 type DisplaySettingsActions = {
@@ -25,6 +26,7 @@ type DisplaySettingsActions = {
   toggleCardInfo: () => void;
   setTitleLines: (lines: number) => void;
   toggleFlattenFolders: () => void;
+  toggleAutoPlay: () => void;
   resetToDefaults: () => void;
   setState: (state: Partial<DisplaySettingsState>) => void;
 };
@@ -37,6 +39,7 @@ const initialState: DisplaySettingsState = {
   showCardInfo: true,
   titleLines: 1,
   flattenFolders: false,
+  autoPlay: false,
 };
 
 const displaySettingsStore: StateCreator<DisplaySettingsState & DisplaySettingsActions> = (
@@ -54,6 +57,7 @@ const displaySettingsStore: StateCreator<DisplaySettingsState & DisplaySettingsA
   toggleCardInfo: () => set((state) => ({ showCardInfo: !state.showCardInfo })),
   setTitleLines: (titleLines) => set({ titleLines }),
   toggleFlattenFolders: () => set((state) => ({ flattenFolders: !state.flattenFolders })),
+  toggleAutoPlay: () => set((state) => ({ autoPlay: !state.autoPlay })),
 
   setState: (state) => set(state),
 

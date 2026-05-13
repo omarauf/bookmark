@@ -3,17 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreatorAvatar } from "@/modules/creator/avatar";
 import { fShortenNumber } from "@/utils/format-number";
 import { fDateTime } from "@/utils/format-time";
-import * as icons from "./icons";
-import { TwitterMediaCard } from "./media";
-import { Stats } from "./stats";
-import { TwitterText } from "./text";
-import { isVerified } from "./utils";
+import * as icons from "./common/icons";
+import { TwitterMediaCard } from "./common/media";
+import { Stats } from "./common/stats";
+import { TwitterText } from "./common/text";
+import { isVerified } from "./common/utils";
 
 type Props = {
   post: Post;
 };
 
-export function TwitterContent({ post }: Props) {
+export function TwitterDialogContent({ post }: Props) {
   if (post.platform !== "twitter") return null;
 
   return (

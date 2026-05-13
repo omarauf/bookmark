@@ -1,22 +1,22 @@
 import type { Post } from "@workspace/contracts/views/post";
 import { InstagramIcon } from "@/assets/icons";
-import { Caption } from "./caption";
-import { PostContext } from "./context";
-import { CreatorProfile } from "./creator-profile";
-import { Location } from "./location";
-import { Media } from "./media";
-import { Music } from "./music";
-import { Statistics } from "./stats";
+import { Caption } from "./common/caption";
+import { PostContext } from "./common/context";
+import { CreatorProfile } from "./common/creator-profile";
+import { Location } from "./common/location";
+import { Media } from "./common/media";
+import { Music } from "./common/music";
+import { Statistics } from "./common/stats";
 
 type Props = {
   post: Post;
 };
 
-export function InstagramContent({ post }: Props) {
+export function InstagramDialogContent({ post }: Props) {
   return (
     <PostContext.Provider value={post}>
       <div className="flex w-fit">
-        <Media className="h-full w-full object-cover" />
+        <Media className="rounded-l-lg" />
       </div>
 
       <div className="w-125">

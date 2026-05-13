@@ -3,6 +3,8 @@ import { Eye, ListTree } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 import { XBreadcrumb } from "@/components/breadcrumb";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useCurrentPlatform } from "@/modules/post/hooks/use-current-platform";
+import { toTitleCase } from "@/utils/change-case";
 import { useLayoutStore } from "../../post/controls/layout-store";
 import { useCollection } from "../hooks/use-ad-categories";
 
@@ -19,9 +21,16 @@ export function CollectionBreadcrumb() {
   const handleToggleChange = useLayoutStore((s) => s.handleToggleChange);
   const toggleValue = useLayoutStore(useShallow((state) => state.getToggleValue()));
 
+  const platform = useCurrentPlatform();
+  const homeLabel = platform ? platform : "Home";
+
   return (
     <div className="flex w-full items-center justify-between">
-      <XBreadcrumb breadcrumbs={pathNode(active)} onClick={onItemClickHandler} />
+      <XBreadcrumb
+        homeLabel={toTitleCase(homeLabel)}
+        breadcrumbs={pathNode(active)}
+        onClick={onItemClickHandler}
+      />
 
       <div>
         <ToggleGroup

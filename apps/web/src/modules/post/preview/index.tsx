@@ -1,6 +1,6 @@
-import { PostContent } from "../content";
 import { useLayoutStore } from "../controls/layout-store";
 import { usePreviewStore } from "../controls/preview-store";
+import { PostItem } from "../views/item";
 
 export function PostPreview() {
   const post = usePreviewStore((s) => s.post);
@@ -11,5 +11,5 @@ export function PostPreview() {
     return <div className="flex h-full items-center justify-center">Select a post to preview</div>;
   }
 
-  return <PostContent post={post} />;
+  return <PostItem post={post} className="rounded-none border-none bg-transparent" />;
 }

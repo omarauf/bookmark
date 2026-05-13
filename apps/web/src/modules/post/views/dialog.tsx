@@ -1,7 +1,8 @@
 import type { Post } from "@workspace/contracts/views/post";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { PostContent } from "../content";
+import { InstagramDialogContent } from "./instagram/dialog";
+import { TwitterDialogContent } from "./twitter/dialog";
 
 type Props = {
   post: Post;
@@ -30,4 +31,12 @@ export function PostDialog({ post, open, onOpenChange }: Props) {
       </DialogContent>
     </Dialog>
   );
+}
+
+function PostContent({ post }: { post: Post }) {
+  if (post.platform === "instagram") return <InstagramDialogContent post={post} />;
+
+  if (post.platform === "twitter") return <TwitterDialogContent post={post} />;
+
+  return null;
 }

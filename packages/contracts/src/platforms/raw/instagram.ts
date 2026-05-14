@@ -974,6 +974,7 @@ export enum MediaProductType {
   Clips = "clips",
   Feed = "feed",
   Igtv = "igtv",
+  Ad = "ad",
 }
 
 export interface SponsorTag {

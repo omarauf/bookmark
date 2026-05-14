@@ -46,6 +46,8 @@ function getMediaType(media_type: number, product_type: MediaProductType) {
         return "IGTV";
       case "clips":
         return "Reel";
+      case "ad":
+        return "Video";
       default:
         throw new Error(`Unknown product_type: ${product_type}`);
     }

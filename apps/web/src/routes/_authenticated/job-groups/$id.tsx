@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
+import { JobGroupCancelButton } from "@/modules/jobs/components/buttons/cancel-group";
 import { JobTable } from "@/modules/jobs/components/job-table";
 import { JobGroupAnalytics } from "@/modules/jobs/views/job-group-analytics";
 
@@ -37,6 +38,8 @@ function JobGroupDetailPage() {
             </p>
           </div>
         </div>
+
+        <JobGroupCancelButton groupId={id} />
       </div>
 
       <ScrollArea className="min-h-0 flex-1">

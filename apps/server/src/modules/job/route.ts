@@ -201,6 +201,32 @@ export const jobRouter = {
 
         return result;
       }),
+
+    cancel: protectedProcedure
+      .input(JobSchemas.group.cancel.request)
+      .output(JobSchemas.group.cancel.response)
+      .errors({ NOT_FOUND: { message: "Job group not found" } })
+      .handler(async ({ input: { groupId }, errors }) => {
+        const [group] = await db
+          .select({ id: jobGroups.id })
+          .from(jobGroups)
+          .where(eq(jobGroups.id, groupId))
+          .limit(1);
+        if (!group) throw errors.NOT_FOUND();
+
+        const cancelled = await db
+          .update(jobs)
+          .set({ status: "cancelled", cancelledAt: new Date(), retryAt: null })
+          .where(
+            and(
+              eq(jobs.groupId, groupId),
+              inArray(jobs.status, ["pending", "processing", "retrying"]),
+            ),
+          )
+          .returning({ id: jobs.id });
+
+        return { cancelled: cancelled.length };
+      }),
   },
 
   stats: protectedProcedure

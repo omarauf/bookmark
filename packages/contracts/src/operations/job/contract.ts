@@ -72,6 +72,10 @@ export const JobSchemas = {
         retrying: z.number().int(),
       }),
     },
+    cancel: {
+      request: z.object({ groupId: z.uuid() }),
+      response: z.object({ cancelled: z.number().int().min(0) }),
+    },
   },
 
   stats: {

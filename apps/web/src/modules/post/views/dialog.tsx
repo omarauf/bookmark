@@ -2,6 +2,7 @@ import type { Post } from "@workspace/contracts/views/post";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { InstagramDialogContent } from "./instagram/dialog";
+import { TiktokDialogContent } from "./tiktok/dialog";
 import { TwitterDialogContent } from "./twitter/dialog";
 
 type Props = {
@@ -17,8 +18,9 @@ export function PostDialog({ post, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "pointer-events-none flex w-max max-w-full flex-row sm:max-w-full",
+          "pointer-events-none flex w-max flex-row sm:max-w-full",
           platform === "instagram" && "h-[95%]",
+          platform === "tiktok" && "h-full max-h-[95%] bg-transparent p-0 sm:max-w-3xl",
           platform === "twitter" && "w-150",
         )}
         onOpenAutoFocus={(e) => e.preventDefault()}
@@ -37,6 +39,8 @@ function PostContent({ post }: { post: Post }) {
   if (post.platform === "instagram") return <InstagramDialogContent post={post} />;
 
   if (post.platform === "twitter") return <TwitterDialogContent post={post} />;
+
+  if (post.platform === "tiktok") return <TiktokDialogContent post={post} />;
 
   return null;
 }

@@ -11,5 +11,5 @@ export function PostPreview() {
     return <div className="flex h-full items-center justify-center">Select a post to preview</div>;
   }
 
-  return <PostItem post={post} className="rounded-none border-none bg-transparent" />;
+  return <PostItem post={post} className="border-none bg-transparent" />;
 }

@@ -11,7 +11,7 @@ export function PostListFeed({ posts = [] }: Props) {
   return (
     <div className="mx-auto grid max-w-xl grid-cols-1 gap-4">
       {flatItems?.map((post) => (
-        <PostItem key={post.id} post={post} />
+        <PostItem key={post.id} post={post} className="overflow-hidden rounded-lg" />
       ))}
     </div>
   );

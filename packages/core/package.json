@@ -3,7 +3,7 @@
   "type": "module",
   "devDependencies": {},
   "exports": {
-    "./import": "./src/import.ts",
+    "./ingest": "./src/ingest.ts",
     "./slugify": "./src/slugify.ts"
   },
   "peerDependencies": {

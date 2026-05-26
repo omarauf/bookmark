@@ -7,19 +7,19 @@ import {
 } from "../../foundation/pagination-query";
 import { PlatformEnum } from "../../foundation/platform";
 import { JobPayloadSchemas } from "../job/payload";
-import { ImportSchema } from "./entity";
+import { IngestSchema } from "./entity";
 
-export const ImportPayloadSchema = z.object({
+export const IngestPayloadSchema = z.object({
   items: CreateItemSchema.array(),
   invalidItems: z.any().array(),
   relations: CreateRelationSchema.array(),
   downloadTasks: JobPayloadSchemas.downloadMedia.array(),
 });
 
-export const ImportSchemas = {
+export const IngestSchemas = {
   list: {
     request: BasePaginationQuerySchema.extend({ platform: PlatformEnum.optional() }),
-    response: PaginationResultSchema(ImportSchema),
+    response: PaginationResultSchema(IngestSchema),
   },
 
   create: {
@@ -27,7 +27,7 @@ export const ImportSchemas = {
     response: z.object({ jobId: z.uuid().optional() }),
   },
 
-  import: {
+  ingest: {
     request: z.object({ id: z.uuid() }),
     response: z.object({ jobId: z.uuid() }),
   },
@@ -43,5 +43,5 @@ export const ImportSchemas = {
   },
 };
 
-export type Import = z.infer<typeof ImportSchema>;
-export type ImportPayload = z.infer<typeof ImportPayloadSchema>;
+export type Ingest = z.infer<typeof IngestSchema>;
+export type IngestPayload = z.infer<typeof IngestPayloadSchema>;

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const JobTypeEnum = z.enum([
-  "import_upload",
-  "import_process",
+  "ingest_upload",
+  "ingest_process",
   "download_media",
   "imdb_discover",
   "imdb_fetch",

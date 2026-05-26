@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { PlatformEnum } from "../../foundation/platform";
 
-export const ImportSchema = z.object({
+export const IngestSchema = z.object({
   id: z.uuid(),
   filename: z.string(),
   platform: PlatformEnum,
@@ -9,7 +9,7 @@ export const ImportSchema = z.object({
   validPost: z.number(),
   invalidPost: z.number(),
 
-  importedAt: z.date().optional(),
+  ingestedAt: z.date().optional(),
   deletedAt: z.date().optional(),
   scrapedAt: z.date(),
 });

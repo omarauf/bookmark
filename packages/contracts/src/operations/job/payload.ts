@@ -14,7 +14,7 @@ const DownloadMediaPayloadSchema = z.object({
   duration: z.number().optional(),
 });
 
-const ImportUploadPayloadSchema = z.object({
+const IngestUploadPayloadSchema = z.object({
   tempFilePath: z.string(),
   filename: z.string(),
   platform: PlatformEnum,
@@ -22,8 +22,8 @@ const ImportUploadPayloadSchema = z.object({
   size: z.number(),
 });
 
-const ImportProcessPayloadSchema = z.object({
-  importId: z.string(),
+const IngestProcessPayloadSchema = z.object({
+  ingestId: z.string(),
 });
 
 const ImdbDiscoverPayloadSchema = z.object({});
@@ -57,8 +57,8 @@ const YoutubeDownloadPayloadSchema = z.object({
 
 export const JobPayloadSchemas = {
   downloadMedia: DownloadMediaPayloadSchema,
-  importUpload: ImportUploadPayloadSchema,
-  importProcess: ImportProcessPayloadSchema,
+  ingestUpload: IngestUploadPayloadSchema,
+  ingestProcess: IngestProcessPayloadSchema,
   imdbDiscover: ImdbDiscoverPayloadSchema,
   imdbFetch: ImdbFetchPayloadSchema,
   animeDiscover: AnimeDiscoverPayloadSchema,
@@ -70,8 +70,8 @@ export const JobPayloadSchemas = {
 
 export const JobPayloadSchema = z.union([
   DownloadMediaPayloadSchema,
-  ImportUploadPayloadSchema,
-  ImportProcessPayloadSchema,
+  IngestUploadPayloadSchema,
+  IngestProcessPayloadSchema,
   ImdbDiscoverPayloadSchema,
   ImdbFetchPayloadSchema,
   AnimeDiscoverPayloadSchema,

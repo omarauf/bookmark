@@ -12,7 +12,7 @@
     "./platform": "./src/foundation/platform.ts",
     "./common/*": "./src/foundation/*.ts",
 
-    "./import": "./src/operations/import/index.ts",
+    "./ingest": "./src/operations/ingest/index.ts",
     "./file-manager": "./src/operations/file-manager/index.ts",
     "./job": "./src/operations/job/index.ts",
 

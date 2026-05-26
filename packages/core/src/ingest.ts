@@ -1,6 +1,6 @@
 import { type Platform, PlatformEnum } from "@workspace/contracts/platform";
 
-export function generateImportFilename(platform: Platform, date: Date = new Date()) {
+export function generateIngestFilename(platform: Platform, date: Date = new Date()) {
   const pad = (n: number) => n.toString().padStart(2, "0");
 
   const year = date.getFullYear();
@@ -15,7 +15,7 @@ export function generateImportFilename(platform: Platform, date: Date = new Date
   return `${platform}_${formatDate}.json`;
 }
 
-export function parseImportFilename(filename: string) {
+export function parseIngestFilename(filename: string) {
   const defaultResult = { scrapedAt: undefined, platform: undefined };
   const split = filename.split("_");
   if (split.length !== 3) return defaultResult;

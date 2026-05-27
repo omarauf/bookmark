@@ -2,7 +2,7 @@ import { PlatformValues } from "@workspace/contracts/platform";
 import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { IdentifiedEntityModel } from "@/core/db/helper/entity";
 
-export const imports = pgTable("imports", {
+export const ingests = pgTable("ingests", {
   ...IdentifiedEntityModel,
 
   filename: text().notNull(),
@@ -13,5 +13,5 @@ export const imports = pgTable("imports", {
 
   deletedAt: timestamp(),
   scrapedAt: timestamp().notNull(),
-  importedAt: timestamp(),
+  ingestedAt: timestamp(),
 });

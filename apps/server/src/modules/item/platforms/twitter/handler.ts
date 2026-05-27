@@ -1,4 +1,4 @@
-import { type ImportPayload, ImportPayloadSchema } from "@workspace/contracts/import";
+import { type IngestPayload, IngestPayloadSchema } from "@workspace/contracts/ingest";
 import type { CreateItem } from "@workspace/contracts/item";
 import type { DownloadMediaPayload } from "@workspace/contracts/job";
 import type { Platform } from "@workspace/contracts/platform";
@@ -36,7 +36,7 @@ export class TwitterHandler implements PlatformHandler {
     return { valid, invalid };
   }
 
-  parse(data: string): ImportPayload {
+  parse(data: string): IngestPayload {
     const jsonData = jsonParse<Twitter[]>(data);
 
     if (jsonData === undefined) {
@@ -47,7 +47,7 @@ export class TwitterHandler implements PlatformHandler {
       .flatMap((post) => post.data.bookmark_timeline_v2.timeline.instructions)
       .flatMap((item) => item.entries);
 
-    const results: ImportPayload[] = [];
+    const results: IngestPayload[] = [];
 
     for (const entry of entries) {
       if (entry.content.itemContent?.tweet_results === undefined) {
@@ -66,7 +66,7 @@ export class TwitterHandler implements PlatformHandler {
     };
   }
 
-  private _parse(data: TweetResults): ImportPayload {
+  private _parse(data: TweetResults): IngestPayload {
     const tweet = postParser(getTweet(data));
     const creator = creatorParser(getCreator(data));
     const createdRelations = relation(tweet.item, creator.item, "created_by");
@@ -88,7 +88,7 @@ export class TwitterHandler implements PlatformHandler {
 
     const payload = { items, invalidItems: [], relations, downloadTasks };
 
-    const result = ImportPayloadSchema.safeParse(payload);
+    const result = IngestPayloadSchema.safeParse(payload);
     if (!result.success) {
       return { items: [], invalidItems: [data], relations: [], downloadTasks: [] };
     }

@@ -1,4 +1,4 @@
-import type { ImportPayload } from "@workspace/contracts/import";
+import type { IngestPayload } from "@workspace/contracts/ingest";
 import type { Platform } from "@workspace/contracts/platform";
 
 export interface PlatformHandler {
@@ -6,5 +6,5 @@ export interface PlatformHandler {
 
   validate(data: string): { valid: number; invalid: number };
 
-  parse(data: string): ImportPayload;
+  parse(data: string): IngestPayload;
 }

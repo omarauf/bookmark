@@ -4,7 +4,7 @@ import { browseRouter } from "@/modules/file-manager/browse.route";
 import { fileRouter } from "@/modules/file-manager/file.route";
 import { folderRouter } from "@/modules/file-manager/folder.route";
 import { imdbRouter } from "@/modules/imdb/route";
-import { importRouter } from "@/modules/import/route";
+import { ingestRouter } from "@/modules/ingest/route";
 import { itemRouter } from "@/modules/item/route";
 import { jobRouter } from "@/modules/job/route";
 import { linkRouter } from "@/modules/link/route";
@@ -14,7 +14,7 @@ import { tagRouter } from "@/modules/tag/route";
 import { youtubeRouter } from "@/modules/youtube/route";
 
 export const appRouter = {
-  import: importRouter,
+  ingest: ingestRouter,
   tag: tagRouter,
   post: postRouter,
   profile: profileRouter,

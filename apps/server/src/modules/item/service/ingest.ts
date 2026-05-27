@@ -183,7 +183,7 @@ function filterNewRelations(
 }
 
 /**
- * Imports items and relations from external payloads into internal DB tables.
+ * Ingests items and relations from external payloads into internal DB tables.
  *
  * Behavior:
  * - Deduplicates input items by `${platform}:${externalId}`.
@@ -194,7 +194,7 @@ function filterNewRelations(
  * - Skips unresolved relations and existing relation rows.
  * - Uses a transaction to ensure atomic inserts.
  */
-export async function importItems(
+export async function ingestItems(
   createdItems: CreateItem[],
   createdRelations: CreateRelation[],
   onProgress?: (progress: number) => void,

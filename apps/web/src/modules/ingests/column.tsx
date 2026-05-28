@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Column, ColumnDef } from "@tanstack/react-table";
-import type { Import } from "@workspace/contracts/import";
+import type { Ingest } from "@workspace/contracts/ingest";
 import { PlatformValues } from "@workspace/contracts/platform";
 import { Ellipsis, Text } from "lucide-react";
 import type * as React from "react";
@@ -23,16 +23,16 @@ import { fNumber, fSize } from "@/utils/format-number";
 import { fDate } from "@/utils/format-time";
 
 type Props = {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<Import> | undefined>>;
+  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<Ingest> | undefined>>;
 };
 
-export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Import>[] {
+export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ingest>[] {
   const queryClient = useQueryClient();
 
-  const runImportMutation = useMutation(
-    orpc.import.import.mutationOptions({
+  const runIngestMutation = useMutation(
+    orpc.ingest.ingest.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: orpc.import.list.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.ingest.list.key() });
       },
       onError: (error) => {
         toast.error(error.message);
@@ -40,19 +40,19 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
     }),
   );
 
-  const importFileHandler = useCallback(
+  const ingestFileHandler = useCallback(
     async (id: string) => {
-      const result = runImportMutation.mutateAsync({ id });
+      const result = runIngestMutation.mutateAsync({ id });
       toast.promise(result, {
-        loading: "Importing...",
-        success: ({ jobId }) => `Import started (Job ID: ${jobId})`,
-        error: "Error importing posts",
+        loading: "Ingesting...",
+        success: ({ jobId }) => `Ingest started (Job ID: ${jobId})`,
+        error: "Error ingesting posts",
       });
     },
-    [runImportMutation],
+    [runIngestMutation],
   );
 
-  const columns = useMemo<ColumnDef<Import>[]>(
+  const columns = useMemo<ColumnDef<Ingest>[]>(
     () => [
       // {
       //   id: "select",
@@ -80,10 +80,10 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
       {
         id: "filename",
         accessorKey: "filename",
-        header: ({ column }: { column: Column<Import, unknown> }) => (
+        header: ({ column }: { column: Column<Ingest, unknown> }) => (
           <DataTableColumnHeader column={column} label="File Name" />
         ),
-        cell: ({ cell }) => <div>{cell.getValue<Import["filename"]>()}</div>,
+        cell: ({ cell }) => <div>{cell.getValue<Ingest["filename"]>()}</div>,
         meta: {
           label: "File Name",
           placeholder: "Search file names...",
@@ -95,10 +95,10 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
       {
         id: "platform",
         accessorKey: "platform",
-        header: ({ column }: { column: Column<Import, unknown> }) => (
+        header: ({ column }: { column: Column<Ingest, unknown> }) => (
           <DataTableColumnHeader column={column} label="Type" />
         ),
-        cell: ({ cell }) => <div>{cell.getValue<Import["platform"]>()}</div>,
+        cell: ({ cell }) => <div>{cell.getValue<Ingest["platform"]>()}</div>,
         meta: {
           label: "Type",
           placeholder: "Search types...",
@@ -111,11 +111,11 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
       {
         id: "validPost",
         accessorKey: "validPost",
-        header: ({ column }: { column: Column<Import, unknown> }) => (
+        header: ({ column }: { column: Column<Ingest, unknown> }) => (
           <DataTableColumnHeader column={column} label="Valid Post Count" />
         ),
         cell: ({ cell }) => {
-          const validPosts = cell.getValue<Import["validPost"]>();
+          const validPosts = cell.getValue<Ingest["validPost"]>();
           const invalidPosts = cell.row.original.invalidPost;
 
           return `${fNumber(validPosts)} / ${fNumber(validPosts + invalidPosts)}`;
@@ -124,22 +124,22 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
       {
         id: "size",
         accessorKey: "size",
-        header: ({ column }: { column: Column<Import, unknown> }) => (
+        header: ({ column }: { column: Column<Ingest, unknown> }) => (
           <DataTableColumnHeader column={column} label="Size" />
         ),
         cell: ({ cell }) => {
-          const size = cell.getValue<Import["size"]>();
+          const size = cell.getValue<Ingest["size"]>();
           return fSize(size / 1024);
         },
       },
       {
-        id: "imported",
-        accessorKey: "importedAt",
-        header: ({ column }: { column: Column<Import, unknown> }) => (
-          <DataTableColumnHeader column={column} label="Imported" />
+        id: "ingested",
+        accessorKey: "ingestedAt",
+        header: ({ column }: { column: Column<Ingest, unknown> }) => (
+          <DataTableColumnHeader column={column} label="Ingested" />
         ),
         cell: ({ cell }) => {
-          const s = cell.getValue<Import["importedAt"]>();
+          const s = cell.getValue<Ingest["ingestedAt"]>();
 
           return (
             <Label variant="soft" className="capitalize">
@@ -151,11 +151,11 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
       {
         id: "scrapedAt",
         accessorKey: "scrapedAt",
-        header: ({ column }: { column: Column<Import, unknown> }) => (
+        header: ({ column }: { column: Column<Ingest, unknown> }) => (
           <DataTableColumnHeader column={column} label="Scraped At" />
         ),
         cell: ({ cell }) => {
-          const s = cell.getValue<Import["scrapedAt"]>();
+          const s = cell.getValue<Ingest["scrapedAt"]>();
 
           return (
             <Label variant="soft" className="capitalize">
@@ -179,8 +179,8 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onSelect={() => importFileHandler(row.original.id)}>
-                  Import
+                <DropdownMenuItem onSelect={() => ingestFileHandler(row.original.id)}>
+                  Ingest
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => setRowAction({ row, variant: "delete" })}>
@@ -194,7 +194,7 @@ export function useGetImportTableColumns({ setRowAction }: Props): ColumnDef<Imp
         size: 40,
       },
     ],
-    [importFileHandler, setRowAction],
+    [ingestFileHandler, setRowAction],
   );
 
   return columns;

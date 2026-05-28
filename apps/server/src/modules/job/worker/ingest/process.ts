@@ -3,49 +3,49 @@ import { JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { db } from "@/core/db";
 import { s3Client } from "@/core/s3";
-import { importRepo } from "@/modules/import/repo";
-import { parseImport } from "@/modules/item/platform-registry";
-import { importItems } from "@/modules/item/service/import";
+import { ingestRepo } from "@/modules/ingest/repo";
+import { parseIngest } from "@/modules/item/platform-registry";
+import { ingestItems } from "@/modules/item/service/ingest";
 import { jobGroups, jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
-export async function processImportProcess(job: Job) {
-  const parseResult = JobPayloadSchemas.importProcess.safeParse(job.payload);
+export async function processIngestProcess(job: Job) {
+  const parseResult = JobPayloadSchemas.ingestProcess.safeParse(job.payload);
   if (!parseResult.success) {
     const error = z.prettifyError(parseResult.error);
     throw new Error(`Invalid job payload: ${error}`);
   }
 
   const payload = parseResult.data;
-  const { importId } = payload;
+  const { ingestId } = payload;
 
-  await log(job.id, "info", "Starting import process", { importId });
+  await log(job.id, "info", "Starting ingest process", { ingestId });
 
-  const importItem = await importRepo.findById(importId);
-  if (!importItem) {
-    throw new Error(`Import item not found for id: ${importId}`);
+  const ingestItem = await ingestRepo.findById(ingestId);
+  if (!ingestItem) {
+    throw new Error(`Ingest item not found for id: ${ingestId}`);
   }
 
   await updateJobProgress(job.id, 10);
 
-  const fileContent = await s3Client.readText(`${importItem.platform}/json/${importItem.filename}`);
+  const fileContent = await s3Client.readText(`${ingestItem.platform}/json/${ingestItem.filename}`);
   if (!fileContent) {
-    throw new Error(`File not found in S3: ${importItem.platform}/json/${importItem.filename}`);
+    throw new Error(`File not found in S3: ${ingestItem.platform}/json/${ingestItem.filename}`);
   }
 
   await updateJobProgress(job.id, 20);
 
-  await log(job.id, "info", "Processing import file");
-  const entities = parseImport(importItem.platform, fileContent);
+  await log(job.id, "info", "Processing ingest file");
+  const entities = parseIngest(ingestItem.platform, fileContent);
 
   await updateJobProgress(job.id, 30);
 
-  await importItems(entities.items, entities.relations, (p) => {
+  await ingestItems(entities.items, entities.relations, (p) => {
     const overall = 30 + Math.round(p * 0.6);
     void updateJobProgress(job.id, overall);
   });
 
-  await log(job.id, "info", "Items imported", { count: entities.items.length });
+  await log(job.id, "info", "Items ingested", { count: entities.items.length });
   await log(job.id, "info", "Invalid items skipped", { count: entities.invalidItems.length });
 
   for (const task of entities.invalidItems) {
@@ -57,7 +57,7 @@ export async function processImportProcess(job: Job) {
   if (entities.downloadTasks.length !== 0) {
     const [group] = await db
       .insert(jobGroups)
-      .values({ name: `import-${importId}`, createdAt: new Date() })
+      .values({ name: `ingest-${ingestId}`, createdAt: new Date() })
       .returning();
 
     for (const task of entities.downloadTasks) {
@@ -71,8 +71,8 @@ export async function processImportProcess(job: Job) {
     count: entities.downloadTasks.length,
   });
 
-  if (importItem.importedAt === null) {
-    await importRepo.update(importId, { importedAt: new Date() });
+  if (ingestItem.ingestedAt === null) {
+    await ingestRepo.update(ingestId, { ingestedAt: new Date() });
   }
 
   await updateJobProgress(job.id, 100);

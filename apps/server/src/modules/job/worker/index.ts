@@ -5,9 +5,9 @@ import { processAnimeDiscover } from "./anime/discover";
 import { processAnimeFetch } from "./anime/fetch";
 import { processImdbDiscover } from "./imdb/discover";
 import { processImdbFetch } from "./imdb/fetch";
-import { processImportUpload } from "./import/upload";
+import { processIngestUpload } from "./ingest/upload";
 import { processDownloadMedia } from "./media/download";
-import { processImportProcess } from "./post/process";
+import { processIngestProcess } from "./ingest/process";
 import { reclaimStaleJobs } from "./reclaimer";
 import { processYoutubeDiscover } from "./youtube/discover";
 import { processYoutubeDownload } from "./youtube/download";
@@ -65,11 +65,11 @@ async function processJob(job: Job) {
 
   try {
     switch (job.type) {
-      case "import_upload":
-        await processImportUpload(job);
+      case "ingest_upload":
+        await processIngestUpload(job);
         break;
-      case "import_process":
-        await processImportProcess(job);
+      case "ingest_process":
+        await processIngestProcess(job);
         break;
       case "download_media":
         await processDownloadMedia(job);

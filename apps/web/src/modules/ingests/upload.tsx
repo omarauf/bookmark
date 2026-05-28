@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { type Platform, PlatformValues } from "@workspace/contracts/platform";
-import { parseImportFilename } from "@workspace/core/import";
+import { parseIngestFilename } from "@workspace/core/ingest";
 import { AlertCircle, Check, FileJson, Upload } from "lucide-react";
 import type React from "react";
 import { useRef, useState } from "react";
@@ -34,9 +34,9 @@ export function UploadButton() {
   const queryClient = useQueryClient();
 
   const uploadMutation = useMutation(
-    orpc.import.create.mutationOptions({
+    orpc.ingest.create.mutationOptions({
       onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: orpc.import.list.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.ingest.list.key() });
         if (data?.jobId) {
           toast.success(
             <div className="flex flex-col gap-1">
@@ -47,7 +47,7 @@ export function UploadButton() {
             </div>,
           );
         } else {
-          toast.success("Import updated.");
+          toast.success("Ingest updated.");
         }
       },
       onError: (error) => {
@@ -99,7 +99,7 @@ export function UploadButton() {
     }
 
     const filename = selectedFile.name.split(".").slice(0, -1).join(".");
-    const { scrapedAt, platform } = parseImportFilename(filename);
+    const { scrapedAt, platform } = parseIngestFilename(filename);
 
     if (scrapedAt === undefined || platform === undefined) {
       setError("Invalid filename format. Expected format: {platform}_YYYY-MM-DD_HH-MM-SS.json");
@@ -125,14 +125,14 @@ export function UploadButton() {
     reader.readAsText(selectedFile);
   };
 
-  const handleImport = async () => {
+  const handleIngest = async () => {
     if (file === null) {
       toast.error("No file selected");
       return;
     }
 
     if (type === undefined) {
-      toast.error("Please select an import type");
+      toast.error("Please select an ingest type");
       return;
     }
 
@@ -151,7 +151,7 @@ export function UploadButton() {
       });
 
       result.then(() => {
-        queryClient.invalidateQueries({ queryKey: ["imports"] });
+        queryClient.invalidateQueries({ queryKey: ["ingests"] });
       });
 
       setOpen(false);
@@ -184,7 +184,7 @@ export function UploadButton() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Import JSON File</DialogTitle>
+          <DialogTitle>Ingest JSON File</DialogTitle>
           <DialogDescription>
             Upload a JSON file by dropping it here or selecting it from your device.
           </DialogDescription>
@@ -256,7 +256,7 @@ export function UploadButton() {
         )}
 
         <XSelect
-          placeholder="Import Type"
+          placeholder="Ingest Type"
           value={type}
           onChange={setType}
           options={PlatformValues.map((p) => p)}
@@ -269,8 +269,8 @@ export function UploadButton() {
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button onClick={handleImport} disabled={!file || !jsonData}>
-            Import
+          <Button onClick={handleIngest} disabled={!file || !jsonData}>
+            Ingest
           </Button>
         </DialogFooter>
       </DialogContent>

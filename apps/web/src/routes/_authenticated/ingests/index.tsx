@@ -1,39 +1,39 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { type Import, ImportSchemas } from "@workspace/contracts/import";
+import { type Ingest, IngestSchemas } from "@workspace/contracts/ingest";
 import React from "react";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
 import { orpc } from "@/integrations/orpc";
-import { useGetImportTableColumns } from "@/modules/imports/column";
-import { DeleteImportsDialog } from "@/modules/imports/delete";
-import { UploadButton } from "@/modules/imports/upload";
+import { useGetIngestTableColumns } from "@/modules/ingests/column";
+import { DeleteIngestsDialog } from "@/modules/ingests/delete";
+import { UploadButton } from "@/modules/ingests/upload";
 import type { DataTableRowAction } from "@/types/data-table";
 
-export const Route = createFileRoute("/_authenticated/imports/")({
-  component: ImportList,
-  validateSearch: ImportSchemas.list.request,
+export const Route = createFileRoute("/_authenticated/ingests/")({
+  component: IngestList,
+  validateSearch: IngestSchemas.list.request,
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { orpc, queryClient }, deps }) => {
-    await queryClient.ensureQueryData(orpc.import.list.queryOptions({ input: deps }));
+    await queryClient.ensureQueryData(orpc.ingest.list.queryOptions({ input: deps }));
     return;
   },
 });
 
-function ImportList() {
+function IngestList() {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
-  const importQuery = useSuspenseQuery(orpc.import.list.queryOptions({ input: search }));
+  const ingestQuery = useSuspenseQuery(orpc.ingest.list.queryOptions({ input: search }));
 
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<Import>>();
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<Ingest>>();
 
-  const columns = useGetImportTableColumns({ setRowAction });
+  const columns = useGetIngestTableColumns({ setRowAction });
 
   const { table } = useDataTable({
-    data: importQuery.data.items,
-    rowCount: importQuery.data.total,
+    data: ingestQuery.data.items,
+    rowCount: ingestQuery.data.total,
     columns,
     pageCount: 1,
     getRowId: (row) => row.id,
@@ -47,14 +47,14 @@ function ImportList() {
         </DataTableToolbar>
       </DataTable>
 
-      <DeleteImportsDialog
+      <DeleteIngestsDialog
         open={rowAction?.variant === "delete"}
         onOpenChange={() => setRowAction(undefined)}
-        imports={rowAction?.row.original ? [rowAction?.row.original] : []}
+        ingests={rowAction?.row.original ? [rowAction?.row.original] : []}
         showTrigger={false}
         onSuccess={() => {
           rowAction?.row.toggleSelected(false);
-          queryClient.invalidateQueries({ queryKey: ["imports"] });
+          queryClient.invalidateQueries({ queryKey: ["ingests"] });
         }}
       />
     </div>

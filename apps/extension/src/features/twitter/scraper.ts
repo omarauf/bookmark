@@ -128,7 +128,7 @@ export function twitterScraper({ pages, download, send, filename }: Props) {
 
     formData.append("file", blob, filename);
 
-    fetch("http://localhost:3000/api/import", {
+    fetch("http://localhost:3000/api/ingest", {
       method: "POST",
       body: formData,
     })

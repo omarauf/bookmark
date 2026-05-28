@@ -2,12 +2,12 @@ import fs from "node:fs/promises";
 import { type Job, JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { s3Client } from "@/core/s3";
-import { importRepo } from "@/modules/import/repo";
-import { validateImport } from "@/modules/item/platform-registry";
+import { ingestRepo } from "@/modules/ingest/repo";
+import { validateIngest } from "@/modules/item/platform-registry";
 import { log, updateJobProgress } from "../../service";
 
-export async function processImportUpload(job: Job) {
-  const parseResult = JobPayloadSchemas.importUpload.safeParse(job.payload);
+export async function processIngestUpload(job: Job) {
+  const parseResult = JobPayloadSchemas.ingestUpload.safeParse(job.payload);
   if (!parseResult.success) {
     const error = z.prettifyError(parseResult.error);
     throw new Error(`Invalid job payload: ${error}`);
@@ -18,7 +18,7 @@ export async function processImportUpload(job: Job) {
 
   const s3Key = `${platform}/json/${filename}`;
 
-  await log(job.id, "info", "Starting import upload processing", { s3Key });
+  await log(job.id, "info", "Starting ingest upload processing", { s3Key });
 
   // 1. Read temp file
   const buffer = await fs.readFile(tempFilePath);
@@ -43,11 +43,11 @@ export async function processImportUpload(job: Job) {
   // 3. Validate content
   const data = buffer.toString("utf-8");
   await log(job.id, "info", "Validating content");
-  const parsedData = validateImport(platform, data);
+  const parsedData = validateIngest(platform, data);
   await log(job.id, "info", "Validation complete", parsedData);
 
-  // 4. Create import record
-  await importRepo.create({
+  // 4. Create ingest record
+  await ingestRepo.create({
     filename,
     validPost: parsedData.valid,
     invalidPost: parsedData.invalid,
@@ -55,7 +55,7 @@ export async function processImportUpload(job: Job) {
     platform: platform,
     scrapedAt: new Date(scrapedAt),
   });
-  await log(job.id, "info", "Import record created", { filename });
+  await log(job.id, "info", "Ingest record created", { filename });
 
   // 5. Clean up temp file
   await fs.unlink(tempFilePath).catch(() => {});

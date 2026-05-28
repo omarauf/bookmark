@@ -27,7 +27,7 @@ import { Route as AuthenticatedPostsIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
 import { Route as AuthenticatedJobGroupsIndexRouteImport } from './routes/_authenticated/job-groups/index'
-import { Route as AuthenticatedImportsIndexRouteImport } from './routes/_authenticated/imports/index'
+import { Route as AuthenticatedIngestsIndexRouteImport } from './routes/_authenticated/ingests/index'
 import { Route as AuthenticatedImdbIndexRouteImport } from './routes/_authenticated/imdb/index'
 import { Route as AuthenticatedFileManagerIndexRouteImport } from './routes/_authenticated/file-manager/index'
 import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
@@ -137,10 +137,10 @@ const AuthenticatedJobGroupsIndexRoute =
     path: '/job-groups/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedImportsIndexRoute =
-  AuthenticatedImportsIndexRouteImport.update({
-    id: '/imports/',
-    path: '/imports/',
+const AuthenticatedIngestsIndexRoute =
+  AuthenticatedIngestsIndexRouteImport.update({
+    id: '/ingests/',
+    path: '/ingests/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedImdbIndexRoute = AuthenticatedImdbIndexRouteImport.update({
@@ -249,7 +249,7 @@ export interface FileRoutesByFullPath {
   '/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/imdb/': typeof AuthenticatedImdbIndexRoute
-  '/imports/': typeof AuthenticatedImportsIndexRoute
+  '/ingests/': typeof AuthenticatedIngestsIndexRoute
   '/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs/': typeof AuthenticatedJobsIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
@@ -283,7 +283,7 @@ export interface FileRoutesByTo {
   '/downloads': typeof AuthenticatedDownloadsIndexRoute
   '/file-manager': typeof AuthenticatedFileManagerIndexRoute
   '/imdb': typeof AuthenticatedImdbIndexRoute
-  '/imports': typeof AuthenticatedImportsIndexRoute
+  '/ingests': typeof AuthenticatedIngestsIndexRoute
   '/job-groups': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
@@ -320,7 +320,7 @@ export interface FileRoutesById {
   '/_authenticated/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/_authenticated/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/_authenticated/imdb/': typeof AuthenticatedImdbIndexRoute
-  '/_authenticated/imports/': typeof AuthenticatedImportsIndexRoute
+  '/_authenticated/ingests/': typeof AuthenticatedIngestsIndexRoute
   '/_authenticated/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
@@ -357,7 +357,7 @@ export interface FileRouteTypes {
     | '/downloads/'
     | '/file-manager/'
     | '/imdb/'
-    | '/imports/'
+    | '/ingests/'
     | '/job-groups/'
     | '/jobs/'
     | '/links/'
@@ -391,7 +391,7 @@ export interface FileRouteTypes {
     | '/downloads'
     | '/file-manager'
     | '/imdb'
-    | '/imports'
+    | '/ingests'
     | '/job-groups'
     | '/jobs'
     | '/links'
@@ -427,7 +427,7 @@ export interface FileRouteTypes {
     | '/_authenticated/downloads/'
     | '/_authenticated/file-manager/'
     | '/_authenticated/imdb/'
-    | '/_authenticated/imports/'
+    | '/_authenticated/ingests/'
     | '/_authenticated/job-groups/'
     | '/_authenticated/jobs/'
     | '/_authenticated/links/'
@@ -581,11 +581,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobGroupsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/imports/': {
-      id: '/_authenticated/imports/'
-      path: '/imports'
-      fullPath: '/imports/'
-      preLoaderRoute: typeof AuthenticatedImportsIndexRouteImport
+    '/_authenticated/ingests/': {
+      id: '/_authenticated/ingests/'
+      path: '/ingests'
+      fullPath: '/ingests/'
+      preLoaderRoute: typeof AuthenticatedIngestsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/imdb/': {
@@ -737,7 +737,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDownloadsIndexRoute: typeof AuthenticatedDownloadsIndexRoute
   AuthenticatedFileManagerIndexRoute: typeof AuthenticatedFileManagerIndexRoute
   AuthenticatedImdbIndexRoute: typeof AuthenticatedImdbIndexRoute
-  AuthenticatedImportsIndexRoute: typeof AuthenticatedImportsIndexRoute
+  AuthenticatedIngestsIndexRoute: typeof AuthenticatedIngestsIndexRoute
   AuthenticatedJobGroupsIndexRoute: typeof AuthenticatedJobGroupsIndexRoute
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
@@ -760,7 +760,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDownloadsIndexRoute: AuthenticatedDownloadsIndexRoute,
   AuthenticatedFileManagerIndexRoute: AuthenticatedFileManagerIndexRoute,
   AuthenticatedImdbIndexRoute: AuthenticatedImdbIndexRoute,
-  AuthenticatedImportsIndexRoute: AuthenticatedImportsIndexRoute,
+  AuthenticatedIngestsIndexRoute: AuthenticatedIngestsIndexRoute,
   AuthenticatedJobGroupsIndexRoute: AuthenticatedJobGroupsIndexRoute,
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,

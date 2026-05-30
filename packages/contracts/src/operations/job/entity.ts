@@ -2,16 +2,9 @@ import { z } from "zod";
 import { JobStatusEnum, JobTypeEnum, LogLevelEnum } from "./enum";
 import { JobPayloadSchema } from "./payload";
 
-export const JobGroupSchema = z.object({
-  id: z.uuid(),
-  name: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
 export const JobSchema = z.object({
   id: z.uuid(),
-  groupId: z.uuid().optional(),
+  ingestId: z.uuid().optional(),
 
   type: JobTypeEnum,
   status: JobStatusEnum,
@@ -48,13 +41,11 @@ export const JobLogSchema = z.object({
 
 // -----------------------------------------------------------------------------
 
-export const CreateJobGroupSchema = z.object({
-  name: z.string(),
-});
-
 export const CreateJobSchema = z.object({
   type: JobTypeEnum,
   status: z.literal("pending").optional().default("pending"),
+
+  ingestId: z.uuid().optional(),
 
   resourceType: z.string().optional(),
   resourceId: z.string().optional(),

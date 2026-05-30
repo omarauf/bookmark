@@ -47,11 +47,11 @@ Assembled views
 Ingest pipeline
 - **Raw**: unmodified platform export types (`instagram.ts, tiktok.ts, twitter.ts`).
 - **PlatformHandler**: per-platform `validate(data)` (valid/invalid counts) + `parse(data)` (raw -> ImportPayload).
-- **Import / ImportPayload**: Import is the upload record (`filename, platform, validPost/invalidPost`). Payload is the normalized batch: `items + relations + downloadTasks + invalidItems`.
+- **Ingest / IngestPayload**: Ingest is the upload record (`filename, platform, validPost/invalidPost`). Payload is the normalized batch: `items + relations + downloadTasks + invalidItems`.
 
 Background jobs
 - **Job**: async work unit. Types: `import_upload, import_process, download_media, *_discover, *_fetch, youtube_download`. Status: `pending, processing, retrying, completed, failed, cancelled`.
-- **JobGroup**: named batch (e.g. discover spawns one fetch job per id; post-process spawns one `download_media` per attachment).
+- **JobIngest**: named batch (e.g. discover spawns one fetch job per id; post-process spawns one `download_media` per attachment).
 - **JobLog**: `debug|info|warn|error` line scoped to a `jobId`.
 
 Storage

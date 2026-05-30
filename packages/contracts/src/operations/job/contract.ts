@@ -3,7 +3,7 @@ import {
   BasePaginationQuerySchema,
   PaginationResultSchema,
 } from "../../foundation/pagination-query";
-import { JobGroupSchema, JobLogSchema, JobSchema } from "./entity";
+import { JobLogSchema, JobSchema } from "./entity";
 import { JobStatusEnum, JobTypeEnum } from "./enum";
 
 export const JobSchemas = {
@@ -14,7 +14,7 @@ export const JobSchemas = {
       status: JobStatusEnum.optional().catch(undefined),
       resourceType: z.string().optional().catch(undefined),
       resourceId: z.string().optional().catch(undefined),
-      groupId: z.uuid().optional().catch(undefined),
+      ingestId: z.uuid().optional().catch(undefined),
     }),
     response: PaginationResultSchema(JobSchema),
   },
@@ -42,40 +42,6 @@ export const JobSchemas = {
   reclaimStale: {
     request: z.object({ stalledMinutes: z.number().int().min(1).default(60) }).optional(),
     response: z.object({ reclaimed: z.number().int().min(0) }),
-  },
-
-  group: {
-    list: {
-      request: BasePaginationQuerySchema,
-      response: PaginationResultSchema(JobGroupSchema),
-    },
-    get: {
-      request: BasePaginationQuerySchema.extend({
-        id: z.uuid(),
-        type: JobTypeEnum.optional().catch(undefined),
-        status: JobStatusEnum.optional().catch(undefined),
-      }),
-      response: z.object({
-        group: JobGroupSchema,
-        jobs: PaginationResultSchema(JobSchema),
-      }),
-    },
-    stats: {
-      request: z.object({ groupId: z.uuid() }),
-      response: z.object({
-        total: z.number().int(),
-        pending: z.number().int(),
-        processing: z.number().int(),
-        completed: z.number().int(),
-        failed: z.number().int(),
-        cancelled: z.number().int(),
-        retrying: z.number().int(),
-      }),
-    },
-    cancel: {
-      request: z.object({ groupId: z.uuid() }),
-      response: z.object({ cancelled: z.number().int().min(0) }),
-    },
   },
 
   stats: {
@@ -134,9 +100,9 @@ export const JobSchemas = {
       ),
       statusCounts: z.record(JobStatusEnum, z.number().int()),
       typeCounts: z.record(JobTypeEnum, z.number().int()),
-      groupSizes: z.array(
+      ingestSize: z.array(
         z.object({
-          groupId: z.string(),
+          ingestId: z.string(),
           name: z.string(),
           count: z.number().int(),
         }),

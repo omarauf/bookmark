@@ -3,22 +3,14 @@ import { JobStatusValues, JobTypeValues, LogLevelValues } from "@workspace/contr
 import { relations, sql } from "drizzle-orm";
 import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { IdentifiedEntityModel } from "@/core/db/helper/entity";
-
-export const jobGroups = pgTable("job_groups", {
-  ...IdentifiedEntityModel,
-
-  name: text().notNull(),
-
-  createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
-});
+import { ingests } from "../ingest/schema";
 
 export const jobs = pgTable(
   "jobs",
   {
     ...IdentifiedEntityModel,
 
-    groupId: uuid().references(() => jobGroups.id, { onDelete: "cascade" }),
+    ingestId: uuid().references(() => ingests.id, { onDelete: "cascade" }),
 
     type: text({ enum: JobTypeValues }).notNull(),
     status: text({ enum: JobStatusValues }).notNull().default("pending"),
@@ -64,12 +56,8 @@ export const jobLogs = pgTable("job_logs", {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
-export const jobGroupsRelations = relations(jobGroups, ({ many }) => ({
-  jobs: many(jobs),
-}));
-
 export const jobsRelations = relations(jobs, ({ one, many }) => ({
-  group: one(jobGroups, { fields: [jobs.groupId], references: [jobGroups.id] }),
+  ingest: one(ingests, { fields: [jobs.ingestId], references: [ingests.id] }),
   logs: many(jobLogs),
 }));
 

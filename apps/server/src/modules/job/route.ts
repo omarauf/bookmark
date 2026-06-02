@@ -6,7 +6,7 @@ import { protectedProcedure } from "@/lib/orpc";
 import { replaceNullWithUndefined } from "@/utils/object";
 import { analyticsHandler } from "./handler/analytics";
 import { jobRepo } from "./repo";
-import { jobGroups, jobLogs, jobs } from "./schema";
+import { jobLogs, jobs } from "./schema";
 import { reclaimStaleJobs } from "./worker/reclaimer";
 
 export const jobRouter = {
@@ -14,7 +14,7 @@ export const jobRouter = {
     .input(JobSchemas.list.request)
     .output(JobSchemas.list.response)
     .handler(async ({ input }) => {
-      const { type, types, status, resourceType, resourceId, groupId } = input;
+      const { type, types, status, resourceType, resourceId, ingestId } = input;
 
       const filters = and(
         types ? inArray(jobs.type, types) : undefined,
@@ -22,7 +22,7 @@ export const jobRouter = {
         status ? eq(jobs.status, status) : undefined,
         resourceType ? eq(jobs.resourceType, resourceType) : undefined,
         resourceId ? eq(jobs.resourceId, resourceId) : undefined,
-        groupId ? eq(jobs.groupId, groupId) : undefined,
+        ingestId ? eq(jobs.ingestId, ingestId) : undefined,
       );
 
       const dataQuery = db.select().from(jobs);
@@ -120,114 +120,6 @@ export const jobRouter = {
       const reclaimed = await reclaimStaleJobs(input?.stalledMinutes);
       return { reclaimed };
     }),
-
-  group: {
-    list: protectedProcedure
-      .input(JobSchemas.group.list.request)
-      .output(JobSchemas.group.list.response)
-      .handler(async ({ input }) => {
-        const dataQuery = db.select().from(jobGroups);
-        const countQuery = db.select({ count: count() }).from(jobGroups);
-
-        return await withPagination({
-          dataQuery,
-          countQuery,
-          page: input.page,
-          perPage: input.perPage,
-          orderByColumn: desc(jobGroups.createdAt),
-        });
-      }),
-
-    get: protectedProcedure
-      .input(JobSchemas.group.get.request)
-      .output(JobSchemas.group.get.response)
-      .errors({ NOT_FOUND: { message: "Job group not found" } })
-      .handler(async ({ input, errors }) => {
-        const { id, status, type } = input;
-        const [group] = await db.select().from(jobGroups).where(eq(jobGroups.id, id)).limit(1);
-        if (!group) throw errors.NOT_FOUND();
-
-        const dataQuery = db.select().from(jobs);
-        const countQuery = db.select({ count: count() }).from(jobs);
-
-        const filters = and(
-          eq(jobs.groupId, id),
-          type ? eq(jobs.type, type) : undefined,
-          status ? eq(jobs.status, status) : undefined,
-        );
-
-        const jobsResult = await withPagination({
-          dataQuery,
-          countQuery,
-          filters: filters,
-          page: input.page,
-          perPage: input.perPage,
-          orderByColumn: desc(jobs.createdAt),
-        });
-
-        return {
-          group,
-          jobs: jobsResult,
-        };
-      }),
-
-    stats: protectedProcedure
-      .input(JobSchemas.group.stats.request)
-      .output(JobSchemas.group.stats.response)
-      .handler(async ({ input: { groupId } }) => {
-        const statusRows = await db
-          .select({ status: jobs.status, count: count() })
-          .from(jobs)
-          .where(eq(jobs.groupId, groupId))
-          .groupBy(jobs.status);
-
-        const result = {
-          total: 0,
-          pending: 0,
-          processing: 0,
-          completed: 0,
-          failed: 0,
-          cancelled: 0,
-          retrying: 0,
-        };
-
-        for (const row of statusRows) {
-          const value = Number(row.count);
-          result.total += value;
-          if (row.status in result) {
-            result[row.status] = value;
-          }
-        }
-
-        return result;
-      }),
-
-    cancel: protectedProcedure
-      .input(JobSchemas.group.cancel.request)
-      .output(JobSchemas.group.cancel.response)
-      .errors({ NOT_FOUND: { message: "Job group not found" } })
-      .handler(async ({ input: { groupId }, errors }) => {
-        const [group] = await db
-          .select({ id: jobGroups.id })
-          .from(jobGroups)
-          .where(eq(jobGroups.id, groupId))
-          .limit(1);
-        if (!group) throw errors.NOT_FOUND();
-
-        const cancelled = await db
-          .update(jobs)
-          .set({ status: "cancelled", cancelledAt: new Date(), retryAt: null })
-          .where(
-            and(
-              eq(jobs.groupId, groupId),
-              inArray(jobs.status, ["pending", "processing", "retrying"]),
-            ),
-          )
-          .returning({ id: jobs.id });
-
-        return { cancelled: cancelled.length };
-      }),
-  },
 
   stats: protectedProcedure
     .input(JobSchemas.stats.request)

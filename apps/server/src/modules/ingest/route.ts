@@ -2,11 +2,13 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { IngestSchemas } from "@workspace/contracts/ingest";
 import { parseIngestFilename } from "@workspace/core/ingest";
-import { count, eq } from "drizzle-orm";
+import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
 import { protectedProcedure } from "@/lib/orpc";
+import { jobs } from "@/modules/job/schema";
 import { createSingleJob } from "@/modules/job/service";
+import { replaceNullWithUndefined } from "@/utils/object";
 import { ingestRepo } from "./repo";
 import { ingests } from "./schema";
 
@@ -79,10 +81,40 @@ export const ingestRouter = {
         type: "ingest_process",
         status: "pending",
         resourceType: "ingest",
+        ingestId: ingestItem.id,
         payload: { ingestId: ingestItem.id },
       });
 
       return { jobId: job.id };
+    }),
+
+  get: protectedProcedure
+    .input(IngestSchemas.get.request)
+    .output(IngestSchemas.get.response)
+    .errors({ NOT_FOUND: { message: "Ingest not found" } })
+    .handler(async ({ input: { id }, errors }) => {
+      const ingestItem = await ingestRepo.findById(id);
+      if (!ingestItem) throw errors.NOT_FOUND();
+      return replaceNullWithUndefined(ingestItem);
+    }),
+
+  jobs: protectedProcedure
+    .input(IngestSchemas.jobs.request)
+    .output(IngestSchemas.jobs.response)
+    .handler(async ({ input }) => {
+      const filters = eq(jobs.ingestId, input.id);
+
+      const dataQuery = db.select().from(jobs);
+      const countQuery = db.select({ count: count() }).from(jobs);
+
+      return await withPagination({
+        dataQuery,
+        countQuery,
+        filters,
+        page: input.page,
+        perPage: input.perPage,
+        orderByColumn: desc(jobs.createdAt),
+      });
     }),
 
   delete: protectedProcedure
@@ -93,5 +125,59 @@ export const ingestRouter = {
       const ingestItem = await ingestRepo.findById(id);
       if (!ingestItem) throw errors.NOT_FOUND();
       await ingestRepo.delete(id);
+    }),
+
+  stats: protectedProcedure
+    .input(IngestSchemas.stats.request)
+    .output(IngestSchemas.stats.response)
+    .handler(async ({ input: { id } }) => {
+      const statusRows = await db
+        .select({ status: jobs.status, count: count() })
+        .from(jobs)
+        .where(eq(jobs.ingestId, id))
+        .groupBy(jobs.status);
+
+      const result = {
+        total: 0,
+        pending: 0,
+        processing: 0,
+        completed: 0,
+        failed: 0,
+        cancelled: 0,
+        retrying: 0,
+      };
+
+      for (const row of statusRows) {
+        const value = Number(row.count);
+        result.total += value;
+        if (row.status in result) {
+          result[row.status] = value;
+        }
+      }
+
+      return result;
+    }),
+
+  cancel: protectedProcedure
+    .input(IngestSchemas.cancel.request)
+    .output(IngestSchemas.cancel.response)
+    .errors({ NOT_FOUND: { message: "Ingest not found" } })
+    .handler(async ({ input: { id }, errors }) => {
+      const [ingest] = await db
+        .select({ id: ingests.id })
+        .from(ingests)
+        .where(eq(ingests.id, id))
+        .limit(1);
+      if (!ingest) throw errors.NOT_FOUND();
+
+      const cancelled = await db
+        .update(jobs)
+        .set({ status: "cancelled", cancelledAt: new Date(), retryAt: null })
+        .where(
+          and(eq(jobs.ingestId, id), inArray(jobs.status, ["pending", "processing", "retrying"])),
+        )
+        .returning({ id: jobs.id });
+
+      return { cancelled: cancelled.length };
     }),
 };

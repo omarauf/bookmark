@@ -2,7 +2,8 @@ import { JobSchemas, type JobType } from "@workspace/contracts/job";
 import { and, asc, count, desc, eq, gte, inArray, isNotNull, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
-import { jobGroups, jobs } from "../schema";
+import { ingests } from "@/modules/ingest/schema";
+import { jobs } from "../schema";
 
 export const analyticsHandler = protectedProcedure
   .input(JobSchemas.analytics.request)
@@ -23,7 +24,7 @@ export const analyticsHandler = protectedProcedure
 
     const typeCounts = await getTypeCounts(types);
 
-    const groupSizes = await getGroupSizes(types);
+    const ingestSize = await getIngestSize(types);
 
     return {
       jobsByDay,
@@ -32,7 +33,7 @@ export const analyticsHandler = protectedProcedure
       topErrors,
       statusCounts,
       typeCounts,
-      groupSizes,
+      ingestSize,
     };
   });
 
@@ -190,25 +191,23 @@ async function getTypeCounts(types: JobType[] | undefined) {
   return typeCounts;
 }
 
-async function getGroupSizes(types: JobType[] | undefined) {
-  const groupSizeRows = await db
+async function getIngestSize(types: JobType[] | undefined) {
+  const rows = await db
     .select({
-      groupId: jobs.groupId,
-      name: jobGroups.name,
+      ingestId: jobs.ingestId,
+      name: ingests.filename,
       count: count(),
     })
     .from(jobs)
-    .leftJoin(jobGroups, eq(jobs.groupId, jobGroups.id))
-    .where(and(isNotNull(jobs.groupId), types ? inArray(jobs.type, types) : undefined))
-    .groupBy(jobs.groupId, jobGroups.name)
+    .leftJoin(ingests, eq(jobs.ingestId, ingests.id))
+    .where(and(isNotNull(jobs.ingestId), types ? inArray(jobs.type, types) : undefined))
+    .groupBy(jobs.ingestId, ingests.filename)
     .orderBy(desc(count()))
     .limit(20);
 
-  const groupSizes = groupSizeRows.map((row) => ({
-    groupId: row.groupId || "<unknown>",
+  return rows.map((row) => ({
+    ingestId: row.ingestId || "<unknown>",
     name: row.name ?? "Unknown",
     count: Number(row.count),
   }));
-
-  return groupSizes;
 }

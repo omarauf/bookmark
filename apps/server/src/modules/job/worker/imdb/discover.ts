@@ -2,7 +2,7 @@ import type { Job } from "@workspace/contracts/job";
 import { JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { db } from "@/core/db";
-import { jobGroups, jobs } from "../../schema";
+import { jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
 export async function processImdbDiscover(job: Job) {
@@ -60,15 +60,7 @@ export async function processImdbDiscover(job: Job) {
   }
 
   if (newIds.length > 0) {
-    // 3. Create a job group for the fetch jobs
-    const [group] = await db
-      .insert(jobGroups)
-      .values({ name: `imdb-sync-${Date.now()}`, createdAt: new Date() })
-      .returning();
-
-    await log(job.id, "info", "Created job group", { groupId: group.id, name: group.name });
-
-    // 4. Spawn one imdb_fetch job per new ID
+    // Spawn one imdb_fetch job per new ID
     let created = 0;
     let skipped = 0;
 
@@ -90,7 +82,6 @@ export async function processImdbDiscover(job: Job) {
             resourceType: "imdb",
             resourceId: imdbId,
             payload: { imdbId, linkId },
-            groupId: group.id,
             createdAt: new Date(),
           })
           .onConflictDoNothing();
@@ -101,7 +92,7 @@ export async function processImdbDiscover(job: Job) {
       }
     }
 
-    await log(job.id, "info", "Spawned fetch jobs", { created, skipped, groupId: group.id });
+    await log(job.id, "info", "Spawned fetch jobs", { created, skipped });
   }
 
   await updateJobProgress(job.id, 100);

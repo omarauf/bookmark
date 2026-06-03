@@ -2,7 +2,7 @@ import type { Job } from "@workspace/contracts/job";
 import { JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { db } from "@/core/db";
-import { jobGroups, jobs } from "../../schema";
+import { jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
 export async function processAnimeDiscover(job: Job) {
@@ -57,16 +57,6 @@ export async function processAnimeDiscover(job: Job) {
   }
 
   if (newIds.length > 0) {
-    const [group] = await db
-      .insert(jobGroups)
-      .values({ name: `anime-sync-${Date.now()}`, createdAt: new Date() })
-      .returning();
-
-    await log(job.id, "info", "Created job group", {
-      groupId: group.id,
-      name: group.name,
-    });
-
     let created = 0;
     let skipped = 0;
 
@@ -88,7 +78,6 @@ export async function processAnimeDiscover(job: Job) {
             resourceType: "anime",
             resourceId: animeId,
             payload: { animeId, linkId },
-            groupId: group.id,
             createdAt: new Date(),
           })
           .onConflictDoNothing();
@@ -102,7 +91,6 @@ export async function processAnimeDiscover(job: Job) {
     await log(job.id, "info", "Spawned fetch jobs", {
       created,
       skipped,
-      groupId: group.id,
     });
   }
 

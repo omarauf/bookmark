@@ -3,7 +3,7 @@ import { JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { db } from "@/core/db";
 import { getQueryParam } from "@/utils/url";
-import { jobGroups, jobs } from "../../schema";
+import { jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
 export async function processYoutubeDiscover(job: Job) {
@@ -61,15 +61,7 @@ export async function processYoutubeDiscover(job: Job) {
   }
 
   if (newIds.length > 0) {
-    // 3. Create a job group for the fetch jobs
-    const [group] = await db
-      .insert(jobGroups)
-      .values({ name: `youtube-sync-${Date.now()}`, createdAt: new Date() })
-      .returning();
-
-    await log(job.id, "info", "Created job group", { groupId: group.id, name: group.name });
-
-    // 4. Spawn one youtube_fetch job per new ID
+    // Spawn one youtube_fetch job per new ID
     let created = 0;
     let skipped = 0;
 
@@ -91,7 +83,6 @@ export async function processYoutubeDiscover(job: Job) {
             resourceType: "youtube",
             resourceId: videoId,
             payload: { videoId, linkId },
-            groupId: group.id,
             createdAt: new Date(),
           })
           .onConflictDoNothing();
@@ -102,7 +93,7 @@ export async function processYoutubeDiscover(job: Job) {
       }
     }
 
-    await log(job.id, "info", "Spawned fetch jobs", { created, skipped, groupId: group.id });
+    await log(job.id, "info", "Spawned fetch jobs", { created, skipped });
   }
 
   await updateJobProgress(job.id, 100);

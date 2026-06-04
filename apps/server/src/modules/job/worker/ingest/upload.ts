@@ -2,8 +2,11 @@ import fs from "node:fs/promises";
 import { type Job, JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { s3Client } from "@/core/s3";
+import { db } from "@/core/db";
+import { eq } from "drizzle-orm";
 import { ingestRepo } from "@/modules/ingest/repo";
 import { validateIngest } from "@/modules/item/platform-registry";
+import { jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
 export async function processIngestUpload(job: Job) {
@@ -47,7 +50,7 @@ export async function processIngestUpload(job: Job) {
   await log(job.id, "info", "Validation complete", parsedData);
 
   // 4. Create ingest record
-  await ingestRepo.create({
+  const ingestItem = await ingestRepo.create({
     filename,
     validPost: parsedData.valid,
     invalidPost: parsedData.invalid,
@@ -55,9 +58,12 @@ export async function processIngestUpload(job: Job) {
     platform: platform,
     scrapedAt: new Date(scrapedAt),
   });
-  await log(job.id, "info", "Ingest record created", { filename });
+  await log(job.id, "info", "Ingest record created", { filename, ingestId: ingestItem.id });
 
-  // 5. Clean up temp file
+  // 5. Link this upload job to its ingest
+  await db.update(jobs).set({ ingestId: ingestItem.id }).where(eq(jobs.id, job.id));
+
+  // 6. Clean up temp file
   await fs.unlink(tempFilePath).catch(() => {});
   await log(job.id, "info", "Temp file cleaned up", { tempFilePath });
 }

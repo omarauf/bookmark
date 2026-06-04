@@ -6,7 +6,7 @@ import { s3Client } from "@/core/s3";
 import { ingestRepo } from "@/modules/ingest/repo";
 import { parseIngest } from "@/modules/item/platform-registry";
 import { ingestItems } from "@/modules/item/service/ingest";
-import { jobGroups, jobs } from "../../schema";
+import { jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
 export async function processIngestProcess(job: Job) {
@@ -55,13 +55,8 @@ export async function processIngestProcess(job: Job) {
   await updateJobProgress(job.id, 92);
 
   if (entities.downloadTasks.length !== 0) {
-    const [group] = await db
-      .insert(jobGroups)
-      .values({ name: `ingest-${ingestId}`, createdAt: new Date() })
-      .returning();
-
     for (const task of entities.downloadTasks) {
-      await createDownloadMediaJob(group.id, task);
+      await createDownloadMediaJob(ingestId, task);
     }
   }
 
@@ -78,7 +73,7 @@ export async function processIngestProcess(job: Job) {
   await updateJobProgress(job.id, 100);
 }
 
-async function createDownloadMediaJob(groupId: string, payload: DownloadMediaPayload) {
+async function createDownloadMediaJob(ingestId: string, payload: DownloadMediaPayload) {
   await db
     .insert(jobs)
     .values({
@@ -87,7 +82,7 @@ async function createDownloadMediaJob(groupId: string, payload: DownloadMediaPay
       resourceType: "media",
       resourceId: payload.key,
       payload,
-      groupId,
+      ingestId,
       createdAt: new Date(),
     })
     .onConflictDoNothing();

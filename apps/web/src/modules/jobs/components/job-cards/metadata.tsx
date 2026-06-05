@@ -39,17 +39,17 @@ export function JobMetadataCard({ job }: Props) {
             {job.attemptCount} / {job.maxAttempts}
           </span>
         </div>
-        {job.groupId && (
+        {job.ingestId && (
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
-              Group
+              Ingest
             </span>
             <Link
-              to="/job-groups/$id"
-              params={{ id: job.groupId }}
+              to="/ingests/$id"
+              params={{ id: job.ingestId }}
               className="text-primary text-xs underline"
             >
-              View Group
+              View Ingest
             </Link>
           </div>
         )}

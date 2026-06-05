@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import type { Column, ColumnDef } from "@tanstack/react-table";
 import type { Ingest } from "@workspace/contracts/ingest";
 import { PlatformValues } from "@workspace/contracts/platform";
@@ -83,7 +84,11 @@ export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ing
         header: ({ column }: { column: Column<Ingest, unknown> }) => (
           <DataTableColumnHeader column={column} label="File Name" />
         ),
-        cell: ({ cell }) => <div>{cell.getValue<Ingest["filename"]>()}</div>,
+        cell: ({ cell }) => (
+          <Link to="/ingests/$id" params={{ id: cell.row.original.id }}>
+            {cell.getValue<Ingest["filename"]>()}
+          </Link>
+        ),
         meta: {
           label: "File Name",
           placeholder: "Search file names...",

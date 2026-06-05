@@ -102,21 +102,21 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
         enableColumnFilter: true,
       },
       {
-        id: "group",
-        accessorKey: "groupId",
+        id: "ingest",
+        accessorKey: "ingestId",
         header: ({ column }: { column: Column<Job, unknown> }) => (
-          <DataTableColumnHeader column={column} label="Group" />
+          <DataTableColumnHeader column={column} label="Ingest" />
         ),
         cell: ({ row }) => {
-          const groupId = row.original.groupId;
-          if (!groupId) return <span className="text-muted-foreground text-xs">—</span>;
+          const ingestId = row.original.ingestId;
+          if (!ingestId) return <span className="text-muted-foreground text-xs">—</span>;
           return (
             <Link
-              to="/job-groups/$id"
-              params={{ id: groupId }}
+              to="/ingests/$id"
+              params={{ id: ingestId }}
               className="text-[10px] text-primary underline"
             >
-              {groupId.slice(0, 8)}
+              {ingestId.slice(0, 8)}
             </Link>
           );
         },

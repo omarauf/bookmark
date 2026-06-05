@@ -43,7 +43,7 @@ export function JobAnalytics({ className }: Props) {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <AnalyticsCard.GroupSize data={data.groupSizes} />
+        <AnalyticsCard.GroupSize data={data.ingestSize} />
 
         <AnalyticsCard.TopError data={data.topErrors} />
       </div>

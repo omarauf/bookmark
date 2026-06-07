@@ -8,7 +8,6 @@ import {
   Folder,
   Form,
   GalleryVerticalEnd,
-  Layers,
   Link,
   Rss,
   ServerCrash,
@@ -83,7 +82,6 @@ export const sidebarData: SidebarData = {
       items: [
         { title: "Downloads", url: "/downloads", icon: Download },
         { title: "Jobs", url: "/jobs", icon: Workflow },
-        { title: "Job Groups", url: "/job-groups", icon: Layers },
       ],
     },
     {

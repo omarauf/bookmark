@@ -26,7 +26,6 @@ import { Route as AuthenticatedProfilesIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedPostsIndexRouteImport } from './routes/_authenticated/posts/index'
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
-import { Route as AuthenticatedJobGroupsIndexRouteImport } from './routes/_authenticated/job-groups/index'
 import { Route as AuthenticatedIngestsIndexRouteImport } from './routes/_authenticated/ingests/index'
 import { Route as AuthenticatedImdbIndexRouteImport } from './routes/_authenticated/imdb/index'
 import { Route as AuthenticatedFileManagerIndexRouteImport } from './routes/_authenticated/file-manager/index'
@@ -37,7 +36,7 @@ import { Route as AuthenticatedProfilesIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPostsTwitterRouteImport } from './routes/_authenticated/posts/twitter'
 import { Route as AuthenticatedPostsTiktokRouteImport } from './routes/_authenticated/posts/tiktok'
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs/$id'
-import { Route as AuthenticatedJobGroupsIdRouteImport } from './routes/_authenticated/job-groups/$id'
+import { Route as AuthenticatedIngestsIdRouteImport } from './routes/_authenticated/ingests/$id'
 import { Route as AuthenticatedAssetsFormRouteImport } from './routes/_authenticated/assets/form'
 import { Route as AuthenticatedPostsInstagramIndexRouteImport } from './routes/_authenticated/posts/instagram/index'
 import { Route as AuthenticatedPostsInstagramVirtualWindowRouteImport } from './routes/_authenticated/posts/instagram/virtual-window'
@@ -131,12 +130,6 @@ const AuthenticatedJobsIndexRoute = AuthenticatedJobsIndexRouteImport.update({
   path: '/jobs/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedJobGroupsIndexRoute =
-  AuthenticatedJobGroupsIndexRouteImport.update({
-    id: '/job-groups/',
-    path: '/job-groups/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedIngestsIndexRoute =
   AuthenticatedIngestsIndexRouteImport.update({
     id: '/ingests/',
@@ -193,12 +186,11 @@ const AuthenticatedJobsIdRoute = AuthenticatedJobsIdRouteImport.update({
   path: '/jobs/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedJobGroupsIdRoute =
-  AuthenticatedJobGroupsIdRouteImport.update({
-    id: '/job-groups/$id',
-    path: '/job-groups/$id',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
+const AuthenticatedIngestsIdRoute = AuthenticatedIngestsIdRouteImport.update({
+  id: '/ingests/$id',
+  path: '/ingests/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAssetsFormRoute = AuthenticatedAssetsFormRouteImport.update({
   id: '/assets/form',
   path: '/assets/form',
@@ -239,7 +231,7 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/sign-in': typeof AuthSignInRoute
   '/assets/form': typeof AuthenticatedAssetsFormRoute
-  '/job-groups/$id': typeof AuthenticatedJobGroupsIdRoute
+  '/ingests/$id': typeof AuthenticatedIngestsIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
   '/posts/twitter': typeof AuthenticatedPostsTwitterRoute
@@ -250,7 +242,6 @@ export interface FileRoutesByFullPath {
   '/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/imdb/': typeof AuthenticatedImdbIndexRoute
   '/ingests/': typeof AuthenticatedIngestsIndexRoute
-  '/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs/': typeof AuthenticatedJobsIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
   '/posts/': typeof AuthenticatedPostsIndexRoute
@@ -273,7 +264,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof AuthSignInRoute
   '/': typeof AuthenticatedIndexRoute
   '/assets/form': typeof AuthenticatedAssetsFormRoute
-  '/job-groups/$id': typeof AuthenticatedJobGroupsIdRoute
+  '/ingests/$id': typeof AuthenticatedIngestsIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
   '/posts/twitter': typeof AuthenticatedPostsTwitterRoute
@@ -284,7 +275,6 @@ export interface FileRoutesByTo {
   '/file-manager': typeof AuthenticatedFileManagerIndexRoute
   '/imdb': typeof AuthenticatedImdbIndexRoute
   '/ingests': typeof AuthenticatedIngestsIndexRoute
-  '/job-groups': typeof AuthenticatedJobGroupsIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
   '/posts': typeof AuthenticatedPostsIndexRoute
@@ -310,7 +300,7 @@ export interface FileRoutesById {
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/assets/form': typeof AuthenticatedAssetsFormRoute
-  '/_authenticated/job-groups/$id': typeof AuthenticatedJobGroupsIdRoute
+  '/_authenticated/ingests/$id': typeof AuthenticatedIngestsIdRoute
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/_authenticated/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
   '/_authenticated/posts/twitter': typeof AuthenticatedPostsTwitterRoute
@@ -321,7 +311,6 @@ export interface FileRoutesById {
   '/_authenticated/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/_authenticated/imdb/': typeof AuthenticatedImdbIndexRoute
   '/_authenticated/ingests/': typeof AuthenticatedIngestsIndexRoute
-  '/_authenticated/job-groups/': typeof AuthenticatedJobGroupsIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
   '/_authenticated/posts/': typeof AuthenticatedPostsIndexRoute
@@ -347,7 +336,7 @@ export interface FileRouteTypes {
     | '/503'
     | '/sign-in'
     | '/assets/form'
-    | '/job-groups/$id'
+    | '/ingests/$id'
     | '/jobs/$id'
     | '/posts/tiktok'
     | '/posts/twitter'
@@ -358,7 +347,6 @@ export interface FileRouteTypes {
     | '/file-manager/'
     | '/imdb/'
     | '/ingests/'
-    | '/job-groups/'
     | '/jobs/'
     | '/links/'
     | '/posts/'
@@ -381,7 +369,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/'
     | '/assets/form'
-    | '/job-groups/$id'
+    | '/ingests/$id'
     | '/jobs/$id'
     | '/posts/tiktok'
     | '/posts/twitter'
@@ -392,7 +380,6 @@ export interface FileRouteTypes {
     | '/file-manager'
     | '/imdb'
     | '/ingests'
-    | '/job-groups'
     | '/jobs'
     | '/links'
     | '/posts'
@@ -417,7 +404,7 @@ export interface FileRouteTypes {
     | '/_auth/sign-in'
     | '/_authenticated/'
     | '/_authenticated/assets/form'
-    | '/_authenticated/job-groups/$id'
+    | '/_authenticated/ingests/$id'
     | '/_authenticated/jobs/$id'
     | '/_authenticated/posts/tiktok'
     | '/_authenticated/posts/twitter'
@@ -428,7 +415,6 @@ export interface FileRouteTypes {
     | '/_authenticated/file-manager/'
     | '/_authenticated/imdb/'
     | '/_authenticated/ingests/'
-    | '/_authenticated/job-groups/'
     | '/_authenticated/jobs/'
     | '/_authenticated/links/'
     | '/_authenticated/posts/'
@@ -574,13 +560,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/job-groups/': {
-      id: '/_authenticated/job-groups/'
-      path: '/job-groups'
-      fullPath: '/job-groups/'
-      preLoaderRoute: typeof AuthenticatedJobGroupsIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/ingests/': {
       id: '/_authenticated/ingests/'
       path: '/ingests'
@@ -651,11 +630,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/job-groups/$id': {
-      id: '/_authenticated/job-groups/$id'
-      path: '/job-groups/$id'
-      fullPath: '/job-groups/$id'
-      preLoaderRoute: typeof AuthenticatedJobGroupsIdRouteImport
+    '/_authenticated/ingests/$id': {
+      id: '/_authenticated/ingests/$id'
+      path: '/ingests/$id'
+      fullPath: '/ingests/$id'
+      preLoaderRoute: typeof AuthenticatedIngestsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/assets/form': {
@@ -729,7 +708,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPostsRouteRoute: typeof AuthenticatedPostsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAssetsFormRoute: typeof AuthenticatedAssetsFormRoute
-  AuthenticatedJobGroupsIdRoute: typeof AuthenticatedJobGroupsIdRoute
+  AuthenticatedIngestsIdRoute: typeof AuthenticatedIngestsIdRoute
   AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
   AuthenticatedProfilesIdRoute: typeof AuthenticatedProfilesIdRoute
   AuthenticatedAnimeIndexRoute: typeof AuthenticatedAnimeIndexRoute
@@ -738,7 +717,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFileManagerIndexRoute: typeof AuthenticatedFileManagerIndexRoute
   AuthenticatedImdbIndexRoute: typeof AuthenticatedImdbIndexRoute
   AuthenticatedIngestsIndexRoute: typeof AuthenticatedIngestsIndexRoute
-  AuthenticatedJobGroupsIndexRoute: typeof AuthenticatedJobGroupsIndexRoute
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
   AuthenticatedProfilesIndexRoute: typeof AuthenticatedProfilesIndexRoute
@@ -752,7 +730,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPostsRouteRoute: AuthenticatedPostsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAssetsFormRoute: AuthenticatedAssetsFormRoute,
-  AuthenticatedJobGroupsIdRoute: AuthenticatedJobGroupsIdRoute,
+  AuthenticatedIngestsIdRoute: AuthenticatedIngestsIdRoute,
   AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
   AuthenticatedProfilesIdRoute: AuthenticatedProfilesIdRoute,
   AuthenticatedAnimeIndexRoute: AuthenticatedAnimeIndexRoute,
@@ -761,7 +739,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFileManagerIndexRoute: AuthenticatedFileManagerIndexRoute,
   AuthenticatedImdbIndexRoute: AuthenticatedImdbIndexRoute,
   AuthenticatedIngestsIndexRoute: AuthenticatedIngestsIndexRoute,
-  AuthenticatedJobGroupsIndexRoute: AuthenticatedJobGroupsIndexRoute,
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,
   AuthenticatedProfilesIndexRoute: AuthenticatedProfilesIndexRoute,

@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { IngestSchemas } from "@workspace/contracts/ingest";
-import { parseIngestFilename } from "@workspace/core/ingest";
+import { ScrapeSchemas } from "@workspace/contracts/scrape";
+import { parseScrapeFilename } from "@workspace/core/scrape";
 import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
@@ -9,19 +9,19 @@ import { protectedProcedure } from "@/lib/orpc";
 import { jobs } from "@/modules/job/schema";
 import { createSingleJob } from "@/modules/job/service";
 import { replaceNullWithUndefined } from "@/utils/object";
-import { ingestRepo } from "./repo";
-import { ingests } from "./schema";
+import { scrapeRepo } from "./repo";
+import { scrapes } from "./schema";
 
-export const ingestRouter = {
+export const scrapeRouter = {
   list: protectedProcedure
-    .input(IngestSchemas.list.request)
-    .output(IngestSchemas.list.response)
+    .input(ScrapeSchemas.list.request)
+    .output(ScrapeSchemas.list.response)
     .handler(async ({ input }) => {
-      const filters = input.platform ? eq(ingests.platform, input.platform) : undefined;
+      const filters = input.platform ? eq(scrapes.platform, input.platform) : undefined;
 
-      const dataQuery = db.select().from(ingests);
+      const dataQuery = db.select().from(scrapes);
 
-      const countQuery = db.select({ count: count() }).from(ingests);
+      const countQuery = db.select({ count: count() }).from(scrapes);
 
       return await withPagination({
         dataQuery,
@@ -29,80 +29,80 @@ export const ingestRouter = {
         filters,
         page: input.page,
         perPage: input.perPage,
-        orderByColumn: ingests.scrapedAt,
+        orderByColumn: scrapes.scrapedAt,
         orderDirection: "desc",
       });
     }),
 
   create: protectedProcedure
-    .route({ path: "/ingest" })
-    .input(IngestSchemas.create.request)
-    .output(IngestSchemas.create.response)
+    .route({ path: "/scrape" })
+    .input(ScrapeSchemas.create.request)
+    .output(ScrapeSchemas.create.response)
     .errors({
       BAD_REQUEST: {
         message: "Invalid filename format. Expected format: {platform}_YYYY-MM-DD_HH-MM-SS.json",
       },
     })
     .handler(async ({ input: { file }, errors }) => {
-      const { scrapedAt, platform } = parseIngestFilename(file.name);
+      const { scrapedAt, platform } = parseScrapeFilename(file.name);
       if (scrapedAt === undefined || platform === undefined) throw errors.BAD_REQUEST();
 
       const filename = `${scrapedAt.toISOString().replace(/[:.]/g, "-")}.json`;
 
-      const exist = await ingestRepo.findOne(eq(ingests.filename, filename));
+      const exist = await scrapeRepo.findOne(eq(scrapes.filename, filename));
       if (exist) return { jobId: undefined };
 
       // Save file to temp directory for async processing
       await fs.mkdir(path.join(process.cwd(), "tmp"), { recursive: true });
-      const tempFilePath = path.join(process.cwd(), "tmp", `ingest-${Date.now()}-${filename}`);
+      const tempFilePath = path.join(process.cwd(), "tmp", `scrape-${Date.now()}-${filename}`);
       const arrayBuffer = await file.arrayBuffer();
       await fs.writeFile(tempFilePath, Buffer.from(arrayBuffer));
 
       // Create background job
       const job = await createSingleJob({
-        type: "ingest_upload",
+        type: "scrape_upload",
         status: "pending",
-        resourceType: "ingest",
+        resourceType: "scrape",
         payload: { tempFilePath, filename, platform, scrapedAt, size: file.size },
       });
 
       return { jobId: job.id };
     }),
 
-  ingest: protectedProcedure
-    .input(IngestSchemas.ingest.request)
-    .output(IngestSchemas.ingest.response)
-    .errors({ NOT_FOUND: { message: "Ingest not found" } })
+  process: protectedProcedure
+    .input(ScrapeSchemas.process.request)
+    .output(ScrapeSchemas.process.response)
+    .errors({ NOT_FOUND: { message: "Scrape not found" } })
     .handler(async ({ input: { id }, errors }) => {
-      const ingestItem = await ingestRepo.findById(id);
-      if (!ingestItem) throw errors.NOT_FOUND();
+      const scrapeItem = await scrapeRepo.findById(id);
+      if (!scrapeItem) throw errors.NOT_FOUND();
 
       const job = await createSingleJob({
-        type: "ingest_process",
+        type: "scrape_process",
         status: "pending",
-        resourceType: "ingest",
-        ingestId: ingestItem.id,
-        payload: { ingestId: ingestItem.id },
+        resourceType: "scrape",
+        scrapeId: scrapeItem.id,
+        payload: { scrapeId: scrapeItem.id },
       });
 
       return { jobId: job.id };
     }),
 
   get: protectedProcedure
-    .input(IngestSchemas.get.request)
-    .output(IngestSchemas.get.response)
-    .errors({ NOT_FOUND: { message: "Ingest not found" } })
+    .input(ScrapeSchemas.get.request)
+    .output(ScrapeSchemas.get.response)
+    .errors({ NOT_FOUND: { message: "Scrape not found" } })
     .handler(async ({ input: { id }, errors }) => {
-      const ingestItem = await ingestRepo.findById(id);
-      if (!ingestItem) throw errors.NOT_FOUND();
-      return replaceNullWithUndefined(ingestItem);
+      const scrapeItem = await scrapeRepo.findById(id);
+      if (!scrapeItem) throw errors.NOT_FOUND();
+      return replaceNullWithUndefined(scrapeItem);
     }),
 
   jobs: protectedProcedure
-    .input(IngestSchemas.jobs.request)
-    .output(IngestSchemas.jobs.response)
+    .input(ScrapeSchemas.jobs.request)
+    .output(ScrapeSchemas.jobs.response)
     .handler(async ({ input }) => {
-      const filters = eq(jobs.ingestId, input.id);
+      const filters = eq(jobs.scrapeId, input.id);
 
       const dataQuery = db.select().from(jobs);
       const countQuery = db.select({ count: count() }).from(jobs);
@@ -118,23 +118,23 @@ export const ingestRouter = {
     }),
 
   delete: protectedProcedure
-    .input(IngestSchemas.delete.request)
-    .output(IngestSchemas.delete.response)
-    .errors({ NOT_FOUND: { message: "Ingest not found" } })
+    .input(ScrapeSchemas.delete.request)
+    .output(ScrapeSchemas.delete.response)
+    .errors({ NOT_FOUND: { message: "Scrape not found" } })
     .handler(async ({ input: { id }, errors }) => {
-      const ingestItem = await ingestRepo.findById(id);
-      if (!ingestItem) throw errors.NOT_FOUND();
-      await ingestRepo.delete(id);
+      const scrapeItem = await scrapeRepo.findById(id);
+      if (!scrapeItem) throw errors.NOT_FOUND();
+      await scrapeRepo.delete(id);
     }),
 
   stats: protectedProcedure
-    .input(IngestSchemas.stats.request)
-    .output(IngestSchemas.stats.response)
+    .input(ScrapeSchemas.stats.request)
+    .output(ScrapeSchemas.stats.response)
     .handler(async ({ input: { id } }) => {
       const statusRows = await db
         .select({ status: jobs.status, count: count() })
         .from(jobs)
-        .where(eq(jobs.ingestId, id))
+        .where(eq(jobs.scrapeId, id))
         .groupBy(jobs.status);
 
       const result = {
@@ -159,22 +159,22 @@ export const ingestRouter = {
     }),
 
   cancel: protectedProcedure
-    .input(IngestSchemas.cancel.request)
-    .output(IngestSchemas.cancel.response)
-    .errors({ NOT_FOUND: { message: "Ingest not found" } })
+    .input(ScrapeSchemas.cancel.request)
+    .output(ScrapeSchemas.cancel.response)
+    .errors({ NOT_FOUND: { message: "Scrape not found" } })
     .handler(async ({ input: { id }, errors }) => {
-      const [ingest] = await db
-        .select({ id: ingests.id })
-        .from(ingests)
-        .where(eq(ingests.id, id))
+      const [scrape] = await db
+        .select({ id: scrapes.id })
+        .from(scrapes)
+        .where(eq(scrapes.id, id))
         .limit(1);
-      if (!ingest) throw errors.NOT_FOUND();
+      if (!scrape) throw errors.NOT_FOUND();
 
       const cancelled = await db
         .update(jobs)
         .set({ status: "cancelled", cancelledAt: new Date(), retryAt: null })
         .where(
-          and(eq(jobs.ingestId, id), inArray(jobs.status, ["pending", "processing", "retrying"])),
+          and(eq(jobs.scrapeId, id), inArray(jobs.status, ["pending", "processing", "retrying"])),
         )
         .returning({ id: jobs.id });
 

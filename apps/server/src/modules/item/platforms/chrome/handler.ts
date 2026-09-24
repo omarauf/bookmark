@@ -1,6 +1,6 @@
-import type { IngestPayload } from "@workspace/contracts/ingest";
 import { type CreateItem, ItemSchemas } from "@workspace/contracts/item";
 import type { Platform } from "@workspace/contracts/platform";
+import type { ScrapePayload } from "@workspace/contracts/scrape";
 import type { PlatformHandler } from "@/core/platform";
 import { jsonParse } from "@/utils/object";
 
@@ -15,7 +15,7 @@ export class ChromeHandler implements PlatformHandler {
     return { valid: validItems.length, invalid: invalidItems.length };
   }
 
-  parse(rawData: string): IngestPayload {
+  parse(rawData: string): ScrapePayload {
     const bookmarkTree = jsonParse<chrome.bookmarks.BookmarkTreeNode[]>(rawData) || [];
 
     if (!bookmarkTree) {

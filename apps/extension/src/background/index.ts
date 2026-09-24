@@ -1,4 +1,4 @@
-import { generateIngestFilename } from "@workspace/core/ingest";
+import { generateScrapeFilename } from "@workspace/core/scrape";
 import { env } from "@/config/env";
 import { instagramCleaner } from "@/features/instagram/cleaner";
 import { instagramScraper } from "@/features/instagram/scraper";
@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener(
         if (tabId === newTab.id && info.status === "complete") {
           chrome.tabs.onUpdated.removeListener(listener);
 
-          const filename = generateIngestFilename(platform);
+          const filename = generateScrapeFilename(platform);
 
           if (platform === "twitter") {
             if (type === "unsave") {

@@ -7,28 +7,28 @@ import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
 
 type Props = {
-  ingestId: string;
+  scrapeId: string;
 };
 
-export function JobIngestCancelButton({ ingestId }: Props) {
+export function JobScrapeCancelButton({ scrapeId }: Props) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
   const { data: stats } = useQuery(
-    orpc.ingest.stats.queryOptions({
-      input: { id: ingestId },
+    orpc.scrape.stats.queryOptions({
+      input: { id: scrapeId },
       refetchInterval: 2000,
       staleTime: 0,
     }),
   );
 
   const cancelMutation = useMutation(
-    orpc.ingest.cancel.mutationOptions({
+    orpc.scrape.cancel.mutationOptions({
       onSuccess: ({ cancelled }) => {
         setOpen(false);
-        queryClient.invalidateQueries({ queryKey: orpc.ingest.get.key() });
-        queryClient.invalidateQueries({ queryKey: orpc.ingest.stats.key() });
-        queryClient.invalidateQueries({ queryKey: orpc.ingest.list.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.scrape.get.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.scrape.stats.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.scrape.list.key() });
         toast.success(cancelled > 0 ? `Cancelled ${cancelled} job(s)` : "No active jobs to cancel");
       },
       onError: (error: { message: string }) => toast.error(error.message),
@@ -57,7 +57,7 @@ export function JobIngestCancelButton({ ingestId }: Props) {
         confirmText="Cancel jobs"
         destructive
         isLoading={cancelMutation.isPending}
-        handleConfirm={() => cancelMutation.mutate({ id: ingestId })}
+        handleConfirm={() => cancelMutation.mutate({ id: scrapeId })}
         className="sm:max-w-sm"
       />
     </>

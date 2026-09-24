@@ -1,11 +1,6 @@
 import type z from "zod";
 import type { JobSchemas } from "./contract";
-import type {
-  CreateJobLogSchema,
-  CreateJobSchema,
-  JobLogSchema,
-  JobSchema,
-} from "./entity";
+import type { CreateJobLogSchema, CreateJobSchema, JobLogSchema, JobSchema } from "./entity";
 import type { JobPayloadSchemas } from "./payload";
 
 export type Job = z.infer<typeof JobSchema>;

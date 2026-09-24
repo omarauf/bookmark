@@ -14,7 +14,7 @@ export const JobSchemas = {
       status: JobStatusEnum.optional().catch(undefined),
       resourceType: z.string().optional().catch(undefined),
       resourceId: z.string().optional().catch(undefined),
-      ingestId: z.uuid().optional().catch(undefined),
+      scrapeId: z.uuid().optional().catch(undefined),
     }),
     response: PaginationResultSchema(JobSchema),
   },
@@ -100,9 +100,9 @@ export const JobSchemas = {
       ),
       statusCounts: z.record(JobStatusEnum, z.number().int()),
       typeCounts: z.record(JobTypeEnum, z.number().int()),
-      ingestSize: z.array(
+      scrapeSize: z.array(
         z.object({
-          ingestId: z.string(),
+          scrapeId: z.string(),
           name: z.string(),
           count: z.number().int(),
         }),

@@ -8,19 +8,19 @@ import {
 import { PlatformEnum } from "../../foundation/platform";
 import { JobSchema } from "../job/entity";
 import { JobPayloadSchemas } from "../job/payload";
-import { IngestSchema } from "./entity";
+import { ScrapeSchema } from "./entity";
 
-export const IngestPayloadSchema = z.object({
+export const ScrapePayloadSchema = z.object({
   items: CreateItemSchema.array(),
   invalidItems: z.any().array(),
   relations: CreateRelationSchema.array(),
   downloadTasks: JobPayloadSchemas.downloadMedia.array(),
 });
 
-export const IngestSchemas = {
+export const ScrapeSchemas = {
   list: {
     request: BasePaginationQuerySchema.extend({ platform: PlatformEnum.optional() }),
-    response: PaginationResultSchema(IngestSchema),
+    response: PaginationResultSchema(ScrapeSchema),
   },
 
   create: {
@@ -28,14 +28,14 @@ export const IngestSchemas = {
     response: z.object({ jobId: z.uuid().optional() }),
   },
 
-  ingest: {
+  process: {
     request: z.object({ id: z.uuid() }),
     response: z.object({ jobId: z.uuid() }),
   },
 
   get: {
     request: z.object({ id: z.uuid() }),
-    response: IngestSchema,
+    response: ScrapeSchema,
   },
 
   jobs: {
@@ -72,5 +72,5 @@ export const IngestSchemas = {
   },
 };
 
-export type Ingest = z.infer<typeof IngestSchema>;
-export type IngestPayload = z.infer<typeof IngestPayloadSchema>;
+export type Scrape = z.infer<typeof ScrapeSchema>;
+export type ScrapePayload = z.infer<typeof ScrapePayloadSchema>;

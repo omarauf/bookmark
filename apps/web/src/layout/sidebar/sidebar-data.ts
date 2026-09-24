@@ -73,7 +73,7 @@ export const sidebarData: SidebarData = {
     {
       title: "Data & Operations",
       items: [
-        { title: "Ingests", url: "/ingests", icon: Upload },
+        { title: "Scrapes", url: "/scrapes", icon: Upload },
         { title: "File Manager", url: "/file-manager", icon: Folder },
       ],
     },

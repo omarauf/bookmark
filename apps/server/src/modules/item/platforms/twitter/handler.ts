@@ -1,9 +1,9 @@
-import { type IngestPayload, IngestPayloadSchema } from "@workspace/contracts/ingest";
 import type { CreateItem } from "@workspace/contracts/item";
 import type { DownloadMediaPayload } from "@workspace/contracts/job";
 import type { Platform } from "@workspace/contracts/platform";
 import type { TweetResults, Twitter } from "@workspace/contracts/raw/twitter";
 import type { CreateRelation } from "@workspace/contracts/relation";
+import { type ScrapePayload, ScrapePayloadSchema } from "@workspace/contracts/scrape";
 import type { PlatformHandler } from "@/core/platform";
 import { jsonParse } from "@/utils/object";
 import { relation } from "../common/relation";
@@ -36,7 +36,7 @@ export class TwitterHandler implements PlatformHandler {
     return { valid, invalid };
   }
 
-  parse(data: string): IngestPayload {
+  parse(data: string): ScrapePayload {
     const jsonData = jsonParse<Twitter[]>(data);
 
     if (jsonData === undefined) {
@@ -47,7 +47,7 @@ export class TwitterHandler implements PlatformHandler {
       .flatMap((post) => post.data.bookmark_timeline_v2.timeline.instructions)
       .flatMap((item) => item.entries);
 
-    const results: IngestPayload[] = [];
+    const results: ScrapePayload[] = [];
 
     for (const entry of entries) {
       if (entry.content.itemContent?.tweet_results === undefined) {
@@ -66,7 +66,7 @@ export class TwitterHandler implements PlatformHandler {
     };
   }
 
-  private _parse(data: TweetResults): IngestPayload {
+  private _parse(data: TweetResults): ScrapePayload {
     const tweet = postParser(getTweet(data));
     const creator = creatorParser(getCreator(data));
     const createdRelations = relation(tweet.item, creator.item, "created_by");
@@ -88,7 +88,7 @@ export class TwitterHandler implements PlatformHandler {
 
     const payload = { items, invalidItems: [], relations, downloadTasks };
 
-    const result = IngestPayloadSchema.safeParse(payload);
+    const result = ScrapePayloadSchema.safeParse(payload);
     if (!result.success) {
       return { items: [], invalidItems: [data], relations: [], downloadTasks: [] };
     }

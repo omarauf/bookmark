@@ -22,10 +22,10 @@ function getHandler(platform: Platform): PlatformHandler {
   return handler;
 }
 
-export function validateIngest(platform: Platform, data: string) {
+export function validateScrape(platform: Platform, data: string) {
   return getHandler(platform).validate(data);
 }
 
-export function parseIngest(platform: Platform, data: string) {
+export function parseScrape(platform: Platform, data: string) {
   return getHandler(platform).parse(data);
 }

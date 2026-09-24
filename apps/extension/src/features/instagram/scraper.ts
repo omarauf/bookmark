@@ -160,7 +160,7 @@ export function instagramScraper({ username, pages, download, send, filename }: 
 
     formData.append("file", blob, filename);
 
-    fetch("http://localhost:3000/api/ingest", {
+    fetch("http://localhost:3000/api/scrape", {
       method: "POST",
       body: formData,
     })

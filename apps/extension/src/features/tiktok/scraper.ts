@@ -128,7 +128,7 @@ export function tiktokScraper({ pages, download, send, filename }: Props) {
 
     formData.append("file", blob, filename);
 
-    fetch("http://localhost:3000/api/ingest", {
+    fetch("http://localhost:3000/api/scrape", {
       method: "POST",
       body: formData,
     })

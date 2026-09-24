@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { Column, ColumnDef } from "@tanstack/react-table";
-import type { Ingest } from "@workspace/contracts/ingest";
 import { PlatformValues } from "@workspace/contracts/platform";
+import type { Scrape } from "@workspace/contracts/scrape";
 import { Ellipsis, Text } from "lucide-react";
 import type * as React from "react";
 import { useCallback, useMemo } from "react";
@@ -24,16 +24,16 @@ import { fNumber, fSize } from "@/utils/format-number";
 import { fDate } from "@/utils/format-time";
 
 type Props = {
-  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<Ingest> | undefined>>;
+  setRowAction: React.Dispatch<React.SetStateAction<DataTableRowAction<Scrape> | undefined>>;
 };
 
-export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ingest>[] {
+export function useGetScrapeTableColumns({ setRowAction }: Props): ColumnDef<Scrape>[] {
   const queryClient = useQueryClient();
 
-  const runIngestMutation = useMutation(
-    orpc.ingest.ingest.mutationOptions({
+  const runScrapeMutation = useMutation(
+    orpc.scrape.process.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: orpc.ingest.list.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.scrape.list.key() });
       },
       onError: (error) => {
         toast.error(error.message);
@@ -41,52 +41,29 @@ export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ing
     }),
   );
 
-  const ingestFileHandler = useCallback(
+  const scrapeFileHandler = useCallback(
     async (id: string) => {
-      const result = runIngestMutation.mutateAsync({ id });
+      const result = runScrapeMutation.mutateAsync({ id });
       toast.promise(result, {
-        loading: "Ingesting...",
-        success: ({ jobId }) => `Ingest started (Job ID: ${jobId})`,
-        error: "Error ingesting posts",
+        loading: "Processing...",
+        success: ({ jobId }) => `Scrape started (Job ID: ${jobId})`,
+        error: "Error processing scrape",
       });
     },
-    [runIngestMutation],
+    [runScrapeMutation],
   );
 
-  const columns = useMemo<ColumnDef<Ingest>[]>(
+  const columns = useMemo<ColumnDef<Scrape>[]>(
     () => [
-      // {
-      //   id: "select",
-      //   header: ({ table }) => (
-      //     <Checkbox
-      //       checked={
-      //         table.getIsAllPageRowsSelected() ||
-      //         (table.getIsSomePageRowsSelected() && "indeterminate")
-      //       }
-      //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-      //       aria-label="Select all"
-      //     />
-      //   ),
-      //   cell: ({ row }) => (
-      //     <Checkbox
-      //       checked={row.getIsSelected()}
-      //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-      //       aria-label="Select row"
-      //     />
-      //   ),
-      //   size: 32,
-      //   enableSorting: false,
-      //   enableHiding: false,
-      // },
       {
         id: "filename",
         accessorKey: "filename",
-        header: ({ column }: { column: Column<Ingest, unknown> }) => (
+        header: ({ column }: { column: Column<Scrape, unknown> }) => (
           <DataTableColumnHeader column={column} label="File Name" />
         ),
         cell: ({ cell }) => (
-          <Link to="/ingests/$id" params={{ id: cell.row.original.id }}>
-            {cell.getValue<Ingest["filename"]>()}
+          <Link to="/scrapes/$id" params={{ id: cell.row.original.id }}>
+            {cell.getValue<Scrape["filename"]>()}
           </Link>
         ),
         meta: {
@@ -100,10 +77,10 @@ export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ing
       {
         id: "platform",
         accessorKey: "platform",
-        header: ({ column }: { column: Column<Ingest, unknown> }) => (
+        header: ({ column }: { column: Column<Scrape, unknown> }) => (
           <DataTableColumnHeader column={column} label="Type" />
         ),
-        cell: ({ cell }) => <div>{cell.getValue<Ingest["platform"]>()}</div>,
+        cell: ({ cell }) => <div>{cell.getValue<Scrape["platform"]>()}</div>,
         meta: {
           label: "Type",
           placeholder: "Search types...",
@@ -116,11 +93,11 @@ export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ing
       {
         id: "validPost",
         accessorKey: "validPost",
-        header: ({ column }: { column: Column<Ingest, unknown> }) => (
+        header: ({ column }: { column: Column<Scrape, unknown> }) => (
           <DataTableColumnHeader column={column} label="Valid Post Count" />
         ),
         cell: ({ cell }) => {
-          const validPosts = cell.getValue<Ingest["validPost"]>();
+          const validPosts = cell.getValue<Scrape["validPost"]>();
           const invalidPosts = cell.row.original.invalidPost;
 
           return `${fNumber(validPosts)} / ${fNumber(validPosts + invalidPosts)}`;
@@ -129,22 +106,22 @@ export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ing
       {
         id: "size",
         accessorKey: "size",
-        header: ({ column }: { column: Column<Ingest, unknown> }) => (
+        header: ({ column }: { column: Column<Scrape, unknown> }) => (
           <DataTableColumnHeader column={column} label="Size" />
         ),
         cell: ({ cell }) => {
-          const size = cell.getValue<Ingest["size"]>();
+          const size = cell.getValue<Scrape["size"]>();
           return fSize(size / 1024);
         },
       },
       {
-        id: "ingested",
-        accessorKey: "ingestedAt",
-        header: ({ column }: { column: Column<Ingest, unknown> }) => (
-          <DataTableColumnHeader column={column} label="Ingested" />
+        id: "processed",
+        accessorKey: "processedAt",
+        header: ({ column }: { column: Column<Scrape, unknown> }) => (
+          <DataTableColumnHeader column={column} label="Processed" />
         ),
         cell: ({ cell }) => {
-          const s = cell.getValue<Ingest["ingestedAt"]>();
+          const s = cell.getValue<Scrape["processedAt"]>();
 
           return (
             <Label variant="soft" className="capitalize">
@@ -156,11 +133,11 @@ export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ing
       {
         id: "scrapedAt",
         accessorKey: "scrapedAt",
-        header: ({ column }: { column: Column<Ingest, unknown> }) => (
+        header: ({ column }: { column: Column<Scrape, unknown> }) => (
           <DataTableColumnHeader column={column} label="Scraped At" />
         ),
         cell: ({ cell }) => {
-          const s = cell.getValue<Ingest["scrapedAt"]>();
+          const s = cell.getValue<Scrape["scrapedAt"]>();
 
           return (
             <Label variant="soft" className="capitalize">
@@ -184,8 +161,8 @@ export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ing
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onSelect={() => ingestFileHandler(row.original.id)}>
-                  Ingest
+                <DropdownMenuItem onSelect={() => scrapeFileHandler(row.original.id)}>
+                  Process
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => setRowAction({ row, variant: "delete" })}>
@@ -199,7 +176,7 @@ export function useGetIngestTableColumns({ setRowAction }: Props): ColumnDef<Ing
         size: 40,
       },
     ],
-    [ingestFileHandler, setRowAction],
+    [scrapeFileHandler, setRowAction],
   );
 
   return columns;

@@ -5,13 +5,13 @@ import { orpc } from "@/integrations/orpc";
 import { MetricCard } from "../components/metric-card";
 
 type Props = {
-  ingestId: string;
+  scrapeId: string;
 };
 
-export function JobIngestAnalytics({ ingestId }: Props) {
+export function JobScrapeAnalytics({ scrapeId }: Props) {
   const { data: stats } = useQuery(
-    orpc.ingest.stats.queryOptions({
-      input: { id: ingestId },
+    orpc.scrape.stats.queryOptions({
+      input: { id: scrapeId },
       refetchInterval: 2000,
       staleTime: 0,
     }),

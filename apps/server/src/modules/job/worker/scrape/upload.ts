@@ -1,16 +1,16 @@
 import fs from "node:fs/promises";
 import { type Job, JobPayloadSchemas } from "@workspace/contracts/job";
-import z from "zod";
-import { s3Client } from "@/core/s3";
-import { db } from "@/core/db";
 import { eq } from "drizzle-orm";
-import { ingestRepo } from "@/modules/ingest/repo";
-import { validateIngest } from "@/modules/item/platform-registry";
+import z from "zod";
+import { db } from "@/core/db";
+import { s3Client } from "@/core/s3";
+import { validateScrape } from "@/modules/item/platform-registry";
+import { scrapeRepo } from "@/modules/scrape/repo";
 import { jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
-export async function processIngestUpload(job: Job) {
-  const parseResult = JobPayloadSchemas.ingestUpload.safeParse(job.payload);
+export async function processScrapeUpload(job: Job) {
+  const parseResult = JobPayloadSchemas.scrapeUpload.safeParse(job.payload);
   if (!parseResult.success) {
     const error = z.prettifyError(parseResult.error);
     throw new Error(`Invalid job payload: ${error}`);
@@ -21,7 +21,7 @@ export async function processIngestUpload(job: Job) {
 
   const s3Key = `${platform}/json/${filename}`;
 
-  await log(job.id, "info", "Starting ingest upload processing", { s3Key });
+  await log(job.id, "info", "Starting scrape upload processing", { s3Key });
 
   // 1. Read temp file
   const buffer = await fs.readFile(tempFilePath);
@@ -46,11 +46,11 @@ export async function processIngestUpload(job: Job) {
   // 3. Validate content
   const data = buffer.toString("utf-8");
   await log(job.id, "info", "Validating content");
-  const parsedData = validateIngest(platform, data);
+  const parsedData = validateScrape(platform, data);
   await log(job.id, "info", "Validation complete", parsedData);
 
-  // 4. Create ingest record
-  const ingestItem = await ingestRepo.create({
+  // 4. Create scrape record
+  const scrapeItem = await scrapeRepo.create({
     filename,
     validPost: parsedData.valid,
     invalidPost: parsedData.invalid,
@@ -58,10 +58,10 @@ export async function processIngestUpload(job: Job) {
     platform: platform,
     scrapedAt: new Date(scrapedAt),
   });
-  await log(job.id, "info", "Ingest record created", { filename, ingestId: ingestItem.id });
+  await log(job.id, "info", "Scrape record created", { filename, scrapeId: scrapeItem.id });
 
-  // 5. Link this upload job to its ingest
-  await db.update(jobs).set({ ingestId: ingestItem.id }).where(eq(jobs.id, job.id));
+  // 5. Link this upload job to its scrape
+  await db.update(jobs).set({ scrapeId: scrapeItem.id }).where(eq(jobs.id, job.id));
 
   // 6. Clean up temp file
   await fs.unlink(tempFilePath).catch(() => {});

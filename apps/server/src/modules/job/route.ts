@@ -14,7 +14,7 @@ export const jobRouter = {
     .input(JobSchemas.list.request)
     .output(JobSchemas.list.response)
     .handler(async ({ input }) => {
-      const { type, types, status, resourceType, resourceId, ingestId } = input;
+      const { type, types, status, resourceType, resourceId, scrapeId } = input;
 
       const filters = and(
         types ? inArray(jobs.type, types) : undefined,
@@ -22,7 +22,7 @@ export const jobRouter = {
         status ? eq(jobs.status, status) : undefined,
         resourceType ? eq(jobs.resourceType, resourceType) : undefined,
         resourceId ? eq(jobs.resourceId, resourceId) : undefined,
-        ingestId ? eq(jobs.ingestId, ingestId) : undefined,
+        scrapeId ? eq(jobs.scrapeId, scrapeId) : undefined,
       );
 
       const dataQuery = db.select().from(jobs);

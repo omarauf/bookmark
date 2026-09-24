@@ -1,6 +1,6 @@
-import { type IngestPayload, IngestPayloadSchema } from "@workspace/contracts/ingest";
 import type { Platform } from "@workspace/contracts/platform";
 import type { ItemList, Tiktok } from "@workspace/contracts/raw/tiktok";
+import { type ScrapePayload, ScrapePayloadSchema } from "@workspace/contracts/scrape";
 import type { PlatformHandler } from "@/core/platform";
 import { jsonParse } from "@/utils/object";
 import { relation } from "../common/relation";
@@ -28,7 +28,7 @@ export class TiktokHandler implements PlatformHandler {
     return { valid, invalid };
   }
 
-  parse(data: string): IngestPayload {
+  parse(data: string): ScrapePayload {
     const jsonData = jsonParse<Tiktok[]>(data);
 
     if (jsonData === undefined) {
@@ -38,7 +38,7 @@ export class TiktokHandler implements PlatformHandler {
     const results = jsonData
       .flatMap((post) => post.itemList ?? [])
       .map((post) => this._parse(post))
-      .filter(Boolean) as IngestPayload[];
+      .filter(Boolean) as ScrapePayload[];
 
     return {
       items: results.flatMap((r) => r.items),
@@ -48,7 +48,7 @@ export class TiktokHandler implements PlatformHandler {
     };
   }
 
-  private _parse(post: ItemList): IngestPayload | undefined {
+  private _parse(post: ItemList): ScrapePayload | undefined {
     if (!post) return { items: [], invalidItems: [post], relations: [], downloadTasks: [] };
 
     const creator = creatorParser(post.author);
@@ -63,7 +63,7 @@ export class TiktokHandler implements PlatformHandler {
 
     const payload = { items, invalidItems: [], relations, downloadTasks };
 
-    const result = IngestPayloadSchema.safeParse(payload);
+    const result = ScrapePayloadSchema.safeParse(payload);
     if (!result.success) {
       return { items: [], invalidItems: [post], relations: [], downloadTasks: [] };
     }

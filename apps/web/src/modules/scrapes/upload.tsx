@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { type Platform, PlatformValues } from "@workspace/contracts/platform";
-import { parseIngestFilename } from "@workspace/core/ingest";
+import { parseScrapeFilename } from "@workspace/core/scrape";
 import { AlertCircle, Check, FileJson, Upload } from "lucide-react";
 import type React from "react";
 import { useRef, useState } from "react";
@@ -34,9 +34,9 @@ export function UploadButton() {
   const queryClient = useQueryClient();
 
   const uploadMutation = useMutation(
-    orpc.ingest.create.mutationOptions({
+    orpc.scrape.create.mutationOptions({
       onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: orpc.ingest.list.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.scrape.list.key() });
         if (data?.jobId) {
           toast.success(
             <div className="flex flex-col gap-1">
@@ -47,7 +47,7 @@ export function UploadButton() {
             </div>,
           );
         } else {
-          toast.success("Ingest updated.");
+          toast.success("Scrape updated.");
         }
       },
       onError: (error) => {
@@ -99,7 +99,7 @@ export function UploadButton() {
     }
 
     const filename = selectedFile.name.split(".").slice(0, -1).join(".");
-    const { scrapedAt, platform } = parseIngestFilename(filename);
+    const { scrapedAt, platform } = parseScrapeFilename(filename);
 
     if (scrapedAt === undefined || platform === undefined) {
       setError("Invalid filename format. Expected format: {platform}_YYYY-MM-DD_HH-MM-SS.json");
@@ -125,14 +125,14 @@ export function UploadButton() {
     reader.readAsText(selectedFile);
   };
 
-  const handleIngest = async () => {
+  const handleScrape = async () => {
     if (file === null) {
       toast.error("No file selected");
       return;
     }
 
     if (type === undefined) {
-      toast.error("Please select an ingest type");
+      toast.error("Please select a scrape type");
       return;
     }
 
@@ -151,7 +151,7 @@ export function UploadButton() {
       });
 
       result.then(() => {
-        queryClient.invalidateQueries({ queryKey: ["ingests"] });
+        queryClient.invalidateQueries({ queryKey: ["scrapes"] });
       });
 
       setOpen(false);
@@ -184,7 +184,7 @@ export function UploadButton() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Ingest JSON File</DialogTitle>
+          <DialogTitle>Upload Scrape JSON File</DialogTitle>
           <DialogDescription>
             Upload a JSON file by dropping it here or selecting it from your device.
           </DialogDescription>
@@ -256,7 +256,7 @@ export function UploadButton() {
         )}
 
         <XSelect
-          placeholder="Ingest Type"
+          placeholder="Scrape Type"
           value={type}
           onChange={setType}
           options={PlatformValues.map((p) => p)}
@@ -269,8 +269,8 @@ export function UploadButton() {
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button onClick={handleIngest} disabled={!file || !jsonData}>
-            Ingest
+          <Button onClick={handleScrape} disabled={!file || !jsonData}>
+            Upload
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Row } from "@tanstack/react-table";
-import type { Ingest } from "@workspace/contracts/ingest";
+import type { Scrape } from "@workspace/contracts/scrape";
 import { Loader, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -28,20 +28,20 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { orpc } from "@/integrations/orpc";
 
 interface Props extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  ingests: Row<Ingest>["original"][];
+  scrapes: Row<Scrape>["original"][];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
-export function DeleteIngestsDialog({ ingests, showTrigger = true, onSuccess, ...props }: Props) {
+export function DeleteScrapesDialog({ scrapes, showTrigger = true, onSuccess, ...props }: Props) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation(
-    orpc.ingest.delete.mutationOptions({
+    orpc.scrape.delete.mutationOptions({
       onSuccess: async () => {
-        queryClient.invalidateQueries({ queryKey: orpc.ingest.list.key() });
-        toast.success("Ingests deleted successfully");
+        queryClient.invalidateQueries({ queryKey: orpc.scrape.list.key() });
+        toast.success("Scrapes deleted successfully");
         props.onOpenChange?.(false);
         onSuccess?.();
       },
@@ -52,7 +52,7 @@ export function DeleteIngestsDialog({ ingests, showTrigger = true, onSuccess, ..
   );
 
   const onDelete = () => {
-    deleteMutation.mutate({ id: ingests.map((ingestItem) => ingestItem.id)[0] });
+    deleteMutation.mutate({ id: scrapes.map((scrapeItem) => scrapeItem.id)[0] });
   };
 
   if (isDesktop) {
@@ -62,7 +62,7 @@ export function DeleteIngestsDialog({ ingests, showTrigger = true, onSuccess, ..
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
               <Trash className="mr-2 size-4" aria-hidden="true" />
-              Delete ({ingests.length})
+              Delete ({scrapes.length})
             </Button>
           </DialogTrigger>
         ) : null}
@@ -71,8 +71,8 @@ export function DeleteIngestsDialog({ ingests, showTrigger = true, onSuccess, ..
             <DialogTitle>Are you absolutely sure?</DialogTitle>
             <DialogDescription>
               This action cannot be undone. This will permanently delete your{" "}
-              <span className="font-medium">{ingests.length}</span>
-              {ingests.length === 1 ? " ingest" : " ingests"} from our servers.
+              <span className="font-medium">{scrapes.length}</span>
+              {scrapes.length === 1 ? " scrape" : " scrapes"} from our servers.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:space-x-0">
@@ -102,7 +102,7 @@ export function DeleteIngestsDialog({ ingests, showTrigger = true, onSuccess, ..
         <DrawerTrigger asChild>
           <Button variant="outline" size="sm">
             <Trash className="mr-2 size-4" aria-hidden="true" />
-            Delete ({ingests.length})
+            Delete ({scrapes.length})
           </Button>
         </DrawerTrigger>
       ) : null}
@@ -111,8 +111,8 @@ export function DeleteIngestsDialog({ ingests, showTrigger = true, onSuccess, ..
           <DrawerTitle>Are you absolutely sure?</DrawerTitle>
           <DrawerDescription>
             This action cannot be undone. This will permanently delete your{" "}
-            <span className="font-medium">{ingests.length}</span>
-            {ingests.length === 1 ? " ingest" : " ingests"} from our servers.
+            <span className="font-medium">{scrapes.length}</span>
+            {scrapes.length === 1 ? " scrape" : " scrapes"} from our servers.
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">

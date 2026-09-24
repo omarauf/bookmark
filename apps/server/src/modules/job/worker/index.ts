@@ -5,10 +5,10 @@ import { processAnimeDiscover } from "./anime/discover";
 import { processAnimeFetch } from "./anime/fetch";
 import { processImdbDiscover } from "./imdb/discover";
 import { processImdbFetch } from "./imdb/fetch";
-import { processIngestUpload } from "./ingest/upload";
 import { processDownloadMedia } from "./media/download";
-import { processIngestProcess } from "./ingest/process";
 import { reclaimStaleJobs } from "./reclaimer";
+import { processScrapeProcess } from "./scrape/process";
+import { processScrapeUpload } from "./scrape/upload";
 import { processYoutubeDiscover } from "./youtube/discover";
 import { processYoutubeDownload } from "./youtube/download";
 import { processYoutubeFetch } from "./youtube/fetch";
@@ -65,11 +65,11 @@ async function processJob(job: Job) {
 
   try {
     switch (job.type) {
-      case "ingest_upload":
-        await processIngestUpload(job);
+      case "scrape_upload":
+        await processScrapeUpload(job);
         break;
-      case "ingest_process":
-        await processIngestProcess(job);
+      case "scrape_process":
+        await processScrapeProcess(job);
         break;
       case "download_media":
         await processDownloadMedia(job);

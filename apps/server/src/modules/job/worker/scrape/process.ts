@@ -3,49 +3,49 @@ import { JobPayloadSchemas } from "@workspace/contracts/job";
 import z from "zod";
 import { db } from "@/core/db";
 import { s3Client } from "@/core/s3";
-import { ingestRepo } from "@/modules/ingest/repo";
-import { parseIngest } from "@/modules/item/platform-registry";
-import { ingestItems } from "@/modules/item/service/ingest";
+import { parseScrape } from "@/modules/item/platform-registry";
+import { bulkInsertItems } from "@/modules/item/service/bulk-insert";
+import { scrapeRepo } from "@/modules/scrape/repo";
 import { jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
-export async function processIngestProcess(job: Job) {
-  const parseResult = JobPayloadSchemas.ingestProcess.safeParse(job.payload);
+export async function processScrapeProcess(job: Job) {
+  const parseResult = JobPayloadSchemas.scrapeProcess.safeParse(job.payload);
   if (!parseResult.success) {
     const error = z.prettifyError(parseResult.error);
     throw new Error(`Invalid job payload: ${error}`);
   }
 
   const payload = parseResult.data;
-  const { ingestId } = payload;
+  const { scrapeId } = payload;
 
-  await log(job.id, "info", "Starting ingest process", { ingestId });
+  await log(job.id, "info", "Starting scrape process", { scrapeId });
 
-  const ingestItem = await ingestRepo.findById(ingestId);
-  if (!ingestItem) {
-    throw new Error(`Ingest item not found for id: ${ingestId}`);
+  const scrapeItem = await scrapeRepo.findById(scrapeId);
+  if (!scrapeItem) {
+    throw new Error(`Scrape item not found for id: ${scrapeId}`);
   }
 
   await updateJobProgress(job.id, 10);
 
-  const fileContent = await s3Client.readText(`${ingestItem.platform}/json/${ingestItem.filename}`);
+  const fileContent = await s3Client.readText(`${scrapeItem.platform}/json/${scrapeItem.filename}`);
   if (!fileContent) {
-    throw new Error(`File not found in S3: ${ingestItem.platform}/json/${ingestItem.filename}`);
+    throw new Error(`File not found in S3: ${scrapeItem.platform}/json/${scrapeItem.filename}`);
   }
 
   await updateJobProgress(job.id, 20);
 
-  await log(job.id, "info", "Processing ingest file");
-  const entities = parseIngest(ingestItem.platform, fileContent);
+  await log(job.id, "info", "Processing scrape file");
+  const entities = parseScrape(scrapeItem.platform, fileContent);
 
   await updateJobProgress(job.id, 30);
 
-  await ingestItems(entities.items, entities.relations, (p) => {
+  await bulkInsertItems(entities.items, entities.relations, (p) => {
     const overall = 30 + Math.round(p * 0.6);
     void updateJobProgress(job.id, overall);
   });
 
-  await log(job.id, "info", "Items ingested", { count: entities.items.length });
+  await log(job.id, "info", "Items scraped", { count: entities.items.length });
   await log(job.id, "info", "Invalid items skipped", { count: entities.invalidItems.length });
 
   for (const task of entities.invalidItems) {
@@ -56,7 +56,7 @@ export async function processIngestProcess(job: Job) {
 
   if (entities.downloadTasks.length !== 0) {
     for (const task of entities.downloadTasks) {
-      await createDownloadMediaJob(ingestId, task);
+      await createDownloadMediaJob(scrapeId, task);
     }
   }
 
@@ -66,14 +66,14 @@ export async function processIngestProcess(job: Job) {
     count: entities.downloadTasks.length,
   });
 
-  if (ingestItem.ingestedAt === null) {
-    await ingestRepo.update(ingestId, { ingestedAt: new Date() });
+  if (scrapeItem.processedAt === null) {
+    await scrapeRepo.update(scrapeId, { processedAt: new Date() });
   }
 
   await updateJobProgress(job.id, 100);
 }
 
-async function createDownloadMediaJob(ingestId: string, payload: DownloadMediaPayload) {
+async function createDownloadMediaJob(scrapeId: string, payload: DownloadMediaPayload) {
   await db
     .insert(jobs)
     .values({
@@ -82,7 +82,7 @@ async function createDownloadMediaJob(ingestId: string, payload: DownloadMediaPa
       resourceType: "media",
       resourceId: payload.key,
       payload,
-      ingestId,
+      scrapeId,
       createdAt: new Date(),
     })
     .onConflictDoNothing();

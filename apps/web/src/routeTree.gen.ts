@@ -22,21 +22,21 @@ import { Route as AuthenticatedYoutubeIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTagsIndexRouteImport } from './routes/_authenticated/tags/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedScrapesIndexRouteImport } from './routes/_authenticated/scrapes/index'
 import { Route as AuthenticatedProfilesIndexRouteImport } from './routes/_authenticated/profiles/index'
 import { Route as AuthenticatedPostsIndexRouteImport } from './routes/_authenticated/posts/index'
 import { Route as AuthenticatedLinksIndexRouteImport } from './routes/_authenticated/links/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
-import { Route as AuthenticatedIngestsIndexRouteImport } from './routes/_authenticated/ingests/index'
 import { Route as AuthenticatedImdbIndexRouteImport } from './routes/_authenticated/imdb/index'
 import { Route as AuthenticatedFileManagerIndexRouteImport } from './routes/_authenticated/file-manager/index'
 import { Route as AuthenticatedDownloadsIndexRouteImport } from './routes/_authenticated/downloads/index'
 import { Route as AuthenticatedCollectionsIndexRouteImport } from './routes/_authenticated/collections/index'
 import { Route as AuthenticatedAnimeIndexRouteImport } from './routes/_authenticated/anime/index'
+import { Route as AuthenticatedScrapesIdRouteImport } from './routes/_authenticated/scrapes/$id'
 import { Route as AuthenticatedProfilesIdRouteImport } from './routes/_authenticated/profiles/$id'
 import { Route as AuthenticatedPostsTwitterRouteImport } from './routes/_authenticated/posts/twitter'
 import { Route as AuthenticatedPostsTiktokRouteImport } from './routes/_authenticated/posts/tiktok'
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs/$id'
-import { Route as AuthenticatedIngestsIdRouteImport } from './routes/_authenticated/ingests/$id'
 import { Route as AuthenticatedAssetsFormRouteImport } from './routes/_authenticated/assets/form'
 import { Route as AuthenticatedPostsInstagramIndexRouteImport } from './routes/_authenticated/posts/instagram/index'
 import { Route as AuthenticatedPostsInstagramVirtualWindowRouteImport } from './routes/_authenticated/posts/instagram/virtual-window'
@@ -109,6 +109,12 @@ const AuthenticatedSettingsIndexRoute =
     path: '/settings/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedScrapesIndexRoute =
+  AuthenticatedScrapesIndexRouteImport.update({
+    id: '/scrapes/',
+    path: '/scrapes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfilesIndexRoute =
   AuthenticatedProfilesIndexRouteImport.update({
     id: '/profiles/',
@@ -130,12 +136,6 @@ const AuthenticatedJobsIndexRoute = AuthenticatedJobsIndexRouteImport.update({
   path: '/jobs/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedIngestsIndexRoute =
-  AuthenticatedIngestsIndexRouteImport.update({
-    id: '/ingests/',
-    path: '/ingests/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedImdbIndexRoute = AuthenticatedImdbIndexRouteImport.update({
   id: '/imdb/',
   path: '/imdb/',
@@ -164,6 +164,11 @@ const AuthenticatedAnimeIndexRoute = AuthenticatedAnimeIndexRouteImport.update({
   path: '/anime/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedScrapesIdRoute = AuthenticatedScrapesIdRouteImport.update({
+  id: '/scrapes/$id',
+  path: '/scrapes/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProfilesIdRoute = AuthenticatedProfilesIdRouteImport.update({
   id: '/profiles/$id',
   path: '/profiles/$id',
@@ -184,11 +189,6 @@ const AuthenticatedPostsTiktokRoute =
 const AuthenticatedJobsIdRoute = AuthenticatedJobsIdRouteImport.update({
   id: '/jobs/$id',
   path: '/jobs/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedIngestsIdRoute = AuthenticatedIngestsIdRouteImport.update({
-  id: '/ingests/$id',
-  path: '/ingests/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAssetsFormRoute = AuthenticatedAssetsFormRouteImport.update({
@@ -231,21 +231,21 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/sign-in': typeof AuthSignInRoute
   '/assets/form': typeof AuthenticatedAssetsFormRoute
-  '/ingests/$id': typeof AuthenticatedIngestsIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
   '/posts/twitter': typeof AuthenticatedPostsTwitterRoute
   '/profiles/$id': typeof AuthenticatedProfilesIdRoute
+  '/scrapes/$id': typeof AuthenticatedScrapesIdRoute
   '/anime/': typeof AuthenticatedAnimeIndexRoute
   '/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/imdb/': typeof AuthenticatedImdbIndexRoute
-  '/ingests/': typeof AuthenticatedIngestsIndexRoute
   '/jobs/': typeof AuthenticatedJobsIndexRoute
   '/links/': typeof AuthenticatedLinksIndexRoute
   '/posts/': typeof AuthenticatedPostsIndexRoute
   '/profiles/': typeof AuthenticatedProfilesIndexRoute
+  '/scrapes/': typeof AuthenticatedScrapesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tags/': typeof AuthenticatedTagsIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
@@ -264,21 +264,21 @@ export interface FileRoutesByTo {
   '/sign-in': typeof AuthSignInRoute
   '/': typeof AuthenticatedIndexRoute
   '/assets/form': typeof AuthenticatedAssetsFormRoute
-  '/ingests/$id': typeof AuthenticatedIngestsIdRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
   '/posts/twitter': typeof AuthenticatedPostsTwitterRoute
   '/profiles/$id': typeof AuthenticatedProfilesIdRoute
+  '/scrapes/$id': typeof AuthenticatedScrapesIdRoute
   '/anime': typeof AuthenticatedAnimeIndexRoute
   '/collections': typeof AuthenticatedCollectionsIndexRoute
   '/downloads': typeof AuthenticatedDownloadsIndexRoute
   '/file-manager': typeof AuthenticatedFileManagerIndexRoute
   '/imdb': typeof AuthenticatedImdbIndexRoute
-  '/ingests': typeof AuthenticatedIngestsIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/links': typeof AuthenticatedLinksIndexRoute
   '/posts': typeof AuthenticatedPostsIndexRoute
   '/profiles': typeof AuthenticatedProfilesIndexRoute
+  '/scrapes': typeof AuthenticatedScrapesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tags': typeof AuthenticatedTagsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -300,21 +300,21 @@ export interface FileRoutesById {
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/assets/form': typeof AuthenticatedAssetsFormRoute
-  '/_authenticated/ingests/$id': typeof AuthenticatedIngestsIdRoute
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/_authenticated/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
   '/_authenticated/posts/twitter': typeof AuthenticatedPostsTwitterRoute
   '/_authenticated/profiles/$id': typeof AuthenticatedProfilesIdRoute
+  '/_authenticated/scrapes/$id': typeof AuthenticatedScrapesIdRoute
   '/_authenticated/anime/': typeof AuthenticatedAnimeIndexRoute
   '/_authenticated/collections/': typeof AuthenticatedCollectionsIndexRoute
   '/_authenticated/downloads/': typeof AuthenticatedDownloadsIndexRoute
   '/_authenticated/file-manager/': typeof AuthenticatedFileManagerIndexRoute
   '/_authenticated/imdb/': typeof AuthenticatedImdbIndexRoute
-  '/_authenticated/ingests/': typeof AuthenticatedIngestsIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/links/': typeof AuthenticatedLinksIndexRoute
   '/_authenticated/posts/': typeof AuthenticatedPostsIndexRoute
   '/_authenticated/profiles/': typeof AuthenticatedProfilesIndexRoute
+  '/_authenticated/scrapes/': typeof AuthenticatedScrapesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tags/': typeof AuthenticatedTagsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
@@ -336,21 +336,21 @@ export interface FileRouteTypes {
     | '/503'
     | '/sign-in'
     | '/assets/form'
-    | '/ingests/$id'
     | '/jobs/$id'
     | '/posts/tiktok'
     | '/posts/twitter'
     | '/profiles/$id'
+    | '/scrapes/$id'
     | '/anime/'
     | '/collections/'
     | '/downloads/'
     | '/file-manager/'
     | '/imdb/'
-    | '/ingests/'
     | '/jobs/'
     | '/links/'
     | '/posts/'
     | '/profiles/'
+    | '/scrapes/'
     | '/settings/'
     | '/tags/'
     | '/users/'
@@ -369,21 +369,21 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/'
     | '/assets/form'
-    | '/ingests/$id'
     | '/jobs/$id'
     | '/posts/tiktok'
     | '/posts/twitter'
     | '/profiles/$id'
+    | '/scrapes/$id'
     | '/anime'
     | '/collections'
     | '/downloads'
     | '/file-manager'
     | '/imdb'
-    | '/ingests'
     | '/jobs'
     | '/links'
     | '/posts'
     | '/profiles'
+    | '/scrapes'
     | '/settings'
     | '/tags'
     | '/users'
@@ -404,21 +404,21 @@ export interface FileRouteTypes {
     | '/_auth/sign-in'
     | '/_authenticated/'
     | '/_authenticated/assets/form'
-    | '/_authenticated/ingests/$id'
     | '/_authenticated/jobs/$id'
     | '/_authenticated/posts/tiktok'
     | '/_authenticated/posts/twitter'
     | '/_authenticated/profiles/$id'
+    | '/_authenticated/scrapes/$id'
     | '/_authenticated/anime/'
     | '/_authenticated/collections/'
     | '/_authenticated/downloads/'
     | '/_authenticated/file-manager/'
     | '/_authenticated/imdb/'
-    | '/_authenticated/ingests/'
     | '/_authenticated/jobs/'
     | '/_authenticated/links/'
     | '/_authenticated/posts/'
     | '/_authenticated/profiles/'
+    | '/_authenticated/scrapes/'
     | '/_authenticated/settings/'
     | '/_authenticated/tags/'
     | '/_authenticated/users/'
@@ -532,6 +532,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/scrapes/': {
+      id: '/_authenticated/scrapes/'
+      path: '/scrapes'
+      fullPath: '/scrapes/'
+      preLoaderRoute: typeof AuthenticatedScrapesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profiles/': {
       id: '/_authenticated/profiles/'
       path: '/profiles'
@@ -558,13 +565,6 @@ declare module '@tanstack/react-router' {
       path: '/jobs'
       fullPath: '/jobs/'
       preLoaderRoute: typeof AuthenticatedJobsIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/ingests/': {
-      id: '/_authenticated/ingests/'
-      path: '/ingests'
-      fullPath: '/ingests/'
-      preLoaderRoute: typeof AuthenticatedIngestsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/imdb/': {
@@ -602,6 +602,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAnimeIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/scrapes/$id': {
+      id: '/_authenticated/scrapes/$id'
+      path: '/scrapes/$id'
+      fullPath: '/scrapes/$id'
+      preLoaderRoute: typeof AuthenticatedScrapesIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profiles/$id': {
       id: '/_authenticated/profiles/$id'
       path: '/profiles/$id'
@@ -628,13 +635,6 @@ declare module '@tanstack/react-router' {
       path: '/jobs/$id'
       fullPath: '/jobs/$id'
       preLoaderRoute: typeof AuthenticatedJobsIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/ingests/$id': {
-      id: '/_authenticated/ingests/$id'
-      path: '/ingests/$id'
-      fullPath: '/ingests/$id'
-      preLoaderRoute: typeof AuthenticatedIngestsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/assets/form': {
@@ -708,18 +708,18 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPostsRouteRoute: typeof AuthenticatedPostsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAssetsFormRoute: typeof AuthenticatedAssetsFormRoute
-  AuthenticatedIngestsIdRoute: typeof AuthenticatedIngestsIdRoute
   AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
   AuthenticatedProfilesIdRoute: typeof AuthenticatedProfilesIdRoute
+  AuthenticatedScrapesIdRoute: typeof AuthenticatedScrapesIdRoute
   AuthenticatedAnimeIndexRoute: typeof AuthenticatedAnimeIndexRoute
   AuthenticatedCollectionsIndexRoute: typeof AuthenticatedCollectionsIndexRoute
   AuthenticatedDownloadsIndexRoute: typeof AuthenticatedDownloadsIndexRoute
   AuthenticatedFileManagerIndexRoute: typeof AuthenticatedFileManagerIndexRoute
   AuthenticatedImdbIndexRoute: typeof AuthenticatedImdbIndexRoute
-  AuthenticatedIngestsIndexRoute: typeof AuthenticatedIngestsIndexRoute
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedLinksIndexRoute: typeof AuthenticatedLinksIndexRoute
   AuthenticatedProfilesIndexRoute: typeof AuthenticatedProfilesIndexRoute
+  AuthenticatedScrapesIndexRoute: typeof AuthenticatedScrapesIndexRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
   AuthenticatedTagsIndexRoute: typeof AuthenticatedTagsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
@@ -730,18 +730,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPostsRouteRoute: AuthenticatedPostsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAssetsFormRoute: AuthenticatedAssetsFormRoute,
-  AuthenticatedIngestsIdRoute: AuthenticatedIngestsIdRoute,
   AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
   AuthenticatedProfilesIdRoute: AuthenticatedProfilesIdRoute,
+  AuthenticatedScrapesIdRoute: AuthenticatedScrapesIdRoute,
   AuthenticatedAnimeIndexRoute: AuthenticatedAnimeIndexRoute,
   AuthenticatedCollectionsIndexRoute: AuthenticatedCollectionsIndexRoute,
   AuthenticatedDownloadsIndexRoute: AuthenticatedDownloadsIndexRoute,
   AuthenticatedFileManagerIndexRoute: AuthenticatedFileManagerIndexRoute,
   AuthenticatedImdbIndexRoute: AuthenticatedImdbIndexRoute,
-  AuthenticatedIngestsIndexRoute: AuthenticatedIngestsIndexRoute,
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedLinksIndexRoute: AuthenticatedLinksIndexRoute,
   AuthenticatedProfilesIndexRoute: AuthenticatedProfilesIndexRoute,
+  AuthenticatedScrapesIndexRoute: AuthenticatedScrapesIndexRoute,
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   AuthenticatedTagsIndexRoute: AuthenticatedTagsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,

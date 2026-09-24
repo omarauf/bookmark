@@ -1,6 +1,6 @@
 {
-  "id": "00000000-0000-4000-8000-000000000007",
-  "prevId": "e11a3248-bd7e-4a33-961b-55bed09a4263",
+  "id": "00000000-0000-4000-8000-000000000009",
+  "prevId": "00000000-0000-4000-8000-000000000008",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -397,46 +397,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.job_groups": {
-      "name": "job_groups",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.job_logs": {
       "name": "job_logs",
       "schema": "",
@@ -508,12 +468,6 @@
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
-        },
-        "group_id": {
-          "name": "group_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
         },
         "type": {
           "name": "type",
@@ -632,6 +586,12 @@
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
+        },
+        "scrape_id": {
+          "name": "scrape_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -664,6 +624,15 @@
           "tableFrom": "jobs",
           "tableTo": "job_groups",
           "columnsFrom": ["group_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "jobs_scrape_id_scrapes_id_fk": {
+          "name": "jobs_scrape_id_scrapes_id_fk",
+          "tableFrom": "jobs",
+          "tableTo": "scrapes",
+          "columnsFrom": ["scrape_id"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -1329,8 +1298,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.ingests": {
-      "name": "ingests",
+    "public.scrapes": {
+      "name": "scrapes",
       "schema": "",
       "columns": {
         "id": {
@@ -1382,8 +1351,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "ingested_at": {
-          "name": "ingested_at",
+        "processed_at": {
+          "name": "processed_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false

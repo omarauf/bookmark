@@ -1,39 +1,39 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { type Ingest, IngestSchemas } from "@workspace/contracts/ingest";
+import { type Scrape, ScrapeSchemas } from "@workspace/contracts/scrape";
 import React from "react";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
 import { orpc } from "@/integrations/orpc";
-import { useGetIngestTableColumns } from "@/modules/ingests/column";
-import { DeleteIngestsDialog } from "@/modules/ingests/delete";
-import { UploadButton } from "@/modules/ingests/upload";
+import { useGetScrapeTableColumns } from "@/modules/scrapes/column";
+import { DeleteScrapesDialog } from "@/modules/scrapes/delete";
+import { UploadButton } from "@/modules/scrapes/upload";
 import type { DataTableRowAction } from "@/types/data-table";
 
-export const Route = createFileRoute("/_authenticated/ingests/")({
-  component: IngestList,
-  validateSearch: IngestSchemas.list.request,
+export const Route = createFileRoute("/_authenticated/scrapes/")({
+  component: ScrapeList,
+  validateSearch: ScrapeSchemas.list.request,
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { orpc, queryClient }, deps }) => {
-    await queryClient.ensureQueryData(orpc.ingest.list.queryOptions({ input: deps }));
+    await queryClient.ensureQueryData(orpc.scrape.list.queryOptions({ input: deps }));
     return;
   },
 });
 
-function IngestList() {
+function ScrapeList() {
   const queryClient = useQueryClient();
   const search = Route.useSearch();
 
-  const ingestQuery = useSuspenseQuery(orpc.ingest.list.queryOptions({ input: search }));
+  const scrapeQuery = useSuspenseQuery(orpc.scrape.list.queryOptions({ input: search }));
 
-  const [rowAction, setRowAction] = React.useState<DataTableRowAction<Ingest>>();
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<Scrape>>();
 
-  const columns = useGetIngestTableColumns({ setRowAction });
+  const columns = useGetScrapeTableColumns({ setRowAction });
 
   const { table } = useDataTable({
-    data: ingestQuery.data.items,
-    rowCount: ingestQuery.data.total,
+    data: scrapeQuery.data.items,
+    rowCount: scrapeQuery.data.total,
     columns,
     pageCount: 1,
     getRowId: (row) => row.id,
@@ -47,14 +47,14 @@ function IngestList() {
         </DataTableToolbar>
       </DataTable>
 
-      <DeleteIngestsDialog
+      <DeleteScrapesDialog
         open={rowAction?.variant === "delete"}
         onOpenChange={() => setRowAction(undefined)}
-        ingests={rowAction?.row.original ? [rowAction?.row.original] : []}
+        scrapes={rowAction?.row.original ? [rowAction?.row.original] : []}
         showTrigger={false}
         onSuccess={() => {
           rowAction?.row.toggleSelected(false);
-          queryClient.invalidateQueries({ queryKey: ["ingests"] });
+          queryClient.invalidateQueries({ queryKey: ["scrapes"] });
         }}
       />
     </div>

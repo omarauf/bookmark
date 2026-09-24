@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
 import { JobIngestCancelButton } from "@/modules/jobs/components/buttons/cancel-ingest";
+import { IngestButton } from "@/modules/jobs/components/buttons/injest";
 import { JobTable } from "@/modules/jobs/components/job-table";
 import { JobIngestAnalytics } from "@/modules/jobs/views/job-ingest-analytics";
 
@@ -39,7 +40,10 @@ function IngestDetailPage() {
           </div>
         </div>
 
-        <JobIngestCancelButton ingestId={id} />
+        <div className="flex items-center gap-2">
+          <IngestButton ingestId={id} />
+          <JobIngestCancelButton ingestId={id} />
+        </div>
       </div>
 
       <ScrollArea className="min-h-0 flex-1">

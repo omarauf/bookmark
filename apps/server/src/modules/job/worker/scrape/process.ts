@@ -54,17 +54,11 @@ export async function processScrapeProcess(job: Job) {
 
   await updateJobProgress(job.id, 92);
 
-  if (entities.downloadTasks.length !== 0) {
-    for (const task of entities.downloadTasks) {
-      await createDownloadMediaJob(scrapeId, task);
-    }
-  }
+  const downloadJobCount = await createDownloadMediaJobs(scrapeId, entities.downloadTasks);
 
   await updateJobProgress(job.id, 95);
 
-  await log(job.id, "info", "Download media jobs created", {
-    count: entities.downloadTasks.length,
-  });
+  await log(job.id, "info", "Download media jobs created", { count: downloadJobCount });
 
   if (scrapeItem.processedAt === null) {
     await scrapeRepo.update(scrapeId, { processedAt: new Date() });
@@ -73,17 +67,36 @@ export async function processScrapeProcess(job: Job) {
   await updateJobProgress(job.id, 100);
 }
 
-async function createDownloadMediaJob(scrapeId: string, payload: DownloadMediaPayload) {
-  await db
-    .insert(jobs)
-    .values({
-      type: "download_media",
-      status: "pending",
+const BULK_INSERT_CHUNK_SIZE = 1000;
+
+async function createDownloadMediaJobs(
+  scrapeId: string,
+  tasks: DownloadMediaPayload[],
+): Promise<number> {
+  if (tasks.length === 0) return 0;
+
+  const seen = new Set<string>();
+  const rows = tasks
+    .filter((task) => {
+      if (seen.has(task.key)) return false;
+      seen.add(task.key);
+      return true;
+    })
+    .map((payload) => ({
+      type: "download_media" as const,
+      status: "pending" as const,
       resourceType: "media",
       resourceId: payload.key,
       payload,
       scrapeId,
-      createdAt: new Date(),
-    })
-    .onConflictDoNothing();
+    }));
+
+  for (let i = 0; i < rows.length; i += BULK_INSERT_CHUNK_SIZE) {
+    await db
+      .insert(jobs)
+      .values(rows.slice(i, i + BULK_INSERT_CHUNK_SIZE))
+      .onConflictDoNothing();
+  }
+
+  return rows.length;
 }

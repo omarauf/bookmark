@@ -15,6 +15,7 @@ export function ProcessScrapeButton({ scrapeId }: Props) {
     orpc.scrape.process.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: orpc.scrape.list.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.scrape.jobs.key() });
       },
       onError: (error) => {
         toast.error(error.message);
@@ -35,7 +36,7 @@ export function ProcessScrapeButton({ scrapeId }: Props) {
   );
 
   return (
-    <Button size="sm" onSelect={() => scrapeFileHandler(scrapeId)}>
+    <Button size="sm" onClick={() => scrapeFileHandler(scrapeId)}>
       Process
     </Button>
   );

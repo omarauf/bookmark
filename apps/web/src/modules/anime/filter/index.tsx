@@ -45,7 +45,6 @@ export function AnimeFilter() {
         {(field) => (
           <field.Input
             placeholder="Search anime..."
-            size="sm"
             classNames={{ wrapper: "w-64" }}
             icon={Search}
           />
@@ -81,9 +80,7 @@ export function AnimeFilter() {
       </form.AppField>
 
       <form.AppField name="minRating">
-        {(field) => (
-          <field.Number placeholder="Min Rating" size="sm" classNames={{ wrapper: "w-36" }} />
-        )}
+        {(field) => <field.Number placeholder="Min Rating" classNames={{ wrapper: "w-36" }} />}
       </form.AppField>
 
       <AnimeTotalNumber />

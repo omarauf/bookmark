@@ -17,7 +17,6 @@ type Props = FormControlProps & {
   max?: number;
   step?: number;
   variant?: "default" | "floating";
-  size?: "sm" | "default";
 };
 
 export function NumberField({
@@ -30,7 +29,6 @@ export function NumberField({
   max,
   step,
   variant = "default",
-  size,
   ...props
 }: Props) {
   const id = useId();
@@ -53,7 +51,6 @@ export function NumberField({
       min={min}
       max={max}
       step={step}
-      size={size}
     />
   );
 

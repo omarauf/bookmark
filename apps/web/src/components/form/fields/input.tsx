@@ -17,7 +17,6 @@ type Props = FormControlProps & {
     input?: string;
   };
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
-  size?: "sm" | "default";
 };
 
 export function InputField({
@@ -30,7 +29,6 @@ export function InputField({
   variant = "default",
   clearOnEmpty = false,
   icon: Icon,
-  size,
   ...props
 }: Props) {
   const id = useId();
@@ -58,7 +56,6 @@ export function InputField({
       aria-invalid={isInvalid}
       dir={dir}
       disabled={disabled}
-      size={size}
     />
   );
 
@@ -81,9 +78,7 @@ export function InputField({
     >
       {comp}
       {Icon && (
-        <div className="pointer-events-none absolute inset-s-0 inset-y-0 flex items-center ps-3 text-muted-foreground/80 group-has-[select[disabled]]:opacity-50">
-          <Icon className="size-4" />
-        </div>
+        <div className="pointer-events-none absolute inset-s-0 inset-y-0 flex items-center ps-3 text-muted-foreground/80 group-has-[select[disabled]]:opacity-50"></div>
       )}
     </FormBase>
   );

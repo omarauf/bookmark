@@ -54,7 +54,6 @@ export function ProfileFilter() {
         {(field) => (
           <field.Input
             placeholder="Search username..."
-            size="sm"
             classNames={{ wrapper: "w-64" }}
             icon={Search}
           />

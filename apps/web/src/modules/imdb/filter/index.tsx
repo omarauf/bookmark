@@ -40,7 +40,7 @@ export function ImdbFilter() {
   const hasData = containsData(filterData.data);
 
   return (
-    <div className="flex flex-wrap items-center gap-3 border-border/50 border-b px-6 py-3">
+    <div className="flex flex-wrap items-center gap-3 border-border/50 border-b py-3">
       <form.AppField name="q">
         {(field) => (
           <field.Input

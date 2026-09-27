@@ -142,14 +142,3 @@
     cursor: pointer;
   }
 }
-
-@layer base {
-  html,
-  body {
-    margin: 0;
-    padding: 0;
-    height: 100vh; /* Force full viewport height */
-    width: 100vw; /* Force full viewport width */
-    overflow: hidden; /* Prevent the main window from scrolling */
-  }
-}

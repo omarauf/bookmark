@@ -1,7 +1,11 @@
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 import { cn } from "cn";
 
-function ScrollArea({ className, children, ...props }: ScrollAreaPrimitive.Root.Props) {
+type Props = ScrollAreaPrimitive.Root.Props & {
+  viewportProps?: React.ComponentProps<typeof ScrollAreaPrimitive.Viewport>;
+};
+
+function ScrollArea({ className, children, viewportProps, ...props }: Props) {
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
@@ -10,7 +14,11 @@ function ScrollArea({ className, children, ...props }: ScrollAreaPrimitive.Root.
     >
       <ScrollAreaPrimitive.Viewport
         data-slot="scroll-area-viewport"
-        className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
+        {...viewportProps}
+        className={cn(
+          "size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1",
+          viewportProps?.className,
+        )}
       >
         {children}
       </ScrollAreaPrimitive.Viewport>

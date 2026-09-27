@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ProfileSchemas } from "@workspace/contracts/views/profile";
 import z from "zod";
-import { Header } from "@/layout/header";
 import { Main } from "@/layout/main";
 import { ProfileFilter } from "@/modules/profile/components/filter";
 import { ProfileList } from "@/modules/profile/views/list";
@@ -20,13 +19,7 @@ function ProfilesPage() {
   const view = Route.useSearch({ select: (s) => s.view });
 
   return (
-    <Main className="flex h-full flex-col p-0">
-      <Header className="border-b">
-        <div className="flex items-center gap-4">
-          <h1 className="font-semibold text-lg">Profiles</h1>
-        </div>
-      </Header>
-
+    <Main breadcrumbs={[{ label: "Profiles" }]}>
       <ProfileFilter />
 
       {view === "table" ? <ProfileTable /> : <ProfileList />}

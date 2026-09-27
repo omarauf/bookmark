@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AnimeSchemas } from "@workspace/contracts/views/anime";
 import { Tv } from "lucide-react";
 import z from "zod";
-import { Header } from "@/layout/header";
 import { Main } from "@/layout/main";
 import { AnimeFilter } from "@/modules/anime/filter";
 import { AnimeList } from "@/modules/anime/list";
@@ -16,17 +15,7 @@ export const Route = createFileRoute("/_authenticated/anime/")({
 
 function AnimePage() {
   return (
-    <Main className="flex h-full flex-col p-0">
-      <Header className="border-border/50 border-b">
-        <div className="flex items-center gap-3 px-6 py-3">
-          <Tv className="h-4 w-4 text-muted-foreground" />
-          <h1 className="font-medium text-lg tracking-tight">Anime</h1>
-          <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
-            Entertainment
-          </span>
-        </div>
-      </Header>
-
+    <Main icon={Tv} breadcrumbs={[{ label: "Anime" }]}>
       <AnimeFilter />
 
       <AnimeList />

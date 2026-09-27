@@ -14,7 +14,7 @@ export function ImdbList() {
       hasNextPage={query.hasNextPage}
       isFetchingNextPage={query.isFetchingNextPage}
       isLoading={query.isLoading}
-      className="px-6 py-4"
+      className="py-4"
     >
       {isEmpty ? (
         <EmptyImdb />

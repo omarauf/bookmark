@@ -1,3 +1,4 @@
+import { Link, type LinkProps } from "@tanstack/react-router";
 import React from "react";
 import {
   Breadcrumb,
@@ -8,41 +9,25 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-type Props = {
-  className?: string;
-  breadcrumbs: { label: string; value?: string }[] | undefined;
-  onClick?: (value: string, index: number) => void;
-  homeLabel?: string;
+export type XBreadcrumbProps = {
+  breadcrumbs: { label: string; value?: LinkProps["to"] }[] | undefined;
   skeletonCount?: number;
 };
 
-export function XBreadcrumb({
-  className,
-  breadcrumbs,
-  onClick,
-  homeLabel,
-  skeletonCount = 0,
-}: Props) {
-  const isOnClickable = onClick !== undefined;
-
+export function XBreadcrumb({ breadcrumbs, skeletonCount = 0 }: XBreadcrumbProps) {
   const showSkeleton = (breadcrumbs === undefined || breadcrumbs === null) && skeletonCount > 0;
   const hasItems = !!breadcrumbs && breadcrumbs.length > 0;
 
   return (
-    <Breadcrumb className={className}>
+    <Breadcrumb>
       <BreadcrumbList className="no-scrollbar flex-nowrap overflow-x-auto overflow-y-hidden whitespace-nowrap">
         {/* Home */}
         <BreadcrumbItem>
-          <Item
-            // TODO: make instead of empty string pass make it undefined and handle it in the Item component since it makes more sense
-            onClick={isOnClickable ? () => onClick("", 0) : undefined}
-            label={homeLabel || "Home"}
-            isLast={false}
-          />
+          <Item label="Home" value="/" isLast={false} />
         </BreadcrumbItem>
 
         {/* Separator only if there are items OR skeletons */}
-        {(hasItems || showSkeleton) && <BreadcrumbSeparator className="rtl:rotate-180" />}
+        {(hasItems || showSkeleton) && <BreadcrumbSeparator />}
 
         {/* Skeleton placeholders */}
         {showSkeleton
@@ -54,23 +39,17 @@ export function XBreadcrumb({
                   </BreadcrumbPage>
                 </BreadcrumbItem>
 
-                {index < skeletonCount - 1 && <BreadcrumbSeparator className="rtl:rotate-180" />}
+                {index < skeletonCount - 1 && <BreadcrumbSeparator />}
               </React.Fragment>
             ))
           : /* Dynamic breadcrumb items */
             breadcrumbs?.map(({ label, value }, index) => (
               <React.Fragment key={index}>
                 <BreadcrumbItem>
-                  <Item
-                    onClick={isOnClickable && value ? () => onClick(value, index + 1) : undefined}
-                    isLast={index === breadcrumbs.length - 1}
-                    label={label}
-                  />
+                  <Item isLast={index === breadcrumbs.length - 1} label={label} value={value} />
                 </BreadcrumbItem>
 
-                {index < breadcrumbs.length - 1 && (
-                  <BreadcrumbSeparator className="rtl:rotate-180" />
-                )}
+                {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
               </React.Fragment>
             ))}
       </BreadcrumbList>
@@ -80,21 +59,22 @@ export function XBreadcrumb({
 
 function Item({
   label,
+  value,
   isLast,
-  onClick,
 }: {
   label: string;
   isLast: boolean;
-  onClick?: () => void;
+  value?: LinkProps["to"];
 }) {
-  if (onClick === undefined || isLast) return <BreadcrumbPage>{label}</BreadcrumbPage>;
+  if (value === undefined || isLast)
+    return <BreadcrumbPage className="text-primary">{label}</BreadcrumbPage>;
 
   return (
     <BreadcrumbLink
       render={
-        <button type="button" onClick={onClick} className="transition-colors hover:text-foreground">
+        <Link to={value} className="transition-colors hover:text-foreground">
           {label}
-        </button>
+        </Link>
       }
     />
   );

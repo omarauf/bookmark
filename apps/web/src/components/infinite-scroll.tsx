@@ -1,4 +1,4 @@
-import { LoaderIcon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "./ui/scroll-area";
@@ -24,69 +24,74 @@ export function InfiniteScroll({
 }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const isRequestingRef = useRef(false);
 
-  // IntersectionObserver for scroll-based infinite loading
   useEffect(() => {
-    const sentinel = sentinelRef.current;
+    if (!isFetchingNextPage) {
+      isRequestingRef.current = false;
+    }
+  }, [isFetchingNextPage]);
+
+  useEffect(() => {
     const root = rootRef.current;
-    if (!sentinel || !root) return;
-    const container =
-      (root.querySelector('[data-slot="scroll-area-viewport"]') as HTMLDivElement | null) ?? root;
+    const sentinel = sentinelRef.current;
+    const container = root?.querySelector('[data-slot="scroll-area-viewport"]');
+    if (!root || !sentinel || !container) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && hasNextPage && !isFetchingNextPage && !isLoading) {
-          onLoadMore();
-        }
-      },
-      {
-        root: container,
-        rootMargin: `0px 0px ${threshold}px 0px`,
-      },
-    );
+    const loadIfNearBottom = (viewportTop: number, viewportBottom: number) => {
+      const sentinelRect = sentinel.getBoundingClientRect();
+      const isNearBottom =
+        sentinelRect.top <= viewportBottom + threshold &&
+        sentinelRect.bottom >= viewportTop - threshold;
 
-    observer.observe(sentinel);
+      if (
+        isNearBottom &&
+        hasNextPage &&
+        !isFetchingNextPage &&
+        !isLoading &&
+        !isRequestingRef.current
+      ) {
+        isRequestingRef.current = true;
+        onLoadMore();
+      }
+    };
+
+    const handleContainerScroll = () => {
+      const containerRect = container.getBoundingClientRect();
+      loadIfNearBottom(containerRect.top, containerRect.bottom);
+    };
+
+    const handleWindowScroll = () => {
+      loadIfNearBottom(0, window.innerHeight);
+    };
+
+    container.addEventListener("scroll", handleContainerScroll, { passive: true });
+    window.addEventListener("scroll", handleWindowScroll, { passive: true });
 
     return () => {
-      observer.disconnect();
+      container.removeEventListener("scroll", handleContainerScroll);
+      window.removeEventListener("scroll", handleWindowScroll);
     };
   }, [onLoadMore, isFetchingNextPage, hasNextPage, threshold, isLoading]);
 
-  // Initial load: only check once after initial data is loaded
-  // useEffect(() => {
-  //   const container = containerRef.current;
-  //   if (!container || hasInitializedRef.current || isLoading || isFetchingNextPage) return;
-
-  //   const containerHeight = container.scrollHeight;
-  //   const containerClientHeight = container.clientHeight;
-
-  //   // Only trigger initial load if container is not full and we have a next page
-  //   if (containerHeight <= containerClientHeight && hasNextPage) {
-  //     hasInitializedRef.current = true;
-  //     onLoadMore();
-  //   } else {
-  //     // Mark as initialized even if we don't need to load more
-  //     hasInitializedRef.current = true;
-  //   }
-  // }, [hasNextPage, isFetchingNextPage, isLoading, onLoadMore]);
-
   return (
-    <ScrollArea ref={rootRef} className={cn("relative overflow-auto")}>
-      <div className={className}>
-        {children}
+    <ScrollArea
+      ref={rootRef}
+      className={cn("relative overflow-auto")}
+      viewportProps={{ className }}
+    >
+      {children}
 
-        <div
-          className={cn(
-            "mt-4 flex w-full items-center justify-center",
-            !isFetchingNextPage && "hidden",
-          )}
-        >
-          <LoaderIcon className="animate-spin" />
-        </div>
-
-        {!isLoading && <div ref={sentinelRef} className="h-1" />}
+      <div
+        className={cn(
+          "mt-2 flex w-full items-center justify-center",
+          !isFetchingNextPage && "hidden",
+        )}
+      >
+        <Loader2Icon className="animate-spin" />
       </div>
+
+      {!isLoading && <div ref={sentinelRef} className="h-1" />}
     </ScrollArea>
   );
 }

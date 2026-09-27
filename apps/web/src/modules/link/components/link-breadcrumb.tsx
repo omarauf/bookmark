@@ -16,6 +16,7 @@ export function LinkBreadcrumb({ className }: Props) {
     return { label: segment, value };
   });
 
+  // TODO: fix
   return (
     <XBreadcrumb
       className={className}

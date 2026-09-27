@@ -4,7 +4,6 @@ import { JobPayloadSchema } from "./payload";
 
 export const JobSchema = z.object({
   id: z.uuid(),
-  scrapeId: z.uuid().optional(),
 
   type: JobTypeEnum,
   status: JobStatusEnum,
@@ -44,8 +43,6 @@ export const JobLogSchema = z.object({
 export const CreateJobSchema = z.object({
   type: JobTypeEnum,
   status: z.literal("pending").optional().default("pending"),
-
-  scrapeId: z.uuid().optional(),
 
   resourceType: z.string().optional(),
   resourceId: z.string().optional(),

@@ -2,11 +2,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { ScrapeSchemas } from "@workspace/contracts/scrape";
 import { parseScrapeFilename } from "@workspace/core/scrape";
-import { and, count, desc, eq, inArray } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
 import { protectedProcedure } from "@/lib/orpc";
-import { jobs } from "@/modules/job/schema";
 import { createSingleJob } from "@/modules/job/service";
 import { replaceNullWithUndefined } from "@/utils/object";
 import { scrapeRepo } from "./repo";
@@ -81,7 +80,6 @@ export const scrapeRouter = {
         type: "scrape_process",
         status: "pending",
         resourceType: "scrape",
-        scrapeId: scrapeItem.id,
         payload: { scrapeId: scrapeItem.id },
       });
 
@@ -98,25 +96,6 @@ export const scrapeRouter = {
       return replaceNullWithUndefined(scrapeItem);
     }),
 
-  jobs: protectedProcedure
-    .input(ScrapeSchemas.jobs.request)
-    .output(ScrapeSchemas.jobs.response)
-    .handler(async ({ input }) => {
-      const filters = eq(jobs.scrapeId, input.id);
-
-      const dataQuery = db.select().from(jobs);
-      const countQuery = db.select({ count: count() }).from(jobs);
-
-      return await withPagination({
-        dataQuery,
-        countQuery,
-        filters,
-        page: input.page,
-        perPage: input.perPage,
-        orderByColumn: desc(jobs.createdAt),
-      });
-    }),
-
   delete: protectedProcedure
     .input(ScrapeSchemas.delete.request)
     .output(ScrapeSchemas.delete.response)
@@ -125,59 +104,5 @@ export const scrapeRouter = {
       const scrapeItem = await scrapeRepo.findById(id);
       if (!scrapeItem) throw errors.NOT_FOUND();
       await scrapeRepo.delete(id);
-    }),
-
-  stats: protectedProcedure
-    .input(ScrapeSchemas.stats.request)
-    .output(ScrapeSchemas.stats.response)
-    .handler(async ({ input: { id } }) => {
-      const statusRows = await db
-        .select({ status: jobs.status, count: count() })
-        .from(jobs)
-        .where(eq(jobs.scrapeId, id))
-        .groupBy(jobs.status);
-
-      const result = {
-        total: 0,
-        pending: 0,
-        processing: 0,
-        completed: 0,
-        failed: 0,
-        cancelled: 0,
-        retrying: 0,
-      };
-
-      for (const row of statusRows) {
-        const value = Number(row.count);
-        result.total += value;
-        if (row.status in result) {
-          result[row.status] = value;
-        }
-      }
-
-      return result;
-    }),
-
-  cancel: protectedProcedure
-    .input(ScrapeSchemas.cancel.request)
-    .output(ScrapeSchemas.cancel.response)
-    .errors({ NOT_FOUND: { message: "Scrape not found" } })
-    .handler(async ({ input: { id }, errors }) => {
-      const [scrape] = await db
-        .select({ id: scrapes.id })
-        .from(scrapes)
-        .where(eq(scrapes.id, id))
-        .limit(1);
-      if (!scrape) throw errors.NOT_FOUND();
-
-      const cancelled = await db
-        .update(jobs)
-        .set({ status: "cancelled", cancelledAt: new Date(), retryAt: null })
-        .where(
-          and(eq(jobs.scrapeId, id), inArray(jobs.status, ["pending", "processing", "retrying"])),
-        )
-        .returning({ id: jobs.id });
-
-      return { cancelled: cancelled.length };
     }),
 };

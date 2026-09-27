@@ -14,7 +14,7 @@ export const jobRouter = {
     .input(JobSchemas.list.request)
     .output(JobSchemas.list.response)
     .handler(async ({ input }) => {
-      const { type, types, status, resourceType, resourceId, scrapeId } = input;
+      const { type, types, status, resourceType, resourceId } = input;
 
       const filters = and(
         types ? inArray(jobs.type, types) : undefined,
@@ -22,7 +22,6 @@ export const jobRouter = {
         status ? eq(jobs.status, status) : undefined,
         resourceType ? eq(jobs.resourceType, resourceType) : undefined,
         resourceId ? eq(jobs.resourceId, resourceId) : undefined,
-        scrapeId ? eq(jobs.scrapeId, scrapeId) : undefined,
       );
 
       const dataQuery = db.select().from(jobs);
@@ -111,6 +110,19 @@ export const jobRouter = {
       if (!updated) throw errors.BAD_REQUEST();
 
       return replaceNullWithUndefined(updated);
+    }),
+
+  cancelAll: protectedProcedure
+    .input(JobSchemas.cancelAll.request)
+    .output(JobSchemas.cancelAll.response)
+    .handler(async () => {
+      const [result] = await db
+        .update(jobs)
+        .set({ status: "cancelled", cancelledAt: new Date(), retryAt: null })
+        .where(inArray(jobs.status, ["pending", "processing", "retrying"]))
+        .returning({ cancelled: count() });
+
+      return { cancelled: Number(result.cancelled) };
     }),
 
   reclaimStale: protectedProcedure

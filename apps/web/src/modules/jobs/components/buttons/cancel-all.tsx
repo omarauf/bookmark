@@ -6,28 +6,22 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
 
-type Props = {
-  scrapeId: string;
-};
-
-export function JobScrapeCancelButton({ scrapeId }: Props) {
+export function JobCancelAllButton() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
   const { data: stats } = useQuery(
-    orpc.scrape.stats.queryOptions({
-      input: { id: scrapeId },
+    orpc.job.stats.queryOptions({
       refetchInterval: 2000,
       staleTime: 0,
     }),
   );
 
   const cancelMutation = useMutation(
-    orpc.scrape.cancel.mutationOptions({
+    orpc.job.cancelAll.mutationOptions({
       onSuccess: ({ cancelled }) => {
         setOpen(false);
         queryClient.invalidateQueries({ queryKey: orpc.scrape.get.key() });
-        queryClient.invalidateQueries({ queryKey: orpc.scrape.stats.key() });
         queryClient.invalidateQueries({ queryKey: orpc.scrape.list.key() });
         toast.success(cancelled > 0 ? `Cancelled ${cancelled} job(s)` : "No active jobs to cancel");
       },
@@ -47,7 +41,7 @@ export function JobScrapeCancelButton({ scrapeId }: Props) {
         onClick={() => setOpen(true)}
       >
         <Ban className="mr-2" />
-        <span className="pt-0.5">Cancel group</span>
+        <span className="pt-0.5">Cancel All</span>
       </Button>
       <ConfirmDialog
         open={open}
@@ -57,7 +51,7 @@ export function JobScrapeCancelButton({ scrapeId }: Props) {
         confirmText="Cancel jobs"
         destructive
         isLoading={cancelMutation.isPending}
-        handleConfirm={() => cancelMutation.mutate({ id: scrapeId })}
+        handleConfirm={() => cancelMutation.mutate()}
         className="sm:max-w-sm"
       />
     </>

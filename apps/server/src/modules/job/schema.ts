@@ -3,14 +3,11 @@ import { JobStatusValues, JobTypeValues, LogLevelValues } from "@workspace/contr
 import { relations, sql } from "drizzle-orm";
 import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { IdentifiedEntityModel } from "@/core/db/helper/entity";
-import { scrapes } from "../scrape/schema";
 
 export const jobs = pgTable(
   "jobs",
   {
     ...IdentifiedEntityModel,
-
-    scrapeId: uuid().references(() => scrapes.id, { onDelete: "cascade" }),
 
     type: text({ enum: JobTypeValues }).notNull(),
     status: text({ enum: JobStatusValues }).notNull().default("pending"),
@@ -56,8 +53,7 @@ export const jobLogs = pgTable("job_logs", {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
-export const jobsRelations = relations(jobs, ({ one, many }) => ({
-  scrape: one(scrapes, { fields: [jobs.scrapeId], references: [scrapes.id] }),
+export const jobsRelations = relations(jobs, ({ many }) => ({
   logs: many(jobLogs),
 }));
 

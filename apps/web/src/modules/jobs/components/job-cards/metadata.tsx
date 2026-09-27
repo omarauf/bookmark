@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import type { Job } from "@workspace/contracts/job";
 import { Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -39,20 +38,6 @@ export function JobMetadataCard({ job }: Props) {
             {job.attemptCount} / {job.maxAttempts}
           </span>
         </div>
-        {job.scrapeId && (
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
-              Scrape
-            </span>
-            <Link
-              to="/scrapes/$id"
-              params={{ id: job.scrapeId }}
-              className="text-primary text-xs underline"
-            >
-              View Scrape
-            </Link>
-          </div>
-        )}
         {job.resourceType && (
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-muted-foreground uppercase tracking-widest">

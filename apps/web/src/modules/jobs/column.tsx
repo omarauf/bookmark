@@ -102,27 +102,6 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
         enableColumnFilter: true,
       },
       {
-        id: "scrape",
-        accessorKey: "scrapeId",
-        header: ({ column }: { column: Column<Job, unknown> }) => (
-          <DataTableColumnHeader column={column} label="Scrape" />
-        ),
-        cell: ({ row }) => {
-          const scrapeId = row.original.scrapeId;
-          if (!scrapeId) return <span className="text-muted-foreground text-xs">—</span>;
-          return (
-            <Link
-              to="/scrapes/$id"
-              params={{ id: scrapeId }}
-              className="text-[10px] text-primary underline"
-            >
-              {scrapeId.slice(0, 8)}
-            </Link>
-          );
-        },
-        size: 80,
-      },
-      {
         id: "progress",
         accessorKey: "progress",
         header: ({ column }: { column: Column<Job, unknown> }) => (

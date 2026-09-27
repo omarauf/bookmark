@@ -14,7 +14,6 @@ export const JobSchemas = {
       status: JobStatusEnum.optional().catch(undefined),
       resourceType: z.string().optional().catch(undefined),
       resourceId: z.string().optional().catch(undefined),
-      scrapeId: z.uuid().optional().catch(undefined),
     }),
     response: PaginationResultSchema(JobSchema),
   },
@@ -37,6 +36,11 @@ export const JobSchemas = {
   cancel: {
     request: z.object({ id: z.uuid() }),
     response: JobSchema,
+  },
+
+  cancelAll: {
+    request: z.void(),
+    response: z.object({ cancelled: z.number().int().min(0) }),
   },
 
   reclaimStale: {
@@ -100,13 +104,6 @@ export const JobSchemas = {
       ),
       statusCounts: z.record(JobStatusEnum, z.number().int()),
       typeCounts: z.record(JobTypeEnum, z.number().int()),
-      scrapeSize: z.array(
-        z.object({
-          scrapeId: z.string(),
-          name: z.string(),
-          count: z.number().int(),
-        }),
-      ),
     }),
   },
 };

@@ -1,8 +1,7 @@
 import { JobSchemas, type JobType } from "@workspace/contracts/job";
-import { and, asc, count, desc, eq, gte, inArray, isNotNull, sql } from "drizzle-orm";
+import { and, asc, count, desc, gte, inArray, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
-import { scrapes } from "@/modules/scrape/schema";
 import { jobs } from "../schema";
 
 export const analyticsHandler = protectedProcedure
@@ -24,8 +23,6 @@ export const analyticsHandler = protectedProcedure
 
     const typeCounts = await getTypeCounts(types);
 
-    const scrapeSize = await getScrapeSize(types);
-
     return {
       jobsByDay,
       durationByType,
@@ -33,7 +30,6 @@ export const analyticsHandler = protectedProcedure
       topErrors,
       statusCounts,
       typeCounts,
-      scrapeSize,
     };
   });
 
@@ -189,25 +185,4 @@ async function getTypeCounts(types: JobType[] | undefined) {
   }
 
   return typeCounts;
-}
-
-async function getScrapeSize(types: JobType[] | undefined) {
-  const rows = await db
-    .select({
-      scrapeId: jobs.scrapeId,
-      name: scrapes.filename,
-      count: count(),
-    })
-    .from(jobs)
-    .leftJoin(scrapes, eq(jobs.scrapeId, scrapes.id))
-    .where(and(isNotNull(jobs.scrapeId), types ? inArray(jobs.type, types) : undefined))
-    .groupBy(jobs.scrapeId, scrapes.filename)
-    .orderBy(desc(count()))
-    .limit(20);
-
-  return rows.map((row) => ({
-    scrapeId: row.scrapeId || "<unknown>",
-    name: row.name ?? "Unknown",
-    count: Number(row.count),
-  }));
 }

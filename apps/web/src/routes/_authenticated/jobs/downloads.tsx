@@ -64,27 +64,27 @@ function DownloadsPage() {
 
       <div className="mb-6 flex animate-stagger-3 items-center gap-6 border-muted/30 border-b pb-4">
         <Link
-          to="/downloads"
+          to="/jobs/downloads"
           className="font-medium text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground aria-[current=page]:text-foreground"
         >
           All
         </Link>
         <Link
-          to="/downloads"
+          to="/jobs/downloads"
           search={{ status: "pending" }}
           className="font-medium text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground aria-[current=page]:text-foreground"
         >
           Pending
         </Link>
         <Link
-          to="/downloads"
+          to="/jobs/downloads"
           search={{ status: "processing" }}
           className="font-medium text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground aria-[current=page]:text-foreground"
         >
           Active
         </Link>
         <Link
-          to="/downloads"
+          to="/jobs/downloads"
           search={{ status: "failed" }}
           className="relative font-medium text-muted-foreground text-xs uppercase tracking-widest transition-colors hover:text-foreground aria-[current=page]:text-foreground"
         >

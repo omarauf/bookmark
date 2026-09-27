@@ -10,7 +10,7 @@ type Props = {
 
 export function JobScrapeAnalytics({ scrapeId }: Props) {
   const { data: stats } = useQuery(
-    orpc.scrape.stats.queryOptions({
+    orpc.job.stats.queryOptions({
       input: { id: scrapeId },
       refetchInterval: 2000,
       staleTime: 0,

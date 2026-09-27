@@ -1,12 +1,9 @@
 import fs from "node:fs/promises";
 import { type Job, JobPayloadSchemas } from "@workspace/contracts/job";
-import { eq } from "drizzle-orm";
 import z from "zod";
-import { db } from "@/core/db";
 import { s3Client } from "@/core/s3";
 import { validateScrape } from "@/modules/item/platform-registry";
 import { scrapeRepo } from "@/modules/scrape/repo";
-import { jobs } from "../../schema";
 import { log, updateJobProgress } from "../../service";
 
 export async function processScrapeUpload(job: Job) {
@@ -60,10 +57,7 @@ export async function processScrapeUpload(job: Job) {
   });
   await log(job.id, "info", "Scrape record created", { filename, scrapeId: scrapeItem.id });
 
-  // 5. Link this upload job to its scrape
-  await db.update(jobs).set({ scrapeId: scrapeItem.id }).where(eq(jobs.id, job.id));
-
-  // 6. Clean up temp file
+  // 5. Clean up temp file
   await fs.unlink(tempFilePath).catch(() => {});
   await log(job.id, "info", "Temp file cleaned up", { tempFilePath });
 }

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
+import { JobCancelAllButton } from "@/modules/jobs/components/buttons/cancel-all";
 import { ReclaimButton } from "@/modules/jobs/components/buttons/reclaim";
 import { JobRefreshButton } from "@/modules/jobs/components/buttons/refresh";
 import { JobTable } from "@/modules/jobs/components/job-table";
@@ -30,6 +31,8 @@ function JobList() {
           <ReclaimButton />
 
           <JobRefreshButton />
+
+          <JobCancelAllButton />
         </div>
       </div>
 

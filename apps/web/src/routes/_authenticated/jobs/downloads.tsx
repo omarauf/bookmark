@@ -8,7 +8,7 @@ import { Main } from "@/layout/main";
 import { StatsOverview } from "@/modules/download-task/stats-overview";
 import { DownloadTaskItem } from "@/modules/download-task/task-item";
 
-export const Route = createFileRoute("/_authenticated/downloads/")({
+export const Route = createFileRoute("/_authenticated/jobs/downloads")({
   validateSearch: JobSchemas.list.request,
   pendingComponent: () => <Loader className="h-screen w-screen" />,
   component: DownloadsPage,

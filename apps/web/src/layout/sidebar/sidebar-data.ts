@@ -1,5 +1,6 @@
 import {
   AudioWaveform,
+  ChartNoAxesCombined,
   Clapperboard,
   Command,
   Construction,
@@ -78,10 +79,11 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: "Background Tasks",
+      title: "Background Jobs",
       items: [
-        { title: "Downloads", url: "/downloads", icon: Download },
         { title: "Jobs", url: "/jobs", icon: Workflow },
+        { title: "Downloads", url: "/jobs/downloads", icon: Download },
+        { title: "Analytics", url: "/jobs/analytics", icon: ChartNoAxesCombined },
       ],
     },
     {

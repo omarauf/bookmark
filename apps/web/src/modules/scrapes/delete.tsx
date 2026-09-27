@@ -27,13 +27,23 @@ import {
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { orpc } from "@/integrations/orpc";
 
-interface Props extends React.ComponentPropsWithoutRef<typeof Dialog> {
+interface Props {
   scrapes: Row<Scrape>["original"][];
   showTrigger?: boolean;
   onSuccess?: () => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function DeleteScrapesDialog({ scrapes, showTrigger = true, onSuccess, ...props }: Props) {
+export function DeleteScrapesDialog({
+  scrapes,
+  showTrigger = true,
+  onSuccess,
+  onOpenChange,
+  open,
+  defaultOpen,
+}: Props) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const queryClient = useQueryClient();
 
@@ -42,7 +52,7 @@ export function DeleteScrapesDialog({ scrapes, showTrigger = true, onSuccess, ..
       onSuccess: async () => {
         queryClient.invalidateQueries({ queryKey: orpc.scrape.list.key() });
         toast.success("Scrapes deleted successfully");
-        props.onOpenChange?.(false);
+        onOpenChange?.(false);
         onSuccess?.();
       },
       onError: (error) => {
@@ -57,14 +67,16 @@ export function DeleteScrapesDialog({ scrapes, showTrigger = true, onSuccess, ..
 
   if (isDesktop) {
     return (
-      <Dialog {...props}>
+      <Dialog open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
         {showTrigger ? (
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Trash className="mr-2 size-4" aria-hidden="true" />
-              Delete ({scrapes.length})
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button variant="outline" size="sm">
+                <Trash className="mr-2 size-4" aria-hidden="true" />
+                Delete ({scrapes.length})
+              </Button>
+            }
+          />
         ) : null}
         <DialogContent>
           <DialogHeader>
@@ -76,9 +88,7 @@ export function DeleteScrapesDialog({ scrapes, showTrigger = true, onSuccess, ..
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:space-x-0">
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
+            <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <Button
               aria-label="Delete selected rows"
               variant="destructive"
@@ -97,7 +107,7 @@ export function DeleteScrapesDialog({ scrapes, showTrigger = true, onSuccess, ..
   }
 
   return (
-    <Drawer {...props}>
+    <Drawer open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       {showTrigger ? (
         <DrawerTrigger asChild>
           <Button variant="outline" size="sm">

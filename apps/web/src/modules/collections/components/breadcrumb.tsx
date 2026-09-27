@@ -35,7 +35,7 @@ export function CollectionBreadcrumb() {
       <div>
         <ToggleGroup
           variant="outline"
-          type="multiple"
+          multiple
           value={toggleValue}
           onValueChange={handleToggleChange}
         >

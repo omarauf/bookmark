@@ -74,9 +74,7 @@ export function RenameDialog({ onClose }: Props) {
         </form.AppField>
 
         <DialogFooter className="mt-4">
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
+          <DialogClose render={<Button variant="outline">Cancel</Button>} />
 
           <form.AppForm>
             <form.SubmitButton>Rename</form.SubmitButton>

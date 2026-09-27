@@ -18,8 +18,9 @@ export function SliderRangeField({ disabled, className, classNames, ...props }: 
   const field = useFieldContext<[number, number]>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
-  const handleChange = (value: number[]) => {
-    field.handleChange([value[0] || 0, value[1] || 0]);
+  const handleChange = (value: number | readonly number[]) => {
+    const arr = Array.isArray(value) ? value : [value];
+    field.handleChange([arr[0] ?? 0, arr[1] ?? 0] as [number, number]);
   };
 
   return (
@@ -36,7 +37,7 @@ export function SliderRangeField({ disabled, className, classNames, ...props }: 
         name={field.name}
         value={field.state.value}
         onBlur={field.handleBlur}
-        onValueChange={(e) => handleChange(e)}
+        onValueChange={handleChange}
         className={cn("mt-2", className, classNames?.slider)}
         aria-invalid={isInvalid}
         disabled={disabled}

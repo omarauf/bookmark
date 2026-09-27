@@ -1,4 +1,4 @@
-import { DirectionProvider } from "@radix-ui/react-direction";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -46,7 +46,7 @@ function AuthenticatedLayout({ children }: Props) {
               "peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-(var(--spacing)*4))]",
             )}
           >
-            <DirectionProvider dir={dir}>{children ?? <Outlet />}</DirectionProvider>
+            <DirectionProvider direction={dir}>{children ?? <Outlet />}</DirectionProvider>
           </SidebarInset>
         </SidebarProvider>
       </SearchProvider>

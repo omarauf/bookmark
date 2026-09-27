@@ -29,11 +29,13 @@ export function DisplaySettingsMenu() {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Layout />
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <Button variant="ghost" size="icon">
+            <Layout />
+          </Button>
+        }
+      />
       <PopoverContent className="w-80 space-y-4" align="start">
         <form.AppField name="layout">
           {(field) => (

@@ -49,11 +49,13 @@ export function DeleteCollectionDialog({ collection }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="ghost" size="icon">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        }
+      />
       <DialogContent className="sm:max-w-125">
         <form onSubmit={onSubmitHandler}>
           <DialogHeader>
@@ -74,11 +76,13 @@ export function DeleteCollectionDialog({ collection }: Props) {
           </div>
 
           <DialogFooter className="mt-4">
-            <DialogClose asChild>
-              <Button variant="outline" disabled={isPending}>
-                Cancel
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button variant="outline" disabled={isPending}>
+                  Cancel
+                </Button>
+              }
+            />
             <Button type="submit" variant="destructive" disabled={isPending}>
               {isPending ? "Deleting..." : "Delete"}
             </Button>

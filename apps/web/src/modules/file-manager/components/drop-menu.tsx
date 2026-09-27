@@ -30,11 +30,13 @@ export function FilesDropMenu() {
       <span className="text-muted-foreground text-sm">{selectedCount} selected</span>
 
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-8">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" size="sm" className="h-8">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          }
+        />
         <DropdownMenuContent align="end">
           <DropdownMenuItem disabled title="Coming soon">
             Copy

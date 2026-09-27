@@ -23,7 +23,7 @@ export function AnimeDetailsDialog({ anime, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="flex h-auto w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:max-w-6xl sm:flex-row"
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        initialFocus={false}
       >
         <DialogTitle className="sr-only">{anime.caption ?? anime.externalId}</DialogTitle>
         <DialogDescription className="sr-only">
@@ -75,12 +75,17 @@ export function AnimeDetailsDialog({ anime, open, onOpenChange }: Props) {
                 {anime.caption ?? anime.externalId}
               </h2>
 
-              <Button asChild variant="outline" size="xs" className="text-[10px]">
-                <a href={anime.url} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-3 w-3" />
-                  MAL
-                </a>
-              </Button>
+              <Button
+                render={
+                  <a href={anime.url} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-3 w-3" />
+                    MAL
+                  </a>
+                }
+                variant="outline"
+                size="xs"
+                className="text-[10px]"
+              />
             </div>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -120,12 +125,12 @@ export function AnimeDetailsDialog({ anime, open, onOpenChange }: Props) {
                     size="sm"
                     variant="secondary"
                     className="text-muted-foreground uppercase"
-                    asChild
-                  >
-                    <Link to="/anime" search={{ genre: g }} onClick={() => onOpenChange(false)}>
-                      {g}
-                    </Link>
-                  </Badge>
+                    render={
+                      <Link to="/anime" search={{ genre: g }} onClick={() => onOpenChange(false)}>
+                        {g}
+                      </Link>
+                    }
+                  />
                 ))}
               </div>
             )}

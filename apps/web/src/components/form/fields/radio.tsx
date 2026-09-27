@@ -32,7 +32,6 @@ export function RadioField<T extends string = string>({
         value={field.state.value}
         onValueChange={field.handleChange}
         onBlur={field.handleBlur}
-        orientation={orientation}
         className={cn(
           orientation === "horizontal" ? "grid-flow-col justify-start" : "",
           classNames?.group,

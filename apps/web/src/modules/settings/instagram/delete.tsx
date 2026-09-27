@@ -38,11 +38,13 @@ export function Delete() {
 
   return (
     <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-      <DialogTrigger asChild>
-        <Button variant="destructive" onClick={openDeleteDialog}>
-          Delete
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="destructive" onClick={openDeleteDialog}>
+            Delete
+          </Button>
+        }
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Instagram</DialogTitle>

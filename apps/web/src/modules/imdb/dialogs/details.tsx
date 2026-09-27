@@ -36,7 +36,7 @@ export function ImdbDetailsDialog({ imdb, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="flex h-auto w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:max-w-6xl sm:flex-row"
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        initialFocus={false}
       >
         <DialogTitle className="sr-only">{imdb.caption ?? imdb.externalId}</DialogTitle>
         <DialogDescription className="sr-only">
@@ -92,12 +92,17 @@ export function ImdbDetailsDialog({ imdb, open, onOpenChange }: Props) {
                 {imdb.caption ?? imdb.externalId}
               </h2>
 
-              <Button asChild variant="outline" size="xs" className="text-[10px]">
-                <a href={imdb.url} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-3 w-3" />
-                  IMDb
-                </a>
-              </Button>
+              <Button
+                render={
+                  <a href={imdb.url} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-3 w-3" />
+                    IMDb
+                  </a>
+                }
+                variant="outline"
+                size="xs"
+                className="text-[10px]"
+              />
             </div>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -129,12 +134,12 @@ export function ImdbDetailsDialog({ imdb, open, onOpenChange }: Props) {
                     size="sm"
                     variant="secondary"
                     className="text-muted-foreground uppercase"
-                    asChild
-                  >
-                    <Link to="/imdb" search={{ genre: g }} onClick={() => onOpenChange(false)}>
-                      {g}
-                    </Link>
-                  </Badge>
+                    render={
+                      <Link to="/imdb" search={{ genre: g }} onClick={() => onOpenChange(false)}>
+                        {g}
+                      </Link>
+                    }
+                  />
                 ))}
               </div>
             )}

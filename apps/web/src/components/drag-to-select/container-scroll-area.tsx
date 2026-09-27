@@ -22,16 +22,15 @@ export function ContainerScrollArea({ children, className }: ContainerProps) {
   }, [children]);
 
   return (
-    <ScrollArea
-      viewportProps={{
-        ...containerProps,
-        className: cn("relative select-none focus:outline-none", className),
-      }}
-      className="flex min-h-0 min-w-0 grow flex-col"
-    >
-      {children}
+    <ScrollArea className="flex min-h-0 min-w-0 grow flex-col">
+      <div
+        {...containerProps}
+        className={cn("relative size-full select-none focus:outline-none", className)}
+      >
+        {children}
 
-      {!hasSelectionBox && <SelectionBox />}
+        {!hasSelectionBox && <SelectionBox />}
+      </div>
     </ScrollArea>
   );
 }

@@ -1,4 +1,4 @@
-import { Root as Radio } from "@radix-ui/react-radio-group";
+import { RadioGroup as Radio } from "@base-ui/react/radio-group";
 import { IconSidebarFloating } from "@/assets/custom/icon-sidebar-floating";
 import { IconSidebarInset } from "@/assets/custom/icon-sidebar-inset";
 import { IconSidebarSidebar } from "@/assets/custom/icon-sidebar-sidebar";

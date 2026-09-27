@@ -20,12 +20,14 @@ export function DateField({ placeholder, ...props }: Props) {
   return (
     <FormBase id={id} {...props}>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button variant="outline" id={id} className="justify-between">
-            {date ? date.toLocaleDateString() : placeholder}
-            <ChevronDownIcon />
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <Button variant="outline" id={id} className="justify-between">
+              {date ? date.toLocaleDateString() : placeholder}
+              <ChevronDownIcon />
+            </Button>
+          }
+        />
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
             mode="single"

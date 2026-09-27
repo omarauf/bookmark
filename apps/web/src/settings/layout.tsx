@@ -1,4 +1,4 @@
-import { Root as Radio } from "@radix-ui/react-radio-group";
+import { RadioGroup as Radio } from "@base-ui/react/radio-group";
 import { IconLayoutCompact } from "@/assets/custom/icon-layout-compact";
 import { IconLayoutDefault } from "@/assets/custom/icon-layout-default";
 import { IconLayoutFull } from "@/assets/custom/icon-layout-full";

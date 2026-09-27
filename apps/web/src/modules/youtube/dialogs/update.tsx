@@ -55,7 +55,7 @@ export function YoutubeUpdateDialog({ youtube, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="flex h-auto max-h-[90vh] w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:h-130 sm:w-120"
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        initialFocus={false}
       >
         <DialogHeader className="border-border/50 border-b p-5 text-left">
           <DialogTitle className="font-semibold text-foreground text-sm">Update</DialogTitle>

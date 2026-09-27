@@ -62,7 +62,7 @@ function Faceted<Multiple extends boolean = false>(props: FacetedProps<Multiple>
       if (!isControlled) {
         setUncontrolledOpen(newOpen);
       }
-      onOpenChangeProp?.(newOpen);
+      onOpenChangeProp?.(newOpen, {} as never);
     },
     [isControlled, onOpenChangeProp],
   );
@@ -181,7 +181,7 @@ function FacetedContent(props: React.ComponentProps<typeof PopoverContent>) {
     <PopoverContent
       {...contentProps}
       align="start"
-      className={cn("w-[200px] origin-(--radix-popover-content-transform-origin) p-0", className)}
+      className={cn("w-[200px] origin-(--transform-origin) p-0", className)}
     >
       <Command>{children}</Command>
     </PopoverContent>

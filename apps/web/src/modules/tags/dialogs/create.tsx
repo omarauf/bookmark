@@ -57,12 +57,14 @@ export function CreateTagDialog() {
 
   return (
     <Dialog open={open} onOpenChange={onOpenHandler}>
-      <DialogTrigger asChild>
-        <Button size="sm">
-          <Plus className="h-4 w-4" />
-          Create Tag
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button size="sm">
+            <Plus className="h-4 w-4" />
+            Create Tag
+          </Button>
+        }
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Tag</DialogTitle>
@@ -79,9 +81,7 @@ export function CreateTagDialog() {
           </div>
 
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
+            <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <form.AppForm>
               <form.SubmitButton>Create</form.SubmitButton>
             </form.AppForm>

@@ -52,8 +52,9 @@ export function SelectField<T extends string | number = string>({
   const value = field.state.value;
   const type = typeof value;
 
-  const onChangeHandler = (c: string) => {
-    const newValue = type === "number" ? Number(c) : c;
+  const onChangeHandler = (v: string | null) => {
+    if (v === null) return;
+    const newValue = type === "number" ? Number(v) : v;
     field.handleChange(newValue as T);
   };
 
@@ -92,7 +93,7 @@ export function SelectField<T extends string | number = string>({
         )}
       </SelectTrigger>
       <SelectContent
-        position={position}
+        alignItemWithTrigger={position !== "popper"}
         className={cn(position === "popper" && "max-h-96!", classNames?.content)}
       >
         {options && options.length > 0 ? (

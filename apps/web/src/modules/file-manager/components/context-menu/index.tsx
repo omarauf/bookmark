@@ -7,13 +7,13 @@ import { MultipleContextMenu } from "./menu-multiple";
 import { SingleContextMenu } from "./menu-single";
 
 interface FileContextMenuProps {
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 export function FileContextMenu({ children }: FileContextMenuProps) {
   return (
     <ContextMenu>
-      <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
+      <ContextMenuTrigger render={children} />
       <ContextMenuContent className="w-48">
         <MenuContent />
       </ContextMenuContent>

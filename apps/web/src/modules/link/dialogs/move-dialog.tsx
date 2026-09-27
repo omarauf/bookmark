@@ -26,10 +26,13 @@ import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";
 import { useMoveLinks } from "../hooks/use-link-mutations";
 
-interface MoveLinksDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
+interface MoveLinksDialogProps {
   linkIds: string[];
   showTrigger?: boolean;
   onSuccess?: () => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 function flattenPathNodes(nodes: FolderTree[], prefix = ""): { path: string; name: string }[] {
@@ -47,7 +50,9 @@ export function MoveLinksDialog({
   linkIds,
   showTrigger = true,
   onSuccess,
-  ...props
+  onOpenChange,
+  open,
+  defaultOpen,
 }: MoveLinksDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const [selectedPath, setSelectedPath] = useState("/");
@@ -61,7 +66,7 @@ export function MoveLinksDialog({
       { ids: linkIds, path: selectedPath },
       {
         onSuccess: () => {
-          props.onOpenChange?.(false);
+          onOpenChange?.(false);
           onSuccess?.();
         },
       },
@@ -100,7 +105,7 @@ export function MoveLinksDialog({
 
   if (isDesktop) {
     return (
-      <Dialog {...props}>
+      <Dialog open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
         {showTrigger ? (
           <Button variant="outline" size="sm">
             Move ({linkIds.length})
@@ -116,9 +121,7 @@ export function MoveLinksDialog({
           </DialogHeader>
           {content}
           <DialogFooter className="gap-2 sm:space-x-0">
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
+            <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <Button onClick={onMove} disabled={moveMutation.isPending}>
               {moveMutation.isPending && (
                 <Loader className="mr-2 size-4 animate-spin" aria-hidden="true" />
@@ -132,7 +135,7 @@ export function MoveLinksDialog({
   }
 
   return (
-    <Drawer {...props}>
+    <Drawer open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       {showTrigger ? null : null}
       <DrawerContent>
         <DrawerHeader>

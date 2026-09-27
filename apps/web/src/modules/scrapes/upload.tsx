@@ -176,12 +176,14 @@ export function UploadButton() {
         reset();
       }}
     >
-      <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          <FileJson className="mr-2 h-4 w-4" />
-          Upload JSON
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button size="sm" variant="outline">
+            <FileJson className="mr-2 h-4 w-4" />
+            Upload JSON
+          </Button>
+        }
+      />
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Upload Scrape JSON File</DialogTitle>

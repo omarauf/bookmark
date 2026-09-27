@@ -39,7 +39,11 @@ export function XSelect<T extends Value>({
   const _options = convertOptions(options);
 
   return (
-    <Select key={key} value={value} onValueChange={onChange as (value: string) => void}>
+    <Select
+      key={key}
+      value={value}
+      onValueChange={(v) => onChange((v ?? undefined) as T | undefined)}
+    >
       <SelectTrigger className={className}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

@@ -30,10 +30,8 @@ export function useLinkTableColumns({ setRowAction }: Props): ColumnDef<Link>[] 
         id: "select",
         header: ({ table }) => (
           <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
+            checked={table.getIsAllPageRowsSelected()}
+            indeterminate={table.getIsSomePageRowsSelected()}
             onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             aria-label="Select all"
           />
@@ -163,18 +161,22 @@ export function useLinkTableColumns({ setRowAction }: Props): ColumnDef<Link>[] 
         header: () => null,
         cell: ({ row }) => (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal />
+                </Button>
+              }
+            />
             <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <a href={row.original.url} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Open in browser
-                </a>
-              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={
+                  <a href={row.original.url} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Open in browser
+                  </a>
+                }
+              />
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-destructive"

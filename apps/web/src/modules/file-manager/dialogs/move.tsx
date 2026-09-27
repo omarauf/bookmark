@@ -140,11 +140,13 @@ export function MoveDialog({ onClose }: Props) {
       </div>
 
       <DialogFooter>
-        <DialogClose asChild>
-          <Button variant="outline" disabled={isPending}>
-            Cancel
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button variant="outline" disabled={isPending}>
+              Cancel
+            </Button>
+          }
+        />
 
         <Button onClick={handleMove} disabled={isPending}>
           {isPending ? "Moving..." : "Move here"}

@@ -35,11 +35,12 @@ export function ToggleGroupField({
   const value = field.state.value;
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
-  const onChangeHandler = (val: string) => {
-    if (clearable && val === value) {
+  const onChangeHandler = (val: string[]) => {
+    const v = val[0] ?? "";
+    if (clearable && v === value) {
       field.handleChange("");
     } else {
-      field.handleChange(val);
+      field.handleChange(v);
     }
   };
 
@@ -55,10 +56,9 @@ export function ToggleGroupField({
       horizontal={horizontal}
     >
       <ToggleGroup
-        type="single"
-        value={value || defaultValue || ""}
+        value={value || defaultValue ? [value || defaultValue || ""] : []}
         onValueChange={onChangeHandler}
-        variant={variant}
+        variant={variant === "falcon" ? "outline" : variant}
         size={size}
         className={cn("w-fit!", variant === "falcon" && "h-9", className, classNames?.group)}
         data-invalid={isInvalid}

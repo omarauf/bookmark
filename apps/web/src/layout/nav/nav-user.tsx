@@ -31,24 +31,26 @@ export function NavUser() {
       <SidebarMenu>
         <SidebarMenuItem>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <SidebarMenuButton
-                size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-              >
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.image || undefined} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">SN</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-start text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
-                </div>
-                <ChevronsUpDown className="ms-auto size-4" />
-              </SidebarMenuButton>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <SidebarMenuButton
+                  size="lg"
+                  className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground"
+                >
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage src={user.image || undefined} alt={user.name} />
+                    <AvatarFallback className="rounded-lg">SN</AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-start text-sm leading-tight">
+                    <span className="truncate font-semibold">{user.name}</span>
+                    <span className="truncate text-xs">{user.email}</span>
+                  </div>
+                  <ChevronsUpDown className="ms-auto size-4" />
+                </SidebarMenuButton>
+              }
+            />
             <DropdownMenuContent
-              className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+              className="w-(--anchor-width) min-w-56 rounded-lg"
               side={isMobile ? "bottom" : "right"}
               align="end"
               sideOffset={4}
@@ -74,24 +76,30 @@ export function NavUser() {
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                  <Link to="/">
-                    <BadgeCheck />
-                    Account
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/">
-                    <CreditCard />
-                    Billing
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/">
-                    <Bell />
-                    Notifications
-                  </Link>
-                </DropdownMenuItem>
+                <DropdownMenuItem
+                  render={
+                    <Link to="/">
+                      <BadgeCheck />
+                      Account
+                    </Link>
+                  }
+                />
+                <DropdownMenuItem
+                  render={
+                    <Link to="/">
+                      <CreditCard />
+                      Billing
+                    </Link>
+                  }
+                />
+                <DropdownMenuItem
+                  render={
+                    <Link to="/">
+                      <Bell />
+                      Notifications
+                    </Link>
+                  }
+                />
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setOpen(true)}>

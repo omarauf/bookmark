@@ -43,7 +43,7 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
           className="flex aspect-1152/1037 h-auto w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:max-w-6xl sm:flex-row"
-          onOpenAutoFocus={(e) => e.preventDefault()}
+          initialFocus={false}
         >
           <DialogTitle className="sr-only">{youtube.caption ?? youtube.externalId}</DialogTitle>
           <DialogDescription className="sr-only">
@@ -111,12 +111,17 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
                     <Download className="h-3 w-3" />
                     Download
                   </Button>
-                  <Button asChild variant="outline" size="xs" className="text-[10px]">
-                    <a href={youtube.url} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-3 w-3" />
-                      YouTube
-                    </a>
-                  </Button>
+                  <Button
+                    render={
+                      <a href={youtube.url} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-3 w-3" />
+                        YouTube
+                      </a>
+                    }
+                    variant="outline"
+                    size="xs"
+                    className="text-[10px]"
+                  />
                 </div>
               </div>
 

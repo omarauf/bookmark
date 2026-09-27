@@ -25,19 +25,21 @@ export function DatePicker({ label, date, setDate, className }: Props) {
 
   return (
     <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant={"outline"}
-          className={cn(
-            "w-[240px] justify-start text-left font-normal",
-            !_date && "text-muted-foreground",
-            className,
-          )}
-        >
-          <CalendarIcon />
-          {_date ? format(_date, "PPP") : <span>{label || "Pick a date"}</span>}
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <Button
+            variant={"outline"}
+            className={cn(
+              "w-[240px] justify-start text-left font-normal",
+              !_date && "text-muted-foreground",
+              className,
+            )}
+          >
+            <CalendarIcon />
+            {_date ? format(_date, "PPP") : <span>{label || "Pick a date"}</span>}
+          </Button>
+        }
+      />
       <PopoverContent className="w-auto p-0" align="start">
         <div className="flex flex-col">
           <Calendar mode="single" selected={_date} onSelect={handleOnSelect} autoFocus />

@@ -15,9 +15,8 @@ export function XToggleGroup<T extends Value>({ value, options, onChange }: Prop
 
   return (
     <ToggleGroup
-      type="single"
-      value={value}
-      onValueChange={(v) => onChange(v as T)}
+      value={value ? [value] : []}
+      onValueChange={(v) => onChange(v[0] as T | undefined)}
       // className="gap-1"
       variant="outline"
     >

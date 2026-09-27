@@ -122,7 +122,7 @@ export function ImdbUpdateDialog({ item, open, onOpenChange }: Props) {
       <DialogContent
         showCloseButton={false}
         className="flex h-auto w-full flex-col gap-0 overflow-hidden border-amber-500/15 bg-background p-0 shadow-2xl sm:h-170 sm:w-110"
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        initialFocus={false}
       >
         <DialogTitle className="sr-only">Update {item.caption ?? item.externalId}</DialogTitle>
         <DialogDescription className="sr-only">

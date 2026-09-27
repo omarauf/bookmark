@@ -58,18 +58,20 @@ export function XMultiSelect<T extends Value>({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className={cn("w-full justify-between", className)}
-        >
-          <span className="truncate">{value.length > 0 ? selectedLabels : placeholder}</span>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popper-anchor-width)] p-0" align="start">
+      <PopoverTrigger
+        render={
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className={cn("w-full justify-between", className)}
+          >
+            <span className="truncate">{value.length > 0 ? selectedLabels : placeholder}</span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        }
+      />
+      <PopoverContent className="w-[var(--anchor-width)] p-0" align="start">
         <Command>
           <CommandInput placeholder="Search options..." className="h-9" />
           <CommandList>

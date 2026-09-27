@@ -23,7 +23,7 @@ export function PostDialog({ post, open, onOpenChange }: Props) {
           platform === "tiktok" && "h-full max-h-[95%] bg-transparent p-0 sm:max-w-3xl",
           platform === "twitter" && "w-150",
         )}
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        initialFocus={false}
         showCloseButton={false}
       >
         <DialogTitle className="sr-only">{`Post by ${post.creator.name}`}</DialogTitle>

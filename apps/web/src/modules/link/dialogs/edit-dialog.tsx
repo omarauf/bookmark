@@ -77,12 +77,14 @@ export function EditLinkDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {showTrigger && (
-        <DialogTrigger asChild>
-          <Button variant="ghost" size="sm" className="w-full justify-start">
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
-        </DialogTrigger>
+        <DialogTrigger
+          render={
+            <Button variant="ghost" size="sm" className="w-full justify-start">
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
+            </Button>
+          }
+        />
       )}
       <DialogContent className="sm:max-w-4xl">
         <form onSubmit={onSubmitHandler}>
@@ -130,9 +132,7 @@ export function EditLinkDialog({
           </div>
 
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
+            <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <form.AppForm>
               <form.SubmitButton>Save</form.SubmitButton>
             </form.AppForm>

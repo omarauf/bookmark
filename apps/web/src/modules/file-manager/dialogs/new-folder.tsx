@@ -62,9 +62,7 @@ export function NewFolderDialog({ onClose }: Props) {
         </form.AppField>
 
         <DialogFooter className="mt-4">
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
+          <DialogClose render={<Button variant="outline">Cancel</Button>} />
 
           <form.AppForm>
             <form.SubmitButton>Create</form.SubmitButton>

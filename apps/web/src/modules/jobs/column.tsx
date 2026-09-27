@@ -211,15 +211,17 @@ export function useGetJobTableColumns({ onViewLogs }: Props): ColumnDef<Job>[] {
 
           return (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  aria-label="Open menu"
-                  variant="ghost"
-                  className="float-right flex size-8 p-0 data-[state=open]:bg-muted"
-                >
-                  <Ellipsis className="size-4" aria-hidden="true" />
-                </Button>
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    aria-label="Open menu"
+                    variant="ghost"
+                    className="float-right flex size-8 p-0 data-[state=open]:bg-muted"
+                  >
+                    <Ellipsis className="size-4" aria-hidden="true" />
+                  </Button>
+                }
+              />
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuItem onSelect={() => onViewLogs(job)}>
                   <List className="mr-2 size-4" />

@@ -35,7 +35,7 @@ function Tags() {
 
       <TagFilter className="px-4 pb-2" />
 
-      <ScrollArea className="h-full min-h-0" viewportProps={{ className: "pt-4 px-4" }}>
+      <ScrollArea className="h-full min-h-0 px-4 pt-4">
         <TagContent />
       </ScrollArea>
     </Main>

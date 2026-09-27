@@ -27,11 +27,15 @@ function ScrapeDetailPage() {
     <Main className="flex h-full flex-col p-0">
       <div className="flex items-center justify-between border-border/50 border-b px-6 py-4">
         <div className="flex items-center gap-4">
-          <Button type="button" variant="ghost" asChild>
-            <Link to="/scrapes">
-              <ArrowLeft />
-            </Link>
-          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            render={
+              <Link to="/scrapes">
+                <ArrowLeft />
+              </Link>
+            }
+          />
           <div>
             <h1 className="font-medium text-lg tracking-tight">
               {scrapeQuery.data?.filename ?? "Scrape"}

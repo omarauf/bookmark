@@ -60,11 +60,13 @@ export function UpdateCollectionDialog({ collection }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenHandler}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Edit className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="ghost" size="icon">
+            <Edit className="h-4 w-4" />
+          </Button>
+        }
+      />
       <DialogContent className="overflow-hidden rounded-2xl border-none shadow-2xl sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Update Collection</DialogTitle>
@@ -105,9 +107,7 @@ export function UpdateCollectionDialog({ collection }: Props) {
           </div>
 
           <DialogFooter className="mt-4">
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
+            <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <form.AppForm>
               <form.SubmitButton>Update</form.SubmitButton>
             </form.AppForm>

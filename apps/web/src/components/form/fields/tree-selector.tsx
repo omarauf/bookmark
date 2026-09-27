@@ -32,10 +32,7 @@ export function TreeSelectorField({ disabled, options, className, classNames, ..
       }}
       {...props}
     >
-      <ScrollArea
-        className="pr-3"
-        viewportProps={{ className: cn("max-h-120", className, classNames?.viewport) }}
-      >
+      <ScrollArea className={cn("pr-3", "max-h-120", className, classNames?.viewport)}>
         <TreeSelector
           data={tree}
           value={field.state.value || []}

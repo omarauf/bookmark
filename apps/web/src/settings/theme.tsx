@@ -1,4 +1,4 @@
-import { Root as Radio } from "@radix-ui/react-radio-group";
+import { RadioGroup as Radio } from "@base-ui/react/radio-group";
 import { IconThemeDark } from "@/assets/custom/icon-theme-dark";
 import { IconThemeLight } from "@/assets/custom/icon-theme-light";
 import { IconThemeSystem } from "@/assets/custom/icon-theme-system";

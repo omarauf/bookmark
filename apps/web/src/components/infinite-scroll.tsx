@@ -22,15 +22,16 @@ export function InfiniteScroll({
   children,
   className,
 }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  // const hasInitializedRef = useRef(false);
 
   // IntersectionObserver for scroll-based infinite loading
   useEffect(() => {
     const sentinel = sentinelRef.current;
-    const container = containerRef.current;
-    if (!sentinel || !container) return;
+    const root = rootRef.current;
+    if (!sentinel || !root) return;
+    const container =
+      (root.querySelector('[data-slot="scroll-area-viewport"]') as HTMLDivElement | null) ?? root;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -71,23 +72,21 @@ export function InfiniteScroll({
   // }, [hasNextPage, isFetchingNextPage, isLoading, onLoadMore]);
 
   return (
-    <ScrollArea
-      ref={containerRef}
-      className={cn("relative overflow-auto")}
-      viewportProps={{ className }}
-    >
-      {children}
+    <ScrollArea ref={rootRef} className={cn("relative overflow-auto")}>
+      <div className={className}>
+        {children}
 
-      <div
-        className={cn(
-          "mt-4 flex w-full items-center justify-center",
-          !isFetchingNextPage && "hidden",
-        )}
-      >
-        <LoaderIcon className="animate-spin" />
+        <div
+          className={cn(
+            "mt-4 flex w-full items-center justify-center",
+            !isFetchingNextPage && "hidden",
+          )}
+        >
+          <LoaderIcon className="animate-spin" />
+        </div>
+
+        {!isLoading && <div ref={sentinelRef} className="h-1" />}
       </div>
-
-      {!isLoading && <div ref={sentinelRef} className="h-1" />}
     </ScrollArea>
   );
 }

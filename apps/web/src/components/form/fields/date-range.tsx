@@ -34,22 +34,24 @@ export function DateRangeField({ placeholder, ...props }: Props) {
   return (
     <FormBase id={id} {...props}>
       <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" id={id} className="justify-start px-2.5 font-normal">
-            <CalendarIcon />
-            {value?.from ? (
-              value.to ? (
-                <>
-                  {format(value.from, "LLL dd, y")} - {format(value.to, "LLL dd, y")}
-                </>
+        <PopoverTrigger
+          render={
+            <Button variant="outline" id={id} className="justify-start px-2.5 font-normal">
+              <CalendarIcon />
+              {value?.from ? (
+                value.to ? (
+                  <>
+                    {format(value.from, "LLL dd, y")} - {format(value.to, "LLL dd, y")}
+                  </>
+                ) : (
+                  format(value.from, "LLL dd, y")
+                )
               ) : (
-                format(value.from, "LLL dd, y")
-              )
-            ) : (
-              <span>{placeholder || "Pick a date"}</span>
-            )}
-          </Button>
-        </PopoverTrigger>
+                <span>{placeholder || "Pick a date"}</span>
+              )}
+            </Button>
+          }
+        />
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="range"

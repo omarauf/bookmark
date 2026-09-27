@@ -280,11 +280,13 @@ export function UploadDialog({ onClose }: Props) {
       )}
 
       <DialogFooter className="mt-4">
-        <DialogClose asChild>
-          <Button type="button" variant="outline" disabled={isUploading}>
-            Cancel
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button type="button" variant="outline" disabled={isUploading}>
+              Cancel
+            </Button>
+          }
+        />
         <Button onClick={handleUpload} disabled={selectedFiles.length === 0 || isUploading}>
           {isUploading
             ? "Uploading..."

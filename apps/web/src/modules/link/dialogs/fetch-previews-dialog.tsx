@@ -104,9 +104,7 @@ export function FetchPreviewsDialog() {
 
   return (
     <Dialog open={open} onOpenChange={onOpenHandler}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Fetch Previews</Button>
-      </DialogTrigger>
+      <DialogTrigger render={<Button variant="outline">Fetch Previews</Button>} />
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Fetch Link Previews</DialogTitle>
@@ -159,7 +157,10 @@ export function FetchPreviewsDialog() {
             <div className="space-y-2">
               {headerPairs.map((pair, index) => (
                 <div key={pair.key} className="flex items-center gap-2">
-                  <Select value={pair.key} onValueChange={(val) => updateHeaderKey(index, val)}>
+                  <Select
+                    value={pair.key}
+                    onValueChange={(val) => updateHeaderKey(index, val ?? "")}
+                  >
                     <SelectTrigger className="w-40 shrink-0">
                       <SelectValue placeholder="Header" />
                     </SelectTrigger>
@@ -192,11 +193,13 @@ export function FetchPreviewsDialog() {
           </div>
 
           <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              }
+            />
             <form.AppForm>
               <form.SubmitButton>Fetch Previews</form.SubmitButton>
             </form.AppForm>

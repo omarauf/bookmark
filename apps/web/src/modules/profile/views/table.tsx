@@ -109,7 +109,7 @@ export function ProfileTable() {
   });
 
   return (
-    <ScrollArea className="min-h-0" viewportProps={{ className: "p-4" }}>
+    <ScrollArea className="min-h-0 p-4">
       <DataTable table={table}>{/* Toolbar could go here */}</DataTable>
     </ScrollArea>
   );

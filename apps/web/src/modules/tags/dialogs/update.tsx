@@ -56,16 +56,18 @@ export function UpdateTagDialog({ tag }: Props) {
           form.handleSubmit();
         }}
       >
-        <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={openHandler}
-            className="rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <Pencil size={16} />
-          </Button>
-        </DialogTrigger>
+        <DialogTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={openHandler}
+              className="rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Pencil size={16} />
+            </Button>
+          }
+        />
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Update Tag</DialogTitle>

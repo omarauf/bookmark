@@ -90,11 +90,13 @@ function Item({
   if (onClick === undefined || isLast) return <BreadcrumbPage>{label}</BreadcrumbPage>;
 
   return (
-    <BreadcrumbLink asChild>
-      <button type="button" onClick={onClick} className="transition-colors hover:text-foreground">
-        {label}
-      </button>
-    </BreadcrumbLink>
+    <BreadcrumbLink
+      render={
+        <button type="button" onClick={onClick} className="transition-colors hover:text-foreground">
+          {label}
+        </button>
+      }
+    />
   );
 }
 

@@ -60,11 +60,13 @@ export function DeleteDialog({ onClose }: Props) {
       </DialogHeader>
 
       <DialogFooter>
-        <DialogClose asChild>
-          <Button variant="outline" disabled={deleteMutation.isPending}>
-            Cancel
-          </Button>
-        </DialogClose>
+        <DialogClose
+          render={
+            <Button variant="outline" disabled={deleteMutation.isPending}>
+              Cancel
+            </Button>
+          }
+        />
 
         <Button variant="destructive" onClick={handleDelete} disabled={deleteMutation.isPending}>
           {deleteMutation.isPending ? "Deleting..." : "Delete"}

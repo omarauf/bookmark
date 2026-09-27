@@ -1,4 +1,4 @@
-import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
+import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
 import { ChevronRight } from "lucide-react";
 import type { ElementType, MouseEvent, ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -224,13 +224,13 @@ export function TreeView<T extends TreeNodeData>({
               height: 0;
             }
             to {
-              height: var(--radix-collapsible-content-height);
+              height: var(--collapsible-panel-height);
             }
           }
 
           @keyframes slideUp {
             from {
-              height: var(--radix-collapsible-content-height);
+              height: var(--collapsible-panel-height);
             }
             to {
               height: 0;
@@ -279,7 +279,7 @@ function TreeNode<T extends TreeNodeData>({
 
   return (
     <li>
-      <CollapsiblePrimitive.Root open={isOpen}>
+      <CollapsiblePrimitive.Root open={isOpen} onOpenChange={() => {}}>
         <div
           aria-hidden="true"
           className={cn(
@@ -335,7 +335,7 @@ function TreeNode<T extends TreeNodeData>({
             ))}
         </div>
 
-        <CollapsiblePrimitive.Content
+        <CollapsiblePrimitive.Panel
           className={cn(
             node.children && node.children?.length > 0 && "CollapsibleContent", // animation only if has children
             "overflow-hidden text-sm transition-all",
@@ -361,7 +361,7 @@ function TreeNode<T extends TreeNodeData>({
               ))}
             </ul>
           )}
-        </CollapsiblePrimitive.Content>
+        </CollapsiblePrimitive.Panel>
       </CollapsiblePrimitive.Root>
     </li>
   );

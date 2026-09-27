@@ -49,15 +49,17 @@ export function DeleteTagDialog({ tag }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-sm p-1 text-muted-foreground transition-colors hover:text-destructive"
-        >
-          <Trash2 size={16} />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-sm p-1 text-muted-foreground transition-colors hover:text-destructive"
+          >
+            <Trash2 size={16} />
+          </Button>
+        }
+      />
       <DialogContent className="sm:max-w-125">
         <form onSubmit={onSubmitHandler}>
           <DialogHeader>
@@ -74,11 +76,13 @@ export function DeleteTagDialog({ tag }: Props) {
           </div>
 
           <DialogFooter className="mt-4">
-            <DialogClose asChild>
-              <Button variant="outline" disabled={isPending}>
-                Cancel
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button variant="outline" disabled={isPending}>
+                  Cancel
+                </Button>
+              }
+            />
             <Button type="submit" variant="destructive" disabled={isPending}>
               {isPending ? "Deleting..." : "Delete"}
             </Button>

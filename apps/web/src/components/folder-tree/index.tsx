@@ -347,7 +347,7 @@ export function Tree({
   React.useEffect(() => {
     if (selectedRef.current && scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector(
-        "[data-radix-scroll-area-viewport]",
+        '[data-slot="scroll-area-viewport"]',
       ) as HTMLElement;
       if (scrollContainer) {
         const selectedElement = selectedRef.current;

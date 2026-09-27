@@ -1,4 +1,4 @@
-import { Root as Radio } from "@radix-ui/react-radio-group";
+import { RadioGroup as Radio } from "@base-ui/react/radio-group";
 import type { SVGProps } from "react";
 import { IconDir } from "@/assets/custom/icon-dir";
 import { RadioGroupItem } from "./common/radio-group";

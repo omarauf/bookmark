@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/imdb/")({
 
 function ImdbPage() {
   return (
-    <Main icon={Film} breadcrumbs={[{ label: "IMDB" }]}>
+    <Main layout="fixed" island icon={Film} breadcrumbs={[{ label: "IMDB" }]}>
       <ImdbFilter />
 
       <ImdbList />

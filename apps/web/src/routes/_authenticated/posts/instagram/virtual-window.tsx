@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PostSchemas } from "@workspace/contracts/views/post";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Header } from "@/layout/header";
-import { CollectionBreadcrumb } from "@/modules/collections/components/breadcrumb";
 import { CollectionTree } from "@/modules/collections/components/tree";
 // import { PostListVirtualWindow } from "@/modules/post/archive/virtual-window";
 import { Filter } from "@/modules/post/filter";
@@ -35,9 +33,9 @@ function Instagram() {
       style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
     >
       {/* TOP BAR */}
-      <Header className="rounded-sm bg-background">
+      {/* <Header className="rounded-sm bg-background">
         <CollectionBreadcrumb />
-      </Header>
+      </Header> */}
 
       <ResizablePanelGroup orientation="horizontal" className="flex h-full min-h-0 gap-1">
         <ResizablePanel defaultSize="20%" className="shrink-0">

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LinkSchemas } from "@workspace/contracts/views/link";
 import z from "zod";
+import { Main } from "@/layout/main";
 import { LinkBrowserView } from "@/modules/link/browser";
 import { Toolbar } from "@/modules/link/components/toolbar";
 import { LinkTable } from "@/modules/link/table";
@@ -21,15 +22,10 @@ function LinksPage() {
   const view = Route.useSearch({ select: (s) => s.view });
 
   return (
-    <div
-      className="h-full w-full overflow-hidden rounded-xl border border-l"
-      style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
-    >
-      <Toolbar className="border-b" />
-
+    <Main action={<Toolbar />}>
       {view === "tree" && <LinkBrowserView />}
 
       {view === "table" && <LinkTable />}
-    </div>
+    </Main>
   );
 }

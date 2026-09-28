@@ -10,8 +10,8 @@ import { Search } from "../search/search";
 import { ProfileDropdown } from "./profile-dropdown";
 
 type Props = {
-  fixed?: boolean;
-  headerFixed?: boolean;
+  layout?: "auto" | "fixed" | "header-fixed";
+  island?: boolean;
   shrink?: boolean;
   children?: React.ReactNode;
   hideSearch?: boolean;
@@ -27,8 +27,8 @@ type Props = {
 };
 
 export function Main({
-  fixed,
-  headerFixed,
+  layout = "auto",
+  island,
   shrink,
   children,
   hideSearch,
@@ -59,12 +59,17 @@ export function Main({
   }, []);
 
   return (
-    <>
+    <div className={cn("flex h-full min-h-0 flex-col", island && "gap-1 bg-sidebar")}>
+      {/* <div
+       className={cn("h-full min-h-0 w-full", island && "gap-1 bg-sidebar")}
+       style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
+     > */}
       <header
         className={cn(
           "z-50",
-          headerFixed && "header-fixed peer/header sticky top-0 w-[inherit]",
-          offset > 10 && headerFixed ? "shadow" : "shadow-none",
+          layout === "header-fixed" && "header-fixed peer/header sticky top-0 w-[inherit]",
+          island && "rounded-xl bg-background",
+          offset > 10 && layout === "header-fixed" ? "shadow" : "shadow-none",
           headerClassName,
         )}
       >
@@ -72,7 +77,7 @@ export function Main({
           className={cn(
             "relative flex h-full items-center gap-3 p-4 sm:gap-4",
             offset > 10 &&
-              headerFixed &&
+              layout === "header-fixed" &&
               "after:absolute after:inset-0 after:-z-10 after:bg-background/20 after:backdrop-blur-lg",
           )}
         >
@@ -84,6 +89,7 @@ export function Main({
           )}
           {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
           <XBreadcrumb breadcrumbs={breadcrumbs} />
+          {action}
 
           {/* <TopNav links={topNav} /> */}
           {!allRightHidden && (
@@ -94,19 +100,18 @@ export function Main({
               {!hideProfile && <ProfileDropdown />}
             </div>
           )}
-
-          {action}
         </div>
       </header>
 
       <main
-        data-layout={fixed ? "fixed" : "auto"}
+        data-layout={layout}
         // className={cn("px-4", className)}
         className={cn(
-          "px-4 pb-6",
+          "flex grow flex-col px-4 pb-6",
 
           // If layout is fixed, make the main container flex and grow
-          fixed && "flex grow flex-col overflow-hidden pb-0",
+          layout === "fixed" && "flex grow flex-col overflow-hidden pb-0",
+          island && "rounded-xl bg-background",
 
           // If layout is not shrink, set the max-width
           shrink && "@7xl/content:mx-auto @7xl/content:w-full @7xl/content:max-w-7xl",
@@ -115,6 +120,6 @@ export function Main({
       >
         {children}
       </main>
-    </>
+    </div>
   );
 }

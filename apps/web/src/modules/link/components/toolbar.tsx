@@ -6,14 +6,9 @@ import { XToggleGroup } from "@/components/inputs/toggle-group";
 import { RefreshButton } from "@/components/refresh-button";
 import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
-import { Header } from "@/layout/header";
 import { FetchPreviewsDialog } from "../dialogs/fetch-previews-dialog";
 
-type Props = {
-  className?: string;
-};
-
-export function Toolbar({ className }: Props) {
+export function Toolbar() {
   const { view, q } = useSearch({ from: "/_authenticated/links/" });
   const navigate = useNavigate({ from: "/links/" });
   const queryClient = useQueryClient();
@@ -43,7 +38,7 @@ export function Toolbar({ className }: Props) {
   };
 
   return (
-    <Header hideSearch className={className}>
+    <>
       <form.AppField name="q">
         {(field) => (
           <div className="relative max-w-sm flex-1">
@@ -77,6 +72,6 @@ export function Toolbar({ className }: Props) {
       <RefreshButton onRefresh={onRefresh} />
 
       <FetchPreviewsDialog />
-    </Header>
+    </>
   );
 }

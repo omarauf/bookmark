@@ -15,13 +15,13 @@ export function EmptyAnime({ hasFilter, className }: Props) {
   return (
     <Card
       className={cn(
-        "gap-1 overflow-hidden border-border/50 border-dashed bg-transparent p-0 shadow-none",
+        "h-full gap-1 overflow-hidden border-border/50 border-dashed bg-transparent p-0 shadow-none",
         className,
       )}
     >
       {/* Poster Placeholder */}
-      <div className="relative aspect-2/3 overflow-hidden bg-muted/50">
-        <div className="flex h-full w-full flex-col items-center justify-center gap-2">
+      <div className="relative overflow-hidden bg-muted/50">
+        <div className="flex aspect-video h-full w-full flex-col items-center justify-center gap-2">
           <CircleAlert className="h-10 w-10 text-muted-foreground/25" />
           <span className="text-[10px] text-muted-foreground/40 uppercase tracking-wider">
             Empty

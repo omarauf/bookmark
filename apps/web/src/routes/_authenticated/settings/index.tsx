@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AppearanceConfig } from "@/settings/appearance";
 import { DirConfig } from "@/settings/direction";
 import { LayoutConfig } from "@/settings/layout";
 import { SidebarConfig } from "@/settings/sidebar";
@@ -22,7 +21,6 @@ function SettingsPage() {
         </div>
 
         <StyleConfig />
-        <AppearanceConfig />
 
         <div className="grid grid-cols-4 gap-6">
           <ThemeConfig />

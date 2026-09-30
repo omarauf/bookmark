@@ -13,12 +13,7 @@ import {
 import { useTheme } from "@/theme/theme-provider";
 import { useSidebar } from "../components/ui/sidebar";
 import { DirConfig } from "./direction";
-import {
-  getAppearanceControls,
-  getCollapsibleControls,
-  getDirectionControls,
-  getStyleControls,
-} from "./hooks/use-store";
+import { getCollapsibleControls, getDirectionControls, getStyleControls } from "./hooks/use-store";
 import { LayoutConfig } from "./layout";
 import { SidebarConfig } from "./sidebar";
 import { StyleConfig } from "./style";
@@ -32,7 +27,6 @@ export function ConfigDrawer() {
   const variantControls = getCollapsibleControls();
   const directionControls = getDirectionControls();
   const styleControls = getStyleControls();
-  const appearanceControls = getAppearanceControls();
 
   const handleReset = () => {
     setOpen(true);
@@ -41,7 +35,6 @@ export function ConfigDrawer() {
     variantControls.reset();
     collapsibleControls.reset();
     styleControls.reset();
-    appearanceControls.reset();
   };
 
   return (

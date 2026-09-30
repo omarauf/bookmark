@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "./styles/fonts.css";
 @import "./styles/one.css";
 @import "./styles/two.css";
 @import "./styles/three.css";

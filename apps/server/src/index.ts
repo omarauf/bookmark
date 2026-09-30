@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { migrate } from "drizzle-orm/node-postgres/migrator"; // Adjust depending on your database
 import app from "./app";
+import { env } from "./config/env";
 import { seedAdmin } from "./core/auth/seed";
 import { db } from "./core/db";
 import { startJobSystem, stopJobSystem } from "./modules/job/worker";
@@ -19,11 +20,11 @@ async function bootstrap() {
   console.log("✅ Job system started");
 
   const server = Bun.serve({
-    port: 3000,
+    port: env.PORT,
     fetch: app.fetch,
     maxRequestBodySize: 1 * 1024 * 1024 * 1024,
   });
-  console.log("🚀 Server running at http://localhost:3000");
+  console.log(`🚀 Server running at http://localhost:${env.PORT}`);
 
   const shutdown = async (signal: string) => {
     console.log(`\n${signal} received. Shutting down gracefully...`);

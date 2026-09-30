@@ -25,6 +25,7 @@ export const auth = betterAuth({
     },
   },
   advanced: {
+    cookiePrefix: "bookmark",
     defaultCookieAttributes: {
       sameSite: "none",
       secure: true,

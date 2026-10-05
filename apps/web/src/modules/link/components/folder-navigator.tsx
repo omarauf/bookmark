@@ -4,6 +4,7 @@ import type { FolderTree, FolderTree as FolderTreeDto } from "@workspace/contrac
 import { FolderIcon, FolderOpenIcon } from "lucide-react";
 import type { ElementType, ReactNode } from "react";
 import { TreeView } from "@/components/tree";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { orpc } from "@/integrations/orpc";
 
@@ -46,8 +47,12 @@ export function FolderNavigator({ className }: Props) {
 
   return (
     <div className={className}>
-      <div className="border-b p-3">
+      <div className="flex items-center justify-between border-b p-3">
         <h2 className="font-medium text-sm">Folders</h2>
+
+        <Button variant="outline" size="icon" disabled>
+          <FolderIcon />
+        </Button>
       </div>
 
       <ScrollArea className="flex-1 overflow-auto">

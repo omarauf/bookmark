@@ -38,7 +38,7 @@ export function Toolbar() {
   };
 
   return (
-    <>
+    <div className="flex items-center gap-2 px-4">
       <form.AppField name="q">
         {(field) => (
           <div className="relative max-w-sm flex-1">
@@ -72,6 +72,6 @@ export function Toolbar() {
       <RefreshButton onRefresh={onRefresh} />
 
       <FetchPreviewsDialog />
-    </>
+    </div>
   );
 }

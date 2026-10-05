@@ -3,7 +3,6 @@ import { LinkSchemas } from "@workspace/contracts/views/link";
 import z from "zod";
 import { Main } from "@/layout/main";
 import { LinkBrowserView } from "@/modules/link/browser";
-import { Toolbar } from "@/modules/link/components/toolbar";
 import { LinkTable } from "@/modules/link/table";
 
 const searchSchema = z
@@ -22,7 +21,7 @@ function LinksPage() {
   const view = Route.useSearch({ select: (s) => s.view });
 
   return (
-    <Main action={<Toolbar />}>
+    <Main layout="fixed" className="px-0" headerClassName="border-b">
       {view === "tree" && <LinkBrowserView />}
 
       {view === "table" && <LinkTable />}

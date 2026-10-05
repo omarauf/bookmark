@@ -1,5 +1,13 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { XBreadcrumb } from "@/components/breadcrumb";
+import { Fragment } from "react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 type Props = {
   className?: string;
@@ -16,13 +24,50 @@ export function LinkBreadcrumb({ className }: Props) {
     return { label: segment, value };
   });
 
-  // TODO: fix
+  const onClickHandler = (value: string) => {
+    navigate({ to: ".", search: { path: value || "/" } });
+  };
+
   return (
-    <XBreadcrumb
-      className={className}
-      breadcrumbs={breadcrumbs}
-      homeLabel="Bookmarks"
-      onClick={(value) => navigate({ to: ".", search: { path: value || "/" } })}
-    />
+    <Breadcrumb className={className}>
+      <BreadcrumbList className="no-scrollbar flex-nowrap overflow-x-auto overflow-y-hidden whitespace-nowrap">
+        {/* Home */}
+        <BreadcrumbItem>
+          <Item onClick={() => onClickHandler("")} label="Bookmarks" isLast={false} />
+        </BreadcrumbItem>
+
+        {/* Separator only if there are items OR skeletons */}
+        <BreadcrumbSeparator />
+
+        {/* Skeleton placeholders */}
+        {breadcrumbs?.map(({ label, value }, index) => (
+          <Fragment key={index}>
+            <BreadcrumbItem>
+              <Item
+                onClick={() => onClickHandler(value)}
+                isLast={index === breadcrumbs.length - 1}
+                label={label}
+              />
+            </BreadcrumbItem>
+
+            {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+          </Fragment>
+        ))}
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+}
+
+function Item({ label, isLast, onClick }: { label: string; isLast: boolean; onClick: () => void }) {
+  if (isLast) return <BreadcrumbPage>{label}</BreadcrumbPage>;
+
+  return (
+    <BreadcrumbLink
+      render={
+        <button type="button" onClick={onClick} className="transition-colors hover:text-foreground">
+          {label}
+        </button>
+      }
+    ></BreadcrumbLink>
   );
 }

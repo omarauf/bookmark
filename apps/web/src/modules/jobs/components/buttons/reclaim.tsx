@@ -27,12 +27,10 @@ export function ReclaimButton() {
     <Button
       type="button"
       variant="outline"
-      size="sm"
-      className="text-[10px] uppercase tracking-widest"
       disabled={reclaimStaleMutation.isPending}
       onClick={() => reclaimStaleMutation.mutate({ stalledMinutes: 60 })}
     >
-      <RefreshCcw className={reclaimStaleMutation.isPending ? "mr-2 animate-spin" : "mr-2"} />
+      <RefreshCcw className={reclaimStaleMutation.isPending ? "animate-spin" : ""} />
       Recover Stale
     </Button>
   );

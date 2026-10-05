@@ -5,10 +5,8 @@ import { z } from "zod";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
-import { JobCancelAllButton } from "@/modules/jobs/components/buttons/cancel-all";
-import { ReclaimButton } from "@/modules/jobs/components/buttons/reclaim";
-import { JobRefreshButton } from "@/modules/jobs/components/buttons/refresh";
 import { JobTable } from "@/modules/jobs/components/job-table";
+import { JobFilter } from "@/modules/jobs/filter";
 
 const searchSchema = JobSchemas.list.request.extend({
   view: z.enum(["analytics", "table"]).optional().default("analytics"),
@@ -26,15 +24,7 @@ function JobList() {
 
   return (
     <Main className="flex h-full flex-col p-0">
-      <div className="flex items-center justify-between border-border/50 border-b px-6 py-4">
-        <div className="flex items-center space-x-2">
-          <ReclaimButton />
-
-          <JobRefreshButton />
-
-          <JobCancelAllButton />
-        </div>
-      </div>
+      <JobFilter />
 
       <ScrollArea className="min-h-0">
         <JobTable

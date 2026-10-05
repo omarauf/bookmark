@@ -13,5 +13,5 @@ export function JobRefreshButton() {
     toast.success("Refreshed job list");
   };
 
-  return <RefreshButton onRefresh={onClick} />;
+  return <RefreshButton onRefresh={onClick} variant="outline" label="Refresh" />;
 }

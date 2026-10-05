@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 
 type Props = {
   onRefresh: () => Promise<void>;
+  variant?: "default" | "ghost" | "outline";
+  size?: "sm" | "default" | "lg";
+  label?: string;
 };
 
-export function RefreshButton({ onRefresh }: Props) {
+export function RefreshButton({ onRefresh, label, ...props }: Props) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const controls = useAnimation();
 
@@ -49,14 +52,15 @@ export function RefreshButton({ onRefresh }: Props) {
   return (
     <Button
       variant="ghost"
-      size="sm"
+      size={label ? "default" : "icon"}
       onClick={handleRefresh}
       disabled={isRefreshing}
-      className="h-8"
+      {...props}
     >
       <motion.div animate={controls} initial={{ rotate: 0 }} style={{ display: "inline-flex" }}>
-        <RefreshCw className="h-4 w-4" />
+        <RefreshCw />
       </motion.div>
+      {label && <span>{label}</span>}
     </Button>
   );
 }

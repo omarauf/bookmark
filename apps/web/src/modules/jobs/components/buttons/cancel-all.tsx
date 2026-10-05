@@ -35,14 +35,14 @@ export function JobCancelAllButton() {
     <>
       <Button
         variant="outline"
-        size="sm"
-        className="text-[10px] text-destructive uppercase tracking-widest hover:text-destructive"
+        className="text-destructive hover:text-destructive"
         disabled={cancelMutation.isPending || active === 0}
         onClick={() => setOpen(true)}
       >
-        <Ban className="mr-2" />
+        <Ban />
         <span className="pt-0.5">Cancel All</span>
       </Button>
+
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}

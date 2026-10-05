@@ -6,6 +6,9 @@ import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
 import { useGetJobTableColumns } from "@/modules/jobs/column";
 import { JobLogsDialog } from "@/modules/jobs/job-logs-dialog";
+import { JobCancelAllButton } from "./buttons/cancel-all";
+import { ReclaimButton } from "./buttons/reclaim";
+import { JobRefreshButton } from "./buttons/refresh";
 
 type Props = {
   className?: string;
@@ -50,7 +53,13 @@ export function JobTable({ className, items, totalCount, totalPages, isLoading, 
   return (
     <>
       <DataTable table={table} className={className}>
-        <DataTableToolbar table={table} />
+        <DataTableToolbar table={table}>
+          <ReclaimButton />
+
+          <JobRefreshButton />
+
+          <JobCancelAllButton />
+        </DataTableToolbar>
       </DataTable>
 
       <JobLogsDialog job={logJob} open={logsOpen} onOpenChange={setLogsOpen} />

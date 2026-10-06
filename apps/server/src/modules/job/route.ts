@@ -4,7 +4,6 @@ import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
 import { protectedProcedure } from "@/lib/orpc";
 import { replaceNullWithUndefined } from "@/utils/object";
-import { analyticsHandler } from "./handler/analytics";
 import { jobRepo } from "./repo";
 import { jobLogs, jobs } from "./schema";
 import { reclaimStaleJobs } from "./worker/reclaimer";
@@ -178,6 +177,4 @@ export const jobRouter = {
 
       return result;
     }),
-
-  analytics: analyticsHandler,
 };

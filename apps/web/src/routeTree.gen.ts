@@ -36,7 +36,6 @@ import { Route as AuthenticatedProfilesIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPostsTwitterRouteImport } from './routes/_authenticated/posts/twitter'
 import { Route as AuthenticatedPostsTiktokRouteImport } from './routes/_authenticated/posts/tiktok'
 import { Route as AuthenticatedJobsDownloadsRouteImport } from './routes/_authenticated/jobs/downloads'
-import { Route as AuthenticatedJobsAnalyticsRouteImport } from './routes/_authenticated/jobs/analytics'
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs/$id'
 import { Route as AuthenticatedAssetsFormRouteImport } from './routes/_authenticated/assets/form'
 import { Route as AuthenticatedPostsInstagramIndexRouteImport } from './routes/_authenticated/posts/instagram/index'
@@ -187,12 +186,6 @@ const AuthenticatedJobsDownloadsRoute =
     path: '/jobs/downloads',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedJobsAnalyticsRoute =
-  AuthenticatedJobsAnalyticsRouteImport.update({
-    id: '/jobs/analytics',
-    path: '/jobs/analytics',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedJobsIdRoute = AuthenticatedJobsIdRouteImport.update({
   id: '/jobs/$id',
   path: '/jobs/$id',
@@ -239,7 +232,6 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof AuthSignInRoute
   '/assets/form': typeof AuthenticatedAssetsFormRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
-  '/jobs/analytics': typeof AuthenticatedJobsAnalyticsRoute
   '/jobs/downloads': typeof AuthenticatedJobsDownloadsRoute
   '/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
   '/posts/twitter': typeof AuthenticatedPostsTwitterRoute
@@ -273,7 +265,6 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/assets/form': typeof AuthenticatedAssetsFormRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
-  '/jobs/analytics': typeof AuthenticatedJobsAnalyticsRoute
   '/jobs/downloads': typeof AuthenticatedJobsDownloadsRoute
   '/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
   '/posts/twitter': typeof AuthenticatedPostsTwitterRoute
@@ -310,7 +301,6 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/assets/form': typeof AuthenticatedAssetsFormRoute
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
-  '/_authenticated/jobs/analytics': typeof AuthenticatedJobsAnalyticsRoute
   '/_authenticated/jobs/downloads': typeof AuthenticatedJobsDownloadsRoute
   '/_authenticated/posts/tiktok': typeof AuthenticatedPostsTiktokRoute
   '/_authenticated/posts/twitter': typeof AuthenticatedPostsTwitterRoute
@@ -347,7 +337,6 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/assets/form'
     | '/jobs/$id'
-    | '/jobs/analytics'
     | '/jobs/downloads'
     | '/posts/tiktok'
     | '/posts/twitter'
@@ -381,7 +370,6 @@ export interface FileRouteTypes {
     | '/'
     | '/assets/form'
     | '/jobs/$id'
-    | '/jobs/analytics'
     | '/jobs/downloads'
     | '/posts/tiktok'
     | '/posts/twitter'
@@ -417,7 +405,6 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/assets/form'
     | '/_authenticated/jobs/$id'
-    | '/_authenticated/jobs/analytics'
     | '/_authenticated/jobs/downloads'
     | '/_authenticated/posts/tiktok'
     | '/_authenticated/posts/twitter'
@@ -643,13 +630,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobsDownloadsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/jobs/analytics': {
-      id: '/_authenticated/jobs/analytics'
-      path: '/jobs/analytics'
-      fullPath: '/jobs/analytics'
-      preLoaderRoute: typeof AuthenticatedJobsAnalyticsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/jobs/$id': {
       id: '/_authenticated/jobs/$id'
       path: '/jobs/$id'
@@ -729,7 +709,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAssetsFormRoute: typeof AuthenticatedAssetsFormRoute
   AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
-  AuthenticatedJobsAnalyticsRoute: typeof AuthenticatedJobsAnalyticsRoute
   AuthenticatedJobsDownloadsRoute: typeof AuthenticatedJobsDownloadsRoute
   AuthenticatedProfilesIdRoute: typeof AuthenticatedProfilesIdRoute
   AuthenticatedScrapesIdRoute: typeof AuthenticatedScrapesIdRoute
@@ -752,7 +731,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAssetsFormRoute: AuthenticatedAssetsFormRoute,
   AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
-  AuthenticatedJobsAnalyticsRoute: AuthenticatedJobsAnalyticsRoute,
   AuthenticatedJobsDownloadsRoute: AuthenticatedJobsDownloadsRoute,
   AuthenticatedProfilesIdRoute: AuthenticatedProfilesIdRoute,
   AuthenticatedScrapesIdRoute: AuthenticatedScrapesIdRoute,

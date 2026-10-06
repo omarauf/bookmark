@@ -9,7 +9,6 @@ export function JobRefreshButton() {
   const onClick = async () => {
     await queryClient.invalidateQueries({ queryKey: orpc.job.list.key() });
     await queryClient.invalidateQueries({ queryKey: orpc.job.stats.key() });
-    await queryClient.invalidateQueries({ queryKey: orpc.job.analytics.key() });
     toast.success("Refreshed job list");
   };
 

@@ -61,49 +61,4 @@ export const JobSchemas = {
       byType: z.record(JobTypeEnum, z.number()),
     }),
   },
-
-  analytics: {
-    request: z
-      .object({
-        days: z.number().int().min(1).max(90).optional().default(30),
-        types: JobTypeEnum.array().optional().catch(undefined),
-      })
-      .optional(),
-    response: z.object({
-      jobsByDay: z.array(
-        z.object({
-          date: z.string(),
-          pending: z.number().int(),
-          processing: z.number().int(),
-          completed: z.number().int(),
-          failed: z.number().int(),
-          cancelled: z.number().int(),
-          retrying: z.number().int(),
-        }),
-      ),
-      durationByType: z.array(
-        z.object({
-          type: JobTypeEnum,
-          avgMs: z.number().int(),
-          minMs: z.number().int(),
-          maxMs: z.number().int(),
-          count: z.number().int(),
-        }),
-      ),
-      attemptDistribution: z.array(
-        z.object({
-          attempts: z.number().int(),
-          count: z.number().int(),
-        }),
-      ),
-      topErrors: z.array(
-        z.object({
-          error: z.string(),
-          count: z.number().int(),
-        }),
-      ),
-      statusCounts: z.record(JobStatusEnum, z.number().int()),
-      typeCounts: z.record(JobTypeEnum, z.number().int()),
-    }),
-  },
 };

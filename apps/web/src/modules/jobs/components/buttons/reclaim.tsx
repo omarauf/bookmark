@@ -12,7 +12,6 @@ export function ReclaimButton() {
       onSuccess: ({ reclaimed }) => {
         queryClient.invalidateQueries({ queryKey: orpc.job.list.key() });
         queryClient.invalidateQueries({ queryKey: orpc.job.stats.key() });
-        queryClient.invalidateQueries({ queryKey: orpc.job.analytics.key() });
         toast.success(
           reclaimed > 0 ? `Recovered ${reclaimed} stale job(s)` : "No stale jobs found",
         );

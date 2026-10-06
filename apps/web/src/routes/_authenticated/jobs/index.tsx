@@ -23,12 +23,16 @@ function JobList() {
   const jobQuery = useQuery(orpc.job.list.queryOptions({ input: search }));
 
   return (
-    <Main className="flex h-full flex-col p-0">
+    <Main
+      layout="fixed"
+      className="min-h-0 min-w-0 flex-col p-0 md:flex-row"
+      headerClassName="border-b"
+    >
       <JobFilter />
 
-      <ScrollArea className="min-h-0">
+      <ScrollArea className="min-h-0 min-w-0 flex-1">
         <JobTable
-          className="p-6 pt-2"
+          className="p-4"
           items={jobQuery.data?.items || []}
           totalCount={jobQuery.data?.total ?? 0}
           totalPages={jobQuery.data?.totalPages ?? 0}

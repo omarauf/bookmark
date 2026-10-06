@@ -1,4 +1,4 @@
-import { JobSchemas, type JobType } from "@workspace/contracts/job";
+import { JobSchemas, type JobType, JobTypeValues } from "@workspace/contracts/job";
 import { and, asc, count, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
@@ -151,6 +151,8 @@ export const jobRouter = {
         .where(where)
         .groupBy(jobs.type);
 
+      const byType = Object.fromEntries(JobTypeValues.map((type) => [type, 0]));
+
       const result = {
         total: 0,
         pending: 0,
@@ -159,7 +161,7 @@ export const jobRouter = {
         failed: 0,
         cancelled: 0,
         retrying: 0,
-        byType: {} as Record<JobType, number>,
+        byType: byType as Record<JobType, number>,
       };
 
       for (const row of statusRows) {

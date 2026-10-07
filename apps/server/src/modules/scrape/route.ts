@@ -5,6 +5,7 @@ import { parseScrapeFilename } from "@workspace/core/scrape";
 import { count, eq } from "drizzle-orm";
 import { db } from "@/core/db";
 import { withPagination } from "@/core/db/helper/pagination";
+import { s3Client } from "@/core/s3";
 import { protectedProcedure } from "@/lib/orpc";
 import { createSingleJob } from "@/modules/job/service";
 import { replaceNullWithUndefined } from "@/utils/object";
@@ -94,6 +95,22 @@ export const scrapeRouter = {
       const scrapeItem = await scrapeRepo.findById(id);
       if (!scrapeItem) throw errors.NOT_FOUND();
       return replaceNullWithUndefined(scrapeItem);
+    }),
+
+  content: protectedProcedure
+    .input(ScrapeSchemas.content.request)
+    .output(ScrapeSchemas.content.response)
+    .errors({
+      NOT_FOUND: { message: "Scrape not found" },
+      FILE_UNAVAILABLE: { status: 502, message: "Could not read the scrape file from S3" },
+    })
+    .handler(async ({ input: { id }, errors }) => {
+      const scrapeItem = await scrapeRepo.findById(id);
+      if (!scrapeItem) throw errors.NOT_FOUND();
+
+      const content = await s3Client.readText(`${scrapeItem.platform}/json/${scrapeItem.filename}`);
+      if (content === undefined) throw errors.FILE_UNAVAILABLE();
+      return { content };
     }),
 
   delete: protectedProcedure

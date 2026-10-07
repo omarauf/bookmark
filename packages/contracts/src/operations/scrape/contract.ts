@@ -37,6 +37,11 @@ export const ScrapeSchemas = {
     response: ScrapeSchema,
   },
 
+  content: {
+    request: z.object({ id: z.uuid() }),
+    response: z.object({ content: z.string() }),
+  },
+
   delete: {
     request: z.object({ id: z.uuid() }),
     response: z.void(),

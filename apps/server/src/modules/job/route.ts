@@ -115,13 +115,12 @@ export const jobRouter = {
     .input(JobSchemas.cancelAll.request)
     .output(JobSchemas.cancelAll.response)
     .handler(async () => {
-      const [result] = await db
+      const result = await db
         .update(jobs)
         .set({ status: "cancelled", cancelledAt: new Date(), retryAt: null })
-        .where(inArray(jobs.status, ["pending", "processing", "retrying"]))
-        .returning({ cancelled: count() });
+        .where(inArray(jobs.status, ["pending", "processing", "retrying"]));
 
-      return { cancelled: Number(result.cancelled) };
+      return { cancelled: result.rowCount ?? 0 };
     }),
 
   reclaimStale: protectedProcedure

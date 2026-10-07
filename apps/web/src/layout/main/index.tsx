@@ -11,6 +11,7 @@ import { ProfileDropdown } from "./profile-dropdown";
 
 type Props = {
   layout?: "auto" | "fixed" | "header-fixed";
+  noHeader?: boolean;
   island?: boolean;
   shrink?: boolean;
   children?: React.ReactNode;
@@ -28,6 +29,7 @@ type Props = {
 
 export function Main({
   layout = "auto",
+  noHeader = false,
   island,
   shrink,
   children,
@@ -64,44 +66,46 @@ export function Main({
        className={cn("h-full min-h-0 w-full", island && "gap-1 bg-sidebar")}
        style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
      > */}
-      <header
-        className={cn(
-          "z-50",
-          layout === "header-fixed" && "header-fixed peer/header sticky top-0 w-[inherit]",
-          island && "rounded-xl bg-background",
-          offset > 10 && layout === "header-fixed" ? "shadow" : "shadow-none",
-          headerClassName,
-        )}
-      >
-        <div
+      {!noHeader && (
+        <header
           className={cn(
-            "relative flex h-full items-center gap-3 p-4 sm:gap-4",
-            offset > 10 &&
-              layout === "header-fixed" &&
-              "after:absolute after:inset-0 after:-z-10 after:bg-background/20 after:backdrop-blur-lg",
+            "z-50",
+            layout === "header-fixed" && "header-fixed peer/header sticky top-0 w-[inherit]",
+            island && "rounded-xl bg-background",
+            offset > 10 && layout === "header-fixed" ? "shadow" : "shadow-none",
+            headerClassName,
           )}
         >
-          {!hideSidebarTrigger && (
-            <>
-              <SidebarTrigger variant="outline" className="max-md:scale-125" />
-              <Separator orientation="vertical" className="h-6!" />
-            </>
-          )}
-          {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
-          <XBreadcrumb breadcrumbs={breadcrumbs} />
-          {action}
+          <div
+            className={cn(
+              "relative flex h-full items-center gap-3 p-4 sm:gap-4",
+              offset > 10 &&
+                layout === "header-fixed" &&
+                "after:absolute after:inset-0 after:-z-10 after:bg-background/20 after:backdrop-blur-lg",
+            )}
+          >
+            {!hideSidebarTrigger && (
+              <>
+                <SidebarTrigger variant="outline" className="max-md:scale-125" />
+                <Separator orientation="vertical" className="h-6!" />
+              </>
+            )}
+            {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
+            <XBreadcrumb breadcrumbs={breadcrumbs} />
+            {action}
 
-          {/* <TopNav links={topNav} /> */}
-          {!allRightHidden && (
-            <div className="ms-auto flex items-center space-x-4">
-              {!hideSearch && <Search />}
-              {!hideThemeSwitch && <ThemeSwitch />}
-              {!hideConfigDrawer && <ConfigDrawer />}
-              {!hideProfile && <ProfileDropdown />}
-            </div>
-          )}
-        </div>
-      </header>
+            {/* <TopNav links={topNav} /> */}
+            {!allRightHidden && (
+              <div className="ms-auto flex items-center space-x-4">
+                {!hideSearch && <Search />}
+                {!hideThemeSwitch && <ThemeSwitch />}
+                {!hideConfigDrawer && <ConfigDrawer />}
+                {!hideProfile && <ProfileDropdown />}
+              </div>
+            )}
+          </div>
+        </header>
+      )}
 
       <main
         data-layout={layout}

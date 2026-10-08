@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/youtube/")({
 
 function YoutubePage() {
   return (
-    <Main icon={Tv} breadcrumbs={[{ label: "Youtube" }]}>
+    <Main layout="fixed" icon={Tv} breadcrumbs={[{ label: "Youtube" }]} className="p-0">
       <YoutubeFilter />
 
       <YoutubeList />

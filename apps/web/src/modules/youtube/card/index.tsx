@@ -1,4 +1,4 @@
-import { useSearch } from "@tanstack/react-router";
+import { useKeyHold } from "@tanstack/react-hotkeys";
 import type { Youtube } from "@workspace/contracts/views/youtube";
 import { Eye, HardDrive, Play, Tv } from "lucide-react";
 import { useState } from "react";
@@ -30,10 +30,7 @@ export function YoutubeCard({ youtube }: Props) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
 
-  const updateMode = useSearch({
-    from: "/_authenticated/youtube/",
-    select: (s) => s.update === true,
-  });
+  const updateMode = useKeyHold("Control");
 
   const handleClick = () => {
     if (updateMode) {

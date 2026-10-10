@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ItemSchemas, type UpdateItem } from "@workspace/contracts/item";
 import type { Youtube } from "@workspace/contracts/views/youtube";
+import { Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
@@ -19,9 +20,10 @@ type Props = {
   youtube: Youtube;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onView: () => void;
 };
 
-export function YoutubeUpdateDialog({ youtube, open, onOpenChange }: Props) {
+export function YoutubeUpdateDialog({ youtube, open, onOpenChange, onView }: Props) {
   const queryClient = useQueryClient();
 
   const tagsQuery = useQuery(orpc.tag.options.queryOptions());
@@ -57,8 +59,19 @@ export function YoutubeUpdateDialog({ youtube, open, onOpenChange }: Props) {
         className="flex h-auto max-h-[90vh] w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:h-130 sm:w-120"
         initialFocus={false}
       >
-        <DialogHeader className="border-border/50 border-b p-5 text-left">
-          <DialogTitle className="font-semibold text-foreground text-sm">Update</DialogTitle>
+        <DialogHeader className="border-border/50 border-b p-5 pr-10 text-left">
+          <div className="flex items-center justify-between gap-3">
+            <DialogTitle className="font-semibold text-foreground text-sm">Update</DialogTitle>
+            <Button
+              variant="outline"
+              size="xs"
+              onClick={onView}
+              disabled={updateMutation.isPending}
+            >
+              <Eye data-icon="inline-start" />
+              View
+            </Button>
+          </div>
           <DialogDescription className="text-[10px] text-muted-foreground">
             {youtube.caption ?? youtube.externalId}
           </DialogDescription>

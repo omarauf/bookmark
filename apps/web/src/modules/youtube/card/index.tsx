@@ -27,17 +27,19 @@ function formatCount(n: number): string {
 }
 
 export function YoutubeCard({ youtube }: Props) {
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [updateOpen, setUpdateOpen] = useState(false);
+  const [dialog, setDialog] = useState<"details" | "update">();
 
   const updateMode = useKeyHold("Control");
 
   const handleClick = () => {
-    if (updateMode) {
-      setUpdateOpen(true);
-    } else {
-      setDetailsOpen(true);
-    }
+    setDialog(updateMode ? "update" : "details");
+  };
+
+  const handleOpenChange = (type: "details" | "update", open: boolean) => {
+    setDialog((current) => {
+      if (open) return type;
+      return current === type ? undefined : current;
+    });
   };
 
   const downloadedVideos = youtube.media.filter((m) => m.type === "video").length;
@@ -102,8 +104,19 @@ export function YoutubeCard({ youtube }: Props) {
         </div>
       </Card>
 
-      <YoutubeDetailsDialog youtube={youtube} open={detailsOpen} onOpenChange={setDetailsOpen} />
-      <YoutubeUpdateDialog youtube={youtube} open={updateOpen} onOpenChange={setUpdateOpen} />
+      <YoutubeDetailsDialog
+        youtube={youtube}
+        open={dialog === "details"}
+        onOpenChange={(open) => handleOpenChange("details", open)}
+        onUpdate={() => setDialog("update")}
+      />
+
+      <YoutubeUpdateDialog
+        youtube={youtube}
+        open={dialog === "update"}
+        onOpenChange={(open) => handleOpenChange("update", open)}
+        onView={() => setDialog("details")}
+      />
     </>
   );
 }

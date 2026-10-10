@@ -9,6 +9,7 @@ import {
   HardDrive,
   Heart,
   MessageSquare,
+  Pencil,
   RotateCw,
   Tv,
   User,
@@ -32,6 +33,7 @@ type Props = {
   youtube: Youtube;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onUpdate: () => void;
 };
 
 function formatCount(n: number): string {
@@ -40,7 +42,7 @@ function formatCount(n: number): string {
   return n.toLocaleString();
 }
 
-export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
+export function YoutubeDetailsDialog({ youtube, open, onOpenChange, onUpdate }: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const queryClient = useQueryClient();
   const refreshMutation = useMutation(
@@ -117,6 +119,10 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
                 </h2>
 
                 <div className="flex flex-wrap items-center gap-2">
+                  <Button variant="outline" size="xs" onClick={onUpdate}>
+                    <Pencil data-icon="inline-start" />
+                    Update
+                  </Button>
                   <Button
                     variant="outline"
                     size="xs"

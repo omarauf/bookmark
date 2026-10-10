@@ -4,7 +4,6 @@ import { Eye, HardDrive, Play, Tv } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { YoutubeDetailsDialog } from "../dialogs/details";
-import { YoutubeUpdateDialog } from "../dialogs/update";
 
 type Props = {
   youtube: Youtube;
@@ -33,13 +32,6 @@ export function YoutubeCard({ youtube }: Props) {
 
   const handleClick = () => {
     setDialog(updateMode ? "update" : "details");
-  };
-
-  const handleOpenChange = (type: "details" | "update", open: boolean) => {
-    setDialog((current) => {
-      if (open) return type;
-      return current === type ? undefined : current;
-    });
   };
 
   const downloadedVideos = youtube.media.filter((m) => m.type === "video").length;
@@ -106,16 +98,10 @@ export function YoutubeCard({ youtube }: Props) {
 
       <YoutubeDetailsDialog
         youtube={youtube}
-        open={dialog === "details"}
-        onOpenChange={(open) => handleOpenChange("details", open)}
-        onUpdate={() => setDialog("update")}
-      />
-
-      <YoutubeUpdateDialog
-        youtube={youtube}
-        open={dialog === "update"}
-        onOpenChange={(open) => handleOpenChange("update", open)}
-        onView={() => setDialog("details")}
+        open={dialog !== undefined}
+        onOpenChange={(open) => setDialog(open ? "details" : undefined)}
+        tab={dialog ?? "details"}
+        onTabChange={setDialog}
       />
     </>
   );

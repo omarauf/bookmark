@@ -9,7 +9,6 @@ import {
   HardDrive,
   Heart,
   MessageSquare,
-  Pencil,
   RotateCw,
   Tv,
   User,
@@ -23,17 +22,20 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { KeyValue } from "@/components/ui/key-value";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { orpc } from "@/integrations/orpc";
 import { getError } from "@/utils/error";
 import { formatDuration } from "@/utils/format-number";
 import { fDate } from "@/utils/format-time";
 import { YoutubeDownloadDialog } from "./download";
+import { YoutubeUpdateForm } from "./update-form";
 
 type Props = {
   youtube: Youtube;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpdate: () => void;
+  tab: "details" | "update";
+  onTabChange: (tab: "details" | "update") => void;
 };
 
 function formatCount(n: number): string {
@@ -42,9 +44,10 @@ function formatCount(n: number): string {
   return n.toLocaleString();
 }
 
-export function YoutubeDetailsDialog({ youtube, open, onOpenChange, onUpdate }: Props) {
+export function YoutubeDetailsDialog({ youtube, open, onOpenChange, tab, onTabChange }: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const queryClient = useQueryClient();
+  const downloadedVideo = youtube.media.find((media) => media.type === "video");
   const refreshMutation = useMutation(
     orpc.youtube.refresh.mutationOptions({
       onSuccess: async () => {
@@ -59,7 +62,7 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange, onUpdate }: 
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
-          className="flex aspect-1152/1037 h-auto w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:max-w-6xl sm:flex-row"
+          className="flex h-[90vh] w-full flex-col gap-0 overflow-hidden border border-border/50 bg-background p-0 shadow-2xl sm:h-[min(85vh,48rem)] sm:max-w-6xl sm:flex-row"
           initialFocus={false}
         >
           <DialogTitle className="sr-only">{youtube.caption ?? youtube.externalId}</DialogTitle>
@@ -68,10 +71,10 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange, onUpdate }: 
           </DialogDescription>
 
           {/* Media Column */}
-          <div className="relative flex aspect-2/3 h-fit w-3/5 shrink-0 items-center overflow-hidden bg-muted">
-            {youtube.media.length > 0 ? (
+          <div className="relative flex h-[30vh] w-full shrink-0 items-center overflow-hidden bg-black sm:h-full sm:w-3/5">
+            {downloadedVideo ? (
               <video
-                src={staticFile(youtube.media[0].key)}
+                src={staticFile(downloadedVideo.key)}
                 controls
                 autoPlay
                 className="h-full w-full object-contain"
@@ -101,7 +104,7 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange, onUpdate }: 
             </div>
 
             {/* Downloaded Badge */}
-            {youtube.media.length > 0 && (
+            {downloadedVideo && (
               <div className="absolute top-3 left-3 flex items-center gap-1 bg-black/80 px-2 py-1 text-[10px] text-white">
                 <HardDrive className="h-3 w-3" />
                 <span>Downloaded</span>
@@ -109,20 +112,22 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange, onUpdate }: 
             )}
           </div>
 
-          {/* Details Column */}
-          <div className="flex flex-1 flex-col">
+          {/* Shared header and tabbed content */}
+          <Tabs
+            value={tab}
+            onValueChange={(value) => {
+              if (value === "details" || value === "update") onTabChange(value);
+            }}
+            className="min-h-0 min-w-0 flex-1 gap-0"
+          >
             {/* Header */}
-            <div className="shrink-0 space-y-2 border-border/50 border-b p-5 pr-10">
+            <div className="shrink-0 px-5 pt-5">
               <div className="flex flex-col gap-3">
                 <h2 className="font-semibold text-base text-foreground leading-snug">
                   {youtube.caption ?? youtube.externalId}
                 </h2>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <Button variant="outline" size="xs" onClick={onUpdate}>
-                    <Pencil data-icon="inline-start" />
-                    Update
-                  </Button>
                   <Button
                     variant="outline"
                     size="xs"
@@ -145,6 +150,7 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange, onUpdate }: 
                     Download
                   </Button>
                   <Button
+                    nativeButton={false}
                     render={
                       <a href={youtube.url} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-3 w-3" />
@@ -157,127 +163,144 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange, onUpdate }: 
                   />
                 </div>
               </div>
-
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                  <User className="h-3 w-3" />
-                  {youtube.channelTitle}
-                </span>
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                  <Calendar className="h-3 w-3" />
-                  {fDate(youtube.publishedAt)}
-                </span>
-              </div>
-
-              {/* Stats */}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                  <Eye className="h-3 w-3" />
-                  {formatCount(youtube.views)} views
-                </span>
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                  <Heart className="h-3 w-3" />
-                  {formatCount(youtube.likes)} likes
-                </span>
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                  <MessageSquare className="h-3 w-3" />
-                  {formatCount(youtube.comments)} comments
-                </span>
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  {formatDuration(youtube.duration)}
-                </span>
-              </div>
-
-              {youtube.tags && youtube.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {youtube.tags.map((t) => (
-                    <Badge
-                      key={t}
-                      size="sm"
-                      variant="secondary"
-                      className="text-muted-foreground uppercase"
-                    >
-                      {t}
-                    </Badge>
-                  ))}
-                </div>
-              )}
             </div>
 
-            {/* Description */}
-            {youtube.description && (
-              <ScrollArea className="min-h-0 grow">
-                <div className="p-5">
-                  <p className="whitespace-pre-wrap text-[11px] text-foreground/80 leading-relaxed">
-                    {youtube.description}
-                  </p>
+            <div className="shrink-0 border-border/50 border-b px-5 py-2">
+              <TabsList variant="line" aria-label="Video information">
+                <TabsTrigger value="details">Details</TabsTrigger>
+                <TabsTrigger value="update">Update</TabsTrigger>
+              </TabsList>
+            </div>
+            <TabsContent value="details" className="min-h-0 overflow-hidden">
+              <ScrollArea className="h-full">
+                <div className="flex flex-col gap-2 border-border/50 border-b px-5 py-2">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <User className="h-3 w-3" />
+                      {youtube.channelTitle}
+                    </span>
+                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
+                      {fDate(youtube.publishedAt)}
+                    </span>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
+                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Eye className="h-3 w-3" />
+                      {formatCount(youtube.views)} views
+                    </span>
+                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Heart className="h-3 w-3" />
+                      {formatCount(youtube.likes)} likes
+                    </span>
+                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <MessageSquare className="h-3 w-3" />
+                      {formatCount(youtube.comments)} comments
+                    </span>
+                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      {formatDuration(youtube.duration)}
+                    </span>
+                  </div>
+
+                  {youtube.tags && youtube.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {youtube.tags.map((t) => (
+                        <Badge
+                          key={t}
+                          size="sm"
+                          variant="secondary"
+                          className="text-muted-foreground uppercase"
+                        >
+                          {t}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Description */}
+                {youtube.description && (
+                  <div className="px-5 py-2">
+                    <p className="whitespace-pre-wrap text-[11px] text-foreground/80 leading-relaxed">
+                      {youtube.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Downloaded Media */}
+                {downloadedVideo && (
+                  <>
+                    <Separator className="shrink-0 bg-border/50" />
+                    <div className="shrink-0 space-y-2 border-border/50 border-b px-5 py-2">
+                      <h3 className="font-medium text-[11px] text-foreground">Downloaded Media</h3>
+                      <div className="space-y-2">
+                        {youtube.media
+                          .filter((m) => m.type === "video")
+                          .map((m) => (
+                            <a
+                              key={m.key}
+                              href={staticFile(m.key)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-between rounded-md border border-border/30 px-3 py-2 transition-colors hover:bg-muted/40"
+                            >
+                              <div className="flex items-center gap-2">
+                                <HardDrive className="h-3 w-3 text-muted-foreground" />
+                                <span className="text-[11px] text-foreground">
+                                  {m.key.split("/").pop()}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                                {m.width > 0 && m.height > 0 && (
+                                  <span>
+                                    {m.width}×{m.height}
+                                  </span>
+                                )}
+                              </div>
+                            </a>
+                          ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <Separator className="shrink-0 bg-border/50" />
+
+                {/* Youtube Grid */}
+                <div className="grid shrink-0 grid-cols-1 gap-0 sm:grid-cols-2">
+                  {/* Category */}
+                  {youtube.categoryId && (
+                    <KeyValue
+                      className="border-border/30 border-b"
+                      icon={<Tv className="h-3 w-3" />}
+                      label="Category ID"
+                      value={youtube.categoryId}
+                    />
+                  )}
+
+                  {/* Channel ID */}
+                  {youtube.channelId && (
+                    <KeyValue
+                      className="border-border/30 border-b"
+                      icon={<User className="h-3 w-3" />}
+                      label="Channel ID"
+                      value={youtube.channelId}
+                    />
+                  )}
                 </div>
               </ScrollArea>
-            )}
-
-            {/* Downloaded Media */}
-            {youtube.media.length > 0 && (
-              <>
-                <Separator className="shrink-0 bg-border/50" />
-                <div className="shrink-0 space-y-2 border-border/50 border-b p-5">
-                  <h3 className="font-medium text-[11px] text-foreground">Downloaded Media</h3>
-                  <div className="space-y-2">
-                    {youtube.media
-                      .filter((m) => m.type === "video")
-                      .map((m) => (
-                        <a
-                          key={m.key}
-                          href={staticFile(m.key)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-between rounded-md border border-border/30 px-3 py-2 transition-colors hover:bg-muted/40"
-                        >
-                          <div className="flex items-center gap-2">
-                            <HardDrive className="h-3 w-3 text-muted-foreground" />
-                            <span className="text-[11px] text-foreground">
-                              {m.key.split("/").pop()}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-                            {m.width > 0 && m.height > 0 && (
-                              <span>
-                                {m.width}×{m.height}
-                              </span>
-                            )}
-                          </div>
-                        </a>
-                      ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            <Separator className="shrink-0 bg-border/50" />
-
-            {/* Youtube Grid */}
-            <div className="grid shrink-0 grid-cols-1 gap-0 sm:grid-cols-2">
-              {/* Category */}
-              {youtube.categoryId && (
-                <KeyValue
-                  className="border-border/30 border-b"
-                  icon={<Tv className="h-3 w-3" />}
-                  label="Category ID"
-                  value={youtube.categoryId}
-                />
-              )}
-
-              {/* Channel ID */}
-              {youtube.channelId && (
-                <KeyValue
-                  className="border-border/30 border-b"
-                  icon={<User className="h-3 w-3" />}
-                  label="Channel ID"
-                  value={youtube.channelId}
-                />
-              )}
-            </div>
-          </div>
+            </TabsContent>
+            <TabsContent
+              value="update"
+              keepMounted
+              className="flex min-h-0 flex-col data-hidden:hidden"
+            >
+              <YoutubeUpdateForm youtube={youtube} onClose={() => onOpenChange(false)} />
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
 

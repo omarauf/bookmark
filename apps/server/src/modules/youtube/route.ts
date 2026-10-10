@@ -1,6 +1,6 @@
 import { YoutubeSchemas } from "@workspace/contracts/views/youtube";
 import { YoutubeMetadataSchema } from "@workspace/contracts/youtube";
-import { and, count, eq, exists, ilike, isNull, notExists } from "drizzle-orm";
+import { and, asc, count, desc, eq, exists, ilike, isNull, notExists, sql } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
 import { items } from "@/modules/item/schema";
@@ -35,11 +35,12 @@ export const youtubeRouter = {
             : undefined,
       );
 
-      // const orderBy = {
-      //   rating: desc(sql`(${items.metadata}->>'rating')::float`),
-      //   year: desc(sql`(${items.metadata}->>'startSeasonYear')::int`),
-      //   createdAt: desc(items.createdAt),
-      // }[input.sortBy || "createdAt"];
+      const orderBy = {
+        createdAt: desc(items.createdAt),
+        publishedAt: desc(sql`(${items.metadata}->>'publishedAt')::timestamptz`),
+        views: desc(sql`(${items.metadata}->>'views')::bigint`),
+        duration: asc(sql`(${items.metadata}->>'duration')::double precision`),
+      }[input.sortBy ?? "createdAt"];
 
       const [data, [{ totalCount }]] = await Promise.all([
         db.query.items.findMany({
@@ -57,7 +58,7 @@ export const youtubeRouter = {
           },
           limit: input.perPage,
           offset,
-          // orderBy,
+          orderBy: [orderBy, desc(items.id)],
         }),
         db.select({ totalCount: count() }).from(items).where(conditions),
       ]);

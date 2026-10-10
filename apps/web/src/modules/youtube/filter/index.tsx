@@ -5,8 +5,23 @@ import { RotateCcw, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { orpc } from "@/integrations/orpc";
+
+const sortOptions = [
+  { value: "createdAt", label: "Recently added" },
+  { value: "publishedAt", label: "Newest published" },
+  { value: "views", label: "Most viewed" },
+  { value: "duration", label: "Shortest first" },
+] satisfies { value: NonNullable<ListYoutube["sortBy"]>; label: string }[];
 
 export function YoutubeFilter() {
   const search = useSearch({ from: "/_authenticated/youtube/" });
@@ -14,7 +29,10 @@ export function YoutubeFilter() {
 
   const syncMutation = useMutation(orpc.youtube.sync.mutationOptions());
 
-  const setFilter = <K extends "q" | "downloadStatus">(key: K, value: ListYoutube[K]) => {
+  const setFilter = <K extends "q" | "downloadStatus" | "sortBy">(
+    key: K,
+    value: ListYoutube[K],
+  ) => {
     void navigate({
       search: (prev) => ({ ...prev, [key]: value, page: 1 }),
     });
@@ -47,6 +65,27 @@ export function YoutubeFilter() {
           <TabsTrigger value="not_downloaded">Not downloaded</TabsTrigger>
         </TabsList>
       </Tabs>
+
+      <Select
+        items={sortOptions}
+        value={search.sortBy ?? "createdAt"}
+        onValueChange={(value) => {
+          if (value) setFilter("sortBy", value === "createdAt" ? undefined : value);
+        }}
+      >
+        <SelectTrigger aria-label="Sort videos">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
 
       <Button
         variant="outline"

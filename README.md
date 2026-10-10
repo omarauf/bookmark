@@ -44,6 +44,22 @@ manager/
 pnpm install
 ```
 
+The workspace allows `youtube-dl-exec` to run its install scripts to download
+yt-dlp. On Linux and macOS, yt-dlp also needs Python installed.
+
+On Windows without Python, use PowerShell to skip the wrapper's Python check.
+The downloaded `yt-dlp.exe` bundles Python:
+
+```powershell
+$env:YOUTUBE_DL_SKIP_PYTHON_CHECK = "1"
+pnpm install
+Remove-Item Env:\YOUTUBE_DL_SKIP_PYTHON_CHECK
+```
+
+If YouTube format listing fails with `spawn ... yt-dlp.exe ENOENT`, restore the
+binary with `pnpm --filter server rebuild youtube-dl-exec`. On Windows without
+Python, set the environment variable above before rebuilding, then remove it.
+
 ### Environment Setup
 
 **apps/server/.env**:

@@ -41,6 +41,7 @@ async function listFormats(videoUrl: string): Promise<ListFormatsResult> {
 
     return { ok: true, data: formats };
   } catch (error) {
+    console.error("Error listing formats:", error);
     const message = error instanceof Error ? error.message : String(error);
     return { ok: false, error: message };
   }

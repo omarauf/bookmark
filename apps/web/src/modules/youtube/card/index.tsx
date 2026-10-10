@@ -1,33 +1,16 @@
-import { useKeyHold } from "@tanstack/react-hotkeys";
 import type { Youtube } from "@workspace/contracts/views/youtube";
 import { Eye, HardDrive, Play, Tv } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { fShortenNumber } from "@/utils/format-number";
+import { formatDuration, fShortenNumber } from "@/utils/format-number";
 import { YoutubeDetailsDialog } from "../dialogs/details";
 
 type Props = {
   youtube: Youtube;
 };
 
-function formatDuration(seconds: number): string {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  if (hrs > 0) {
-    return `${hrs}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-  }
-  return `${mins}:${String(secs).padStart(2, "0")}`;
-}
-
 export function YoutubeCard({ youtube }: Props) {
-  const [dialog, setDialog] = useState<"details" | "update">();
-
-  const updateMode = useKeyHold("Control");
-
-  const handleClick = () => {
-    setDialog(updateMode ? "update" : "details");
-  };
+  const [open, setOpen] = useState(false);
 
   const downloadedVideos = youtube.media.filter((m) => m.type === "video").length;
 
@@ -35,7 +18,7 @@ export function YoutubeCard({ youtube }: Props) {
     <>
       <Card
         className="group cursor-pointer gap-0 overflow-hidden border-border/50 bg-transparent p-0 shadow-none transition-colors hover:border-foreground/30"
-        onClick={handleClick}
+        onClick={() => setOpen(true)}
       >
         {/* Thumbnail */}
         <div className="relative aspect-video overflow-hidden bg-muted">
@@ -91,11 +74,7 @@ export function YoutubeCard({ youtube }: Props) {
         </div>
       </Card>
 
-      <YoutubeDetailsDialog
-        youtube={youtube}
-        open={dialog !== undefined}
-        onOpenChange={(open) => setDialog(open ? "details" : undefined)}
-      />
+      <YoutubeDetailsDialog youtube={youtube} open={open} onOpenChange={setOpen} />
     </>
   );
 }

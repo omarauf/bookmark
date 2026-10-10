@@ -1,10 +1,8 @@
-import { useKeyHold } from "@tanstack/react-hotkeys";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { ListYoutube } from "@workspace/contracts/views/youtube";
-import { Eye, Pencil, RotateCcw, Search } from "lucide-react";
+import { RotateCcw, Search } from "lucide-react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,7 +24,6 @@ const sortOptions = [
 ] satisfies { value: NonNullable<ListYoutube["sortBy"]>; label: string }[];
 
 export function YoutubeFilter() {
-  const updateMode = useKeyHold("Control");
   const search = useSearch({ from: "/_authenticated/youtube/" });
   const navigate = useNavigate({ from: "/youtube/" });
 
@@ -105,13 +102,6 @@ export function YoutubeFilter() {
         <RotateCcw className="mr-1.5 h-3 w-3" />
         Sync
       </Button>
-
-      <Badge
-        variant={updateMode ? "default" : "secondary"}
-        className="aspect-square h-full rounded-md"
-      >
-        {updateMode ? <Pencil /> : <Eye />}
-      </Badge>
     </div>
   );
 }

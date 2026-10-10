@@ -16,7 +16,7 @@ type Props = {
 };
 
 const mediaActionClassName =
-  "size-10 rounded-full border-white/20 bg-black/80 text-white shadow-sm hover:bg-black/90 hover:text-white";
+  "size-7 border-white/20 bg-black/80 text-white shadow-sm hover:bg-black/90 hover:text-white";
 
 export function YoutubeMediaActions({ youtube, className }: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
@@ -40,7 +40,7 @@ export function YoutubeMediaActions({ youtube, className }: Props) {
             render={
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-xs"
                 className={mediaActionClassName}
                 onClick={() => refreshMutation.mutate({ id: youtube.id })}
                 disabled={refreshMutation.isPending}
@@ -51,12 +51,13 @@ export function YoutubeMediaActions({ youtube, className }: Props) {
           </TooltipTrigger>
           <TooltipContent side="bottom">Refresh details</TooltipContent>
         </Tooltip>
+
         <Tooltip>
           <TooltipTrigger
             render={
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-xs"
                 className={mediaActionClassName}
                 onClick={() => setDownloadOpen(true)}
               />
@@ -66,6 +67,7 @@ export function YoutubeMediaActions({ youtube, className }: Props) {
           </TooltipTrigger>
           <TooltipContent side="bottom">Download video</TooltipContent>
         </Tooltip>
+
         <Tooltip>
           <TooltipTrigger
             render={
@@ -74,7 +76,7 @@ export function YoutubeMediaActions({ youtube, className }: Props) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
-                  buttonVariants({ variant: "ghost", size: "icon" }),
+                  buttonVariants({ variant: "ghost", size: "icon-xs" }),
                   mediaActionClassName,
                 )}
               />

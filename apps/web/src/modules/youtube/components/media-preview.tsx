@@ -1,18 +1,24 @@
 import type { Youtube } from "@workspace/contracts/views/youtube";
+import { cn } from "cn";
 import { HardDrive, Tv } from "lucide-react";
 import { staticFile } from "@/api/static-file";
 import { formatDuration } from "@/utils/format-number";
-import { YoutubeMediaActions } from "./media-actions";
 
 type Props = {
   youtube: Youtube;
+  className?: string;
 };
 
-export function YoutubeMediaPreview({ youtube }: Props) {
+export function YoutubeMediaPreview({ youtube, className }: Props) {
   const downloadedVideo = youtube.media.find((media) => media.type === "video");
 
   return (
-    <div className="relative flex h-[30vh] w-full shrink-0 items-center overflow-hidden bg-black sm:h-full sm:w-3/5">
+    <div
+      className={cn(
+        "relative flex min-h-0 min-w-0 items-center overflow-hidden bg-black",
+        className,
+      )}
+    >
       {downloadedVideo ? (
         <video
           src={staticFile(downloadedVideo.key)}
@@ -38,8 +44,6 @@ export function YoutubeMediaPreview({ youtube }: Props) {
           </span>
         </div>
       )}
-
-      <YoutubeMediaActions youtube={youtube} className="absolute top-3 right-12 sm:right-3" />
 
       {/* Duration Badge */}
       <div className="absolute right-3 bottom-3 bg-black/80 px-2 py-1 font-medium text-[10px] text-white">

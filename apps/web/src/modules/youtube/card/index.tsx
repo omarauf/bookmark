@@ -95,8 +95,6 @@ export function YoutubeCard({ youtube }: Props) {
         youtube={youtube}
         open={dialog !== undefined}
         onOpenChange={(open) => setDialog(open ? "details" : undefined)}
-        tab={dialog ?? "details"}
-        onTabChange={setDialog}
       />
     </>
   );

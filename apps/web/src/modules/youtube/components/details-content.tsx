@@ -16,8 +16,11 @@ export function YoutubeDetailsContent({ youtube }: Props) {
   const downloadedVideo = youtube.media.find((media) => media.type === "video");
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full" viewportProps={{ className: "flex flex-col" }}>
       <div className="flex flex-col gap-2 border-border/50 border-b px-5 py-2">
+        <h2 className="pt-3 pb-1 font-semibold text-base text-foreground leading-snug">
+          {youtube.caption ?? youtube.externalId}
+        </h2>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
             <User className="h-3 w-3" />
@@ -67,7 +70,7 @@ export function YoutubeDetailsContent({ youtube }: Props) {
 
       {/* Description */}
       {youtube.description && (
-        <div className="px-5 py-2">
+        <div className="grow px-5 py-2">
           <p className="whitespace-pre-wrap text-[11px] text-foreground/80 leading-relaxed">
             {youtube.description}
           </p>

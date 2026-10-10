@@ -1,9 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { ListYoutube } from "@workspace/contracts/views/youtube";
-import { RotateCcw, Search } from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -14,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { orpc } from "@/integrations/orpc";
+import { SyncButton } from "../components/sync";
 
 const sortOptions = [
   { value: "createdAt", label: "Recently added" },
@@ -26,8 +23,6 @@ const sortOptions = [
 export function YoutubeFilter() {
   const search = useSearch({ from: "/_authenticated/youtube/" });
   const navigate = useNavigate({ from: "/youtube/" });
-
-  const syncMutation = useMutation(orpc.youtube.sync.mutationOptions());
 
   const setFilter = <K extends "q" | "downloadStatus" | "sortBy">(
     key: K,
@@ -87,21 +82,7 @@ export function YoutubeFilter() {
         </SelectContent>
       </Select>
 
-      <Button
-        variant="outline"
-        size="sm"
-        className="ml-auto h-8 border-border/50 text-[10px]"
-        onClick={() => {
-          syncMutation.mutate(undefined, {
-            onSuccess: () => toast.success("Youtube sync queued"),
-            onError: () => toast.error("Failed to queue sync"),
-          });
-        }}
-        disabled={syncMutation.isPending}
-      >
-        <RotateCcw className="mr-1.5 h-3 w-3" />
-        Sync
-      </Button>
+      <SyncButton />
     </div>
   );
 }

@@ -1,9 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import type { ListYoutube } from "@workspace/contracts/views/youtube";
 import { RotateCcw, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { orpc } from "@/integrations/orpc";
 
 export function YoutubeFilter() {
@@ -12,14 +14,14 @@ export function YoutubeFilter() {
 
   const syncMutation = useMutation(orpc.youtube.sync.mutationOptions());
 
-  const setFilter = (key: string, value: string | undefined | number | boolean) => {
+  const setFilter = <K extends "q" | "downloadStatus">(key: K, value: ListYoutube[K]) => {
     void navigate({
       search: (prev) => ({ ...prev, [key]: value, page: 1 }),
     });
   };
 
   return (
-    <div className="flex items-center justify-between gap-3 border-border/50 border-b px-6 py-3">
+    <div className="flex flex-wrap items-center gap-3 border-border/50 border-b px-6 py-3">
       <div className="relative min-w-50 max-w-sm flex-1">
         <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -30,10 +32,26 @@ export function YoutubeFilter() {
         />
       </div>
 
+      <Tabs
+        value={search.downloadStatus ?? "both"}
+        onValueChange={(value) =>
+          setFilter(
+            "downloadStatus",
+            value === "downloaded" || value === "not_downloaded" ? value : undefined,
+          )
+        }
+      >
+        <TabsList aria-label="Download status">
+          <TabsTrigger value="both">Both</TabsTrigger>
+          <TabsTrigger value="downloaded">Downloaded</TabsTrigger>
+          <TabsTrigger value="not_downloaded">Not downloaded</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       <Button
         variant="outline"
         size="sm"
-        className="h-8 border-border/50 text-[10px]"
+        className="ml-auto h-8 border-border/50 text-[10px]"
         onClick={() => {
           syncMutation.mutate(undefined, {
             onSuccess: () => toast.success("Youtube sync queued"),

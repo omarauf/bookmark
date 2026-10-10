@@ -1,9 +1,10 @@
 import { YoutubeSchemas } from "@workspace/contracts/views/youtube";
-import { and, count, eq, ilike, isNull } from "drizzle-orm";
+import { and, count, eq, exists, ilike, isNull, notExists } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
 import { items } from "@/modules/item/schema";
 import { createSingleJob } from "@/modules/job/service";
+import { media } from "@/modules/media/schema";
 import { ytDlpClient } from "./integrations";
 import { mapItemToYoutube } from "./mapper-2";
 
@@ -14,12 +15,22 @@ export const youtubeRouter = {
     .handler(async ({ input }) => {
       const offset = (input.page - 1) * input.perPage;
 
-      const { q } = input;
+      const { q, downloadStatus } = input;
+
+      const videoMedia = db
+        .select({ id: media.id })
+        .from(media)
+        .where(and(eq(media.itemId, items.id), eq(media.type, "video")));
 
       const conditions = and(
         eq(items.platform, "youtube"),
         isNull(items.deletedAt),
         q ? ilike(items.caption, `%${q}%`) : undefined,
+        downloadStatus === "downloaded"
+          ? exists(videoMedia)
+          : downloadStatus === "not_downloaded"
+            ? notExists(videoMedia)
+            : undefined,
       );
 
       // const orderBy = {

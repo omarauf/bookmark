@@ -15,7 +15,7 @@ export function YoutubeMediaPreview({ youtube, className }: Props) {
   return (
     <div
       className={cn(
-        "relative flex min-h-0 min-w-0 items-center overflow-hidden bg-black",
+        "relative flex min-h-0 min-w-0 items-center overflow-hidden bg-muted",
         className,
       )}
     >

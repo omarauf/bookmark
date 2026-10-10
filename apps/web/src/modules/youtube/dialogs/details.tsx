@@ -1,13 +1,13 @@
 import type { Youtube } from "@workspace/contracts/views/youtube";
 import { cn } from "cn";
 import { Columns3, LayoutPanelLeft } from "lucide-react";
-import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { YoutubeDetailsContent } from "../components/details-content";
 import { YoutubeMediaActions } from "../components/media-actions";
 import { YoutubeMediaPreview } from "../components/media-preview";
 import { YoutubeUpdateForm } from "../components/update-form";
+import { useLayoutStore } from "../hooks/use-layout";
 
 type Props = {
   youtube: Youtube;
@@ -16,11 +16,12 @@ type Props = {
 };
 
 export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
-  const [layout, setLayout] = useState<"D" | "E">("D");
+  const layout = useLayoutStore((s) => s.layout);
+  const toggleLayout = useLayoutStore((s) => s.toggleLayout);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex h-[90vh] w-full flex-col gap-0 overflow-hidden border border-border/50 bg-black p-0 text-white shadow-2xl sm:h-[min(85vh,48rem)] sm:max-w-6xl">
+      <DialogContent className="flex h-[90vh] w-full flex-col gap-0 overflow-hidden border border-border/50 bg-black p-0 text-white shadow-2xl sm:h-[min(85vh,64rem)] sm:max-w-[80%]">
         <DialogTitle className="sr-only">{youtube.caption ?? youtube.externalId}</DialogTitle>
         <DialogDescription className="sr-only">
           Detailed information about {youtube.caption ?? youtube.externalId}
@@ -62,7 +63,7 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
 
               <ToggleGroup
                 value={[layout]}
-                onValueChange={(values) => setLayout(values[0] as "D" | "E")}
+                onValueChange={toggleLayout}
                 variant="outline"
                 size="sm"
                 spacing={0}

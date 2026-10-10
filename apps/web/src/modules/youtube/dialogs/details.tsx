@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Youtube } from "@workspace/contracts/views/youtube";
+import { cn } from "cn";
 import {
   Calendar,
   Clock,
@@ -17,12 +18,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { staticFile } from "@/api/static-file";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { KeyValue } from "@/components/ui/key-value";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { orpc } from "@/integrations/orpc";
 import { getError } from "@/utils/error";
 import { formatDuration } from "@/utils/format-number";
@@ -37,6 +39,9 @@ type Props = {
   tab: "details" | "update";
   onTabChange: (tab: "details" | "update") => void;
 };
+
+const mediaActionClassName =
+  "size-10 rounded-full border-white/20 bg-black/80 text-white shadow-sm hover:bg-black/90 hover:text-white";
 
 function formatCount(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -98,6 +103,64 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange, tab, onTabCh
               </div>
             )}
 
+            <div className="absolute top-3 right-12 flex items-center gap-2 sm:right-3">
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={mediaActionClassName}
+                      aria-label={
+                        refreshMutation.isPending ? "Refreshing details" : "Refresh details"
+                      }
+                      aria-busy={refreshMutation.isPending}
+                      onClick={() => refreshMutation.mutate({ id: youtube.id })}
+                      disabled={refreshMutation.isPending}
+                    />
+                  }
+                >
+                  <RotateCw className={refreshMutation.isPending ? "animate-spin" : undefined} />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Refresh details</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={mediaActionClassName}
+                      aria-label="Download video"
+                      onClick={() => setDownloadOpen(true)}
+                    />
+                  }
+                >
+                  <Download />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Download video</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <a
+                      href={youtube.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Open on YouTube"
+                      className={cn(
+                        buttonVariants({ variant: "ghost", size: "icon" }),
+                        mediaActionClassName,
+                      )}
+                    />
+                  }
+                >
+                  <ExternalLink />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Open on YouTube</TooltipContent>
+              </Tooltip>
+            </div>
+
             {/* Duration Badge */}
             <div className="absolute right-3 bottom-3 bg-black/80 px-2 py-1 font-medium text-[10px] text-white">
               {formatDuration(youtube.duration)}
@@ -122,47 +185,9 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange, tab, onTabCh
           >
             {/* Header */}
             <div className="shrink-0 px-5 pt-5">
-              <div className="flex flex-col gap-3">
-                <h2 className="font-semibold text-base text-foreground leading-snug">
-                  {youtube.caption ?? youtube.externalId}
-                </h2>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="xs"
-                    onClick={() => refreshMutation.mutate({ id: youtube.id })}
-                    disabled={refreshMutation.isPending}
-                  >
-                    <RotateCw
-                      data-icon="inline-start"
-                      className={refreshMutation.isPending ? "animate-spin" : undefined}
-                    />
-                    {refreshMutation.isPending ? "Refreshing..." : "Refresh details"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="xs"
-                    className="text-[10px]"
-                    onClick={() => setDownloadOpen(true)}
-                  >
-                    <Download className="h-3 w-3" />
-                    Download
-                  </Button>
-                  <Button
-                    nativeButton={false}
-                    render={
-                      <a href={youtube.url} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="h-3 w-3" />
-                        YouTube
-                      </a>
-                    }
-                    variant="outline"
-                    size="xs"
-                    className="text-[10px]"
-                  />
-                </div>
-              </div>
+              <h2 className="font-semibold text-base text-foreground leading-snug">
+                {youtube.caption ?? youtube.externalId}
+              </h2>
             </div>
 
             <div className="shrink-0 border-border/50 border-b px-5 py-2">

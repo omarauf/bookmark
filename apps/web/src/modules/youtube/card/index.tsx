@@ -3,6 +3,7 @@ import type { Youtube } from "@workspace/contracts/views/youtube";
 import { Eye, HardDrive, Play, Tv } from "lucide-react";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import { fShortenNumber } from "@/utils/format-number";
 import { YoutubeDetailsDialog } from "../dialogs/details";
 
 type Props = {
@@ -17,12 +18,6 @@ function formatDuration(seconds: number): string {
     return `${hrs}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   }
   return `${mins}:${String(secs).padStart(2, "0")}`;
-}
-
-function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return n.toLocaleString();
 }
 
 export function YoutubeCard({ youtube }: Props) {
@@ -90,7 +85,7 @@ export function YoutubeCard({ youtube }: Props) {
             </span>
             <span className="flex shrink-0 items-center gap-0.5 text-[10px] text-muted-foreground/60">
               <Eye className="h-2.5 w-2.5" />
-              {formatCount(youtube.views)}
+              {fShortenNumber(youtube.views)}
             </span>
           </div>
         </div>

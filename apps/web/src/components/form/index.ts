@@ -19,6 +19,7 @@ import { PasswordField } from "./fields/password";
 import { RadioField } from "./fields/radio";
 import { SelectField } from "./fields/select";
 import { SliderRangeField } from "./fields/slider-range";
+import { StarRatingField } from "./fields/star-rating";
 import { SwitchField } from "./fields/switch";
 import { TabsField } from "./fields/tab";
 import { TextareaField } from "./fields/textarea";
@@ -48,6 +49,7 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
     Switch: SwitchField,
     ButtonGroup: ButtonGroupField,
     TreeSelector: TreeSelectorField,
+    StarRating: StarRatingField,
   },
   formComponents: {
     SubmitButton,

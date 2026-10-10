@@ -33,13 +33,38 @@ export function TreeSelectorField({ disabled, options, className, classNames, ..
       {...props}
     >
       <ScrollArea className={cn("pr-3", "max-h-120", className, classNames?.viewport)}>
-        <TreeSelector
-          data={tree}
-          value={field.state.value || []}
-          onValueChange={field.handleChange}
-          className="p-0"
-        />
+        <RenderOptions options={tree} value={field.state.value} handleChange={field.handleChange} />
       </ScrollArea>
     </FormBase>
+  );
+}
+
+function RenderOptions({
+  options,
+  value,
+  handleChange,
+}: {
+  options: { value: string; label: string; color?: string }[] | undefined;
+  value: string[] | undefined;
+  handleChange: (value: string[]) => void;
+}) {
+  if (options === undefined) {
+    return (
+      <div className="flex items-center justify-center rounded-lg border border-dashed p-3 text-muted-foreground text-sm">
+        Loading options...
+      </div>
+    );
+  }
+
+  if (options.length === 0) {
+    return (
+      <div className="flex items-center justify-center rounded-lg border border-dashed p-3 text-muted-foreground text-sm">
+        No options available.
+      </div>
+    );
+  }
+
+  return (
+    <TreeSelector data={options} value={value || []} onValueChange={handleChange} className="p-0" />
   );
 }

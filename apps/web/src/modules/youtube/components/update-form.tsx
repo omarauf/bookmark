@@ -1,9 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ItemSchemas, type UpdateItem } from "@workspace/contracts/item";
 import type { Youtube } from "@workspace/contracts/views/youtube";
+import { Heart } from "lucide-react";
+import { useId } from "react";
 import { toast } from "sonner";
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Toggle } from "@/components/ui/toggle";
 import { orpc } from "@/integrations/orpc";
 import { getError } from "@/utils/error";
 
@@ -13,6 +17,8 @@ type Props = {
 };
 
 export function YoutubeUpdateForm({ youtube, onClose }: Props) {
+  const formId = useId();
+  const favoriteId = useId();
   const queryClient = useQueryClient();
 
   const tagsQuery = useQuery(orpc.tag.options.queryOptions());
@@ -29,6 +35,7 @@ export function YoutubeUpdateForm({ youtube, onClose }: Props) {
   };
 
   const form = useAppForm({
+    formId,
     defaultValues,
     validators: { onSubmit: ItemSchemas.update.request },
     onSubmit: async ({ value }) => {
@@ -44,30 +51,51 @@ export function YoutubeUpdateForm({ youtube, onClose }: Props) {
     },
   });
 
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    form.handleSubmit();
+  };
+
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        form.handleSubmit();
-      }}
-      className="flex min-h-0 flex-1 flex-col"
-    >
+    <form id={formId} onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
+        <div className="flex items-start justify-between gap-3">
+          <form.AppField name="rate">
+            {(field) => (
+              <field.StarRating
+                classNames={{ wrapper: "w-fit" }}
+                disabled={updateMutation.isPending}
+                label="Rating"
+              />
+            )}
+          </form.AppField>
+
+          <form.AppField name="favorite">
+            {(field) => (
+              <Field className="w-fit">
+                <FieldLabel htmlFor={favoriteId}>Favorite</FieldLabel>
+                <Toggle
+                  id={favoriteId}
+                  type="button"
+                  variant="outline"
+                  pressed={field.state.value ?? false}
+                  onPressedChange={field.handleChange}
+                  onBlur={field.handleBlur}
+                  disabled={updateMutation.isPending}
+                  className="aspect-square h-8 w-8 motion-safe:active:scale-95"
+                >
+                  <Heart className={field.state.value ? "fill-current" : undefined} />
+                </Toggle>
+              </Field>
+            )}
+          </form.AppField>
+        </div>
+
         <form.AppField name="note">
           {(field) => (
             <field.Textarea label="Notes" placeholder="Add notes..." className="text-xs" />
           )}
         </form.AppField>
-
-        <div className="grid grid-cols-2 gap-4">
-          <form.AppField name="rate">
-            {(field) => <field.Number label="Rate" placeholder="0-10" min={0} max={10} />}
-          </form.AppField>
-
-          <form.AppField name="favorite">
-            {(field) => <field.Switch label="Favorite" />}
-          </form.AppField>
-        </div>
 
         <form.AppField name="tagIds">
           {(field) => (
@@ -93,18 +121,15 @@ export function YoutubeUpdateForm({ youtube, onClose }: Props) {
       <div className="flex shrink-0 justify-end gap-2 border-border/50 border-t p-5">
         <Button
           variant="outline"
-          size="sm"
-          className="text-xs"
           onClick={onClose}
           disabled={updateMutation.isPending}
           type="button"
         >
           Cancel
         </Button>
+
         <form.AppForm>
-          <form.SubmitButton className="text-xs">
-            {updateMutation.isPending ? "Saving..." : "Save"}
-          </form.SubmitButton>
+          <form.SubmitButton>{updateMutation.isPending ? "Saving..." : "Save"}</form.SubmitButton>
         </form.AppForm>
       </div>
     </form>

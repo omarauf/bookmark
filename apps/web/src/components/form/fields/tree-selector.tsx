@@ -32,7 +32,7 @@ export function TreeSelectorField({ disabled, options, className, classNames, ..
       }}
       {...props}
     >
-      <ScrollArea className={cn("pr-3", "max-h-120", className, classNames?.viewport)}>
+      <ScrollArea className={cn("rounded-lg border pr-2", className, classNames?.viewport)}>
         <RenderOptions options={tree} value={field.state.value} handleChange={field.handleChange} />
       </ScrollArea>
     </FormBase>

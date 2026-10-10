@@ -25,7 +25,7 @@ export function ButtonGroupField({ disabled, className, classNames, options, ...
 
   return (
     <FormBase id={id} {...props}>
-      <ScrollArea>
+      <ScrollArea className="rounded-lg border p-2">
         <RenderOptions
           options={options}
           value={field.state.value}
@@ -65,7 +65,7 @@ function RenderOptions({
   }
 
   return (
-    <div className={cn("flex max-h-120 flex-wrap gap-2", className)}>
+    <div className={cn("flex flex-wrap gap-2", className)}>
       {options?.map((option) => {
         const isSelected = value?.includes(option.value);
         return (

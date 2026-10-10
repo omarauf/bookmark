@@ -98,13 +98,7 @@ export function YoutubeUpdateForm({ youtube, onClose }: Props) {
         </form.AppField>
 
         <form.AppField name="tagIds">
-          {(field) => (
-            <field.ButtonGroup
-              label="Tags"
-              options={tagsQuery.data}
-              className="grid max-h-40 grid-cols-2 gap-1 overflow-y-auto pr-1"
-            />
-          )}
+          {(field) => <field.ButtonGroup label="Tags" options={tagsQuery.data} className="h-50" />}
         </form.AppField>
 
         <form.AppField name="collectionIds">
@@ -112,7 +106,7 @@ export function YoutubeUpdateForm({ youtube, onClose }: Props) {
             <field.TreeSelector
               label="Collections"
               options={collectionsQuery.data}
-              className="max-h-48"
+              className="h-80"
             />
           )}
         </form.AppField>

@@ -28,6 +28,11 @@ export const YoutubeSchemas = {
     response: z.object({}),
   },
 
+  refresh: {
+    request: z.object({ id: z.uuid() }),
+    response: z.object({ success: z.boolean() }),
+  },
+
   listFormats: {
     request: z.object({ id: z.uuid() }),
     response: z.object({

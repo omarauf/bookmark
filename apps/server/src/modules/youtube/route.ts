@@ -1,11 +1,13 @@
 import { YoutubeSchemas } from "@workspace/contracts/views/youtube";
+import { YoutubeMetadataSchema } from "@workspace/contracts/youtube";
 import { and, count, eq, exists, ilike, isNull, notExists } from "drizzle-orm";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
 import { items } from "@/modules/item/schema";
 import { createSingleJob } from "@/modules/job/service";
 import { media } from "@/modules/media/schema";
-import { ytDlpClient } from "./integrations";
+import { youtubeClient, ytDlpClient } from "./integrations";
+import { getYoutubeMetadata } from "./mapper";
 import { mapItemToYoutube } from "./mapper-2";
 
 export const youtubeRouter = {
@@ -80,6 +82,34 @@ export const youtubeRouter = {
 
     return job;
   }),
+
+  refresh: protectedProcedure
+    .input(YoutubeSchemas.refresh.request)
+    .output(YoutubeSchemas.refresh.response)
+    .errors({
+      NOT_FOUND: { message: "YouTube item not found" },
+      BAD_REQUEST: { message: "Item is not a YouTube video" },
+      BAD_GATEWAY: { message: "Could not refresh YouTube details" },
+      METADATA_PARSE_ERROR: { message: "Failed to parse YouTube metadata", status: 400 },
+    })
+    .handler(async ({ input: { id }, errors }) => {
+      const condition = and(eq(items.id, id), isNull(items.deletedAt));
+      const item = await db.query.items.findFirst({ where: condition });
+      if (!item) throw errors.NOT_FOUND();
+      if (item.platform !== "youtube" || item.kind !== "video") throw errors.BAD_REQUEST();
+
+      const [data, error] = await youtubeClient.getByVideoId(item.externalId);
+      if (error || !data) throw errors.BAD_GATEWAY({ message: error });
+      const video = data.items[0];
+      if (!video) throw errors.NOT_FOUND({ message: "Video is unavailable on YouTube" });
+
+      const result = YoutubeMetadataSchema.safeParse(getYoutubeMetadata(data));
+      if (!result.success) throw errors.METADATA_PARSE_ERROR();
+      const metadata = result.data;
+      await db.update(items).set({ caption: video.snippet.title, metadata }).where(condition);
+
+      return { success: true };
+    }),
 
   listFormats: protectedProcedure
     .input(YoutubeSchemas.listFormats.request)

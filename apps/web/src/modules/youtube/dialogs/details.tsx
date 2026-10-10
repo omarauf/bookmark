@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Youtube } from "@workspace/contracts/views/youtube";
 import {
   Calendar,
@@ -8,10 +9,12 @@ import {
   HardDrive,
   Heart,
   MessageSquare,
+  RotateCw,
   Tv,
   User,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { staticFile } from "@/api/static-file";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +22,8 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { KeyValue } from "@/components/ui/key-value";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { orpc } from "@/integrations/orpc";
+import { getError } from "@/utils/error";
 import { formatDuration } from "@/utils/format-number";
 import { fDate } from "@/utils/format-time";
 import { YoutubeDownloadDialog } from "./download";
@@ -37,6 +42,16 @@ function formatCount(n: number): string {
 
 export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const refreshMutation = useMutation(
+    orpc.youtube.refresh.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: orpc.youtube.list.key() });
+        toast.success("Details refreshed");
+      },
+      onError: (error) => toast.error(getError(error, "Could not refresh details")),
+    }),
+  );
 
   return (
     <>
@@ -96,12 +111,24 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
           <div className="flex flex-1 flex-col">
             {/* Header */}
             <div className="shrink-0 space-y-2 border-border/50 border-b p-5 pr-10">
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col gap-3">
                 <h2 className="font-semibold text-base text-foreground leading-snug">
                   {youtube.caption ?? youtube.externalId}
                 </h2>
 
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="xs"
+                    onClick={() => refreshMutation.mutate({ id: youtube.id })}
+                    disabled={refreshMutation.isPending}
+                  >
+                    <RotateCw
+                      data-icon="inline-start"
+                      className={refreshMutation.isPending ? "animate-spin" : undefined}
+                    />
+                    {refreshMutation.isPending ? "Refreshing..." : "Refresh details"}
+                  </Button>
                   <Button
                     variant="outline"
                     size="xs"

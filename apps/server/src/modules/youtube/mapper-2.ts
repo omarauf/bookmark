@@ -39,6 +39,7 @@ export function mapItemToYoutube(items: RawItem[]): Youtube[] {
 
     youtubeArr.push({
       ...item.metadata,
+      publishedAt: new Date(item.metadata.publishedAt),
       id: item.id,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,

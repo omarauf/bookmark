@@ -24,9 +24,9 @@ export function getYoutubeMetadata(data: YoutubeVideo): YoutubeMetadata {
     channelId: video.snippet.channelId,
     channelTitle: video.snippet.channelTitle,
     publishedAt: new Date(video.snippet.publishedAt),
-    comments: parseInt(video.statistics.commentCount, 10),
-    likes: parseInt(video.statistics.likeCount, 10),
-    views: parseInt(video.statistics.viewCount, 10),
+    comments: parseInt(video.statistics.commentCount ?? "0", 10),
+    likes: parseInt(video.statistics.likeCount ?? "0", 10),
+    views: parseInt(video.statistics.viewCount ?? "0", 10),
     duration: parseDuration(video.contentDetails.duration),
     tags: video.snippet.tags || [],
   };

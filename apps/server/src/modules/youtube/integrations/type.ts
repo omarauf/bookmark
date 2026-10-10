@@ -58,10 +58,10 @@ export type YoutubeVideo = {
       projection: string;
     };
     statistics: {
-      viewCount: string;
-      likeCount: string;
+      viewCount?: string;
+      likeCount?: string;
       favoriteCount: string;
-      commentCount: string;
+      commentCount?: string;
     };
   }>;
   pageInfo: {

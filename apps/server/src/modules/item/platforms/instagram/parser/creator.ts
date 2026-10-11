@@ -15,7 +15,6 @@ export function creatorParser(creator: Owner | CoauthorProducer): CreateItem {
     kind: "profile",
     url,
     caption: undefined, // TODO: can we get the bio/description of the creator?
-    createdAt: undefined,
     metadata: {
       platform: "instagram",
       kind: "profile",

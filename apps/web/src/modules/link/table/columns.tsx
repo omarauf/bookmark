@@ -139,13 +139,13 @@ export function useLinkTableColumns({ setRowAction }: Props): ColumnDef<Link>[] 
         enableColumnFilter: true,
       },
       {
-        id: "createdAt",
-        accessorKey: "createdAt",
+        id: "addedAt",
+        accessorKey: "addedAt",
         header: ({ column }: { column: Column<Link, unknown> }) => (
           <DataTableColumnHeader column={column} label="Added" />
         ),
         cell: ({ row }) => {
-          const date = row.original.createdAt;
+          const date = row.original.addedAt;
           return (
             <span className="whitespace-nowrap text-muted-foreground text-sm">{fDate(date)}</span>
           );

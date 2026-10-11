@@ -35,6 +35,10 @@ export function mapItemToPost(item: RawItem): Post {
 
   const normalizedItem = replaceNullWithUndefined(item);
 
+  if (!normalizedItem.publishedAt) {
+    throw new Error(`Publication date missing for post ${item.id}`);
+  }
+
   if (normalizedItem.metadata?.kind !== "post") {
     throw new Error(`Item ${item.id} is not an Instagram post`);
   }
@@ -44,6 +48,7 @@ export function mapItemToPost(item: RawItem): Post {
   return {
     ...normalizedItem,
     ...normalizedItem.metadata,
+    publishedAt: normalizedItem.publishedAt,
     creator: mapProfile(creator),
     media: normalizeMedia(item.media),
     taggedItems: taggedItems,
@@ -79,6 +84,10 @@ function mapQuotedItem(item: RawItem) {
 
   const normalizedItem = replaceNullWithUndefined(quotedItem);
 
+  if (!normalizedItem.publishedAt) {
+    throw new Error(`Publication date missing for quoted post ${quotedItem.id}`);
+  }
+
   if (normalizedItem.metadata?.kind !== "post") {
     throw new Error(`Item ${item.id} is not an Instagram post`);
   }
@@ -93,6 +102,7 @@ function mapQuotedItem(item: RawItem) {
     ...normalizedItem,
     ...normalizedItem.metadata,
     media: normalizeMedia(quotedItem.media),
+    publishedAt: normalizedItem.publishedAt,
     creator: mapProfile(creator),
     collectionIds: [],
     tagIds: [],

@@ -64,7 +64,7 @@ export function PostCard({ post, onClick, className }: Props) {
             <p className="flex items-center text-nowrap text-sm">{post.creator.username}</p>
           </div>
 
-          <p className="text-sm">{fDate(post.createdAt)}</p>
+          <p className="text-sm">{fDate(post.publishedAt)}</p>
         </CardContent>
       )}
     </Card>

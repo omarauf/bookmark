@@ -77,7 +77,7 @@ export class ChromeHandler implements PlatformHandler {
           url: String(node.url),
           externalId: node.id,
           caption: node.title,
-          createdAt: node.dateAdded ? new Date(node.dateAdded) : undefined,
+          publishedAt: node.dateAdded ? new Date(node.dateAdded) : undefined,
           metadata: {
             kind: "link",
             platform: "chrome",

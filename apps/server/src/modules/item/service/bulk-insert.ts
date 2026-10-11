@@ -64,7 +64,7 @@ function prepareItemsForInsert(newItems: CreateItem[]) {
     externalId: item.externalId,
     url: item.url,
     caption: item.caption,
-    createdAt: item.createdAt,
+    publishedAt: item.publishedAt,
     metadata: item.metadata,
   }));
 }

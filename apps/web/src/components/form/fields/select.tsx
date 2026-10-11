@@ -67,6 +67,7 @@ export function SelectField<T extends string | number = string>({
   const comp = (
     <Select
       key={key}
+      items={options}
       disabled={disabled}
       onValueChange={onChangeHandler}
       value={(value as string) ?? ""}

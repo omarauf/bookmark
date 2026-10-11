@@ -32,7 +32,8 @@ export function mapItemToLink(item: RawItem): Link {
 
   const link: Link = {
     id: normalizedItem.id,
-    createdAt: normalizedItem.createdAt,
+    addedAt: normalizedItem.addedAt,
+    publishedAt: normalizedItem.publishedAt,
     updatedAt: normalizedItem.updatedAt,
     url: normalizedItem.url,
     caption: normalizedItem.caption,

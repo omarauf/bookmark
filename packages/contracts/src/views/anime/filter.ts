@@ -5,5 +5,5 @@ export const AnimeFilterSchema = z.object({
   genre: z.string().optional().catch(undefined),
   year: z.number().int().optional().catch(undefined),
   minRating: z.number().min(0).max(10).optional().catch(undefined),
-  sortBy: z.enum(["rating", "year", "createdAt"]).optional().catch("createdAt"),
+  sortBy: z.enum(["rating", "year", "addedAt"]).optional().catch("addedAt"),
 });

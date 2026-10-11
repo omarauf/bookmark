@@ -29,6 +29,8 @@ export function Filter({ className }: { className?: string }) {
   const form = useAppForm({
     defaultValues: {
       ...searchData.data,
+      sortBy: searchData.data.sortBy ?? "addedAt",
+      sortOrder: searchData.data.sortOrder ?? "desc",
       rangeData: {
         from: searchData.data.from,
         to: searchData.data.to,
@@ -51,6 +53,8 @@ export function Filter({ className }: { className?: string }) {
   useEffect(() => {
     form.reset({
       ...searchData.data,
+      sortBy: searchData.data.sortBy ?? "addedAt",
+      sortOrder: searchData.data.sortOrder ?? "desc",
       rangeData: {
         from: searchData.data.from,
         to: searchData.data.to,
@@ -111,13 +115,29 @@ export function Filter({ className }: { className?: string }) {
           )}
         </form.AppField>
 
+        <form.AppField name="sortBy">
+          {(field) => (
+            <field.Select
+              placeholder="Sort by"
+              classNames={{ wrapper: "w-40 shrink-0" }}
+              options={[
+                { label: "Date added", value: "addedAt" },
+                { label: "Post date", value: "publishedAt" },
+                { label: "Your rating", value: "rate" },
+                { label: "Likes", value: "likes" },
+                { label: "Views", value: "views" },
+              ]}
+            />
+          )}
+        </form.AppField>
+
         <form.AppField name="sortOrder">
           {(field) => (
             <field.Tabs
               defaultValue="desc"
               options={[
-                { label: "Latest", value: "desc" },
-                { label: "Oldest", value: "asc" },
+                { label: "Descending", value: "desc" },
+                { label: "Ascending", value: "asc" },
               ]}
             />
           )}

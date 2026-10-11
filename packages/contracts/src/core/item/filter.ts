@@ -14,7 +14,7 @@ export const ItemFilterSchema = z.object({
   type: InstagramPostTypeEnum.optional().catch(undefined),
   from: dateOnly().optional().catch(undefined),
   to: dateOnly().optional().catch(undefined),
-  sortBy: z.enum(["createdAt", "rate"]).optional().catch(undefined),
+  sortBy: z.enum(["addedAt", "rate"]).optional().catch(undefined),
 });
 
 export type ItemFilter = z.infer<typeof ItemFilterSchema>;

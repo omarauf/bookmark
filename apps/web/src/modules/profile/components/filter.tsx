@@ -68,7 +68,7 @@ export function ProfileFilter() {
             placeholder="Sort By"
             classNames={{ wrapper: "w-36" }}
             options={[
-              { label: "Created", value: "createdAt" },
+              { label: "Added", value: "addedAt" },
               { label: "Username", value: "username" },
               { label: "Posts", value: "postCount" },
               { label: "Tags", value: "tagCount" },

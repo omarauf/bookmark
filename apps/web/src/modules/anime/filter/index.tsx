@@ -71,7 +71,7 @@ export function AnimeFilter() {
             placeholder="Sort By"
             classNames={{ wrapper: "w-36" }}
             options={[
-              { label: "Added", value: "createdAt" },
+              { label: "Added", value: "addedAt" },
               { label: "Rating", value: "rating" },
               { label: "Year", value: "year" },
             ]}

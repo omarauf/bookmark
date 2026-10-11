@@ -28,8 +28,8 @@ export const imdbRouter = {
       const orderBy = {
         rating: desc(sql`(${items.metadata}->>'rating')::float`),
         year: desc(sql`(${items.metadata}->>'year')::int`),
-        createdAt: desc(items.createdAt),
-      }[input.sortBy || "createdAt"];
+        addedAt: desc(items.addedAt),
+      }[input.sortBy || "addedAt"];
 
       const [data, [{ totalCount }]] = await Promise.all([
         // Data query (with Limit and Offset)

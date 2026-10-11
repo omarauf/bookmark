@@ -4,7 +4,7 @@ import { musicParser } from "./music";
 
 export function postParser(post: ItemList): CreateItem {
   const postId = post.id;
-  const createdAt = new Date(post.createTime * 1000);
+  const publishedAt = new Date(post.createTime * 1000);
   const caption = post.desc;
   const url = `https://tiktok.com/@${post.author.uniqueId}/video/${postId}`;
   const music = musicParser(post.music);
@@ -14,7 +14,7 @@ export function postParser(post: ItemList): CreateItem {
     platform: "tiktok",
     kind: "post",
     url,
-    createdAt,
+    publishedAt,
     caption,
     metadata: {
       platform: "tiktok",

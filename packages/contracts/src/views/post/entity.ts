@@ -10,13 +10,17 @@ import { ProfileSchema } from "../profile";
 
 const PostBaseSchema = ProfileSchema.omit({ postCount: true, tagCount: true });
 
-const BasePostSchema = ItemBaseViewSchema.extend({
+const PostItemSchema = ItemBaseViewSchema.extend({
+  publishedAt: z.date(),
+});
+
+const BasePostSchema = PostItemSchema.extend({
   media: NormalizedMediaSchema.array(),
   creator: PostBaseSchema,
   collections: CollectionSummarySchema.array(),
   tags: TagSchema.array(),
   taggedItems: PostBaseSchema.extend({ x: z.number(), y: z.number() }).array(),
-  quoteItem: ItemBaseViewSchema.extend({
+  quoteItem: PostItemSchema.extend({
     media: NormalizedMediaSchema.array(),
     creator: PostBaseSchema,
   }).optional(),

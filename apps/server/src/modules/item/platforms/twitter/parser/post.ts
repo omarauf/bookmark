@@ -21,13 +21,13 @@ export function postParser(tweet: TweetResultsResult | FluffyTweet | CunningResu
   const postId = tweet.rest_id;
   const username = getUsername(tweet.core.user_results);
   const url = `https://x.com/${username}/status/${postId}`;
-  const createdAt = new Date(tweet.legacy.created_at);
+  const publishedAt = new Date(tweet.legacy.created_at);
 
   return {
     item: {
       externalId: postId,
       url,
-      createdAt,
+      publishedAt,
       kind: "post",
       platform: "twitter",
       caption: tweet.legacy.full_text.replace(/https:\/\/t\.co\/\S+/g, ""),

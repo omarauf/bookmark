@@ -32,7 +32,7 @@ export const linkRouter = {
           isNull(items.deletedAt),
           eq(items.platform, "chrome"),
         ),
-        orderBy: [desc(items.createdAt), desc(items.id)],
+        orderBy: [desc(items.addedAt), desc(items.id)],
         with: {
           collections: {
             with: { collection: { columns: { id: true, label: true, color: true } } },
@@ -107,7 +107,7 @@ export const linkRouter = {
         filters: filter,
         page: input.page,
         perPage: input.perPage,
-        orderByColumn: items.createdAt,
+        orderByColumn: items.addedAt,
         orderDirection: "desc",
       });
     }),

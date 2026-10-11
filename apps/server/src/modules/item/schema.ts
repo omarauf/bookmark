@@ -3,14 +3,15 @@ import { KindValues, PlatformValues } from "@workspace/contracts/platform";
 import { boolean, integer, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { relations as drizzleRelations } from "drizzle-orm/relations";
 import type { InferSelectModel } from "drizzle-orm/table";
-import { baseTable } from "@/core/db/helper/entity";
+import { AuditedEntityModel, IdentifiedEntityModel } from "@/core/db/helper/entity";
 import { collectionItems } from "../collection/schema";
 import { media } from "../media/schema";
 import { relations } from "../relation/schema";
 import { itemTags } from "../tag/schema";
 
 export const items = pgTable("items", {
-  ...baseTable,
+  ...IdentifiedEntityModel,
+  updatedAt: AuditedEntityModel.updatedAt,
 
   platform: text({ enum: PlatformValues }).notNull(),
   kind: text({ enum: KindValues }).notNull(),
@@ -18,6 +19,8 @@ export const items = pgTable("items", {
   externalId: text().notNull(),
   url: text().notNull(),
   caption: text(),
+  addedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  publishedAt: timestamp({ withTimezone: true }),
 
   // user input
   favorite: boolean().default(false),

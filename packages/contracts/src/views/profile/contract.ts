@@ -12,10 +12,7 @@ export const ProfileSchemas = {
   list: {
     request: BasePaginationQuerySchema.extend({
       ...ProfileFilterSchema.shape,
-      sortBy: z
-        .enum(["createdAt", "username", "postCount", "tagCount"])
-        .optional()
-        .catch(undefined),
+      sortBy: z.enum(["addedAt", "username", "postCount", "tagCount"]).optional().catch(undefined),
     }),
     response: PaginationResultSchema(ProfileSchema),
   },

@@ -77,12 +77,12 @@ function getColumns(): ColumnDef<Profile>[] {
       enableSorting: false,
     },
     {
-      id: "createdAt",
-      accessorKey: "createdAt",
-      header: ({ column }) => <DataTableColumnHeader column={column} label="Created" />,
+      id: "addedAt",
+      accessorKey: "addedAt",
+      header: ({ column }) => <DataTableColumnHeader column={column} label="Added" />,
       cell: ({ row }) => (
         <span className="whitespace-nowrap text-muted-foreground text-sm">
-          {fDate(row.original.createdAt)}
+          {fDate(row.original.addedAt)}
         </span>
       ),
       enableSorting: false,

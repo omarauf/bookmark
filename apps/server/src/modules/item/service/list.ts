@@ -86,11 +86,11 @@
 //   }
 
 //   if (from) {
-//     whereClauses.push(gte(items.createdAt, parseDateWithFlexibleTZ(from)));
+//     whereClauses.push(gte(items.publishedAt, parseDateWithFlexibleTZ(from)));
 //   }
 
 //   if (to) {
-//     whereClauses.push(lte(items.createdAt, parseDateWithFlexibleTZ(to)));
+//     whereClauses.push(lte(items.publishedAt, parseDateWithFlexibleTZ(to)));
 //   }
 
 //   return and(...whereClauses);

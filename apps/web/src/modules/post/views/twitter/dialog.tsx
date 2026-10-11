@@ -56,7 +56,7 @@ export function TwitterDialogContent({ post }: Props) {
                 <p>{post.quoteItem.creator.name}</p>
                 {post.quoteItem.creator.verified && <icons.Verified />}
                 <p className="opacity-60">@{post.quoteItem.creator.username}</p>
-                <p> {fDateTime(post.quoteItem.createdAt, "MMM DD, YYYY")}</p>
+                <p> {fDateTime(post.quoteItem.publishedAt, "MMM DD, YYYY")}</p>
               </CardTitle>
             </CardHeader>
 
@@ -72,7 +72,7 @@ export function TwitterDialogContent({ post }: Props) {
         )}
 
         <p dir="ltr" className="flex items-center gap-1 text-xs opacity-60">
-          <span>{fDateTime(post.createdAt, "hh:mm A · MMM DD, YYYY")}</span>·
+          <span>{fDateTime(post.publishedAt, "hh:mm A · MMM DD, YYYY")}</span>·
           <span className="font-bold text-white">{fShortenNumber(post.views)}</span>
           <span className="opacity-60">views</span>
         </p>

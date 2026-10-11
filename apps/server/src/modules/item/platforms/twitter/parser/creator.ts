@@ -21,7 +21,7 @@ export function creatorParser(
   const externalId = creator.result.id;
   const username = getUsername(creator);
   const name = creator.result.core.name;
-  const createdAt = new Date(creator.result.core.created_at);
+  const publishedAt = new Date(creator.result.core.created_at);
   const url = `https://x.com/${username}`;
   const verified = creator.result.is_blue_verified;
   const location = creator.result.location.location || undefined;
@@ -37,7 +37,7 @@ export function creatorParser(
       kind: "profile",
       url,
       caption: undefined, // TODO: can we get the bio/description of the creator?
-      createdAt,
+      publishedAt,
       metadata: {
         platform: "twitter",
         kind: "profile",

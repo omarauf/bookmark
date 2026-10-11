@@ -37,7 +37,8 @@ export function mapItemToImdb(items: RawItem[]): ImdbItem[] {
     imdbArr.push({
       ...item.metadata,
       id: item.id,
-      createdAt: item.createdAt,
+      addedAt: item.addedAt,
+      publishedAt: item.publishedAt ?? undefined,
       updatedAt: item.updatedAt,
       url: item.url,
       caption: item.caption ?? undefined,

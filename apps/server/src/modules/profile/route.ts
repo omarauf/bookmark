@@ -22,11 +22,11 @@ export const profileRouter = {
       );
 
       const orderBy = {
-        createdAt: items.createdAt,
+        addedAt: items.addedAt,
         username: sql`(${items.metadata}->>'username')`,
         postCount: sql`post_count`,
         tagCount: sql`tag_count`,
-      }[input.sortBy || "createdAt"];
+      }[input.sortBy || "addedAt"];
 
       const [data, [{ totalCount }]] = await Promise.all([
         db.query.items.findMany({

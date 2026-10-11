@@ -36,11 +36,11 @@ export const youtubeRouter = {
       );
 
       const orderBy = {
-        createdAt: desc(items.createdAt),
+        addedAt: desc(items.addedAt),
         publishedAt: desc(sql`(${items.metadata}->>'publishedAt')::timestamptz`),
         views: desc(sql`(${items.metadata}->>'views')::bigint`),
         duration: asc(sql`(${items.metadata}->>'duration')::double precision`),
-      }[input.sortBy ?? "createdAt"];
+      }[input.sortBy ?? "addedAt"];
 
       const [data, [{ totalCount }]] = await Promise.all([
         db.query.items.findMany({

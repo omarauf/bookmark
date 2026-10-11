@@ -14,7 +14,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SyncButton } from "../components/sync";
 
 const sortOptions = [
-  { value: "createdAt", label: "Recently added" },
+  { value: "addedAt", label: "Recently added" },
   { value: "publishedAt", label: "Newest published" },
   { value: "views", label: "Most viewed" },
   { value: "duration", label: "Shortest first" },
@@ -63,9 +63,9 @@ export function YoutubeFilter() {
 
       <Select
         items={sortOptions}
-        value={search.sortBy ?? "createdAt"}
+        value={search.sortBy ?? "addedAt"}
         onValueChange={(value) => {
-          if (value) setFilter("sortBy", value === "createdAt" ? undefined : value);
+          if (value) setFilter("sortBy", value === "addedAt" ? undefined : value);
         }}
       >
         <SelectTrigger aria-label="Sort videos">

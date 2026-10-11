@@ -21,6 +21,7 @@ import { items } from "@/modules/item/schema";
 import { relations } from "@/modules/relation/schema";
 import { itemTags } from "@/modules/tag/schema";
 import { mapItemToPost } from "./mapper";
+import { getPostOrderBy } from "./sort";
 
 export async function listPosts(input: ListPost) {
   // Calculate offset based on current page
@@ -57,8 +58,7 @@ export async function listPosts(input: ListPost) {
       // },
       limit: input.perPage,
       offset: offset,
-      orderBy: (post, { asc, desc }) =>
-        input.sortOrder === "asc" ? asc(post.createdAt) : desc(post.createdAt),
+      orderBy: getPostOrderBy(input),
     }),
 
     // Count query
@@ -196,14 +196,14 @@ function buildItemFilter(filter: PostFilter) {
   }
 
   if (from) {
-    whereClauses.push(gte(items.createdAt, parseDateWithFlexibleTZ(from)));
+    whereClauses.push(gte(items.publishedAt, parseDateWithFlexibleTZ(from)));
   }
 
   if (to) {
     const toDate = parseDateWithFlexibleTZ(to);
     // Add 1 day to include the entire 'to' date
     toDate.setUTCDate(toDate.getUTCDate() + 1);
-    whereClauses.push(lte(items.createdAt, toDate));
+    whereClauses.push(lte(items.publishedAt, toDate));
   }
 
   return and(...whereClauses);

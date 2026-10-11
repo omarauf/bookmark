@@ -16,7 +16,6 @@ export function creatorParser(author: Author): CreateItem {
     kind: "profile",
     url,
     caption: undefined, // TODO: can we get the bio/description of the creator?
-    createdAt: undefined,
     metadata: {
       platform: "tiktok",
       kind: "profile",

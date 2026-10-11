@@ -17,7 +17,7 @@ export function postParser(post: Media): CreateItem {
     platform: "instagram",
     kind: "post",
     url,
-    createdAt: new Date(post.taken_at * 1000),
+    publishedAt: new Date(post.taken_at * 1000),
     caption: text,
     metadata: {
       platform: "instagram",

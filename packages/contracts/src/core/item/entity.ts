@@ -7,7 +7,7 @@ export const CreateItemSchema = z.object({
   url: z.url(),
   platform: PlatformEnum,
   kind: KindEnum,
-  createdAt: z.date().optional(),
+  publishedAt: z.date().optional(),
   caption: z.string().optional(),
   metadata: ItemMetadataSchema,
 });
@@ -22,7 +22,7 @@ export const ItemSchema = CreateItemSchema.extend({
   rate: z.number().min(0).max(10).optional(),
 
   deletedAt: z.date().optional(),
-  createdAt: z.date(),
+  addedAt: z.date(),
   updatedAt: z.date(),
 });
 

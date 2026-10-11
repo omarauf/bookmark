@@ -69,7 +69,7 @@ export function Filter({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="no-scrollbar -mb-1 flex flex-1 items-center gap-3 overflow-x-auto pb-1">
+      <div className="no-scrollbar flex flex-1 items-center gap-3">
         <DisplaySettingsMenu />
 
         <form.AppField name="username">

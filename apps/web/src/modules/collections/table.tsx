@@ -1,4 +1,4 @@
-import type { Collection } from "@workspace/contracts/collection";
+import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -8,15 +8,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { orpc } from "@/integrations/orpc";
 import { EmptyCollections } from "./components/empty";
 import { DeleteCollectionDialog } from "./dialogs/delete";
 import { UpdateCollectionDialog } from "./dialogs/update";
 
-type Props = {
-  collections: Collection[];
-};
+export function CollectionTable() {
+  const query = useQuery(orpc.collection.all.queryOptions());
 
-export function CollectionTable({ collections }: Props) {
+  if (query.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  const collections = query.data;
+
+  if (!collections) {
+    return <div>Error: No collections found.</div>;
+  }
+
   if (collections.length === 0) return <EmptyCollections />;
 
   return (

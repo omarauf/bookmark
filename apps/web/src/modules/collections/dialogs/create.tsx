@@ -71,8 +71,9 @@ export function CreateCollectionDialog({ parentId }: Props) {
     <Dialog open={open} onOpenChange={onOpenHandler}>
       <DialogTrigger
         render={
-          <Button variant="ghost" size="icon">
-            <Plus className="h-4 w-4" />
+          <Button>
+            <Plus />
+            Create Collection
           </Button>
         }
       />

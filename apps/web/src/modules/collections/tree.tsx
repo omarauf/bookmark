@@ -1,18 +1,30 @@
+import { useQuery } from "@tanstack/react-query";
 import type { CollectionTree } from "@workspace/contracts/collection";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { orpc } from "@/integrations/orpc";
 import { EmptyCollections } from "./components/empty";
 import { CreateCollectionDialog } from "./dialogs/create";
 import { DeleteCollectionDialog } from "./dialogs/delete";
 import { UpdateCollectionDialog } from "./dialogs/update";
+import { listToTree } from "./utils";
 
-type Props = {
-  nodes: CollectionTree[];
-};
+export function RenderCollectionTree() {
+  const query = useQuery(orpc.collection.all.queryOptions());
 
-export function RenderCollectionTree({ nodes }: Props) {
+  if (query.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  const collections = query.data;
+  const nodes = collections ? listToTree(collections) : [];
+
   if (nodes.length === 0) {
     return <EmptyCollections />;
   }

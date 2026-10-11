@@ -59,8 +59,8 @@ export function CreateTagDialog() {
     <Dialog open={open} onOpenChange={onOpenHandler}>
       <DialogTrigger
         render={
-          <Button size="sm">
-            <Plus className="h-4 w-4" />
+          <Button>
+            <Plus />
             Create Tag
           </Button>
         }

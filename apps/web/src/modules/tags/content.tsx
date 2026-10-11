@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { orpc } from "@/integrations/orpc";
 import { TagCard } from "./components/card";
 import { EmptyTags } from "./components/empty";
-import { PopularTags } from "./components/popular";
 import { TagSkeletons } from "./components/tag-skeleton";
 
 type Props = {
@@ -40,8 +39,6 @@ export function TagContent({ className }: Props) {
           <TagCard key={tag.id} tag={tag} maxCount={maxCount} />
         ))}
       </div>
-
-      <PopularTags search={search} filteredTags={filteredTags} className="mt-6" />
     </div>
   );
 }

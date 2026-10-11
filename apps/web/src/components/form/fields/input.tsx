@@ -78,7 +78,9 @@ export function InputField({
     >
       {comp}
       {Icon && (
-        <div className="pointer-events-none absolute inset-s-0 inset-y-0 flex items-center ps-3 text-muted-foreground/80 group-has-[select[disabled]]:opacity-50"></div>
+        <div className="pointer-events-none absolute inset-s-0 inset-y-0 flex items-center ps-3 text-muted-foreground/80 group-has-[select[disabled]]:opacity-50">
+          {<Icon className="h-4 w-4" />}
+        </div>
       )}
     </FormBase>
   );

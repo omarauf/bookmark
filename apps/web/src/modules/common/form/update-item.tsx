@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ItemSchemas, type UpdateItem } from "@workspace/contracts/item";
-import type { Youtube } from "@workspace/contracts/views/youtube";
+import { cn } from "cn";
 import { Heart } from "lucide-react";
 import { useId } from "react";
 import { toast } from "sonner";
@@ -12,26 +12,27 @@ import { orpc } from "@/integrations/orpc";
 import { getError } from "@/utils/error";
 
 type Props = {
-  youtube: Youtube;
+  item: UpdateItem;
+  className?: string;
   onClose: () => void;
+  onSuccess?: () => void | Promise<void>;
 };
 
-export function YoutubeUpdateForm({ youtube, onClose }: Props) {
+export function ItemUpdateForm({ item, className, onClose, onSuccess }: Props) {
   const formId = useId();
   const favoriteId = useId();
-  const queryClient = useQueryClient();
 
   const tagsQuery = useQuery(orpc.tag.options.queryOptions());
   const collectionsQuery = useQuery(orpc.collection.options.queryOptions());
   const updateMutation = useMutation(orpc.item.update.mutationOptions());
 
   const defaultValues: UpdateItem = {
-    id: youtube.id,
-    note: youtube.note ?? "",
-    rate: youtube.rate ?? 0,
-    favorite: youtube.favorite ?? false,
-    tagIds: youtube.tagIds ?? [],
-    collectionIds: youtube.collectionIds ?? [],
+    id: item.id,
+    note: item.note ?? "",
+    rate: item.rate ?? 0,
+    favorite: item.favorite ?? false,
+    tagIds: item.tagIds ?? [],
+    collectionIds: item.collectionIds ?? [],
   };
 
   const form = useAppForm({
@@ -41,7 +42,7 @@ export function YoutubeUpdateForm({ youtube, onClose }: Props) {
     onSubmit: async ({ value }) => {
       try {
         await updateMutation.mutateAsync(value);
-        queryClient.invalidateQueries({ queryKey: orpc.youtube.list.key() });
+        await onSuccess?.();
         toast.success("Item updated successfully");
         onClose();
       } catch (error) {
@@ -57,7 +58,11 @@ export function YoutubeUpdateForm({ youtube, onClose }: Props) {
   };
 
   return (
-    <form id={formId} onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col gap-4 p-5">
+    <form
+      id={formId}
+      onSubmit={onSubmit}
+      className={cn("flex min-h-0 flex-1 flex-col gap-4 p-5", className)}
+    >
       <div className="flex items-start justify-between gap-3">
         <form.AppField name="rate">
           {(field) => (

@@ -3,10 +3,10 @@ import { cn } from "cn";
 import { Columns3, LayoutPanelLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ItemUpdateForm } from "@/modules/common/form/update-item";
 import { YoutubeDetailsContent } from "../components/details-content";
 import { YoutubeMediaActions } from "../components/media-actions";
 import { YoutubeMediaPreview } from "../components/media-preview";
-import { YoutubeUpdateForm } from "../components/update-form";
 import { useLayoutStore } from "../hooks/use-layout";
 
 type Props = {
@@ -77,7 +77,7 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
               </ToggleGroup>
             </div>
 
-            <YoutubeUpdateForm youtube={youtube} onClose={() => onOpenChange(false)} />
+            <ItemUpdateForm item={youtube} onClose={() => onOpenChange(false)} />
           </div>
         </div>
       </DialogContent>

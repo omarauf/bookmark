@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ProfileSchemas } from "@workspace/contracts/views/profile";
+import { UserCircle } from "lucide-react";
 import z from "zod";
 import { Main } from "@/layout/main";
 import { ProfileFilter } from "@/modules/profile/components/filter";
@@ -19,8 +20,8 @@ function ProfilesPage() {
   const view = Route.useSearch({ select: (s) => s.view });
 
   return (
-    <Main breadcrumbs={[{ label: "Profiles" }]}>
-      <ProfileFilter />
+    <Main breadcrumbs={[{ label: "Profiles" }]} icon={UserCircle} className="p-0" layout="fixed">
+      <ProfileFilter className="border-border/50 border-b px-4 py-3" />
 
       {view === "table" ? <ProfileTable /> : <ProfileList />}
     </Main>

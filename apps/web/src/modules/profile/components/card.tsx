@@ -17,7 +17,7 @@ export function ProfileCard({ profile }: Props) {
 
   return (
     <Link to="/profiles/$id" params={{ id: profile.id }}>
-      <Card className="group relative flex h-full flex-col items-center gap-4 overflow-hidden border p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+      <Card className="group relative flex h-full flex-col items-center gap-4 overflow-hidden border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
         <div className="absolute top-3 right-3">
           <Badge variant="outline" className={cn("font-semibold text-[10px]", style.badge)}>
             {style.label}

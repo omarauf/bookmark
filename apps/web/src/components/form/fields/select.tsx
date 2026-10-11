@@ -76,7 +76,7 @@ export function SelectField<T extends string | number = string>({
         aria-invalid={isInvalid}
         id={id}
         onBlur={field.handleBlur}
-        className={cn(Icon && "relative ps-9", className, classNames?.select)}
+        className={cn(Icon && "relative", className, classNames?.select)}
         size={size}
       >
         {Icon && (
@@ -90,7 +90,10 @@ export function SelectField<T extends string | number = string>({
             Loading...
           </div>
         ) : (
-          <SelectValue placeholder={variant === "default" ? placeholder : ""} />
+          <SelectValue
+            placeholder={variant === "default" ? placeholder : ""}
+            className={cn(Icon && "ps-6")}
+          />
         )}
       </SelectTrigger>
       <SelectContent

@@ -1,6 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ProfileSchemas } from "@workspace/contracts/views/profile";
-import { Search, Star } from "lucide-react";
+import { Search } from "lucide-react";
 import { useEffect } from "react";
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,11 @@ import { cn } from "@/lib/utils";
 import { containsData } from "@/utils/object";
 import { ProfileViewToggle } from "./view-toggle";
 
-export function ProfileFilter() {
+type Props = {
+  className?: string;
+};
+
+export function ProfileFilter({ className }: Props) {
   const search = useSearch({ from: "/_authenticated/profiles/" });
   const navigate = useNavigate();
 
@@ -35,12 +39,23 @@ export function ProfileFilter() {
   const hasData = containsData(filterData.data);
 
   return (
-    <div className="flex items-center justify-between gap-3 border-b bg-background px-4 py-3">
+    <div
+      className={cn("flex items-center justify-between gap-3 border-b bg-background", className)}
+    >
+      <form.AppField name="username">
+        {(field) => (
+          <field.Input
+            placeholder="Search username..."
+            classNames={{ wrapper: "w-84" }}
+            icon={Search}
+          />
+        )}
+      </form.AppField>
+
       <form.AppField name="platform">
         {(field) => (
           <field.ToggleGroup
             variant="outline"
-            size="sm"
             options={[
               { label: "Instagram", value: "instagram" },
               { label: "Twitter", value: "twitter" },
@@ -50,23 +65,11 @@ export function ProfileFilter() {
         )}
       </form.AppField>
 
-      <form.AppField name="username">
-        {(field) => (
-          <field.Input
-            placeholder="Search username..."
-            classNames={{ wrapper: "w-64" }}
-            icon={Search}
-          />
-        )}
-      </form.AppField>
-
       <form.AppField name="sortBy">
         {(field) => (
           <field.Select
-            icon={Star}
-            size="sm"
             placeholder="Sort By"
-            classNames={{ wrapper: "w-36" }}
+            classNames={{ wrapper: "w-64" }}
             options={[
               { label: "Added", value: "addedAt" },
               { label: "Username", value: "username" },
@@ -79,10 +82,8 @@ export function ProfileFilter() {
 
       <form.AppField name="sortOrder">
         {(field) => (
-          <field.ToggleGroup
-            variant="outline"
+          <field.Tabs
             defaultValue="desc"
-            size="sm"
             options={[
               { label: "Latest", value: "desc" },
               { label: "Oldest", value: "asc" },

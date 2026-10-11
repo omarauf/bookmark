@@ -22,7 +22,7 @@ function Collections() {
     <Main icon={Folder} className="p-0" layout="fixed" breadcrumbs={[{ label: "Collections" }]}>
       <CollectionFilter className="border-border/50 border-b px-4 py-3" />
 
-      <ScrollArea className="min-h-0 px-4 py-4">
+      <ScrollArea className="min-h-0 p-4">
         {view === "tree" ? <RenderCollectionTree /> : <CollectionTable />}
       </ScrollArea>
     </Main>

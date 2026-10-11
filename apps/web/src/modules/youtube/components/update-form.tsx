@@ -57,62 +57,59 @@ export function YoutubeUpdateForm({ youtube, onClose }: Props) {
   };
 
   return (
-    <form id={formId} onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
-        <div className="flex items-start justify-between gap-3">
-          <form.AppField name="rate">
-            {(field) => (
-              <field.StarRating
-                classNames={{ wrapper: "w-fit" }}
-                disabled={updateMutation.isPending}
-                label="Rating"
-              />
-            )}
-          </form.AppField>
-
-          <form.AppField name="favorite">
-            {(field) => (
-              <Field className="w-fit">
-                <FieldLabel htmlFor={favoriteId}>Favorite</FieldLabel>
-                <Toggle
-                  id={favoriteId}
-                  type="button"
-                  variant="outline"
-                  pressed={field.state.value ?? false}
-                  onPressedChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  disabled={updateMutation.isPending}
-                  className="aspect-square h-8 w-8 motion-safe:active:scale-95"
-                >
-                  <Heart className={field.state.value ? "fill-current" : undefined} />
-                </Toggle>
-              </Field>
-            )}
-          </form.AppField>
-        </div>
-
-        <form.AppField name="note">
+    <form id={formId} onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col gap-4 p-5">
+      <div className="flex items-start justify-between gap-3">
+        <form.AppField name="rate">
           {(field) => (
-            <field.Textarea label="Notes" placeholder="Add notes..." className="text-xs" />
+            <field.StarRating
+              classNames={{ wrapper: "w-fit" }}
+              disabled={updateMutation.isPending}
+              label="Rating"
+            />
           )}
         </form.AppField>
 
-        <form.AppField name="tagIds">
-          {(field) => <field.ButtonGroup label="Tags" options={tagsQuery.data} className="h-50" />}
-        </form.AppField>
-
-        <form.AppField name="collectionIds">
+        <form.AppField name="favorite">
           {(field) => (
-            <field.TreeSelector
-              label="Collections"
-              options={collectionsQuery.data}
-              className="h-80"
-            />
+            <Field className="w-fit">
+              <FieldLabel htmlFor={favoriteId}>Favorite</FieldLabel>
+              <Toggle
+                id={favoriteId}
+                type="button"
+                variant="outline"
+                pressed={field.state.value ?? false}
+                onPressedChange={field.handleChange}
+                onBlur={field.handleBlur}
+                disabled={updateMutation.isPending}
+                className="aspect-square h-8 w-8 motion-safe:active:scale-95"
+              >
+                <Heart className={field.state.value ? "fill-current" : undefined} />
+              </Toggle>
+            </Field>
           )}
         </form.AppField>
       </div>
 
-      <div className="flex shrink-0 justify-end gap-2 border-border/50 border-t p-5">
+      <form.AppField name="note">
+        {(field) => <field.Textarea label="Notes" placeholder="Add notes..." className="text-xs" />}
+      </form.AppField>
+
+      <form.AppField name="tagIds">
+        {(field) => <field.ButtonGroup label="Tags" options={tagsQuery.data} className="h-50" />}
+      </form.AppField>
+
+      <form.AppField name="collectionIds">
+        {(field) => (
+          <field.TreeSelector
+            label="Collections"
+            options={collectionsQuery.data}
+            className="h-80"
+            classNames={{ wrapper: "h-full" }}
+          />
+        )}
+      </form.AppField>
+
+      <div className="flex shrink-0 justify-end gap-2 border-border/50 border-t pt-3">
         <Button
           variant="outline"
           onClick={onClose}

@@ -7,6 +7,7 @@ import { useFieldContext } from "../context";
 
 type Props = FormControlProps & {
   disabled?: boolean;
+  defaultOpenLevel?: number;
   className?: string;
   classNames?: {
     viewport?: string;
@@ -14,7 +15,14 @@ type Props = FormControlProps & {
   options: { label: string; value: string; parentId: string | null; color?: string }[] | undefined;
 };
 
-export function TreeSelectorField({ disabled, options, className, classNames, ...props }: Props) {
+export function TreeSelectorField({
+  disabled,
+  defaultOpenLevel,
+  options,
+  className,
+  classNames,
+  ...props
+}: Props) {
   const id = useId();
   const field = useFieldContext<string[] | undefined>();
 
@@ -48,6 +56,7 @@ export function TreeSelectorField({ disabled, options, className, classNames, ..
           value={field.state.value || []}
           onValueChange={field.handleChange}
           disabled={disabled}
+          defaultOpenLevel={defaultOpenLevel}
           className={cn(className, classNames?.viewport)}
         />
       )}

@@ -42,6 +42,11 @@ type TreeViewProps<T extends TreeNodeData> = {
   onValueChange: (value: string[], node?: T) => void;
   disabled?: boolean;
 
+  /** Initial expansion depth: 0 opens roots, 1 also opens their children.
+   * Omit or use -1 to expand only paths to selected nodes.
+   */
+  defaultOpenLevel?: number;
+
   /**
    * Optional className for the root container.
    */
@@ -81,6 +86,7 @@ export function TreeSelector<T extends TreeNodeData>({
   icon,
   iconRender,
   disabled = false,
+  defaultOpenLevel,
 }: TreeViewProps<T>) {
   const nodes = useMemo(() => (Array.isArray(data) ? data : [data]), [data]);
   const [search, setSearch] = useState("");
@@ -90,7 +96,11 @@ export function TreeSelector<T extends TreeNodeData>({
   const [searchOpenNodes, setSearchOpenNodes] = useState<Set<string>>(new Set());
   const paths = useMemo(() => collectPathNodesForTargets(nodes, value), [nodes, value]);
   const previousPaths = useRef(paths);
-  const [openNodes, setOpenNodes] = useState<Set<string>>(paths);
+  const [openNodes, setOpenNodes] = useState<Set<string>>(() => {
+    const initial = collectBranchIds(nodes, defaultOpenLevel ?? -1);
+    for (const node of paths) initial.add(node);
+    return initial;
+  });
   const activeOpenNodes = query ? searchOpenNodes : openNodes;
   const setActiveOpenNodes = query ? setSearchOpenNodes : setOpenNodes;
 
@@ -465,17 +475,21 @@ function filterNodes<T extends TreeNodeData>(nodes: T[], query: string): T[] {
   return result;
 }
 
-function collectBranchIds<T extends TreeNodeData>(nodes: T[]): Set<string> {
+function collectBranchIds<T extends TreeNodeData>(
+  nodes: T[],
+  maxLevel = Number.POSITIVE_INFINITY,
+): Set<string> {
   const result = new Set<string>();
-  const visit = (current: T[]) => {
+  const visit = (current: T[], level: number) => {
+    if (level > maxLevel) return;
     for (const node of current) {
       if (node.children?.length) {
         result.add(node.value);
-        visit(node.children);
+        visit(node.children, level + 1);
       }
     }
   };
-  visit(nodes);
+  visit(nodes, 0);
   return result;
 }
 

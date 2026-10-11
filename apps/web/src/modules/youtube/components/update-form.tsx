@@ -104,7 +104,10 @@ export function YoutubeUpdateForm({ youtube, onClose }: Props) {
             label="Collections"
             options={collectionsQuery.data}
             className="min-h-0 flex-1"
-            classNames={{ wrapper: "h-auto min-h-0 [&>[data-slot=field-content]]:flex-none" }}
+            classNames={{
+              wrapper:
+                "h-auto min-h-0 flex-1 overflow-hidden [&>[data-slot=field-content]]:flex-none",
+            }}
           />
         )}
       </form.AppField>

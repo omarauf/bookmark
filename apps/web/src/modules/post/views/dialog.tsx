@@ -19,12 +19,8 @@ export function PostDialog({ post, open, onOpenChange }: Props) {
       <DialogContent
         className={cn(
           "flex flex-col gap-0 overflow-hidden rounded-none bg-black p-0 text-white",
-          platform === "instagram" && "sm:max-w-7xl",
+          (platform === "instagram" || platform === "tiktok") && "sm:max-w-7xl",
           platform === "twitter" && "sm:max-w-xl",
-          platform === "tiktok" && "sm:max-w-104",
-          platform === "tiktok" &&
-            post.media.length > 0 &&
-            "max-w-[min(26rem,calc(100dvw-2rem),max(16rem,calc((100dvh-8rem)*9/16)))] sm:max-w-[min(26rem,max(16rem,calc((100dvh-8rem)*9/16)))]",
         )}
         initialFocus={false}
         showCloseButton={false}

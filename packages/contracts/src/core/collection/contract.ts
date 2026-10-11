@@ -4,6 +4,7 @@ import { CollectionSchema } from "./entity";
 
 export const CollectionSchemas = {
   all: {
+    request: z.object({ search: z.string().optional() }).optional(),
     response: CollectionSchema.array(),
   },
 

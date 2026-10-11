@@ -1,5 +1,6 @@
 import { CollectionSchemas } from "@workspace/contracts/collection";
-import { and, arrayContained, eq, getTableColumns, lte, ne, or, sql } from "drizzle-orm";
+import { and, arrayContained, eq, exists, getTableColumns, lte, ne, or, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { db } from "@/core/db";
 import { protectedProcedure } from "@/lib/orpc";
 import { collections } from "./schema";
@@ -7,15 +8,38 @@ import { isDescendantPath, normalizePathSafe } from "./service";
 import { getSlugPath } from "./utils";
 
 export const collectionRouter = {
-  all: protectedProcedure.output(CollectionSchemas.all.response).handler(async () => {
-    return await db
-      .select({
-        ...getTableColumns(collections),
-        value: collections.path,
-      })
-      .from(collections)
-      .orderBy(collections.path, collections.slug);
-  }),
+  all: protectedProcedure
+    .input(CollectionSchemas.all.request)
+    .output(CollectionSchemas.all.response)
+    .handler(async ({ input }) => {
+      const { search } = input || {};
+      const term = search?.toLowerCase().replace(/[\s_-]+/g, "");
+      const matches = alias(collections, "matching_collection");
+
+      // Match labels or slugs, then include every descendant using ltree, regardless of its label.
+      const matchingSubtree = term
+        ? exists(
+            db
+              .select({ path: matches.path })
+              .from(matches)
+              .where(
+                and(
+                  arrayContained(collections.path, matches.path),
+                  or(
+                    sql`strpos(lower(regexp_replace(${matches.label}, '[[:space:]_-]+', '', 'g')), ${term}) > 0`,
+                    sql`strpos(lower(regexp_replace(${matches.slug}, '[[:space:]_-]+', '', 'g')), ${term}) > 0`,
+                  ),
+                ),
+              ),
+          )
+        : undefined;
+
+      return await db
+        .select({ ...getTableColumns(collections), value: collections.path })
+        .from(collections)
+        .where(matchingSubtree)
+        .orderBy(collections.path, collections.slug);
+    }),
 
   options: protectedProcedure.output(CollectionSchemas.options.response).handler(async () => {
     const rows = await db

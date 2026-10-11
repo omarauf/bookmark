@@ -13,10 +13,6 @@ export const Route = createFileRoute("/_authenticated/collections/")({
     view: z.enum(["tree", "table"]).optional().default("tree"),
     search: z.coerce.string().optional(),
   }),
-  loader: async ({ context: { orpc, queryClient } }) => {
-    await queryClient.ensureQueryData(orpc.collection.all.queryOptions());
-    return;
-  },
 });
 
 function Collections() {

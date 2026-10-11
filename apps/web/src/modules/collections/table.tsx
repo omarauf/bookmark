@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -14,7 +15,8 @@ import { DeleteCollectionDialog } from "./dialogs/delete";
 import { UpdateCollectionDialog } from "./dialogs/update";
 
 export function CollectionTable() {
-  const query = useQuery(orpc.collection.all.queryOptions());
+  const { search } = useSearch({ from: "/_authenticated/collections/" });
+  const query = useQuery(orpc.collection.all.queryOptions({ input: { search } }));
 
   if (query.isLoading) {
     return <div>Loading...</div>;

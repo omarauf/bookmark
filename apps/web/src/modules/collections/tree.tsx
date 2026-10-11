@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
 import type { CollectionTree } from "@workspace/contracts/collection";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
@@ -12,7 +13,8 @@ import { UpdateCollectionDialog } from "./dialogs/update";
 import { listToTree } from "./utils";
 
 export function RenderCollectionTree() {
-  const query = useQuery(orpc.collection.all.queryOptions());
+  const { search } = useSearch({ from: "/_authenticated/collections/" });
+  const query = useQuery(orpc.collection.all.queryOptions({ input: { search } }));
 
   if (query.isLoading) {
     return <div>Loading...</div>;

@@ -18,7 +18,7 @@ export function CollectionFilter({ className }: Props) {
     listeners: {
       onChangeDebounceMs: 500,
       onChange({ formApi }) {
-        navigate({ search: { search: formApi.state.values.search || undefined } });
+        navigate({ search: formApi.state.values });
       },
     },
   });
@@ -28,7 +28,7 @@ export function CollectionFilter({ className }: Props) {
       <form.AppField name="search">
         {(field) => (
           <field.Input
-            placeholder="Search tags..."
+            placeholder="Search collections..."
             icon={SearchIcon}
             classNames={{ wrapper: "w-96" }}
           />

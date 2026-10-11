@@ -17,7 +17,7 @@ import { useFieldContext } from "../context";
 
 type Props<T extends string | number> = FormControlProps & {
   placeholder?: string;
-  options: { value: T; label: string }[] | undefined;
+  options: { value: T; label: string; color?: string }[] | undefined;
   className?: string;
   classNames?: {
     select?: string;
@@ -74,7 +74,7 @@ export function MultiSelectField<T extends string | number = string>({
         )}
       </MultiSelectTrigger>
       <MultiSelectContent
-        className={cn("h-fit max-h-96", classNames?.content)}
+        scrollClassName={classNames?.content}
         // search={{ emptyMessage: t.notFound, placeholder: t.search }}
         search={false}
       >
@@ -83,6 +83,12 @@ export function MultiSelectField<T extends string | number = string>({
             <MultiSelectGroup className="group">
               {options.map((option) => (
                 <MultiSelectItem key={option.value} value={option.value as string}>
+                  {option.color && (
+                    <div
+                      className="h-2 w-2 rounded-full"
+                      style={{ backgroundColor: option.color }}
+                    />
+                  )}
                   {option.label}
                 </MultiSelectItem>
               ))}

@@ -11,7 +11,7 @@ import { containsData } from "@/utils/object";
 import { DisplaySettingsMenu } from "./display-settings";
 
 export function Filter({ className }: { className?: string }) {
-  const collectionsQuery = useQuery(orpc.collection.all.queryOptions());
+  const tagsQuery = useQuery(orpc.tag.options.queryOptions());
 
   const search = useSearch({ strict: false });
 
@@ -99,12 +99,13 @@ export function Filter({ className }: { className?: string }) {
           )}
         </form.AppField>
 
-        <form.AppField name="collectionPaths">
+        <form.AppField name="tagIds">
           {(field) => (
             <field.MultiSelect
-              placeholder="Collections"
+              placeholder="Tags"
               className="w-64 bg-background/50"
-              options={collectionsQuery.data?.map((t) => ({ label: t.label, value: t.path }))}
+              options={tagsQuery.data}
+              classNames={{ content: "h-auto min-h-0 max-h-164" }}
             />
           )}
         </form.AppField>

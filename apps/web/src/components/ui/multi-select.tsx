@@ -258,10 +258,12 @@ export function MultiSelectValue({
 export function MultiSelectContent({
   search = true,
   children,
+  scrollClassName,
   ...props
 }: {
   search?: boolean | { placeholder?: string; emptyMessage?: string };
   children: ReactNode;
+  scrollClassName?: string;
 } & Omit<ComponentPropsWithoutRef<typeof Command>, "children">) {
   const canSearch = typeof search === "object" ? true : search;
 
@@ -281,7 +283,10 @@ export function MultiSelectContent({
           ) : (
             <button autoFocus className="sr-only" />
           )}
-          <ScrollArea className="h-60 has-data-[slot=command-empty]:h-fit">
+          <ScrollArea
+            className={cn("h-60 has-data-[slot=command-empty]:h-fit", scrollClassName)}
+            viewportProps={{ className: scrollClassName }}
+          >
             <CommandList className="max-h-full">
               {canSearch && (
                 <CommandEmpty>

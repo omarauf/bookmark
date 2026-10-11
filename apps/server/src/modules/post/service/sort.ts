@@ -10,7 +10,7 @@ export function getPostOrderBy(input: Pick<ListPost, "sortBy" | "sortOrder">) {
     rate: items.rate,
     likes: sql`(${items.metadata}->>'likes')::numeric`,
     views: sql`(CASE ${items.platform}
-      WHEN 'instagram' THEN COALESCE(${items.metadata}->>'view', ${items.metadata}->>'play')
+      WHEN 'instagram' THEN COALESCE(${items.metadata}->>'views', ${items.metadata}->>'plays')
       WHEN 'tiktok' THEN ${items.metadata}->>'plays'
       WHEN 'twitter' THEN ${items.metadata}->>'views'
     END)::numeric`,

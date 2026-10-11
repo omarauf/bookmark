@@ -59,8 +59,9 @@ export function InstagramDialogContent({ post }: { post: Post }) {
           <PostStatistics
             statistics={[
               { label: "Likes", value: post.likes },
-              { label: "Views", value: post.view },
-              { label: "Plays", value: post.play },
+              { label: "Comments", value: post.comments },
+              { label: "Views", value: post.views },
+              { label: "Plays", value: post.plays },
             ]}
           />
           <Separator />

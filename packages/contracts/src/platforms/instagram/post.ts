@@ -11,6 +11,7 @@ export const InstagramMetadataPostSchema = z.object({
   location: InstagramLocationSchema.optional(),
   music: InstagramMusicSchema.optional(),
   likes: z.number(),
-  play: z.number().optional(),
-  view: z.number().optional(),
+  comments: z.number().optional(),
+  plays: z.number().optional(),
+  views: z.number().optional(),
 });

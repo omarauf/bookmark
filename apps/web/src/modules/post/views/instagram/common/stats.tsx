@@ -1,4 +1,4 @@
-import { Eye, Heart, Play } from "lucide-react";
+import { Eye, Heart, MessageCircle, Play } from "lucide-react";
 import { fShortenNumber } from "@/utils/format-number";
 import { usePostContext } from "./context";
 
@@ -11,8 +11,9 @@ export function Statistics() {
     <div className="flex justify-between">
       <IconNumber icon={Heart} number={post.likes} />
 
-      {post.play && <IconNumber icon={Play} number={post.play} />}
-      {post.view && <IconNumber icon={Eye} number={post.view} />}
+      {post.comments !== undefined && <IconNumber icon={MessageCircle} number={post.comments} />}
+      {post.plays !== undefined && <IconNumber icon={Play} number={post.plays} />}
+      {post.views !== undefined && <IconNumber icon={Eye} number={post.views} />}
     </div>
   );
 }

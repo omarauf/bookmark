@@ -20,6 +20,7 @@ type Props = {
   hideThemeSwitch?: boolean;
   hideConfigDrawer?: boolean;
   hideSidebarTrigger?: boolean;
+  hideBreadcrumbs?: boolean;
   breadcrumbs?: XBreadcrumbProps["breadcrumbs"];
   action?: React.ReactNode;
   className?: string;
@@ -38,6 +39,7 @@ export function Main({
   hideThemeSwitch,
   hideConfigDrawer,
   hideSidebarTrigger,
+  hideBreadcrumbs,
   breadcrumbs,
   action,
   headerClassName,
@@ -91,7 +93,7 @@ export function Main({
               </>
             )}
             {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
-            <XBreadcrumb breadcrumbs={breadcrumbs} />
+            {!hideBreadcrumbs && <XBreadcrumb breadcrumbs={breadcrumbs} />}
             {action}
 
             {/* <TopNav links={topNav} /> */}

@@ -1,7 +1,8 @@
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
 import { ChevronRight } from "lucide-react";
 import type { ElementType, MouseEvent, ReactNode } from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 // ================================================================
@@ -46,6 +47,11 @@ type TreeViewProps<T extends TreeNodeData> = {
    * Optional className for the root container.
    */
   className?: string;
+
+  /** Initial expansion depth: 0 opens roots, 1 also opens their children.
+   * Omit to expand only selected paths, or use -1 to expand everything.
+   */
+  defaultOpenLevel?: number;
 
   /**
    * Controls whether tree auto-collapses to only the selected path.
@@ -94,12 +100,26 @@ function findPath<T extends TreeNodeData>(nodes: T[], target: string): string[] 
   return [];
 }
 
+function collectOpenNodes<T extends TreeNodeData>(nodes: T[], maxLevel: number): Set<string> {
+  const result = new Set<string>();
+  const visit = (current: T[], level: number) => {
+    if (maxLevel !== -1 && level > maxLevel) return;
+    for (const node of current) {
+      if (node.children?.length) {
+        result.add(node.value);
+        visit(node.children, level + 1);
+      }
+    }
+  };
+  visit(nodes, 0);
+  return result;
+}
+
 type TreeNodeProps<T extends TreeNodeData> = {
   node: T;
   value: string[];
   onPathChange: (value: string[], node: T) => void;
   trace: string[];
-  autoCollapse?: boolean;
   openNodes?: Set<string>;
   expandOn?: "item" | "icon";
   onToggle?: (nodeValue: string) => void;
@@ -114,6 +134,7 @@ type TreeNodeProps<T extends TreeNodeData> = {
 export function TreeView<T extends TreeNodeData>({
   data,
   className,
+  defaultOpenLevel,
   value,
   onPathChange,
   autoCollapse = true,
@@ -122,24 +143,45 @@ export function TreeView<T extends TreeNodeData>({
   icon,
   iconRender,
 }: TreeViewProps<T>) {
-  const nodes = Array.isArray(data) ? data : [data];
+  const nodes = useMemo(() => (Array.isArray(data) ? data : [data]), [data]);
   const path = useMemo(
     () => (typeof value === "string" ? findPath(nodes, value) : value),
     [value, nodes],
   );
-  const [openNodes, setOpenNodes] = useState<Set<string>>(new Set(path));
+  const defaultOpenNodes = useMemo(
+    () =>
+      defaultOpenLevel === undefined
+        ? new Set<string>()
+        : collectOpenNodes(nodes, defaultOpenLevel),
+    [nodes, defaultOpenLevel],
+  );
+  const previousPath = useRef(path);
+  const previousDefaults = useRef(defaultOpenNodes);
+  const [openNodes, setOpenNodes] = useState<Set<string>>(
+    () => new Set([...defaultOpenNodes, ...path]),
+  );
 
   useEffect(() => {
-    if (autoCollapse) {
-      setOpenNodes(new Set(path));
-    } else if (syncOpenWithValue) {
-      setOpenNodes((prev) => {
-        const next = new Set(prev);
+    const pathChanged =
+      path.length !== previousPath.current.length ||
+      path.some((node, index) => node !== previousPath.current[index]);
+    const addedDefaults = [...defaultOpenNodes].filter(
+      (node) => !previousDefaults.current.has(node),
+    );
+    previousPath.current = path;
+    previousDefaults.current = defaultOpenNodes;
+    if (!pathChanged && addedDefaults.length === 0) return;
+
+    setOpenNodes((prev) => {
+      const next = autoCollapse && pathChanged ? new Set(path) : new Set(prev);
+      if (pathChanged && !autoCollapse && syncOpenWithValue) {
         for (const node of path) next.add(node);
-        return next;
-      });
-    }
-  }, [path, autoCollapse, syncOpenWithValue]);
+      }
+      // Apply defaults to newly loaded branches without reopening manually collapsed ones.
+      for (const node of addedDefaults) next.add(node);
+      return next;
+    });
+  }, [path, defaultOpenNodes, autoCollapse, syncOpenWithValue]);
 
   const handleNodeClick = useCallback(
     (newPath: string[], node: T) => {
@@ -188,7 +230,10 @@ export function TreeView<T extends TreeNodeData>({
   }, []);
 
   return (
-    <div className={cn("relative overflow-auto px-3 py-2", className)} role="tree">
+    <ScrollArea
+      className={cn("min-h-0 min-w-0 flex-1 overflow-hidden", className)}
+      viewportProps={{ role: "tree", className: "px-3 py-2" }}
+    >
       <ul className="space-y-1">
         {nodes.map((node) => (
           <TreeNode
@@ -198,7 +243,6 @@ export function TreeView<T extends TreeNodeData>({
             onPathChange={handleNodeClick}
             trace={[]}
             openNodes={openNodes}
-            autoCollapse={autoCollapse}
             expandOn={expandOn}
             onToggle={handleToggle}
             icon={icon}
@@ -238,7 +282,7 @@ export function TreeView<T extends TreeNodeData>({
           }
         `}
       </style>
-    </div>
+    </ScrollArea>
   );
 }
 
@@ -251,7 +295,6 @@ function TreeNode<T extends TreeNodeData>({
   onPathChange,
   value: path,
   trace,
-  autoCollapse = true,
   openNodes,
   expandOn = "icon",
   onToggle,
@@ -259,10 +302,7 @@ function TreeNode<T extends TreeNodeData>({
   iconRender,
 }: TreeNodeProps<T>) {
   const hasChildren = node.children && node.children.length > 0;
-  const isOpen =
-    expandOn === "icon" || !autoCollapse
-      ? [...trace, node.value].every((item) => openNodes?.has(item))
-      : [...trace, node.value].every((item, index) => item === path[index]);
+  const isOpen = [...trace, node.value].every((item) => openNodes?.has(item));
   const isSelected = path.at(-1) === node.value;
 
   const handleItemClick = () => {
@@ -351,7 +391,6 @@ function TreeNode<T extends TreeNodeData>({
                   onPathChange={onPathChange}
                   value={path}
                   trace={[...trace, node.value]}
-                  autoCollapse={autoCollapse}
                   openNodes={openNodes}
                   expandOn={expandOn}
                   onToggle={onToggle}

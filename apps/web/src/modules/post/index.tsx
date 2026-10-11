@@ -1,7 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Main } from "@/layout/main";
-import { CollectionBreadcrumb } from "@/modules/collections/components/breadcrumb";
 import { CollectionTree } from "@/modules/collections/components/tree";
 import { useLayoutStore } from "./controls/layout-store";
 import { PostFeed } from "./feed";
@@ -17,10 +16,11 @@ export function Posts() {
     <Main
       layout="fixed"
       island
-      className="h-full w-full gap-1 overflow-hidden bg-sidebar px-0"
-      // headerClassName="rounded-xl overflow-hidden"
-      action={<CollectionBreadcrumb />}
+      className="h-full w-full gap-1 overflow-hidden rounded-none bg-sidebar px-0"
+      breadcrumbs={[{ label: "Instagram" }]}
     >
+      <Filter className="rounded-xl bg-background" />
+
       <ResizablePanelGroup
         orientation="horizontal"
         className="flex h-full min-h-0 gap-1"
@@ -29,7 +29,7 @@ export function Posts() {
         onLayoutChanged={setLayout}
       >
         <ResizablePanel id="tree" className="shrink-0" collapsible minSize={200} maxSize="25%">
-          <CollectionTree className="h-full rounded-sm" />
+          <CollectionTree className="h-full rounded-xl" />
         </ResizablePanel>
 
         {/*<ResizableHandle />*/}
@@ -37,13 +37,9 @@ export function Posts() {
         <ResizablePanel
           id="main"
           // defaultSize="50%"
-          className="flex grow flex-col overflow-auto rounded-sm bg-background"
+          className="flex grow flex-col overflow-auto rounded-xl bg-background"
         >
-          {/* FILTER */}
-          <Filter className="sticky" />
-
-          {/* MAIN */}
-          <PostFeed />
+          <PostFeed className="p-4" />
         </ResizablePanel>
 
         {/*<ResizableHandle className="transition-colors hover:bg-primary" />*/}
@@ -53,61 +49,11 @@ export function Posts() {
           minSize={100}
           id="preview"
           // defaultSize="30%"
-          className="w-40 shrink-0 rounded-sm bg-background"
+          className="w-40 shrink-0 rounded-xl bg-background"
         >
           <PostPreview />
         </ResizablePanel>
       </ResizablePanelGroup>
     </Main>
   );
-
-  // return (
-  //   <div
-  //     className="h-full w-full gap-1 overflow-hidden bg-sidebar"
-  //     style={{ display: "grid", gridTemplateRows: "auto 1fr" }}
-  //   >
-  //     {/* TOP BAR */}
-  //     <Header className="rounded-sm bg-background">
-  //       <CollectionBreadcrumb />
-  //     </Header>
-
-  //     <ResizablePanelGroup
-  //       orientation="horizontal"
-  //       className="flex h-full min-h-0 gap-1"
-  //       defaultLayout={layout}
-  //       groupRef={ref}
-  //       onLayoutChanged={setLayout}
-  //     >
-  //       <ResizablePanel id="tree" className="shrink-0" collapsible minSize={200} maxSize="25%">
-  //         <CollectionTree className="h-full rounded-sm" />
-  //       </ResizablePanel>
-
-  //       {/*<ResizableHandle />*/}
-
-  //       <ResizablePanel
-  //         id="main"
-  //         // defaultSize="50%"
-  //         className="flex grow flex-col overflow-auto rounded-sm bg-background"
-  //       >
-  //         {/* FILTER */}
-  //         <Filter className="sticky" />
-
-  //         {/* MAIN */}
-  //         <PostFeed />
-  //       </ResizablePanel>
-
-  //       {/*<ResizableHandle className="transition-colors hover:bg-primary" />*/}
-
-  //       <ResizablePanel
-  //         collapsible
-  //         minSize={100}
-  //         id="preview"
-  //         // defaultSize="30%"
-  //         className="w-40 shrink-0 rounded-sm bg-background"
-  //       >
-  //         <PostPreview />
-  //       </ResizablePanel>
-  //     </ResizablePanelGroup>
-  //   </div>
-  // );
 }

@@ -23,9 +23,10 @@ import { CollectionPreview } from "../form/preview";
 
 type Props = {
   parentId?: string;
+  render?: React.ReactElement;
 };
 
-export function CreateCollectionDialog({ parentId }: Props) {
+export function CreateCollectionDialog({ parentId, render }: Props) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -71,10 +72,12 @@ export function CreateCollectionDialog({ parentId }: Props) {
     <Dialog open={open} onOpenChange={onOpenHandler}>
       <DialogTrigger
         render={
-          <Button>
-            <Plus />
-            Create Collection
-          </Button>
+          render || (
+            <Button>
+              <Plus />
+              Create Collection
+            </Button>
+          )
         }
       />
       <DialogContent className="overflow-hidden rounded-2xl border-none shadow-2xl sm:max-w-2xl">

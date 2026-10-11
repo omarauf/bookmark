@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { EmptyPosts } from "../components/empty";
 import { LoadingCards } from "../components/loading-cards";
@@ -7,7 +8,11 @@ import { usePostQuery } from "../hooks/use-post-query";
 import { PostGridFeed } from "./grid";
 import { PostListFeed } from "./list";
 
-export function PostFeed() {
+type Props = {
+  className?: string;
+};
+
+export function PostFeed({ className }: Props) {
   const postQuery = usePostQuery();
 
   const flatItems = postQuery.data?.pages.flatMap((page) => page.items);
@@ -22,7 +27,7 @@ export function PostFeed() {
       hasNextPage={postQuery.hasNextPage}
       isFetchingNextPage={postQuery.isFetchingNextPage}
       isLoading={postQuery.isLoading}
-      className="gap-4 px-4"
+      className={cn("gap-4", className)}
     >
       {layout === "grid" ? <PostGridFeed posts={flatItems} /> : <PostListFeed posts={flatItems} />}
 

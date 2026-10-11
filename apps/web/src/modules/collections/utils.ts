@@ -6,6 +6,31 @@ type Base = {
 
 type TreeNode<T> = T & { children: TreeNode<T>[] };
 
+/** Keep matching collections with their descendants and the ancestors needed to display them. */
+export function filterCollectionTree<T extends Base & { label: string }>(
+  nodes: TreeNode<T>[],
+  search: string,
+): TreeNode<T>[] {
+  const normalize = (value: string) => value.toLowerCase().replace(/[\s_-]+/g, "");
+  const query = normalize(search);
+  if (!query) return nodes;
+
+  const filter = (current: TreeNode<T>[]): TreeNode<T>[] => {
+    const result: TreeNode<T>[] = [];
+    for (const node of current) {
+      if (normalize(node.label).includes(query) || normalize(node.slug).includes(query)) {
+        result.push(node);
+        continue;
+      }
+      const children = filter(node.children);
+      if (children.length > 0) result.push({ ...node, children });
+    }
+    return result;
+  };
+
+  return filter(nodes);
+}
+
 export function listToTree<T extends Base>(list: T[]): TreeNode<T>[] {
   const byId = new Map<string, TreeNode<T>>();
 

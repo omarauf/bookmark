@@ -6,6 +6,7 @@ import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { orpc } from "@/integrations/orpc";
 import { cn } from "@/lib/utils";
+import { LayoutToggle } from "@/modules/collections/components/layout-toggle";
 import { containsData } from "@/utils/object";
 import { DisplaySettingsMenu } from "./display-settings";
 
@@ -124,6 +125,8 @@ export function Filter({ className }: { className?: string }) {
       </div>
 
       <div className="flex items-center gap-2 border-border/40 border-l pl-2">
+        <LayoutToggle />
+
         <Button
           variant={hasData ? "secondary" : "ghost"}
           size="sm"

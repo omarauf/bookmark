@@ -18,18 +18,21 @@ export function PostDialog({ post, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "pointer-events-none flex w-max flex-row sm:max-w-full",
-          platform === "instagram" && "h-[95%]",
-          platform === "tiktok" && "h-full max-h-[95%] bg-transparent p-0 sm:max-w-3xl",
-          platform === "twitter" && "w-150",
+          "flex flex-col gap-0 overflow-hidden rounded-none bg-black p-0 text-white",
+          platform === "instagram" && "sm:max-w-7xl",
+          platform === "twitter" && "sm:max-w-xl",
+          platform === "tiktok" && "sm:max-w-104",
+          platform === "tiktok" &&
+            post.media.length > 0 &&
+            "max-w-[min(26rem,calc(100dvw-2rem),max(16rem,calc((100dvh-8rem)*9/16)))] sm:max-w-[min(26rem,max(16rem,calc((100dvh-8rem)*9/16)))]",
         )}
         initialFocus={false}
         showCloseButton={false}
       >
-        <DialogTitle className="sr-only">{`Post by ${post.creator.name}`}</DialogTitle>
+        <DialogTitle className="sr-only">{`Post by ${post.creator.name || post.creator.username}`}</DialogTitle>
         <DialogDescription className="sr-only">Post content</DialogDescription>
 
-        <PostContent post={post} />
+        <PostContent key={post.id} post={post} />
       </DialogContent>
     </Dialog>
   );

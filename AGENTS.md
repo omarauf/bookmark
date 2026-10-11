@@ -56,3 +56,11 @@ Background jobs
 
 Storage
 - **File Manager**: generic S3 storage outside the graph. `Folder/FolderTree` + `File` (`s3Key, folderId, mimeType`); `BrowseItem` is either.
+
+## Accessibility
+
+This project is for personal use only. Do not add accessibility-specific attributes or features unless explicitly requested.
+
+- Avoid ARIA attributes such as `aria-label`, `aria-current`, `aria-describedby`, and `aria-live`.
+- Do not add accessibility-specific code solely to satisfy accessibility guidelines.
+- Prioritize simplicity, readability, and minimal code.

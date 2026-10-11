@@ -1,84 +1,76 @@
 import type { Post } from "@workspace/contracts/views/post";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { CreatorAvatar } from "@/modules/creator/avatar";
-import { fShortenNumber } from "@/utils/format-number";
 import { fDateTime } from "@/utils/format-time";
-import * as icons from "./common/icons";
-import { TwitterMediaCard } from "./common/media";
-import { Stats } from "./common/stats";
-import { TwitterText } from "./common/text";
-import { isVerified } from "./common/utils";
+import {
+  PostCaption,
+  PostDates,
+  PostDialogHeader,
+  PostDialogMedia,
+  PostStatistics,
+} from "../dialog-parts";
 
-type Props = {
-  post: Post;
-};
-
-export function TwitterDialogContent({ post }: Props) {
+export function TwitterDialogContent({ post }: { post: Post }) {
   if (post.platform !== "twitter") return null;
 
   return (
-    <div className="flex w-full flex-col gap-4 text-card-foreground shadow-sm">
-      <div className="relative">
-        <div className="flex items-center gap-2">
-          <CreatorAvatar creator={post.creator} className="size-9" />
-          <div>
-            <div className="flex items-center gap-1">
-              <p className="font-bold text-sm">{post.creator.name || "N/A"}</p>
-              {isVerified(post.creator) && <icons.Verified />}
-            </div>
-            <p className="font-medium text-xs opacity-60">@{post.creator.username}</p>
-          </div>
-        </div>
-
-        <div className="absolute top-0 right-0">
-          <a
-            href={post.url}
-            className="opacity-80 hover:opacity-100"
-            target="_blank"
-            rel="noopener"
-          >
-            <icons.Twitter />
-          </a>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <TwitterText text={post.caption} />
-
-        <TwitterMediaCard media={post.media} />
-
-        {post.quoteItem && (
-          <Card className="gap-2 pt-4 pb-0">
-            <CardHeader className="px-4">
-              <CardTitle className="flex items-center gap-1.5 text-xs">
+    <div className="flex min-h-0 flex-col">
+      <PostDialogHeader post={post} />
+      <Separator />
+      <ScrollArea className="min-h-0" viewportProps={{ className: "max-h-[calc(100dvh-6.5rem)]" }}>
+        <div className="flex flex-col gap-5 p-5">
+          <PostCaption text={post.caption} className="wrap-break-word text-xl/8" />
+          {post.quoteItem && (
+            <blockquote className="flex min-w-0 flex-col gap-3 border-white/35 border-l-2 pl-4">
+              <a
+                href={post.quoteItem.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-w-0 items-center gap-2 hover:underline"
+              >
                 <CreatorAvatar creator={post.quoteItem.creator} className="size-6" />
-
-                <p>{post.quoteItem.creator.name}</p>
-                {post.quoteItem.creator.verified && <icons.Verified />}
-                <p className="opacity-60">@{post.quoteItem.creator.username}</p>
-                <p> {fDateTime(post.quoteItem.publishedAt, "MMM DD, YYYY")}</p>
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent className="grow p-0">
-              <TwitterText text={post.quoteItem.caption} className="mb-4 px-4" />
-
-              <TwitterMediaCard
-                media={post.quoteItem.media}
-                className="aspect-video w-full rounded-t-none"
-              />
-            </CardContent>
-          </Card>
-        )}
-
-        <p dir="ltr" className="flex items-center gap-1 text-xs opacity-60">
-          <span>{fDateTime(post.publishedAt, "hh:mm A · MMM DD, YYYY")}</span>·
-          <span className="font-bold text-white">{fShortenNumber(post.views)}</span>
-          <span className="opacity-60">views</span>
-        </p>
-      </div>
-
-      <Stats post={post} className="w-full" />
+                <span className="min-w-0 truncate font-semibold text-xs">
+                  {post.quoteItem.creator.name || post.quoteItem.creator.username}
+                  <span className="ml-2 font-normal text-white/65">
+                    @{post.quoteItem.creator.username}
+                  </span>
+                </span>
+              </a>
+              <PostCaption text={post.quoteItem.caption} className="wrap-break-word text-sm/6" />
+              {post.quoteItem.media.length > 0 && (
+                <PostDialogMedia
+                  key={post.quoteItem.id}
+                  media={post.quoteItem.media}
+                  className="h-[min(18rem,35dvh)]"
+                />
+              )}
+              <time
+                dateTime={post.quoteItem.publishedAt.toISOString()}
+                className="text-white/65 text-xs"
+              >
+                {fDateTime(post.quoteItem.publishedAt)}
+              </time>
+            </blockquote>
+          )}
+          {post.media.length > 0 && (
+            <PostDialogMedia media={post.media} className="h-[min(24rem,45dvh)]" />
+          )}
+          <footer>
+            <PostDates post={post} />
+            <Separator />
+            <PostStatistics
+              statistics={[
+                { label: "Replies", value: post.replies },
+                { label: "Reposts", value: post.retweets },
+                { label: "Likes", value: post.likes },
+                { label: "Bookmarks", value: post.bookmarks },
+                { label: "Views", value: post.views },
+              ]}
+            />
+          </footer>
+        </div>
+      </ScrollArea>
     </div>
   );
 }

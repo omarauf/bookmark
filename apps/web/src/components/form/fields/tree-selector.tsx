@@ -1,6 +1,5 @@
 import { useId } from "react";
 import { TreeSelector } from "@/components/tree/selector";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { listToTree } from "@/modules/collections/utils";
 import { FormBase, type FormControlProps } from "../common/form-base";
@@ -32,39 +31,26 @@ export function TreeSelectorField({ disabled, options, className, classNames, ..
       }}
       {...props}
     >
-      <ScrollArea className={cn("rounded-lg border pr-2", className, classNames?.viewport)}>
-        <RenderOptions options={tree} value={field.state.value} handleChange={field.handleChange} />
-      </ScrollArea>
+      {tree === undefined ? (
+        <div
+          role="status"
+          className={cn(
+            "h-64 min-h-0 min-w-0 rounded-lg border p-3 text-muted-foreground text-sm",
+            className,
+            classNames?.viewport,
+          )}
+        >
+          Loading options...
+        </div>
+      ) : (
+        <TreeSelector
+          data={tree}
+          value={field.state.value || []}
+          onValueChange={field.handleChange}
+          disabled={disabled}
+          className={cn(className, classNames?.viewport)}
+        />
+      )}
     </FormBase>
-  );
-}
-
-function RenderOptions({
-  options,
-  value,
-  handleChange,
-}: {
-  options: { value: string; label: string; color?: string }[] | undefined;
-  value: string[] | undefined;
-  handleChange: (value: string[]) => void;
-}) {
-  if (options === undefined) {
-    return (
-      <div className="flex items-center justify-center rounded-lg border border-dashed p-3 text-muted-foreground text-sm">
-        Loading options...
-      </div>
-    );
-  }
-
-  if (options.length === 0) {
-    return (
-      <div className="flex items-center justify-center rounded-lg border border-dashed p-3 text-muted-foreground text-sm">
-        No options available.
-      </div>
-    );
-  }
-
-  return (
-    <TreeSelector data={options} value={value || []} onValueChange={handleChange} className="p-0" />
   );
 }

@@ -1,7 +1,10 @@
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Search } from "lucide-react";
 import type { ElementType, MouseEvent, ReactNode } from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 // ================================================================
@@ -34,12 +37,10 @@ type TreeViewProps<T extends TreeNodeData> = {
   value: string[];
 
   /**
-   * Callback fired when user selects a node.
-   * Returns:
-   * - value: full path of selected node
-   * - node: the actual node object
+   * Selected ids and the changed node. Clearing all selections has no changed node.
    */
-  onValueChange: (value: string[], node: T) => void;
+  onValueChange: (value: string[], node?: T) => void;
+  disabled?: boolean;
 
   /**
    * Optional className for the root container.
@@ -79,12 +80,24 @@ export function TreeSelector<T extends TreeNodeData>({
   expandOn = "icon",
   icon,
   iconRender,
+  disabled = false,
 }: TreeViewProps<T>) {
-  const nodes = Array.isArray(data) ? data : [data];
+  const nodes = useMemo(() => (Array.isArray(data) ? data : [data]), [data]);
+  const [search, setSearch] = useState("");
+  const query = search.trim().toLowerCase();
+  const visibleNodes = useMemo(() => filterNodes(nodes, query), [nodes, query]);
+  const branchIds = useMemo(() => collectBranchIds(visibleNodes), [visibleNodes]);
+  const [searchOpenNodes, setSearchOpenNodes] = useState<Set<string>>(new Set());
   const paths = useMemo(() => collectPathNodesForTargets(nodes, value), [nodes, value]);
+  const previousPaths = useRef(paths);
   const [openNodes, setOpenNodes] = useState<Set<string>>(paths);
+  const activeOpenNodes = query ? searchOpenNodes : openNodes;
+  const setActiveOpenNodes = query ? setSearchOpenNodes : setOpenNodes;
 
   useEffect(() => {
+    const previous = previousPaths.current;
+    previousPaths.current = paths;
+    if (previous.size === paths.size && [...paths].every((id) => previous.has(id))) return;
     setOpenNodes((prev) => {
       const next = new Set(prev);
       for (const node of paths) next.add(node);
@@ -94,6 +107,9 @@ export function TreeSelector<T extends TreeNodeData>({
 
   const handleNodeClick = useCallback(
     (_: string, node: T, path: string[]) => {
+      if (disabled) return;
+      // Search prunes children for display, but selection rules use the complete subtree.
+      const originalNode = findNode(nodes, node.value) ?? node;
       const newValue = new Set(value);
 
       const clicked = node.value;
@@ -124,57 +140,120 @@ export function TreeSelector<T extends TreeNodeData>({
         }
       };
 
-      removeDescendants(node);
+      removeDescendants(originalNode);
 
       // ===== OPEN STATE =====
       if (expandOn === "item") {
-        setOpenNodes((prev) => {
+        setActiveOpenNodes((prev) => {
           const next = new Set(prev);
           if (next.has(clicked)) next.delete(clicked);
           else next.add(clicked);
           return next;
         });
       } else {
-        setOpenNodes((prev) => {
+        setActiveOpenNodes((prev) => {
           const next = new Set(prev);
           next.add(clicked);
           return next;
         });
       }
 
-      onValueChange(Array.from(newValue), node);
+      onValueChange(Array.from(newValue), originalNode);
     },
-    [value, expandOn, onValueChange],
+    [value, expandOn, onValueChange, disabled, nodes, setActiveOpenNodes],
   );
 
-  const handleToggle = useCallback((nodeValue: string) => {
-    setOpenNodes((prev) => {
-      const next = new Set(prev);
-      if (next.has(nodeValue)) next.delete(nodeValue);
-      else next.add(nodeValue);
-      return next;
-    });
-  }, []);
+  const handleToggle = useCallback(
+    (nodeValue: string) => {
+      if (disabled) return;
+      setActiveOpenNodes((prev) => {
+        const next = new Set(prev);
+        if (next.has(nodeValue)) next.delete(nodeValue);
+        else next.add(nodeValue);
+        return next;
+      });
+    },
+    [disabled, setActiveOpenNodes],
+  );
 
   return (
-    <div className={cn("relative overflow-auto px-3 py-2", className)} role="tree">
-      <ul className="space-y-1">
-        {nodes.map((node) => (
-          <TreeNode
-            key={node.value}
-            node={node}
-            paths={paths}
-            value={value}
-            onNodeClick={handleNodeClick}
-            trace={[]}
-            openNodes={openNodes}
-            expandOn={expandOn}
-            onToggle={handleToggle}
-            icon={icon}
-            iconRender={iconRender}
+    <div
+      className={cn(
+        "flex h-64 min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border",
+        className,
+      )}
+    >
+      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-2">
+        <div className="relative min-w-32 flex-1">
+          <Search className="absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            aria-label="Search tree"
+            placeholder="Search..."
+            value={search}
+            disabled={disabled}
+            onChange={(event) => {
+              const nextSearch = event.target.value;
+              setSearch(nextSearch);
+              setSearchOpenNodes(
+                collectBranchIds(filterNodes(nodes, nextSearch.trim().toLowerCase())),
+              );
+            }}
+            className="h-7 pl-7 text-xs"
           />
-        ))}
-      </ul>
+        </div>
+        <Button
+          type="button"
+          size="xs"
+          variant="outline"
+          disabled={disabled || branchIds.size === 0}
+          onClick={() => setActiveOpenNodes(new Set(branchIds))}
+        >
+          Expand all
+        </Button>
+        <Button
+          type="button"
+          size="xs"
+          variant="outline"
+          disabled={disabled || activeOpenNodes.size === 0}
+          onClick={() => setActiveOpenNodes(new Set())}
+        >
+          Collapse all
+        </Button>
+        <Button
+          type="button"
+          size="xs"
+          variant="outline"
+          disabled={disabled || value.length === 0}
+          onClick={() => onValueChange([])}
+        >
+          Unselect all
+        </Button>
+      </div>
+      <ScrollArea className="min-h-0 flex-1">
+        {visibleNodes.length === 0 ? (
+          <p className="p-3 text-muted-foreground text-sm" role="status">
+            {query ? "No matching options." : "No options available."}
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-1 p-2" role="tree" aria-multiselectable="true">
+            {visibleNodes.map((node) => (
+              <TreeNode
+                key={node.value}
+                node={node}
+                value={value}
+                onNodeClick={handleNodeClick}
+                trace={[]}
+                openNodes={activeOpenNodes}
+                disabled={disabled}
+                expandOn={expandOn}
+                onToggle={handleToggle}
+                icon={icon}
+                iconRender={iconRender}
+              />
+            ))}
+          </ul>
+        )}
+      </ScrollArea>
 
       <style>
         {`
@@ -217,7 +296,7 @@ export function TreeSelector<T extends TreeNodeData>({
 
 type TreeNodeProps<T extends TreeNodeData> = {
   node: T;
-  paths: Set<string>;
+  disabled?: boolean;
   value: string[];
   onNodeClick: (value: string, node: T, path: string[]) => void;
   trace: string[];
@@ -231,7 +310,7 @@ type TreeNodeProps<T extends TreeNodeData> = {
 function TreeNode<T extends TreeNodeData>({
   node,
   onNodeClick,
-  paths,
+  disabled,
   value,
   trace,
   openNodes,
@@ -245,7 +324,7 @@ function TreeNode<T extends TreeNodeData>({
   const isSelected = value.includes(node.value);
 
   const handleItemClick = () => {
-    if (node.disabled) return;
+    if (disabled || node.disabled) return;
 
     const newPath = [...trace, node.value];
     onNodeClick(node.value, node, newPath);
@@ -265,7 +344,7 @@ function TreeNode<T extends TreeNodeData>({
             "group relative flex w-full flex-1 items-center gap-2 px-2 py-1.5 transition-all",
             "cursor-pointer rounded-md hover:text-accent-foreground",
             isSelected ? "bg-primary text-accent-foreground" : "hover:bg-secondary",
-            node.disabled && "pointer-events-none cursor-not-allowed opacity-50",
+            (disabled || node.disabled) && "pointer-events-none cursor-not-allowed opacity-50",
           )}
           onClick={handleItemClick}
         >
@@ -328,7 +407,7 @@ function TreeNode<T extends TreeNodeData>({
                   key={child.value}
                   node={child}
                   onNodeClick={onNodeClick}
-                  paths={paths}
+                  disabled={disabled}
                   value={value}
                   trace={[...trace, node.value]}
                   openNodes={openNodes}
@@ -371,6 +450,43 @@ function TreeActions({ children, isSelected }: { children: ReactNode; isSelected
 // ================================================================
 // UTILS
 // ================================================================
+
+function filterNodes<T extends TreeNodeData>(nodes: T[], query: string): T[] {
+  if (!query) return nodes;
+  const result: T[] = [];
+  for (const node of nodes) {
+    if (node.label.toLowerCase().includes(query)) {
+      result.push(node);
+    } else {
+      const children = filterNodes(node.children ?? [], query);
+      if (children.length) result.push({ ...node, children });
+    }
+  }
+  return result;
+}
+
+function collectBranchIds<T extends TreeNodeData>(nodes: T[]): Set<string> {
+  const result = new Set<string>();
+  const visit = (current: T[]) => {
+    for (const node of current) {
+      if (node.children?.length) {
+        result.add(node.value);
+        visit(node.children);
+      }
+    }
+  };
+  visit(nodes);
+  return result;
+}
+
+function findNode<T extends TreeNodeData>(nodes: T[], value: string): T | undefined {
+  for (const node of nodes) {
+    if (node.value === value) return node;
+    const match = findNode(node.children ?? [], value);
+    if (match) return match;
+  }
+  return undefined;
+}
 
 function collectPathNodesForTargets<T extends TreeNodeData>(
   nodes: T[],

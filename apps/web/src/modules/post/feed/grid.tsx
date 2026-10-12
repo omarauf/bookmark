@@ -4,7 +4,6 @@ import { CARD_MIN_WIDTH } from "../card/constant";
 import { useDisplaySettingsStore } from "../controls/display-setting-store";
 import { useLayoutStore } from "../controls/layout-store";
 import { usePreviewStore } from "../controls/preview-store";
-import { usePostNavigation } from "../controls/use-post-navigation";
 import { PostCard } from "../views/card";
 import { PostDialog } from "../views/dialog";
 
@@ -14,7 +13,6 @@ type Props = {
 
 export function PostGridFeed({ posts = [] }: Props) {
   const flatItems = posts;
-  usePostNavigation(flatItems);
 
   const cardSize = useDisplaySettingsStore((s) => s.cardSize);
   const cardMinWidth = CARD_MIN_WIDTH[cardSize];

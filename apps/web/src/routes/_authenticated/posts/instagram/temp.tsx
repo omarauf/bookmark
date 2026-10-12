@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { List, type RowComponentProps } from "react-window";
 
 export const Route = createFileRoute("/_authenticated/posts/instagram/temp")({
+  head: () => ({ meta: [{ title: "Virtual List Playground" }] }),
   component: RouteComponent,
 });
 

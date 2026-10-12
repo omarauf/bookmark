@@ -7,6 +7,7 @@ import { TagFilter } from "@/modules/tags/components/filter";
 import { TagContent } from "@/modules/tags/content";
 
 export const Route = createFileRoute("/_authenticated/tags/")({
+  head: () => ({ meta: [{ title: "Tags" }] }),
   component: Tags,
   validateSearch: z.object({
     search: z.string().optional(),

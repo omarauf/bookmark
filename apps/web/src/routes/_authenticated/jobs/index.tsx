@@ -9,6 +9,7 @@ import { JobTable } from "@/modules/jobs/components/job-table";
 import { JobFilter } from "@/modules/jobs/filter";
 
 export const Route = createFileRoute("/_authenticated/jobs/")({
+  head: () => ({ meta: [{ title: "Jobs" }] }),
   component: JobList,
   validateSearch: JobSchemas.list.request,
 });

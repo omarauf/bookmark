@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/profiles/$id")({
+  head: () => ({ meta: [{ title: "Profile Details" }] }),
   component: ProfileDetailPage,
 });
 

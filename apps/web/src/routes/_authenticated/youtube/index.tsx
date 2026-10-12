@@ -8,6 +8,7 @@ import { YoutubeList } from "@/modules/youtube/list";
 export const Route = createFileRoute("/_authenticated/youtube/")({
   component: YoutubePage,
   validateSearch: YoutubeSchemas.list.request,
+  head: () => ({ meta: [{ title: "Youtube" }] }),
 });
 
 function YoutubePage() {

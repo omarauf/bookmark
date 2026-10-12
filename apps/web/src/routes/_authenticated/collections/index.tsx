@@ -8,6 +8,7 @@ import { CollectionTable } from "@/modules/collections/table";
 import { RenderCollectionTree } from "@/modules/collections/tree";
 
 export const Route = createFileRoute("/_authenticated/collections/")({
+  head: () => ({ meta: [{ title: "Collections" }] }),
   component: Collections,
   validateSearch: z.object({
     view: z.enum(["tree", "table"]).optional().default("tree"),

@@ -10,6 +10,7 @@ import { JobRetryButton } from "@/modules/jobs/components/buttons/retry";
 import { JobCards } from "@/modules/jobs/components/job-cards";
 
 export const Route = createFileRoute("/_authenticated/jobs/$id")({
+  head: () => ({ meta: [{ title: "Job Details" }] }),
   component: JobDetailPage,
   loader: async ({ params, context: { orpc, queryClient } }) => {
     const id = params.id;

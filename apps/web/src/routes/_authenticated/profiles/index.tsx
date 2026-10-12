@@ -12,6 +12,7 @@ const searchSchema = ProfileSchemas.list.request.extend({
 });
 
 export const Route = createFileRoute("/_authenticated/profiles/")({
+  head: () => ({ meta: [{ title: "Profiles" }] }),
   component: ProfilesPage,
   validateSearch: searchSchema,
 });

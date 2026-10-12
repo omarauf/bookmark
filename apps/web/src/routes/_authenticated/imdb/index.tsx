@@ -7,6 +7,7 @@ import { ImdbFilter } from "@/modules/imdb/filter";
 import { ImdbList } from "@/modules/imdb/list";
 
 export const Route = createFileRoute("/_authenticated/imdb/")({
+  head: () => ({ meta: [{ title: "IMDB" }] }),
   component: ImdbPage,
   validateSearch: ImdbSchemas.list.request.extend({
     mode: z.enum(["view", "update"]).optional().catch(undefined),

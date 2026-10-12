@@ -2,5 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { NotFoundError } from "@/modules/errors/not-found-error";
 
 export const Route = createFileRoute("/(errors)/404")({
+  head: () => ({ meta: [{ title: "Page Not Found" }] }),
   component: NotFoundError,
 });

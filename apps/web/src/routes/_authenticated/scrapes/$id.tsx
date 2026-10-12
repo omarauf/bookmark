@@ -8,6 +8,7 @@ import { ScrapeContent } from "@/modules/scrapes/details/content";
 import { ScrapeDetails } from "@/modules/scrapes/details/details";
 
 export const Route = createFileRoute("/_authenticated/scrapes/$id")({
+  head: () => ({ meta: [{ title: "Scrape Details" }] }),
   component: ScrapeDetailPage,
   loader: async ({ params, context: { orpc, queryClient } }) => {
     await queryClient.ensureQueryData(orpc.scrape.get.queryOptions({ input: { id: params.id } }));

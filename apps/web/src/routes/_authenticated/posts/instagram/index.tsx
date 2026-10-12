@@ -4,6 +4,7 @@ import z from "zod";
 import { Posts } from "@/modules/post";
 
 export const Route = createFileRoute("/_authenticated/posts/instagram/")({
+  head: () => ({ meta: [{ title: "Instagram" }] }),
   component: Posts,
   validateSearch: PostSchemas.list.request.extend({
     platform: z.literal("instagram").optional().default("instagram"),

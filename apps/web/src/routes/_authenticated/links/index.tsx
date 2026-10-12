@@ -13,6 +13,7 @@ const searchSchema = z
   .catch({ view: "tree" });
 
 export const Route = createFileRoute("/_authenticated/links/")({
+  head: () => ({ meta: [{ title: "Links" }] }),
   component: LinksPage,
   validateSearch: searchSchema,
 });

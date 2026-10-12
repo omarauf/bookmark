@@ -12,6 +12,7 @@ import { UploadButton } from "@/modules/scrapes/upload";
 import type { DataTableRowAction } from "@/types/data-table";
 
 export const Route = createFileRoute("/_authenticated/scrapes/")({
+  head: () => ({ meta: [{ title: "Scrapes" }] }),
   component: ScrapeList,
   validateSearch: ScrapeSchemas.list.request,
   loaderDeps: ({ search }) => search,

@@ -4,6 +4,7 @@ import z from "zod";
 import { Posts } from "@/modules/post";
 
 export const Route = createFileRoute("/_authenticated/posts/tiktok")({
+  head: () => ({ meta: [{ title: "TikTok" }] }),
   component: Posts,
   validateSearch: PostSchemas.list.request.extend({
     platform: z.literal("tiktok").optional().default("tiktok"),

@@ -7,6 +7,7 @@ import { AnimeFilter } from "@/modules/anime/filter";
 import { AnimeList } from "@/modules/anime/list";
 
 export const Route = createFileRoute("/_authenticated/anime/")({
+  head: () => ({ meta: [{ title: "Anime" }] }),
   component: AnimePage,
   validateSearch: AnimeSchemas.list.request.extend({
     mode: z.enum(["view", "update"]).optional().catch(undefined),

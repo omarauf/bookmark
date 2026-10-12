@@ -6,6 +6,7 @@ import { StyleConfig } from "@/settings/style";
 import { ThemeConfig } from "@/settings/theme";
 
 export const Route = createFileRoute("/_authenticated/settings/")({
+  head: () => ({ meta: [{ title: "Settings" }] }),
   component: SettingsPage,
 });
 

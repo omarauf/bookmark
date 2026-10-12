@@ -14,6 +14,7 @@ import { useFileManagerDnd } from "@/modules/file-manager/hooks/use-file-manager
 import { useStore } from "@/modules/file-manager/store";
 
 export const Route = createFileRoute("/_authenticated/file-manager/")({
+  head: () => ({ meta: [{ title: "File Manager" }] }),
   validateSearch: z.object({
     folderId: z.string().optional(),
   }),

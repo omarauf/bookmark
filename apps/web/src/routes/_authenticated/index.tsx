@@ -7,6 +7,7 @@ import { orpc } from "@/integrations/orpc";
 import { Main } from "@/layout/main";
 
 export const Route = createFileRoute("/_authenticated/")({
+  head: () => ({ meta: [{ title: "Dashboard" }] }),
   component: Dashboard,
   loader: async ({ context: { orpc, queryClient } }) => {
     await queryClient.ensureQueryData(orpc.tag.list.queryOptions({ input: {} }));

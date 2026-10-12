@@ -26,6 +26,7 @@ import { options } from "./-components/options";
 import { defaultValues, formSchema } from "./-components/schema";
 
 export const Route = createFileRoute("/_authenticated/assets/form")({
+  head: () => ({ meta: [{ title: "Form Playground" }] }),
   component: RouteComponent,
 });
 

@@ -6,6 +6,7 @@ import { useAppForm } from "@/components/form";
 import { authClient } from "@/integrations/auth";
 
 export const Route = createFileRoute("/_auth/sign-in")({
+  head: () => ({ meta: [{ title: "Sign In" }] }),
   beforeLoad: async ({ context: { session } }) => {
     if (session) throw redirect({ to: "/" });
   },

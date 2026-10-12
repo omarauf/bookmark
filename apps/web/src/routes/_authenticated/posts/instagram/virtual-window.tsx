@@ -6,6 +6,7 @@ import { CollectionTree } from "@/modules/collections/components/tree";
 import { Filter } from "@/modules/post/filter";
 
 export const Route = createFileRoute("/_authenticated/posts/instagram/virtual-window")({
+  head: () => ({ meta: [{ title: "Instagram Virtual Window" }] }),
   component: Instagram,
   validateSearch: PostSchemas.list.request,
   loaderDeps: ({ search }) => search,

@@ -15,10 +15,13 @@ export function TwitterDialogContent({ post }: { post: Post }) {
   if (post.platform !== "twitter") return null;
 
   return (
-    <div className="flex min-h-0 flex-col">
+    <div className="flex min-h-0 flex-col lg:h-full">
       <PostDialogHeader post={post} />
       <Separator />
-      <ScrollArea className="min-h-0" viewportProps={{ className: "max-h-[calc(100dvh-6.5rem)]" }}>
+      <ScrollArea
+        className="min-h-0 lg:flex-1"
+        viewportProps={{ className: "max-h-[calc(90dvh-5rem)]" }}
+      >
         <div className="flex flex-col gap-5 p-5">
           <PostCaption text={post.caption} className="wrap-break-word text-xl/8" />
           {post.quoteItem && (

@@ -14,17 +14,17 @@ export function InstagramDialogContent({ post }: { post: Post }) {
   if (post.platform !== "instagram") return null;
 
   return (
-    <div className="flex min-h-0 flex-col md:flex-row">
+    <div className="flex min-h-0 flex-col lg:h-full lg:flex-row">
       {post.media.length > 0 && (
         <PostDialogMedia
           media={post.media}
-          className="h-[90vh] shrink-0 bg-background/90 md:w-[60%]"
+          className="h-[35dvh] shrink-0 bg-background/90 lg:h-full lg:w-[60%]"
         />
       )}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <PostDialogHeader post={post} />
         <Separator />
-        <ScrollArea className="min-h-0 flex-1">
+        <ScrollArea className="h-64 min-h-0 lg:h-auto lg:flex-1">
           <div className="flex flex-col gap-6 p-5">
             <PostCaption text={post.caption} className="wrap-break-word text-sm/7" />
             {(post.location || post.music) && (

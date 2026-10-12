@@ -14,7 +14,7 @@ import { getError } from "@/utils/error";
 type Props = {
   item: UpdateItem;
   className?: string;
-  onClose: () => void;
+  onClose?: () => void;
   onSuccess?: () => void | Promise<void>;
 };
 
@@ -44,7 +44,6 @@ export function ItemUpdateForm({ item, className, onClose, onSuccess }: Props) {
         await updateMutation.mutateAsync(value);
         await onSuccess?.();
         toast.success("Item updated successfully");
-        onClose();
       } catch (error) {
         const msg = getError(error, "Failed to update item");
         toast.error(msg);
@@ -55,6 +54,11 @@ export function ItemUpdateForm({ item, className, onClose, onSuccess }: Props) {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     form.handleSubmit();
+  };
+
+  const onCloseHandler = () => {
+    form.reset();
+    onClose?.();
   };
 
   return (
@@ -121,7 +125,7 @@ export function ItemUpdateForm({ item, className, onClose, onSuccess }: Props) {
       <div className="flex shrink-0 justify-end gap-2 border-border/50 border-t pt-3">
         <Button
           variant="outline"
-          onClick={onClose}
+          onClick={onCloseHandler}
           disabled={updateMutation.isPending}
           type="button"
         >

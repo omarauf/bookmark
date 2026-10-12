@@ -1,8 +1,10 @@
+import { useQueryClient } from "@tanstack/react-query";
 import type { Youtube } from "@workspace/contracts/views/youtube";
 import { cn } from "cn";
 import { Columns3, LayoutPanelLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { orpc } from "@/integrations/orpc";
 import { ItemUpdateForm } from "@/modules/common/form/update-item";
 import { YoutubeDetailsContent } from "../components/details-content";
 import { YoutubeMediaActions } from "../components/media-actions";
@@ -18,6 +20,11 @@ type Props = {
 export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
   const layout = useLayoutStore((s) => s.layout);
   const toggleLayout = useLayoutStore((s) => s.toggleLayout);
+
+  const queryClient = useQueryClient();
+  const onSuccess = async () => {
+    await queryClient.invalidateQueries({ queryKey: orpc.youtube.list.key() });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -77,7 +84,11 @@ export function YoutubeDetailsDialog({ youtube, open, onOpenChange }: Props) {
               </ToggleGroup>
             </div>
 
-            <ItemUpdateForm item={youtube} onClose={() => onOpenChange(false)} />
+            <ItemUpdateForm
+              item={youtube}
+              onClose={() => onOpenChange(false)}
+              onSuccess={onSuccess}
+            />
           </div>
         </div>
       </DialogContent>

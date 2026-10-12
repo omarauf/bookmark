@@ -9,6 +9,7 @@ export function usePostNavigation(posts: Post[] = []) {
   const handleNavigation = useCallback(
     async (event: KeyboardEvent) => {
       if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      if (event.target instanceof HTMLElement && event.target.closest("form")) return;
       if (!openPostId) return;
 
       const currentIndex = posts.findIndex((post) => post.id === openPostId);

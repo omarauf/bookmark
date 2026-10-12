@@ -1,5 +1,4 @@
 import type { Post } from "@workspace/contracts/views/post";
-import { Fragment } from "react";
 import { cn } from "@/lib/utils";
 import { CARD_MIN_WIDTH } from "../card/constant";
 import { useDisplaySettingsStore } from "../controls/display-setting-store";
@@ -19,6 +18,9 @@ export function PostGridFeed({ posts = [] }: Props) {
 
   const cardSize = useDisplaySettingsStore((s) => s.cardSize);
   const cardMinWidth = CARD_MIN_WIDTH[cardSize];
+  const isPreview = useLayoutStore((s) => s.isPreviewVisible());
+  const selectedPost = usePreviewStore((s) => s.post);
+  const setSelectedPost = usePreviewStore((s) => s.setSelectedPost);
 
   return (
     <div
@@ -26,25 +28,12 @@ export function PostGridFeed({ posts = [] }: Props) {
       style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${cardMinWidth}px, 1fr))` }}
     >
       {flatItems?.map((post) => (
-        <PostListCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} onClick={() => setSelectedPost(post)} />
       ))}
-    </div>
-  );
-}
 
-function PostListCard({ post }: { post: Post }) {
-  const isPreview = useLayoutStore((s) => s.isPreviewVisible());
-
-  const isPostOpen = usePreviewStore((s) => s.post?.id === post.id);
-  const onClick = usePreviewStore((s) => s.setSelectedPost);
-
-  return (
-    <Fragment key={post.id}>
-      <PostCard post={post} onClick={() => onClick(post)} />
-
-      {!isPreview && (
-        <PostDialog post={post} open={isPostOpen} onOpenChange={() => onClick(undefined)} />
+      {!isPreview && selectedPost && (
+        <PostDialog post={selectedPost} onClose={() => setSelectedPost(undefined)} />
       )}
-    </Fragment>
+    </div>
   );
 }

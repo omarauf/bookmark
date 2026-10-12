@@ -9,9 +9,8 @@ import {
 import { useSettingStore } from "@/settings/hooks/use-store";
 import { NavGroup } from "../nav/nav-group";
 import { NavUser } from "../nav/nav-user";
-// import { AppTitle } from './app-title'
+import { AppTitle } from "./app-title";
 import { sidebarData } from "./sidebar-data";
-import { TeamSwitcher } from "./team-switcher";
 
 export function AppSidebar() {
   const collapsible = useSettingStore((state) => state.collapsible);
@@ -20,11 +19,11 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>
-        <TeamSwitcher teams={sidebarData.teams} />
+        {/* <TeamSwitcher teams={sidebarData.teams} /> */}
 
         {/* Replace <TeamSwitch /> with the following <AppTitle />
          /* if you want to use the normal app title instead of TeamSwitch dropdown */}
-        {/* <AppTitle /> */}
+        <AppTitle />
       </SidebarHeader>
       <ScrollArea className="h-full min-h-0">
         <SidebarContent>

@@ -1,13 +1,10 @@
 import {
-  AudioWaveform,
   Clapperboard,
-  Command,
   Construction,
   Download,
   FileQuestion,
   Folder,
   Form,
-  GalleryVerticalEnd,
   Link,
   Rss,
   ServerCrash,
@@ -26,23 +23,6 @@ import { InstagramIcon, TwitterIcon } from "@/assets/icons";
 import type { SidebarData } from "./types";
 
 export const sidebarData: SidebarData = {
-  teams: [
-    {
-      name: "Shadcn Admin",
-      logo: Command,
-      plan: "Vite + ShadcnUI",
-    },
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-  ],
   navGroups: [
     {
       title: "Content",
